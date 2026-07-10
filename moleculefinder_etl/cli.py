@@ -2,8 +2,11 @@
 from __future__ import annotations
 import argparse
 import logging
+from dotenv import load_dotenv
 from .config import Settings
 from . import pipeline
+
+load_dotenv()  # pick up SUPABASE_URL / SUPABASE_SERVICE_KEY from a local .env
 
 STAGES = {
     "seed": pipeline.stage_seed,

@@ -151,12 +151,17 @@ def load_all(client, molecules: list[dict]) -> dict[str, int]:
             client.table(table).upsert(rows, on_conflict=conflict).execute()
         counts[table] = len(rows)
 
-    # molecule_category / similarity_edge use composite PKs.
-    mc = [{**r, "category_id": cat_id[r.pop("category_slug")]} for r in sid(mol(tables["molecule_category"]))]
+    # molecule_category / similarity_edge use composite PKs. Swap the natural key
+    # for the surrogate id in place (a dict spread would keep the stale key).
+    mc = sid(mol(tables["molecule_category"]))
+    for r in mc:
+        r["category_id"] = cat_id[r.pop("category_slug")]
     if mc:
         client.table("molecule_category").upsert(mc, on_conflict="molecule_id,category_id").execute()
     counts["molecule_category"] = len(mc)
-    edges = [{**r, "neighbor_id": mol_id[r.pop("neighbor_cid")]} for r in mol(tables["similarity_edge"])]
+    edges = mol(tables["similarity_edge"])
+    for r in edges:
+        r["neighbor_id"] = mol_id[r.pop("neighbor_cid")]
     if edges:
         client.table("similarity_edge").upsert(edges, on_conflict="molecule_id,neighbor_id").execute()
     counts["similarity_edge"] = len(edges)
