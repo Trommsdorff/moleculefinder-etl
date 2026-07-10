@@ -32,22 +32,16 @@ BOARDS: dict[str, dict] = {
         "description": "Ranked by sweetness relative to table sugar (sucrose = 1×).",
     },
     "hottest": {
-        "title": "Hottest",
+        "title": "Most pungent",
         "metric": "scoville_shu",
         "direction": "desc",
         "unit": "SHU",
         "value_label": "Scoville",
         "confidence": "computed",
-        "description": "Ranked by Scoville heat units: the pungency of a molecule's capsaicinoids.",
-    },
-    "most-caffeinated": {
-        "title": "Most caffeinated",
-        "metric": "caffeine_mg",
-        "direction": "desc",
-        "unit": "mg",
-        "value_label": "Caffeine",
-        "confidence": "from_source",
-        "description": "Ranked by caffeine content per typical serving.",
+        "description": (
+            "Ranked by Scoville heat units, the pungency of the pure compound: from "
+            "capsaicin's chili-pepper fire down to the milder bite of piperine in black pepper."
+        ),
     },
     "biggest": {
         "title": "Biggest",

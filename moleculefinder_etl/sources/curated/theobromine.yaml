@@ -1,0 +1,18 @@
+# Hand-authored marquee overlay. Theobromine is caffeine's methylxanthine cousin;
+# its half-life lights up the "still in your system" hook beyond caffeine.
+cid: 5429
+slug: theobromine
+tier: marquee
+types:
+  - stimulant
+  - methylxanthine
+hooks:
+  still_in_system: { half_life_hours: 7.2, serving_mg: 200, source: "pharmacology review" }
+foods:
+  - { category: chocolate, note: "~150 to 250 mg per serving of dark chocolate" }
+  - { category: cocoa }
+editorial: |
+  Theobromine is caffeine's gentler cousin and the molecule that gives chocolate
+  its lift. Named for the cacao tree (Theobroma, food of the gods), it clears the
+  body more slowly than caffeine, and the dose in dark chocolate is enough to
+  poison a dog.

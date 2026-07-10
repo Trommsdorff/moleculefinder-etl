@@ -3,6 +3,8 @@
 cid: 134601
 slug: aspartame
 tier: marquee
+types:
+  - sweetener
 relative_sweetness: 200
 foods:
   - { category: diet-soda }

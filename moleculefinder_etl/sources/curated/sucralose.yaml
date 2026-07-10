@@ -1,0 +1,15 @@
+# Hand-authored marquee overlay. Sucralose is the sweetest of the everyday
+# tabletop sweeteners, so it tops the "sweetest" leaderboard.
+cid: 71485
+slug: sucralose
+tier: marquee
+relative_sweetness: 600         # ~600x sucrose (commonly cited)
+types:
+  - sweetener
+foods:
+  - { category: diet-soda }
+  - { category: tabletop-sweetener }
+editorial: |
+  Sucralose is roughly six hundred times sweeter than sugar, built by swapping
+  three of sucrose's hydroxyl groups for chlorine. The change makes it pass
+  through the body largely undigested, so it sweetens with almost no calories.

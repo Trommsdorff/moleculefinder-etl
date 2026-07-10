@@ -1,0 +1,15 @@
+# Hand-authored marquee overlay. Xylitol, a sugar alcohol about as sweet as
+# sugar, joins the "sweetest" leaderboard and the sugar-alcohol type.
+cid: 6912
+slug: xylitol
+tier: marquee
+relative_sweetness: 1.0         # ~1x sucrose (commonly cited)
+types:
+  - sugar-alcohol
+  - sweetener
+foods:
+  - { category: sugar-free-gum }
+editorial: |
+  Xylitol is a sugar alcohol almost exactly as sweet as sugar, gram for gram,
+  but with far fewer calories. It starves the bacteria that cause tooth decay,
+  which is why it turns up in gum and toothpaste. It is also highly toxic to dogs.

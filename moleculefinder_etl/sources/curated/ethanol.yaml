@@ -4,6 +4,8 @@
 cid: 702
 slug: ethanol
 tier: marquee
+types:
+  - depressant
 foods:
   - { category: beer,    note: "~5% alcohol by volume" }
   - { category: wine,    note: "~12% alcohol by volume" }

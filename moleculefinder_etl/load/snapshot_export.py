@@ -5,6 +5,14 @@ from pathlib import Path
 from ..config import SNAPSHOTS
 
 
+def _prune(directory: Path, keep: set[str]) -> None:
+    """Delete stale *.json so the snapshot mirrors the current data set: a dropped
+    leaderboard or a removed molecule leaves no orphan file behind for the web build."""
+    for f in directory.glob("*.json"):
+        if f.name not in keep:
+            f.unlink()
+
+
 def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files.
 
@@ -20,6 +28,7 @@ def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
                       "formula": m.get("molecular_formula"),
                       "synonyms": m.get("synonyms", [])[:8]})
     (SNAPSHOTS / "index.json").write_text(json.dumps(index, ensure_ascii=False))
+    _prune(mol_dir, {f"{m['slug']}.json" for m in molecules})
     lb_dir = SNAPSHOTS / "leaderboards"
     lb_dir.mkdir(parents=True, exist_ok=True)
     lb_index = []
@@ -36,4 +45,5 @@ def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
             "top": entries[0] if entries else None,
         })
     (lb_dir / "index.json").write_text(json.dumps(lb_index, ensure_ascii=False))
+    _prune(lb_dir, {f"{slug}.json" for slug in leaderboards} | {"index.json"})
     return SNAPSHOTS

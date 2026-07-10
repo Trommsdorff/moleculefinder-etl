@@ -1,0 +1,18 @@
+# Hand-authored marquee overlay. Piperine gives the "most pungent" leaderboard a
+# second, milder entry against capsaicin (black-pepper bite, not chili fire).
+cid: 638024
+slug: piperine
+tier: marquee
+scoville_shu: 100000            # ~100,000 SHU, pungency of the pure compound
+types:
+  - pungent
+smell_card:
+  experience: "the sharp bite of black pepper"
+  detection: "acts on the TRPV1 heat receptor, like a milder capsaicin"
+foods:
+  - { category: black-pepper }
+editorial: |
+  Piperine is the molecule behind the bite of black pepper, mild on the Scoville
+  scale next to capsaicin but working on some of the same heat receptors. It also
+  slows the liver enzymes that break down other compounds, which is why pepper can
+  boost the potency of some drugs and supplements.

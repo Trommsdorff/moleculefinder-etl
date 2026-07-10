@@ -3,6 +3,8 @@
 cid: 5988
 slug: sucrose
 tier: marquee
+types:
+  - sugar
 relative_sweetness: 1
 foods:
   - { category: table-sugar }

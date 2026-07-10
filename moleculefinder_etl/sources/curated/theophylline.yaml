@@ -1,0 +1,16 @@
+# Hand-authored marquee overlay. Theophylline is the third dietary methylxanthine;
+# it lingers longest, extending the "still in your system" hook.
+cid: 2153
+slug: theophylline
+tier: marquee
+types:
+  - methylxanthine
+  - stimulant
+hooks:
+  still_in_system: { half_life_hours: 8.0, serving_mg: 300, source: "pharmacology review" }
+foods:
+  - { category: tea, note: "trace amounts" }
+editorial: |
+  Theophylline is the third of the three dietary methylxanthines, found in trace
+  amounts in tea and used as a drug to open the airways. It shares caffeine's
+  chemistry but lingers longer in the body.
