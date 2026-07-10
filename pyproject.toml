@@ -1,0 +1,27 @@
+[project]
+name = "moleculefinder-etl"
+version = "0.0.1"
+description = "ETL for MoleculeFinder: PubChem/Wikidata -> Supabase + static snapshot"
+requires-python = ">=3.12"
+dependencies = [
+  "requests>=2.32",
+  "tenacity>=9.0",          # retry/backoff for rate-limited APIs
+  "pyyaml>=6.0",            # curated marquee overlays
+  "pyarrow>=17.0",          # canon.parquet
+  "python-dotenv>=1.0",
+  "supabase>=2.7",          # loader (service role)
+  "rdkit>=2024.3",          # fingerprints, 2D coords, SMARTS
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+mfetl = "moleculefinder_etl.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["moleculefinder_etl*"]

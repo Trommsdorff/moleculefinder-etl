@@ -1,0 +1,15 @@
+cid: 1548943
+slug: capsaicin
+tier: marquee
+capsaicinoid_ppm: 660000        # ~ pure; SHU ~= ppm * 16
+hooks:
+  dose_poison: { ld50_mg_per_kg: 47.2, species: rat, route: oral, source: "PubChem" }
+smell_card:
+  experience: "the burn of chili peppers"
+  detection: "binds the TRPV1 heat receptor"
+foods:
+  - { category: chili-peppers }
+  - { category: hot-sauce }
+editorial: |
+  Capsaicin doesn't actually burn tissue — it hijacks the same receptor that
+  senses real heat, which is why your brain insists your mouth is on fire.

@@ -1,0 +1,14 @@
+# Hand-authored marquee overlay. Sucrose is the reference point of the sweetness
+# scale (table sugar := 1x), so it anchors the "sweetest" leaderboard.
+cid: 5988
+slug: sucrose
+tier: marquee
+relative_sweetness: 1
+foods:
+  - { category: table-sugar }
+  - { category: fruit }
+  - { category: honey }
+editorial: |
+  Sucrose — ordinary table sugar — is the yardstick every other sweetener is
+  measured against. By definition it sits at 1x on the sweetness scale; a
+  sweetener rated "200x" simply tastes as sweet at one two-hundredth the amount.
