@@ -27,11 +27,20 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## Status: M1 DONE (2026-07-10)
-`pipeline.py`'s five stages are wired to the real functions; `transform/assemble.py`
-builds the assembled per-molecule record that flows fetch → transform → load → export.
-`mfetl all --target 200` produces a 125-molecule snapshot AND (with Supabase creds)
-loads it. 41 offline tests pass; ruff clean. Web app live at moleculefinder-web.vercel.app.
+## Status: M1 + M3-leaderboards DONE (2026-07-10)
+`pipeline.py`'s five stages flow fetch → transform → load → export; `transform/assemble.py`
+builds the per-molecule record. `mfetl all --target 200` produces a 125-molecule snapshot AND
+(with Supabase creds) loads it. **M3:** `transform/leaderboards.py` now emits self-describing
+boards (metadata + enriched entries + a `leaderboards/index.json`) that the web `/best` pages
+render. Recent: an em-dash sweep of board descriptions + curated editorial (house rule). 41
+offline tests pass; ruff clean. **Ahead 1, unpushed** (the em-dash commit); origin has M3.
+
+**Next — the ETL curation pass** (agreed for after the web design install): hand-curate the marquee
+YAML (`sources/curated/*.yaml`) to add (a) molecule **type tags** (stimulant, methylxanthine, roam
+role pills; only `food` + `functional_group` categories exist today), (b) **board coverage**
+(caffeine-per-serving so `most-caffeinated` populates; more sweetness/Scoville for `sweetest`/`hottest`),
+and (c) more **half-lives** so the web `StillInSystem` hook fires beyond caffeine. Regenerate with
+`mfetl transform && mfetl export`, then `npm run sync-data` in the web repo.
 
 ## How it flows (disk-to-disk, resumable)
 - `stage_seed` → `data/seed/canon.parquet` — canon: marquee names→CID
