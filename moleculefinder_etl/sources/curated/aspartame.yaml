@@ -1,0 +1,13 @@
+# Hand-authored marquee overlay. Aspartame is ~200x as sweet as sucrose, so it
+# tops the "sweetest" leaderboard against sucrose's 1x anchor.
+cid: 134601
+slug: aspartame
+tier: marquee
+relative_sweetness: 200
+foods:
+  - { category: diet-soda }
+  - { category: sugar-free-gum }
+editorial: |
+  Aspartame is roughly two hundred times sweeter than sugar, so a diet soda
+  needs only a trace of it to match the sweetness of the ~40 grams of sugar in
+  a regular can — with almost none of the calories.

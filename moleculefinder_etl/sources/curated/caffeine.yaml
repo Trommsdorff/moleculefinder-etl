@@ -1,0 +1,15 @@
+# Hand-authored marquee overlay (replaces license-blocked FooDB / odor data).
+cid: 2519
+slug: caffeine
+tier: marquee
+hooks:
+  still_in_system: { half_life_hours: 5.0, serving_mg: 95, source: "pharmacology review" }
+  dose_poison:     { ld50_mg_per_kg: 192, species: rat, route: oral, source: "PubChem" }
+foods:
+  - { category: coffee,    note: "~95 mg per 8 oz cup" }
+  - { category: tea,       note: "~47 mg per 8 oz cup" }
+  - { category: chocolate }
+smell_card: null
+editorial: |
+  Caffeine is the world's most widely used psychoactive drug, and the only one
+  routinely served to children (as chocolate) and at the breakfast table.
