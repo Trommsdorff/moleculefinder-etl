@@ -27,29 +27,39 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## What is REAL vs. STUB
-- **Real (building blocks):** `config`, `sources/registry` (+ guard), `sources/pubchem`
-  (`properties`, `pug_view`), `sources/wikidata`, `sources/pageviews`,
-  `transform/` (canon, slugs, confidence, similarity, toxicity, ghs, hooks,
-  categories, leaderboards, names, structures), `load/supabase_loader`,
-  `load/snapshot_export`. Offline tests pass.
-- **Stub (your M1 work):** `pipeline.py` — `stage_fetch`, `stage_transform`,
-  `stage_load`, `stage_export` are log-only placeholders. **M1 = wire the real
-  functions into these stages** and define the assembled per-molecule record that
-  flows fetch → transform → load → export.
+## Status: M1 DONE (2026-07-10)
+`pipeline.py`'s five stages are wired to the real functions; `transform/assemble.py`
+builds the assembled per-molecule record that flows fetch → transform → load → export.
+`mfetl all --target 200` produces a 125-molecule snapshot AND (with Supabase creds)
+loads it. 41 offline tests pass; ruff clean. Web app live at moleculefinder-web.vercel.app.
 
-## M1 build order (this repo)
-1. `stage_fetch`: for the seed canon CIDs, call `pubchem.properties` (batched) and,
-   where relevant, `pubchem.pug_view` for `Toxicity` + `GHS Classification`. Cache.
-2. `stage_transform`: assemble molecule dicts — preferred name (`names`), unique
-   `slugs`, Morgan fingerprints → top-30 `similarity` edges, parse `toxicity`/`ghs`,
-   `categories.functional_groups`, `hooks.hooks_for` (see plan §7.1), `structures.svg_for`.
-   Merge `sources/curated/*.yaml` overlays. Apply filter-4 (drop hookless/edgeless orphans).
-3. `stage_load`: upsert every table via `supabase_loader`; `record_run` each stage.
-4. `stage_export` already delegates to `snapshot_export.export`; just call it.
-5. Add pytest coverage for new parsers (assert caffeine t½≈5h behavior, an LD50 parse,
-   a GHS parse). Keep the suite green.
+## How it flows (disk-to-disk, resumable)
+- `stage_seed` → `data/seed/canon.parquet` — canon: marquee names→CID
+  (`pubchem.name_to_cid`, filter-2) + curated CIDs + Wikidata notability, ranked by pageviews.
+- `stage_fetch` → `data/seed/fetched.json` — batched properties + synonyms; PUG-View
+  Toxicity/GHS warmed into `data/raw_cache/`.
+- `stage_transform` → `data/seed/molecules.json` — `assemble.py`; filter-4 applied.
+- `stage_load` → Supabase upserts (idempotent) + `ingest_run`; **skips if no creds.**
+- `stage_export` → `data/snapshots/` — per-molecule JSON + index + leaderboards.
 
-## Definition of done for M1 (etl)
-`mfetl all --target 200` produces `data/snapshots/molecules/*.json` + `index.json`
-+ leaderboards, every value labeled, no BLOCKED source touched, tests green.
+## Supabase / DB
+- Creds in `.env` (gitignored): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (= the `sb_secret_…`
+  key). `mfetl load` uses supabase-py (REST). Refresh the web repo's snapshot copy with
+  `npm run sync-data` there.
+- **DDL/migrations (no `psql` locally):** connect with `psycopg` over the Supabase **session
+  pooler** (port 5432, IPv4) and apply `supabase/migrations/*.sql` in order — including
+  `0003_grants.sql`, which grants the API roles (the SQL Editor does this automatically; a
+  raw connection does not, or the API 42501s "permission denied"). Pooler passwords can
+  contain unescaped `@ # $ \` — split on the LAST `@`, pass host/user/password/dbname as
+  psycopg kwargs (not a URL).
+
+## PubChem gotchas (fixed in code — watch at 10k / on API drift)
+- Property fields renamed: read `SMILES` (isomeric) + `ConnectivitySMILES` (canonical).
+- Batched POSTs need ONE comma-separated `cid=1,2,3`; repeated `cid=1&cid=2` returns only
+  the first CID.
+
+## Next
+- Scale to `--target 10000` — **gated** until the marquee template earns engagement.
+- Turn on weekly `.github/workflows/etl.yml` (needs the Supabase secrets + a Vercel deploy
+  hook in the repo's Actions secrets).
+- Curate more marquee overlays (`sources/curated/*.yaml`; ~5 today, plan envisions ~500).
