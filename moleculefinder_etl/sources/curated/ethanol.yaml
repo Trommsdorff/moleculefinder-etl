@@ -13,6 +13,6 @@ smell_card:
   detection: "highly volatile; sensed by smell and as a burn"
 editorial: |
   Ethanol is the one recreational drug humans have fermented for at least nine
-  thousand years. The body clears it at a roughly fixed rate — about one
-  standard drink per hour — which is why its math is a Widmark BAC curve rather
+  thousand years. The body clears it at a roughly fixed rate, about one
+  standard drink per hour, which is why its math is a Widmark BAC curve rather
   than a half-life decay.
