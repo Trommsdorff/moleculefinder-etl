@@ -5,8 +5,12 @@ from pathlib import Path
 from ..config import SNAPSHOTS
 
 
-def export(molecules: list[dict], leaderboards: dict[str, list[dict]]) -> Path:
-    """Write per-molecule JSON + a compact search index + leaderboard files."""
+def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
+    """Write per-molecule JSON + a compact search index + leaderboard files.
+
+    Each leaderboard file is a self-describing board (metadata + enriched
+    entries); `leaderboards/index.json` lists the boards for the /best index.
+    """
     mol_dir = SNAPSHOTS / "molecules"
     mol_dir.mkdir(parents=True, exist_ok=True)
     index = []
@@ -18,6 +22,18 @@ def export(molecules: list[dict], leaderboards: dict[str, list[dict]]) -> Path:
     (SNAPSHOTS / "index.json").write_text(json.dumps(index, ensure_ascii=False))
     lb_dir = SNAPSHOTS / "leaderboards"
     lb_dir.mkdir(parents=True, exist_ok=True)
-    for slug, rows in leaderboards.items():
-        (lb_dir / f"{slug}.json").write_text(json.dumps(rows, ensure_ascii=False))
+    lb_index = []
+    for slug, board in leaderboards.items():
+        (lb_dir / f"{slug}.json").write_text(json.dumps(board, ensure_ascii=False))
+        entries = board["entries"]
+        lb_index.append({
+            "slug": slug,
+            "title": board["title"],
+            "unit": board["unit"],
+            "value_label": board["value_label"],
+            "description": board["description"],
+            "count": len(entries),
+            "top": entries[0] if entries else None,
+        })
+    (lb_dir / "index.json").write_text(json.dumps(lb_index, ensure_ascii=False))
     return SNAPSHOTS

@@ -170,7 +170,7 @@ def stage_export(settings: Settings) -> Path:
     molecules = json.loads(MOLECULES.read_text())
     boards = {slug: leaderboards.rank(slug, molecules) for slug in leaderboards.BOARDS}
     path = snapshot_export.export(molecules, boards)
-    non_empty = {k: len(v) for k, v in boards.items() if v}
+    non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)
     log.info("  boards: %s", non_empty)
     return path

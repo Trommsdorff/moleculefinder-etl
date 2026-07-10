@@ -70,4 +70,8 @@ def test_snapshot_export(tmp_path, monkeypatch):
     index = json.loads((tmp_path / "index.json").read_text())
     assert {e["slug"] for e in index} == {"caffeine", "theobromine"}
     biggest = json.loads((tmp_path / "leaderboards" / "biggest.json").read_text())
-    assert biggest[0]["molecule_cid"] == 2519          # caffeine (194) heavier than theobromine (180)
+    assert biggest["title"] == "Biggest" and biggest["unit"] == "g/mol"
+    top = biggest["entries"][0]
+    assert top["cid"] == 2519 and top["slug"] == "caffeine"   # caffeine (194) heavier than theobromine (180)
+    lb_index = json.loads((tmp_path / "leaderboards" / "index.json").read_text())
+    assert {b["slug"] for b in lb_index} == set(leaderboards.BOARDS)
