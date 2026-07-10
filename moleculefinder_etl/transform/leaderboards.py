@@ -17,7 +17,7 @@ BOARDS: dict[str, dict] = {
         "value_label": "LD50",
         "confidence": "from_source",
         "description": (
-            "Ranked by the lowest reported oral LD50 — the smaller the lethal dose per "
+            "Ranked by the lowest reported oral LD50. The smaller the lethal dose per "
             "kilogram of body weight, the deadlier. Animal data shown as neutral science: "
             "an estimate, never a threshold to act on."
         ),
@@ -38,7 +38,7 @@ BOARDS: dict[str, dict] = {
         "unit": "SHU",
         "value_label": "Scoville",
         "confidence": "computed",
-        "description": "Ranked by Scoville heat units — the pungency of a molecule's capsaicinoids.",
+        "description": "Ranked by Scoville heat units: the pungency of a molecule's capsaicinoids.",
     },
     "most-caffeinated": {
         "title": "Most caffeinated",
@@ -56,7 +56,7 @@ BOARDS: dict[str, dict] = {
         "unit": "g/mol",
         "value_label": "Mol. weight",
         "confidence": "from_source",
-        "description": "Ranked by molecular weight — the heaviest molecules in the canon.",
+        "description": "Ranked by molecular weight: the heaviest molecules in the canon.",
     },
 }
 
