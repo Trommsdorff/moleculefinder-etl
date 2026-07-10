@@ -1,0 +1,16 @@
+# Hand-authored marquee overlay. Saccharin, the first artificial sweetener,
+# adds another high-intensity entry to the "sweetest" leaderboard.
+cid: 5143
+slug: saccharin
+tier: marquee
+relative_sweetness: 300         # ~300x sucrose (commonly cited)
+types:
+  - sweetener
+foods:
+  - { category: diet-soda }
+  - { category: tabletop-sweetener }
+editorial: |
+  Saccharin was the first artificial sweetener, discovered by accident in 1879
+  by a chemist who noticed his dinner tasted sweet after a day in the lab. Around
+  three hundred times sweeter than sugar, it carried a cancer warning for decades
+  before the science walked that back.

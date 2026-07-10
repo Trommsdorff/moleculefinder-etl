@@ -2,6 +2,9 @@
 cid: 2519
 slug: caffeine
 tier: marquee
+types:
+  - stimulant
+  - methylxanthine
 hooks:
   still_in_system: { half_life_hours: 5.0, serving_mg: 95, source: "pharmacology review" }
   dose_poison:     { ld50_mg_per_kg: 192, species: rat, route: oral, source: "PubChem" }

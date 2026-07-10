@@ -122,6 +122,11 @@ def _merge_curated(rec: dict, curated: dict) -> None:
         cur["capsaicinoid_ppm"] = ppm
         rec["scoville_shu"] = round(ppm * 16)            # SHU ≈ ppm × 16 (plan §7)
         rec["properties"].append(_prop("scoville_shu", rec["scoville_shu"], "SHU", "scoville", "curated"))
+    elif curated.get("scoville_shu") is not None:
+        # Direct pure-compound Scoville for pungent molecules that aren't capsaicinoids
+        # (e.g. piperine), where a capsaicinoid ppm would be meaningless.
+        rec["scoville_shu"] = curated["scoville_shu"]
+        rec["properties"].append(_prop("scoville_shu", rec["scoville_shu"], "SHU", "scoville", "curated"))
 
     if curated.get("relative_sweetness") is not None:
         rs = curated["relative_sweetness"]
@@ -138,6 +143,13 @@ def _merge_curated(rec: dict, curated: dict) -> None:
             rec["categories"].append({"slug": fslug, "name": _titleize(fslug), "kind": "food",
                                       "note": food.get("note"), "confidence": label_for("curated_fact"),
                                       "source": _src("curated")})
+
+    # Type / role tags (stimulant, methylxanthine, sweetener, ...): a curated
+    # "what kind of molecule is this" membership that powers the roam role pills
+    # and its own /in/<type> page.
+    for tslug in curated.get("types") or []:
+        rec["categories"].append({"slug": tslug, "name": _titleize(tslug), "kind": "type",
+                                  "confidence": label_for("curated_fact"), "source": _src("curated")})
 
     if curated.get("editorial"):
         rec["content_blocks"].append({"block_type": "editorial", "body_md": curated["editorial"].strip()})
@@ -180,7 +192,7 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         "properties": [], "categories": [], "hooks": [], "edges": [], "content_blocks": [],
         "half_life_hours": None,
         "ld50_mg_per_kg": (fetched.get("toxicity") or [{}])[0].get("value_num"),
-        "relative_sweetness": None, "scoville_shu": None, "caffeine_mg": None,
+        "relative_sweetness": None, "scoville_shu": None,
     }
 
     if curated:

@@ -27,19 +27,26 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## Status: M1 + M3-leaderboards DONE (2026-07-10)
+## Status: M1 + M3-leaderboards + curation pass DONE (2026-07-10)
 `pipeline.py`'s five stages flow fetch → transform → load → export; `transform/assemble.py`
 builds the per-molecule record. `mfetl all --target 200` produces a 125-molecule snapshot AND
-(with Supabase creds) loads it. **M3:** `transform/leaderboards.py` now emits self-describing
+(with Supabase creds) loads it. **M3:** `transform/leaderboards.py` emits self-describing
 boards (metadata + enriched entries + a `leaderboards/index.json`) that the web `/best` pages
-render. Recent: an em-dash sweep of board descriptions + curated editorial (house rule). 41
-offline tests pass; ruff clean. **Ahead 1, unpushed** (the em-dash commit); origin has M3.
+render. **Curation pass:** curated `types:` overlays fold into `kind:"type"` categories (roam role
+pills + `/in/<type>`); Sweetest board 2→9; half-lives + `serving_mg` for theobromine/theophylline/
+nicotine (StillInSystem now fires on 4); Hottest reframed as "Most pungent" (pure-compound Scoville:
+capsaicin 16M via `capsaicinoid_ppm: 1000000`, piperine via a direct `scoville_shu` overlay); Most
+caffeinated dropped (its metric was never wired and it can't be an honest molecule ranking);
+`snapshot_export` now prunes stale molecule/board files. ~16 curated overlays. 42 offline tests pass;
+ruff clean. **Ahead 3, unpushed.**
 
-**Next — the ETL curation pass** (agreed for after the web design install): hand-curate the marquee
-YAML (`sources/curated/*.yaml`) to add (a) molecule **type tags** (stimulant, methylxanthine, roam
-role pills; only `food` + `functional_group` categories exist today), (b) **board coverage**
-(caffeine-per-serving so `most-caffeinated` populates; more sweetness/Scoville for `sweetest`/`hottest`),
-and (c) more **half-lives** so the web `StillInSystem` hook fires beyond caffeine. Regenerate with
+**Design principle (Garrett's call):** leaderboards rank **molecules by intrinsic properties**
+(sweetness, LD50, weight, pure-compound pungency). Food-shaped rankings (hottest sauces, most
+caffeinated drinks) are a **separate future content type**, not a board metric. The food angle
+already lives in `foods:` categories + the new type tags.
+
+**Next — more marquee overlays** (`sources/curated/*.yaml`; ~16 today, plan envisions ~500), then
+scale to `--target 10000` (gated on engagement). Regenerate any curation with
 `mfetl transform && mfetl export`, then `npm run sync-data` in the web repo.
 
 ## How it flows (disk-to-disk, resumable)

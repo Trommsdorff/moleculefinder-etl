@@ -118,6 +118,29 @@ def test_leaderboard_keys_present():
     assert asp["relative_sweetness"] == 200
 
 
+def test_curated_type_tags_and_direct_scoville():
+    # Type tags fold into kind:"type" categories (caffeine → stimulant, methylxanthine).
+    caf = _caffeine()
+    type_cats = [c for c in caf["categories"] if c["kind"] == "type"]
+    assert {"stimulant", "methylxanthine"} <= {c["slug"] for c in type_cats}
+    assert all(c["confidence"] == FROM_SOURCE for c in type_cats)
+
+    # Direct pure-compound Scoville for a non-capsaicinoid pungent molecule (piperine).
+    pip = assemble.assemble_record(
+        canon_row(638024, "Piperine"),
+        fetched({"CID": 638024, "SMILES": "CCO", "MolecularWeight": "285.34"},
+                curated=_curated("piperine")), set())
+    assert pip["scoville_shu"] == 100000
+    assert "pungent" in {c["slug"] for c in pip["categories"] if c["kind"] == "type"}
+
+    # Capsaicin's pure-compound Scoville is 16M (capsaicinoid_ppm 1,000,000 × 16).
+    cap = assemble.assemble_record(
+        canon_row(1548943, "Capsaicin"),
+        fetched({"CID": 1548943, "SMILES": "CCO", "MolecularWeight": "305.41"},
+                curated=_curated("capsaicin")), set())
+    assert cap["scoville_shu"] == 16000000
+
+
 # ── slugs, edges, filter-4 ───────────────────────────────────────────────────
 def test_unique_slugs_across_collisions():
     taken = set()

@@ -1,0 +1,15 @@
+# Hand-authored marquee overlay. Fructose is the sweetest of the common sugars,
+# giving the "sweetest" leaderboard a natural-sugar reference above sucrose.
+cid: 2723872
+slug: fructose
+tier: marquee
+relative_sweetness: 1.7         # ~1.7x sucrose (crystalline fructose)
+types:
+  - sugar
+foods:
+  - { category: fruit }
+  - { category: honey }
+editorial: |
+  Fructose is the sugar that makes fruit taste sweet, and the sweetest of the
+  common sugars, about one and a half times sweeter than table sugar. The body
+  handles it differently from glucose, routing almost all of it through the liver.

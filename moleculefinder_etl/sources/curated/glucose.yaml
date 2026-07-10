@@ -1,0 +1,15 @@
+# Hand-authored marquee overlay. Glucose sits just below table sugar on the
+# "sweetest" leaderboard, the sugar the body actually runs on.
+cid: 5793
+slug: glucose
+tier: marquee
+relative_sweetness: 0.75        # ~0.75x sucrose (commonly cited)
+types:
+  - sugar
+foods:
+  - { category: fruit }
+  - { category: honey }
+editorial: |
+  Glucose is the sugar the body actually runs on, the molecule a blood-sugar
+  reading measures. On the tongue it is only about three quarters as sweet as
+  table sugar.

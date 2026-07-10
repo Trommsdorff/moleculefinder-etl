@@ -64,6 +64,11 @@ def test_snapshot_export(tmp_path, monkeypatch):
     monkeypatch.setattr(snapshot_export, "SNAPSHOTS", tmp_path)
     molecules = [caf, theo]
     boards = {slug: leaderboards.rank(slug, molecules) for slug in leaderboards.BOARDS}
+    # Stale files from a prior run must be pruned so the snapshot mirrors current data.
+    (tmp_path / "molecules").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "molecules" / "ghost.json").write_text("{}")
+    (tmp_path / "leaderboards").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "leaderboards" / "most-caffeinated.json").write_text("{}")
     snapshot_export.export(molecules, boards)
 
     assert (tmp_path / "molecules" / "caffeine.json").exists()
@@ -75,3 +80,5 @@ def test_snapshot_export(tmp_path, monkeypatch):
     assert top["cid"] == 2519 and top["slug"] == "caffeine"   # caffeine (194) heavier than theobromine (180)
     lb_index = json.loads((tmp_path / "leaderboards" / "index.json").read_text())
     assert {b["slug"] for b in lb_index} == set(leaderboards.BOARDS)
+    assert not (tmp_path / "molecules" / "ghost.json").exists()                # stale molecule pruned
+    assert not (tmp_path / "leaderboards" / "most-caffeinated.json").exists()  # stale board pruned

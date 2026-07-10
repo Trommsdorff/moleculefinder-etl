@@ -1,0 +1,16 @@
+# Hand-authored marquee overlay. Stevioside anchors the "natural" end of the
+# high-intensity sweeteners on the "sweetest" leaderboard.
+cid: 442089
+slug: stevioside
+tier: marquee
+relative_sweetness: 200         # ~200x sucrose (stevioside; commonly cited)
+types:
+  - sweetener
+foods:
+  - { category: stevia }
+  - { category: diet-soda }
+editorial: |
+  Stevioside is the sweet molecule extracted from the leaves of the stevia
+  plant, about two hundred times sweeter than sugar. Because it comes from a
+  leaf rather than a lab, it anchors the natural end of the high-intensity
+  sweeteners.

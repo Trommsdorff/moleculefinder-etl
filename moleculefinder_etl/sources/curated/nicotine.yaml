@@ -1,0 +1,13 @@
+# Hand-authored marquee overlay. Nicotine's short half-life is a sharp contrast
+# to caffeine on the "still in your system" hook (fast in, fast out).
+cid: 89594
+slug: nicotine
+tier: marquee
+types:
+  - stimulant
+hooks:
+  still_in_system: { half_life_hours: 2.0, serving_mg: 1.5, source: "pharmacology review" }
+editorial: |
+  Nicotine is the stimulant that makes tobacco addictive, and one of the
+  fastest-clearing drugs people use: its half-life is only about two hours, part
+  of why cravings return so quickly. In the plant it is a natural pesticide.
