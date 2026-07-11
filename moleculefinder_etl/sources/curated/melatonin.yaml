@@ -1,0 +1,10 @@
+# Hand-authored marquee overlay: melatonin half-life + type.
+cid: 896
+slug: melatonin
+tier: marquee
+types:
+  - hormone
+hooks:
+  still_in_system: { half_life_hours: 0.75, serving_mg: 3, source: "pharmacology review" }
+editorial: |
+  Melatonin is the hormone the brain releases as darkness falls to cue sleep. As a supplement it clears fast, with a half-life under an hour, so it nudges you toward sleep rather than holding you under like a sedative.

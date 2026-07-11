@@ -1,0 +1,5 @@
+# Hand-authored type overlay: gamma-aminobutyric-acid.
+cid: 119
+slug: gamma-aminobutyric-acid
+types:
+  - neurotransmitter

@@ -1,0 +1,5 @@
+# Hand-authored type overlay: uracil.
+cid: 1174
+slug: uracil
+types:
+  - nucleobase

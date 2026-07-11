@@ -1,0 +1,10 @@
+# Hand-authored marquee overlay: acetaminophen half-life + type.
+cid: 1983
+slug: acetaminophen
+tier: marquee
+types:
+  - analgesic
+hooks:
+  still_in_system: { half_life_hours: 2.0, serving_mg: 500, source: "pharmacology review" }
+editorial: |
+  Acetaminophen, sold as Tylenol or paracetamol, is the most common drug in the medicine cabinet and, in overdose, the leading cause of acute liver failure. It eases pain and fever without the stomach irritation of the NSAIDs, but its safety margin is narrower than most people assume.

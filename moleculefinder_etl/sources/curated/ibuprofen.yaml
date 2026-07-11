@@ -1,0 +1,11 @@
+# Hand-authored marquee overlay: ibuprofen half-life + type.
+cid: 3672
+slug: ibuprofen
+tier: marquee
+types:
+  - nsaid
+  - analgesic
+hooks:
+  still_in_system: { half_life_hours: 2.0, serving_mg: 200, source: "pharmacology review" }
+editorial: |
+  Ibuprofen is the everyday anti-inflammatory, blocking the COX enzymes that build the prostaglandins behind pain, fever, and swelling. It clears in about two hours, which is why the label says to redose every four to six.

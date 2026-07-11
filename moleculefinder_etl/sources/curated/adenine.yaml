@@ -1,0 +1,5 @@
+# Hand-authored type overlay: adenine.
+cid: 190
+slug: adenine
+types:
+  - nucleobase
