@@ -1,0 +1,6 @@
+# Hand-authored type overlay: codeine.
+cid: 5284371
+slug: codeine
+types:
+  - opioid
+  - analgesic

@@ -1,0 +1,5 @@
+# Hand-authored type overlay: epinephrine.
+cid: 5816
+slug: epinephrine
+types:
+  - neurotransmitter

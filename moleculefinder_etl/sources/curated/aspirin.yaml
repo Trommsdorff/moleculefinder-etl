@@ -1,0 +1,6 @@
+# Hand-authored type overlay: aspirin.
+cid: 2244
+slug: aspirin
+types:
+  - nsaid
+  - analgesic

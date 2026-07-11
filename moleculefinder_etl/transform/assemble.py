@@ -45,6 +45,10 @@ def _titleize(slug: str) -> str:
     return slug.replace("-", " ").replace("_", " ").strip().title()
 
 
+# Type slugs whose display name _titleize would mangle (acronyms).
+_TYPE_NAMES = {"nsaid": "NSAID"}
+
+
 # Registry/cross-reference codes that make poor display or search synonyms.
 _CODE_PREFIX = re.compile(
     r"^(SCHEMBL|DTXSID|DTXCID|CHEMBL|CHEBI|UNII|EINECS|NSC|AKOS|MFCD|ZINC|BDBM|"
@@ -148,7 +152,7 @@ def _merge_curated(rec: dict, curated: dict) -> None:
     # "what kind of molecule is this" membership that powers the roam role pills
     # and its own /in/<type> page.
     for tslug in curated.get("types") or []:
-        rec["categories"].append({"slug": tslug, "name": _titleize(tslug), "kind": "type",
+        rec["categories"].append({"slug": tslug, "name": _TYPE_NAMES.get(tslug, _titleize(tslug)), "kind": "type",
                                   "confidence": label_for("curated_fact"), "source": _src("curated")})
 
     if curated.get("editorial"):

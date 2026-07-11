@@ -1,0 +1,11 @@
+# Hand-authored marquee overlay: naproxen half-life + type.
+cid: 156391
+slug: naproxen
+tier: marquee
+types:
+  - nsaid
+  - analgesic
+hooks:
+  still_in_system: { half_life_hours: 14.0, serving_mg: 220, source: "pharmacology review" }
+editorial: |
+  Naproxen is the long-acting NSAID: chemically close to ibuprofen but cleared far more slowly, with a half-life near fourteen hours. One dose lasts most of a day, and it lingers long after the pain is gone.

@@ -1,0 +1,5 @@
+# Hand-authored type overlay: tyrosine.
+cid: 6057
+slug: tyrosine
+types:
+  - amino-acid

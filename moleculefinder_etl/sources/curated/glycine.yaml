@@ -1,0 +1,5 @@
+# Hand-authored type overlay: glycine.
+cid: 750
+slug: glycine
+types:
+  - amino-acid

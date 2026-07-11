@@ -1,0 +1,6 @@
+# Hand-authored type overlay: cortisol.
+cid: 5754
+slug: cortisol
+types:
+  - steroid
+  - hormone

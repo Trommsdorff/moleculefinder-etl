@@ -1,0 +1,6 @@
+# Hand-authored type overlay: estradiol.
+cid: 5757
+slug: estradiol
+types:
+  - steroid
+  - hormone

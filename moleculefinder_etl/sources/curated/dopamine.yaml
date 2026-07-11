@@ -1,0 +1,5 @@
+# Hand-authored type overlay: dopamine.
+cid: 681
+slug: dopamine
+types:
+  - neurotransmitter

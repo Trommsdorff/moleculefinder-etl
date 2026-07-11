@@ -1,0 +1,5 @@
+# Hand-authored type overlay: phenylalanine.
+cid: 6140
+slug: phenylalanine
+types:
+  - amino-acid

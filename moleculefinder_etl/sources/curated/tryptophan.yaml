@@ -1,0 +1,5 @@
+# Hand-authored type overlay: tryptophan.
+cid: 6305
+slug: tryptophan
+types:
+  - amino-acid
