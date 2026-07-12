@@ -17,6 +17,7 @@ first. Every network call is cached under data/raw_cache so re-runs are cheap
 and resumable. Emits data/seed/canon.parquet.
 """
 from __future__ import annotations
+import csv
 import json
 import zlib
 from pathlib import Path
@@ -158,6 +159,66 @@ def household_seed() -> list[dict]:
     return out
 
 
+# ── Scope B everyday-core canon (the curated 489, not a demand slice of 119M) ──
+SCOPE_B_CSV = SEEDS_DIR / "scope_b_core.csv"
+
+
+def _scope_b_rows() -> list[dict]:
+    """Read scope_b_core.csv → canon rows, each already stamped with its bucket/family.
+
+    The 489 are hand-picked, so every row is marquee tier (never truncated). Real compounds
+    keep their PubChem CID; ``hand-model`` rows (collagen, starch, gluten...) get a synthetic
+    negative CID — the same value `household_seed()` derives from the name, so the two agree.
+    Pageviews come straight from the CSV (no Wikipedia API call needed to rank)."""
+    if not SCOPE_B_CSV.exists():
+        return []
+    out: list[dict] = []
+    with SCOPE_B_CSV.open(newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            name = (row.get("molecule") or "").strip()
+            if not name:
+                continue
+            raw_cid = (row.get("pubchem_cid") or "").strip()
+            hand = (row.get("handling") == "hand-model") or not raw_cid
+            out.append({
+                "cid": _synthetic_cid(name) if hand else int(raw_cid),
+                "enwiki_title": name, "wikidata_qid": None, "has_common_name": True,
+                "tier": "marquee", "summary": None,
+                "pageviews": int(row.get("wikipedia_views_monthly") or 0),
+                "hand_model": hand,
+                "scope_bucket": (row.get("bucket") or "").strip() or None,
+                "scope_family": (row.get("family") or "").strip() or None,
+                "is_otc": (row.get("is_otc") or "").strip().lower() == "yes",
+                "dual_use": (row.get("dual_use") or "").strip().lower() == "yes",
+            })
+    return out
+
+
+def build_scope_b_canon() -> "list[dict]":
+    """The Scope B everyday-core canon: exactly the molecules in scope_b_core.csv, each
+    stamped with its Scope B bucket/family and ranked by the CSV's Wikipedia pageviews.
+
+    No notability net — this is a curated everyday core, not a demand-ranked slice of the
+    119M-compound universe, so the target/notability machinery of `build_canon` is bypassed.
+    CC0 Wikidata descriptions + QIDs are filled for the real CIDs (cached; synthetic CIDs
+    have no PubChem/Wikidata row and are skipped)."""
+    canon = _scope_b_rows()
+    if not canon:
+        raise SystemExit(f"missing {SCOPE_B_CSV.name}; cannot build the Scope B canon")
+
+    desc = _descriptions_cached([r["cid"] for r in canon if r["cid"] > 0])
+    for r in canon:
+        d = desc.get(r["cid"])
+        if d:
+            r["summary"] = r["summary"] or d.get("desc")
+            r["wikidata_qid"] = r["wikidata_qid"] or d.get("qid")
+
+    canon.sort(key=lambda r: -r["pageviews"])
+    for i, r in enumerate(canon):
+        r["build_order"] = i
+    return canon
+
+
 # ── Canon build ──────────────────────────────────────────────────────────────
 def build_canon(target: int = CANON_TARGET) -> "list[dict]":
     """Return the canon rows (network-bound; cached). Marquee is always included."""
@@ -232,10 +293,14 @@ def write_parquet(rows: "list[dict]", path: Path | None = None) -> Path:
     import pyarrow.parquet as pq
     path = path or (SEED_DIR / "canon.parquet")
     path.parent.mkdir(parents=True, exist_ok=True)
-    # Uniform schema across rows (pyarrow infers from the first row otherwise).
+    # Uniform schema across rows (pyarrow infers from the first row otherwise). The Scope B
+    # bucket/family/flags ride the parquet so stage_transform can stamp all 489 (not just the
+    # household seed) — assemble_record reads row["scope_bucket"] straight off the canon row.
     cols = ["cid", "tier", "build_order", "has_common_name", "wikidata_qid",
-            "enwiki_title", "summary", "pageviews", "hand_model"]
-    norm = [{**{c: r.get(c) for c in cols}, "hand_model": bool(r.get("hand_model"))} for r in rows]
+            "enwiki_title", "summary", "pageviews", "hand_model",
+            "scope_bucket", "scope_family", "is_otc", "dual_use"]
+    norm = [{**{c: r.get(c) for c in cols}, "hand_model": bool(r.get("hand_model")),
+             "is_otc": bool(r.get("is_otc")), "dual_use": bool(r.get("dual_use"))} for r in rows]
     pq.write_table(pa.Table.from_pylist(norm), path)
     return path
 

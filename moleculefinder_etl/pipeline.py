@@ -47,11 +47,20 @@ def _load_curated() -> dict[int, dict]:
 
 # ── Stage 0: canon ───────────────────────────────────────────────────────────
 def stage_seed(settings: Settings) -> list[dict]:
-    log.info("stage 0: canon selection (target=%d)", settings.canon_target)
-    rows = canon_stage.build_canon(settings.canon_target)
+    # Scope B everyday-core build: when scope_b_core.csv is present the canon IS the curated
+    # 489 (each stamped with its bucket), not a demand-ranked slice — so the notability net and
+    # the --target cap are bypassed. Falls back to the open notability build if the CSV is absent.
+    if canon_stage.SCOPE_B_CSV.exists():
+        log.info("stage 0: canon = Scope B everyday core (%s)", canon_stage.SCOPE_B_CSV.name)
+        rows = canon_stage.build_scope_b_canon()
+    else:
+        log.info("stage 0: canon selection (target=%d)", settings.canon_target)
+        rows = canon_stage.build_canon(settings.canon_target)
     canon_stage.write_parquet(rows)
     marquee = sum(r["tier"] == "marquee" for r in rows)
-    log.info("  canon: %d molecules (%d marquee, %d canon)", len(rows), marquee, len(rows) - marquee)
+    hand = sum(bool(r.get("hand_model")) for r in rows)
+    log.info("  canon: %d molecules (%d marquee, %d canon, %d hand-model)",
+             len(rows), marquee, len(rows) - marquee, hand)
     return rows
 
 
@@ -124,7 +133,14 @@ def stage_transform(settings: Settings) -> list[dict]:
     for row in canon:
         cid = int(row["cid"])
         if row.get("hand_model"):                          # structureless macromolecule variant
-            records.append(assemble.assemble_handmodel(row, seed_by_cid.get(cid, {}), taken))
+            # Meta prefers the hand-authored YAML seed; the canon row (Scope B CSV) backfills
+            # it so a hand-model row present only in the CSV still gets its bucket/family.
+            meta = seed_by_cid.get(cid) or {
+                "name": row.get("enwiki_title"), "bucket": row.get("scope_bucket"),
+                "family": row.get("scope_family"), "is_otc": row.get("is_otc"),
+                "dual_use": row.get("dual_use"),
+            }
+            records.append(assemble.assemble_handmodel(row, meta, taken))
             continue
         f = fetched_by_cid.get(cid, {})
         fetched = {
