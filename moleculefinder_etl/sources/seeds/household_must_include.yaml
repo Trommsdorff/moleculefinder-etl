@@ -1,0 +1,328 @@
+# household_must_include.yaml  (hand-maintained, hand-curated on purpose)
+# -----------------------------------------------------------------------------
+# Permanent MUST-INCLUDE seed for MoleculeFinder. These molecules are force-added
+# to the canon on EVERY run via the marquee-seed union (the same mechanism that
+# guarantees glucose), regardless of Wikidata linkage or Wikipedia traffic rank.
+#
+# Why this file exists: ranking the compound universe by Wikipedia traffic has two
+# blind spots that silently drop molecules that clearly belong on a "molecules
+# behind everything" site --
+#   1. everyday/household chemistry (water, hydrogen peroxide, ammonia ...), and
+#   2. proteins / biopolymers / mixtures that have no single clean PubChem compound
+#      link (collagen, starch, gluten ...), the exact way glucose was almost lost.
+#
+# handling:
+#   add-core   -> normal single compound; fetch by `cid` on the usual PubChem path.
+#   hand-model -> NO single PubChem compound (cid: null). Route to the hand-modeled
+#                 macromolecule path: no 2D/3D structure, no fabricated MW/SMILES;
+#                 populate description/family/found-in/neighbors, every value
+#                 carrying its confidence tag (curated / inferred).
+#
+# Do NOT auto-classify OTC-vs-Rx or everyday-vs-pharma here. The OTC/Rx line is
+# country-dependent and classifiers proved unreliable; decide membership by hand.
+# Edit freely: add or remove names; the pipeline reconciles on the next run.
+molecules:
+  - name: "Water"
+    cid: 962
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 1
+  - name: "Hydrogen peroxide"
+    cid: 784
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: true
+    dual_use: false
+    handling: add-core
+    tier: 1
+  - name: "Carbon dioxide"
+    cid: 280
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 1
+  - name: "Isopropyl alcohol"
+    cid: 3776
+    bucket: everyday-chemistry
+    family: alcohol
+    is_otc: true
+    dual_use: false
+    handling: add-core
+    tier: 1
+  - name: "Acetone"
+    cid: 180
+    bucket: everyday-chemistry
+    family: ketone
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 1
+  - name: "Theophylline"
+    cid: 2153
+    bucket: plant-compound
+    family: alkaloid
+    is_otc: false
+    dual_use: true
+    handling: add-core
+    tier: 1
+  - name: "Collagen"
+    cid: null
+    bucket: body-endogenous
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Keratin"
+    cid: null
+    bucket: body-endogenous
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Hemoglobin"
+    cid: null
+    bucket: body-endogenous
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Melanin"
+    cid: null
+    bucket: body-endogenous
+    family: pigment-polymer
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Starch"
+    cid: null
+    bucket: food-flavor
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Cellulose"
+    cid: null
+    bucket: plant-compound
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Gelatin"
+    cid: null
+    bucket: food-flavor
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Endorphin"
+    cid: null
+    bucket: body-endogenous
+    family: peptide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 1
+  - name: "Ammonia"
+    cid: 222
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Nitrous oxide"
+    cid: 948
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: true
+    handling: add-core
+    tier: 2
+  - name: "Formaldehyde"
+    cid: 712
+    bucket: everyday-chemistry
+    family: aldehyde
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Methanol"
+    cid: 887
+    bucket: everyday-chemistry
+    family: alcohol
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Sodium hypochlorite"
+    cid: 23665760
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Nitric oxide"
+    cid: 145068
+    bucket: body-endogenous
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "DEET"
+    cid: 4284
+    bucket: everyday-chemistry
+    family: amide
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Ethylene"
+    cid: 6325
+    bucket: plant-compound
+    family: alkene
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Sodium fluoride"
+    cid: 5235
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Iodine"
+    cid: 24841
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: true
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Triclosan"
+    cid: 5564
+    bucket: everyday-chemistry
+    family: phenolic
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Glycolic acid"
+    cid: 757
+    bucket: everyday-chemistry
+    family: organic-acid
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Sodium lauryl sulfate"
+    cid: 3423265
+    bucket: everyday-chemistry
+    family: surfactant
+    is_otc: false
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Chlorhexidine"
+    cid: 9552079
+    bucket: everyday-chemistry
+    family: biguanide
+    is_otc: true
+    dual_use: false
+    handling: add-core
+    tier: 2
+  - name: "Pectin"
+    cid: null
+    bucket: food-flavor
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Lecithin"
+    cid: null
+    bucket: food-flavor
+    family: phospholipid-mixture
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Carrageenan"
+    cid: null
+    bucket: food-flavor
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Xanthan gum"
+    cid: null
+    bucket: food-flavor
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Guar gum"
+    cid: null
+    bucket: food-flavor
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Agar"
+    cid: null
+    bucket: food-flavor
+    family: polysaccharide
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Gluten"
+    cid: null
+    bucket: food-flavor
+    family: protein-mixture
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Casein"
+    cid: null
+    bucket: food-flavor
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Albumin"
+    cid: null
+    bucket: body-endogenous
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Fibrin"
+    cid: null
+    bucket: body-endogenous
+    family: protein
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2

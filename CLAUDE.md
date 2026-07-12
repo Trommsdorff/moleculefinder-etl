@@ -27,7 +27,10 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## Status: M1 + M3-leaderboards + curation (batches 1 & 2) DONE + LIVE (2026-07-10)
+## Status: LIVE = 125-molecule snapshot; a 125 -> 489 Scope B rebuild is IN PROGRESS (uncommitted)
+> Resume at **step 4** — see `../scope-b-rebuild-STATUS.md` and the "IN PROGRESS" block below.
+
+### Shipped + live (2026-07-10): M1 + M3-leaderboards + curation (batches 1 & 2)
 `pipeline.py`'s five stages flow fetch → transform → load → export; `transform/assemble.py`
 builds the per-molecule record. `mfetl all --target 200` produces a 125-molecule snapshot AND
 (with Supabase creds) loads it. **M3:** `transform/leaderboards.py` emits self-describing boards
@@ -55,20 +58,24 @@ labels, transparent bg). `transform/families.py` maps type-slug → family key (
 caffeinated drinks) are a **separate future content type**, not a board metric. The food angle
 already lives in `foods:` categories + the new type tags.
 
-**Next — the 125→500 fill** (Garrett's direction; NOT engagement-gated). Start with a content-depth
-**sample** (a few next-tier-popular molecules, automated-only vs AI-drafted-rich) so Garrett sets the
-"well fleshed out" bar, then scale the pageview-ranked canon toward ~500. This run also lands his
-open feedback:
-- **CAS numbers** — PubChem synonyms carry them; extract and add to the record so the web can show
-  CAS next to the PubChem CID (the synonym cleaner currently drops CAS-pattern codes in `assemble.py`).
-- **Coverage** — add THC/cannabinoids and the common sugar alcohols (only glycerol/xylitol/sorbitol
-  are in) to the seed/curated set.
-- **Family-tag gaps** — molecules like cocaine have no `kind:"type"` overlay, so `family` is null and
-  they read as uncategorized (grey) in the web color/roam system. Add `types:` to their curated YAML
-  to give them their family color for free (`transform/families.py` maps the slug).
-The ~500 curated overlays (`sources/curated/*.yaml`; 55 today) and the `--target 10000` bulk canon
-stay as before (10k gated on engagement). Regenerate with `mfetl transform && mfetl export`, then
-`npm run sync-data` in the web repo.
+**IN PROGRESS — the 125 -> 489 Scope B rebuild (uncommitted on `main`; resume at step 4).**
+Read `../scope-b-rebuild-STATUS.md` first. Steps 1 + 3 (ETL) are DONE + tested in the working tree:
+- **Step 1 — household seed + structureless hand-model path.** `sources/seeds/household_must_include.yaml`
+  (38 must-includes). `canon.py`: `household_seed()`, `_synthetic_cid()` (hand-model rows get a stable
+  **negative** CID), `build_canon` force-includes the seed. `pipeline.py` fetch **skips** hand-model
+  rows; transform routes them to `assemble.assemble_handmodel()` (no structure/MW/SMILES; every value
+  confidence-labeled). Tests: `tests/test_household_seed.py`, `tests/test_handmodel_integration.py`.
+- **Step 3 — buckets.** New `transform/buckets.py` (labels + roam ring order; mirrors web `lib/buckets.ts`).
+  `assemble.apply_scope_bucket()` stamps `scope_bucket`/`scope_family` + a `kind:"bucket"` category +
+  `neighbor_bucket` on edges. `roam_layout.py` clusters by **bucket** and emits a `groups` legend.
+- **Step 4 (NOT started) — make the 489 core the canon INPUT.** Today `build_canon` only force-includes
+  the 38 seed with buckets; the other ~451 need `scope_bucket` on their canon rows. Feed `build_canon`
+  from `../scope-b-core.csv` (cid, pageviews, bucket, family, handling) so the canon **is** the 489,
+  route the 18 `hand-model` rows to the structureless path, then `mfetl all`. **Do NOT** run to the
+  `--target 10000` default. Then `npm run sync-data` in the web repo, build, **hold the push**.
+- **Still pending — CAS numbers:** `assemble._clean_synonyms` still *drops* CAS-pattern codes; change it
+  to *extract* the CAS (validate the CAS checksum so an EC number isn't grabbed). Fold into the run.
+Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferred.
 
 ## How it flows (disk-to-disk, resumable)
 - `stage_seed` → `data/seed/canon.parquet` — canon: marquee names→CID
@@ -96,7 +103,8 @@ stay as before (10k gated on engagement). Regenerate with `mfetl transform && mf
   the first CID.
 
 ## Next
+- **Step 4 of the Scope B rebuild** (above): 489 core as canon input, `mfetl all`, sync + build, hold push.
+- CAS-number extraction in `assemble._clean_synonyms` (fold into the step-4 run).
 - Scale to `--target 10000` — **gated** until the marquee template earns engagement.
 - Turn on weekly `.github/workflows/etl.yml` (needs the Supabase secrets + a Vercel deploy
   hook in the repo's Actions secrets).
-- Curate more marquee overlays (`sources/curated/*.yaml`; ~5 today, plan envisions ~500).

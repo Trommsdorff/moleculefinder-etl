@@ -18,11 +18,12 @@ and resumable. Emits data/seed/canon.parquet.
 """
 from __future__ import annotations
 import json
+import zlib
 from pathlib import Path
 
 import yaml
 
-from ..config import SEED_DIR, CANON_TARGET, RAW_CACHE, CURATED_DIR
+from ..config import SEED_DIR, CANON_TARGET, RAW_CACHE, CURATED_DIR, SEEDS_DIR
 from ..sources import wikidata, pageviews, pubchem
 
 # ~household-name molecules forced into the marquee tier, spanning families that
@@ -127,6 +128,36 @@ def _curated_seed() -> dict[int, dict]:
     return out
 
 
+# ── Household must-include seed (the permanent fix for the traffic-ranking blind spots) ──
+HOUSEHOLD_SEED = SEEDS_DIR / "household_must_include.yaml"
+
+
+def _synthetic_cid(name: str) -> int:
+    """A stable, negative pseudo-CID for a hand-modeled molecule that has no PubChem
+    compound. Negative so it can never collide with a real (always-positive) PubChem CID;
+    deterministic in the name so re-runs and the DB natural key stay stable."""
+    return -(zlib.crc32(name.strip().lower().encode("utf-8")) + 1)
+
+
+def household_seed() -> list[dict]:
+    """The hand-maintained must-include molecules (name, bucket, family, cid-or-null,
+    is_otc, dual_use, handling). `hand-model` entries get a synthetic negative CID and are
+    flagged so fetch skips PubChem and transform builds a structureless record. This is the
+    marquee-union mechanism that guarantees glucose, generalized to every blind-spot name."""
+    if not HOUSEHOLD_SEED.exists():
+        return []
+    data = yaml.safe_load(HOUSEHOLD_SEED.read_text()) or {}
+    out: list[dict] = []
+    for m in data.get("molecules", []):
+        name = (m.get("name") or "").strip()
+        if not name:
+            continue
+        hand = (m.get("handling") == "hand-model") or m.get("cid") in (None, "null", "")
+        cid = _synthetic_cid(name) if hand else int(m["cid"])
+        out.append({**m, "name": name, "cid": cid, "hand_model": hand})
+    return out
+
+
 # ── Canon build ──────────────────────────────────────────────────────────────
 def build_canon(target: int = CANON_TARGET) -> "list[dict]":
     """Return the canon rows (network-bound; cached). Marquee is always included."""
@@ -147,6 +178,17 @@ def build_canon(target: int = CANON_TARGET) -> "list[dict]":
         rows.setdefault(cid, {"cid": cid, "enwiki_title": meta["title"], "wikidata_qid": None,
                               "has_common_name": True, "tier": "marquee", "summary": None})
 
+    # 2b. Household must-include seed: force in water / everyday chemistry and the hand-
+    #     modeled macromolecules (collagen, starch, gluten...) that traffic-ranking or a
+    #     missing Wikidata compound link would silently drop — the glucose failure mode,
+    #     generalized. Marquee tier ⇒ never truncated; hand_model flag ⇒ fetch skips it.
+    for m in household_seed():
+        c = m["cid"]
+        rows.setdefault(c, {"cid": c, "enwiki_title": m["name"], "wikidata_qid": None,
+                            "has_common_name": True, "tier": "marquee", "summary": None})
+        rows[c]["tier"] = "marquee"
+        rows[c]["hand_model"] = m["hand_model"]
+
     # 3. Notability net (Wikidata + enwiki), cached. Canon tier unless already marquee.
     for row in _notable_cached():
         c = row.get("cid")
@@ -166,7 +208,8 @@ def build_canon(target: int = CANON_TARGET) -> "list[dict]":
     canon = list(rows.values())
 
     # 4. CC0 descriptions + QIDs for everyone (fills marquee summaries the net missed).
-    desc = _descriptions_cached([r["cid"] for r in canon])
+    #    Skip synthetic (negative) CIDs — hand-modeled molecules have no PubChem/Wikidata row.
+    desc = _descriptions_cached([r["cid"] for r in canon if r["cid"] > 0])
     for r in canon:
         d = desc.get(r["cid"])
         if d:
@@ -191,8 +234,8 @@ def write_parquet(rows: "list[dict]", path: Path | None = None) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     # Uniform schema across rows (pyarrow infers from the first row otherwise).
     cols = ["cid", "tier", "build_order", "has_common_name", "wikidata_qid",
-            "enwiki_title", "summary", "pageviews"]
-    norm = [{c: r.get(c) for c in cols} for r in rows]
+            "enwiki_title", "summary", "pageviews", "hand_model"]
+    norm = [{**{c: r.get(c) for c in cols}, "hand_model": bool(r.get("hand_model"))} for r in rows]
     pq.write_table(pa.Table.from_pylist(norm), path)
     return path
 
