@@ -81,8 +81,11 @@ def stage_fetch(settings: Settings) -> None:
     """Pull PubChem properties/synonyms/annotations for the canon (all cached)."""
     _require(SEED_DIR / "canon.parquet", "seed")
     canon = canon_stage.read_parquet()
-    cids = [int(r["cid"]) for r in canon]
-    log.info("stage 1: fetch — %d CIDs (PubChem properties + synonyms + PUG-View Tox/GHS)", len(cids))
+    # Hand-modeled macromolecules have a synthetic CID and no PubChem compound — skip them.
+    cids = [int(r["cid"]) for r in canon if not r.get("hand_model")]
+    n_hand = sum(1 for r in canon if r.get("hand_model"))
+    log.info("stage 1: fetch — %d CIDs (PubChem properties + synonyms + PUG-View Tox/GHS); "
+             "%d hand-modeled molecules skip PubChem", len(cids), n_hand)
 
     props = _fetch_cached(cids, "props", lambda miss: {int(p["CID"]): p for p in pubchem.properties(miss)})
     syns = _fetch_cached(cids, "syn", lambda miss: pubchem.synonyms(miss))
@@ -114,11 +117,15 @@ def stage_transform(settings: Settings) -> list[dict]:
     canon = canon_stage.read_parquet()
     fetched_by_cid = {f["cid"]: f for f in json.loads(FETCHED.read_text())}
     curated_by_cid = _load_curated()
+    seed_by_cid = {m["cid"]: m for m in canon_stage.household_seed()}
 
     taken: set[str] = set()
     records: list[dict] = []
     for row in canon:
         cid = int(row["cid"])
+        if row.get("hand_model"):                          # structureless macromolecule variant
+            records.append(assemble.assemble_handmodel(row, seed_by_cid.get(cid, {}), taken))
+            continue
         f = fetched_by_cid.get(cid, {})
         fetched = {
             "props": f.get("props") or {},
@@ -127,7 +134,11 @@ def stage_transform(settings: Settings) -> list[dict]:
             "toxicity": toxicity.parse_ld50(pubchem.pug_view(cid, "Toxicity")),
             "ghs": ghs.parse_ghs(pubchem.pug_view(cid, "GHS Classification")),
         }
-        records.append(assemble.assemble_record(row, fetched, taken))
+        rec = assemble.assemble_record(row, fetched, taken)
+        seed = seed_by_cid.get(cid)                         # carry Scope B bucket onto add-core seeds
+        if seed:
+            assemble.apply_scope_bucket(rec, seed.get("bucket"), seed.get("family"))
+        records.append(rec)
 
     assemble.attach_edges(records)
     kept, deferred = assemble.apply_filter4(records)

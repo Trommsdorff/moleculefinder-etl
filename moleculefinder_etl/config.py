@@ -14,6 +14,7 @@ SEED_DIR = DATA / "seed"
 RAW_CACHE = DATA / "raw_cache"
 SNAPSHOTS = DATA / "snapshots"
 CURATED_DIR = Path(__file__).resolve().parent / "sources" / "curated"
+SEEDS_DIR = Path(__file__).resolve().parent / "sources" / "seeds"
 
 # ── External endpoints ───────────────────────────────────────────────────────
 WDQS_ENDPOINT = "https://query.wikidata.org/sparql"

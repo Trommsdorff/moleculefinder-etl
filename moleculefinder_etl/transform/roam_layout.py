@@ -8,14 +8,15 @@ sunflower spiral per cluster), so the layout is stable across runs.
 from __future__ import annotations
 import math
 
+from . import buckets
+
 # SVG viewBox units; nodes stay inside the margin.
 W, H = 1000, 680
 MARGIN = 56
 
-# Cluster order around the ring (mirrors lib/families FAMILIES); uncategorized ("none")
+# Cluster order around the ring (mirrors lib/buckets BUCKET_ORDER); uncategorized ("none")
 # forms a looser central blob rather than a labeled cluster.
-FAMILY_ORDER = ["stimulant", "depressant", "analgesic", "opioid", "neuro",
-                "hormone", "vitamin", "nucleobase", "amino"]
+BUCKET_ORDER = buckets.BUCKET_ORDER
 GOLDEN = math.pi * (3 - math.sqrt(5))
 
 
@@ -29,8 +30,8 @@ def _radius(pageviews: int, pv_max: int) -> float:
 def build_roam(molecules: list[dict]) -> dict:
     groups: dict[str, list[dict]] = {}
     for m in molecules:
-        groups.setdefault(m.get("family") or "none", []).append(m)
-    fam_keys = [f for f in FAMILY_ORDER if f in groups] + (["none"] if "none" in groups else [])
+        groups.setdefault(m.get("scope_bucket") or "none", []).append(m)
+    fam_keys = [b for b in BUCKET_ORDER if b in groups] + (["none"] if "none" in groups else [])
     pv_max = max((m.get("pageviews_monthly") or 0) for m in molecules) if molecules else 0
 
     cx, cy = W / 2, H / 2
@@ -57,7 +58,8 @@ def build_roam(molecules: list[dict]) -> dict:
             y = max(MARGIN, min(H - MARGIN, fcy + r * math.sin(a)))
             pos[m["slug"]] = (x, y)
             nodes.append({
-                "slug": m["slug"], "title": m["title"], "family": m.get("family") or None,
+                "slug": m["slug"], "title": m["title"],
+                "bucket": m.get("scope_bucket") or None, "family": m.get("family") or None,
                 "x": round(x, 1), "y": round(y, 1),
                 "r": _radius(m.get("pageviews_monthly") or 0, pv_max),
             })
@@ -77,8 +79,11 @@ def build_roam(molecules: list[dict]) -> dict:
                 (ax, ay), (bx, by) = pos[s], pos[t]
                 edges.append({"x1": round(ax, 1), "y1": round(ay, 1),
                               "x2": round(bx, 1), "y2": round(by, 1),
+                              "bucket": m.get("scope_bucket") or None,
                               "family": m.get("family") or None})
 
     legend = [{"key": f, "count": len(groups[f])} for f in fam_keys if f != "none"]
+    # `groups` is the bucket legend (primary color dimension); `families` kept empty for
+    # back-compat with the web's older-snapshot fallback.
     return {"width": W, "height": H, "count": len(nodes),
-            "nodes": nodes, "edges": edges, "families": legend}
+            "nodes": nodes, "edges": edges, "groups": legend, "families": []}

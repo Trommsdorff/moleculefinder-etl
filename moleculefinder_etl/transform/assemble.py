@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 
 from .confidence import label_for
-from . import names, slugs, categories, hooks, structures, similarity, families
+from . import names, slugs, categories, hooks, structures, similarity, families, buckets
 from ..sources.registry import assert_not_blocked
 
 # PubChem renamed these properties (CanonicalSMILES→ConnectivitySMILES,
@@ -163,6 +163,17 @@ def _merge_curated(rec: dict, curated: dict) -> None:
     rec["curated"] = cur
 
 
+def apply_scope_bucket(rec: dict, bucket: "str | None", family: "str | None") -> None:
+    """Stamp a record's Scope B bucket + family, and add a kind:"bucket" category so the
+    bucket is roamable (its own /in/<bucket> page) and drives the primary color. Idempotent."""
+    rec["scope_bucket"] = bucket
+    rec["scope_family"] = family
+    if bucket and not any(c.get("kind") == "bucket" for c in rec["categories"]):
+        rec["categories"].append({"slug": bucket, "name": buckets.bucket_label(bucket) or _titleize(bucket),
+                                  "kind": "bucket", "confidence": label_for("curated_fact"),
+                                  "source": _src("curated")})
+
+
 def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
     """Build one molecule record from a canon row + its fetched PubChem payload."""
     cid = row["cid"]
@@ -197,6 +208,10 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         "half_life_hours": None,
         "ld50_mg_per_kg": (fetched.get("toxicity") or [{}])[0].get("value_num"),
         "relative_sweetness": None, "scoville_shu": None,
+        # Scope B grouping (populated for must-include seed molecules); hand_model flags
+        # the structureless macromolecule variant. Uniform keys so every record has them.
+        "scope_bucket": None, "scope_family": None,
+        "hand_model": False, "macromolecule": False,
     }
 
     if curated:
@@ -210,6 +225,10 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
     # Primary family (Color System Brief §2b): first kind:type membership that maps
     # to a hued family. Consumed by the family pills/cards/neighbors/roam on the web.
     rec["family"] = families.family_of(rec["categories"])
+
+    # Scope B bucket (the primary color/roam dimension): from the canon row when the core
+    # list supplies it. No-op for rows without one; the hand-model path stamps its own.
+    apply_scope_bucket(rec, row.get("scope_bucket"), row.get("scope_family"))
 
     # Hooks (plan §7.1). hooks.hooks_for reads these exact keys.
     rec["hooks"] = hooks.hooks_for({
@@ -230,6 +249,56 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
     return rec
 
 
+def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
+    """Structureless record for a hand-modeled macromolecule / mixture (collagen, starch,
+    gluten, hemoglobin...) that has NO single PubChem compound.
+
+    These are force-included from the household must-include seed (`hand-model` handling).
+    We deliberately DO NOT fabricate a structure, molecular weight or SMILES: the record
+    carries curated identity + Scope B family/bucket only, every value confidence-labeled,
+    and the web renders it with the macromolecule page variant (no 2D/3D). It gets no
+    similarity edges (no fingerprint) and never qualifies for a numeric leaderboard.
+    """
+    cid = int(row["cid"])
+    name = meta.get("name") or row.get("enwiki_title") or f"CID {cid}"
+    slug = slugs.unique_slug(meta.get("slug") or name, taken)
+    fam_slug = (meta.get("family") or "").strip().lower()
+
+    rec = {
+        "cid": cid, "slug": slug, "title": name, "preferred_name": name,
+        "tier": row.get("tier", "marquee"),
+        "wikidata_qid": row.get("wikidata_qid"), "wikipedia_title": row.get("enwiki_title"),
+        "pageviews_monthly": int(row.get("pageviews") or 0),
+        "summary": row.get("summary"),
+        "summary_source": _src("wikidata") if row.get("summary") else None,
+        "iupac_name": None, "molecular_formula": None, "molecular_weight": None,
+        "canonical_smiles": None, "isomeric_smiles": None, "inchi": None, "inchikey": None,
+        "synonyms": [name],
+        "structure_svg": None,       # no single structure — the web variant omits the render
+        "descriptors": {"xlogp": None, "tpsa": None, "h_bond_donors": None,
+                        "h_bond_acceptors": None, "rotatable_bonds": None,
+                        "complexity": None, "formal_charge": None,
+                        "confidence": label_for("descriptor")},
+        "toxicity": [], "ghs": None,
+        "properties": [], "categories": [], "hooks": [], "edges": [], "content_blocks": [],
+        "half_life_hours": None, "ld50_mg_per_kg": None,
+        "relative_sweetness": None, "scoville_shu": None,
+        "scope_bucket": meta.get("bucket"), "scope_family": meta.get("family"),
+        "hand_model": True, "macromolecule": True,
+        "is_otc": bool(meta.get("is_otc")), "dual_use": bool(meta.get("dual_use")),
+    }
+    # The curated family becomes a kind:"type" membership, so the molecule groups on its
+    # own /in/<family> page and survives filter-4. Confidence: hand-authored (from_source).
+    if fam_slug:
+        rec["categories"].append({"slug": fam_slug, "name": _TYPE_NAMES.get(fam_slug, _titleize(fam_slug)),
+                                  "kind": "type", "confidence": label_for("curated_fact"),
+                                  "source": _src("curated")})
+    rec["family"] = families.family_of(rec["categories"])
+    apply_scope_bucket(rec, meta.get("bucket"), meta.get("family"))
+    rec["sources"] = ["curated"] + (["wikidata"] if rec["summary"] else [])
+    return rec
+
+
 def attach_edges(records: list[dict], top_n: int | None = None, floor: float | None = None) -> None:
     """Compute Morgan fingerprints once and attach each record's top-N neighbors."""
     kwargs = {}
@@ -243,14 +312,16 @@ def attach_edges(records: list[dict], top_n: int | None = None, floor: float | N
         nbr = records[j]
         records[i]["edges"].append({
             "neighbor_cid": nbr["cid"], "neighbor_slug": nbr["slug"], "neighbor_title": nbr["title"],
-            "neighbor_family": nbr.get("family"),
+            "neighbor_family": nbr.get("family"), "neighbor_bucket": nbr.get("scope_bucket"),
             "tanimoto": score, "method": "morgan_r2_2048", "confidence": label_for("similarity"),
         })
 
 
 def apply_filter4(records: list[dict]) -> tuple[list[dict], list[dict]]:
-    """Filter-4 (plan §4): demote orphans with zero hooks AND zero edges AND no category."""
+    """Filter-4 (plan §4): demote orphans with zero hooks AND zero edges AND no category.
+    Hand-modeled must-include molecules are always kept (they are curated on purpose and
+    have no structure to earn edges)."""
     kept, deferred = [], []
     for r in records:
-        (kept if (r["hooks"] or r["edges"] or r["categories"]) else deferred).append(r)
+        (kept if (r.get("hand_model") or r["hooks"] or r["edges"] or r["categories"]) else deferred).append(r)
     return kept, deferred
