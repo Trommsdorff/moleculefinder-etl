@@ -173,6 +173,28 @@ def _is_code_leaked(s):
     return ":" in s or s.startswith(("SCHEMBL", "RefChem", "CHEBI")) or s.replace("-", "").isdigit()
 
 
+def test_extract_cas_pulls_the_registry_number():
+    # Same synonym list _clean_synonyms drops the CAS from — here we recover it.
+    syns = ["Guaranine", "SCHEMBL12345", "58-08-2", "1,3,7-Trimethylxanthine", "Theine"]
+    assert assemble._extract_cas(syns) == "58-08-2"          # caffeine's real CAS
+
+
+def test_extract_cas_rejects_a_same_shaped_non_cas():
+    # An EC number is 3-3-1 digits (won't match), and a CAS-shaped code with a bad
+    # checksum must be rejected — 58-08-3 is 58-08-2 with the wrong check digit.
+    assert assemble._extract_cas(["200-362-1"]) is None      # EC number, not a CAS
+    assert assemble._extract_cas(["58-08-3"]) is None         # CAS shape, bad checksum
+    assert assemble._extract_cas([]) is None
+
+
+def test_cas_lands_on_the_record():
+    caf = assemble.assemble_record(
+        canon_row(2519, "Caffeine"),
+        fetched(CAFFEINE_PROPS, synonyms=["caffeine", "58-08-2", "Theine"]), set())
+    assert caf["cas"] == "58-08-2"
+    assert "58-08-2" not in caf["synonyms"]                  # not shown as a display synonym
+
+
 def test_filter4_demotes_orphans():
     good = assemble.assemble_record(canon_row(2519, "Caffeine"), fetched(CAFFEINE_PROPS), set())
     orphan = assemble.assemble_record(canon_row(999, "Mystery"), fetched({"CID": 999}), set())  # no SMILES

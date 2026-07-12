@@ -75,6 +75,27 @@ def _clean_synonyms(syns, title: "str | None") -> list[str]:
     return out
 
 
+# A CAS Registry Number is 2–7 + 2 + 1 digits. The last digit is a checksum, which we verify
+# so a same-shaped code (an EC number, a random dashed id) is never mistaken for a CAS.
+_CAS_RE = re.compile(r"\b(\d{2,7}-\d{2}-\d)\b")
+
+
+def _cas_checksum_ok(cas: str) -> bool:
+    body, check = cas.replace("-", "")[:-1], int(cas[-1])
+    return sum(int(d) * i for i, d in enumerate(reversed(body), start=1)) % 10 == check
+
+
+def _extract_cas(syns) -> "str | None":
+    """First checksum-valid CAS Registry Number among the PubChem synonyms (else None).
+    ``_clean_synonyms`` drops CAS strings from the display list; this pulls the real one out
+    so the web can show it beside the PubChem CID as an identity code."""
+    for s in syns or []:
+        m = _CAS_RE.search(str(s))
+        if m and _cas_checksum_ok(m.group(1)):
+            return m.group(1)
+    return None
+
+
 def _descriptors(props: dict) -> dict:
     return {
         "xlogp": props.get("XLogP"), "tpsa": props.get("TPSA"),
@@ -199,6 +220,7 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         "molecular_weight": _to_float(props.get("MolecularWeight")),
         "canonical_smiles": can, "isomeric_smiles": iso,
         "inchi": props.get("InChI"), "inchikey": props.get("InChIKey"),
+        "cas": _extract_cas(syns),
         "synonyms": _clean_synonyms(syns, title),
         "structure_svg": structures.svg_for(iso) if iso else None,
         "descriptors": _descriptors(props),
@@ -273,6 +295,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "summary_source": _src("wikidata") if row.get("summary") else None,
         "iupac_name": None, "molecular_formula": None, "molecular_weight": None,
         "canonical_smiles": None, "isomeric_smiles": None, "inchi": None, "inchikey": None,
+        "cas": None,                 # no single compound ⇒ no CAS Registry Number
         "synonyms": [name],
         "structure_svg": None,       # no single structure — the web variant omits the render
         "descriptors": {"xlogp": None, "tpsa": None, "h_bond_donors": None,
