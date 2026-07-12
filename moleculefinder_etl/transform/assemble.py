@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 
 from .confidence import label_for
-from . import names, slugs, categories, hooks, structures, similarity
+from . import names, slugs, categories, hooks, structures, similarity, families
 from ..sources.registry import assert_not_blocked
 
 # PubChem renamed these properties (CanonicalSMILES→ConnectivitySMILES,
@@ -207,6 +207,10 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         rec["categories"].append({"slug": fg, "name": _titleize(fg), "kind": "functional_group",
                                   "confidence": label_for("functional_group"), "source": _src("rdkit")})
 
+    # Primary family (Color System Brief §2b): first kind:type membership that maps
+    # to a hued family. Consumed by the family pills/cards/neighbors/roam on the web.
+    rec["family"] = families.family_of(rec["categories"])
+
     # Hooks (plan §7.1). hooks.hooks_for reads these exact keys.
     rec["hooks"] = hooks.hooks_for({
         "cid": cid, "isomeric_smiles": iso, "half_life_hours": rec["half_life_hours"],
@@ -239,6 +243,7 @@ def attach_edges(records: list[dict], top_n: int | None = None, floor: float | N
         nbr = records[j]
         records[i]["edges"].append({
             "neighbor_cid": nbr["cid"], "neighbor_slug": nbr["slug"], "neighbor_title": nbr["title"],
+            "neighbor_family": nbr.get("family"),
             "tanimoto": score, "method": "morgan_r2_2048", "confidence": label_for("similarity"),
         })
 
