@@ -41,14 +41,34 @@ plus the OTC drugs (acetaminophen/ibuprofen/naproxen/melatonin) so StillInSystem
 (metric never wired, not an honest molecule board); `snapshot_export` prunes stale files; `_TYPE_NAMES`
 fixes acronym labels (nsaid → NSAID). 42 offline tests pass; ruff clean. **Pushed + live; even with origin.**
 
+**Color-as-Information (2026-07-11, pushed + live — commit `19a1cf6`):** for
+`../MoleculeFinder-Color-System-Brief.md`. `transform/structures.py` now renders CPK-colored SVGs
+(**verified recipe:** `updateAtomPalette` with **carbon = key 6** + `singleColourBonds` +
+`setSymbolColour(#bdd6e6)` + `clearBackground=False` → uniform light skeleton, colored heteroatom
+labels, transparent bg). `transform/families.py` maps type-slug → family key (the web mirrors it in
+`lib/families.ts`); `assemble.py` bakes `family` per molecule + `neighbor_family` per edge.
+`transform/roam_layout.py` bakes a deterministic family-clustered constellation → `roam.json`
+(emitted by `snapshot_export`). Regenerate all of it with `mfetl transform && mfetl export`.
+
 **Design principle (Garrett's call):** leaderboards rank **molecules by intrinsic properties**
 (sweetness, LD50, weight, pure-compound pungency). Food-shaped rankings (hottest sauces, most
 caffeinated drinks) are a **separate future content type**, not a board metric. The food angle
 already lives in `foods:` categories + the new type tags.
 
-**Next — more marquee overlays** (`sources/curated/*.yaml`; 55 today, plan envisions ~500), then
-scale to `--target 10000` (gated on engagement). Regenerate any curation with
-`mfetl transform && mfetl export`, then `npm run sync-data` in the web repo.
+**Next — the 125→500 fill** (Garrett's direction; NOT engagement-gated). Start with a content-depth
+**sample** (a few next-tier-popular molecules, automated-only vs AI-drafted-rich) so Garrett sets the
+"well fleshed out" bar, then scale the pageview-ranked canon toward ~500. This run also lands his
+open feedback:
+- **CAS numbers** — PubChem synonyms carry them; extract and add to the record so the web can show
+  CAS next to the PubChem CID (the synonym cleaner currently drops CAS-pattern codes in `assemble.py`).
+- **Coverage** — add THC/cannabinoids and the common sugar alcohols (only glycerol/xylitol/sorbitol
+  are in) to the seed/curated set.
+- **Family-tag gaps** — molecules like cocaine have no `kind:"type"` overlay, so `family` is null and
+  they read as uncategorized (grey) in the web color/roam system. Add `types:` to their curated YAML
+  to give them their family color for free (`transform/families.py` maps the slug).
+The ~500 curated overlays (`sources/curated/*.yaml`; 55 today) and the `--target 10000` bulk canon
+stay as before (10k gated on engagement). Regenerate with `mfetl transform && mfetl export`, then
+`npm run sync-data` in the web repo.
 
 ## How it flows (disk-to-disk, resumable)
 - `stage_seed` → `data/seed/canon.parquet` — canon: marquee names→CID
