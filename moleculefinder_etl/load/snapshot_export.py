@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from ..config import SNAPSHOTS
+from ..transform import roam_layout
 
 
 def _prune(directory: Path, keep: set[str]) -> None:
@@ -28,6 +29,9 @@ def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
                       "formula": m.get("molecular_formula"),
                       "synonyms": m.get("synonyms", [])[:8]})
     (SNAPSHOTS / "index.json").write_text(json.dumps(index, ensure_ascii=False))
+    # Roam constellation: baked node positions for the static /roam map (§5).
+    (SNAPSHOTS / "roam.json").write_text(
+        json.dumps(roam_layout.build_roam(molecules), ensure_ascii=False))
     _prune(mol_dir, {f"{m['slug']}.json" for m in molecules})
     lb_dir = SNAPSHOTS / "leaderboards"
     lb_dir.mkdir(parents=True, exist_ok=True)
