@@ -27,9 +27,10 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## Status: LIVE = 125-molecule snapshot; the 125 -> 489 Scope B rebuild is BUILT + committed LOCAL, held for push
-> Steps 1-4 DONE (commits `0ad32db` + `76a05b8`); nothing pushed, live site still serves 125.
-> See `../scope-b-rebuild-STATUS.md` for the full state + the "To ship" checklist.
+## Status: SHIPPED — the 125 -> 489 Scope B rebuild is LIVE (deployed 2026-07-12)
+> The live vercel.app site serves the **489**. Pushed: `76a05b8` (rebuild + CAS) + `b882a07`
+> (molecule_category dup-key fix). Supabase reconciled to the 489. See `../scope-b-rebuild-STATUS.md`.
+> Only owner action left: point `moleculefinder.com`.
 
 ### Shipped + live (2026-07-10): M1 + M3-leaderboards + curation (batches 1 & 2)
 `pipeline.py`'s five stages flow fetch → transform → load → export; `transform/assemble.py`
@@ -59,8 +60,8 @@ labels, transparent bg). `transform/families.py` maps type-slug → family key (
 caffeinated drinks) are a **separate future content type**, not a board metric. The food angle
 already lives in `foods:` categories + the new type tags.
 
-**BUILT + committed local, held for push — the 125 -> 489 Scope B rebuild.** Read
-`../scope-b-rebuild-STATUS.md` first. All four steps are DONE + tested in local `main`:
+**SHIPPED — the 125 -> 489 Scope B rebuild is LIVE.** Read `../scope-b-rebuild-STATUS.md` first.
+All four steps done, pushed, and deployed; Supabase reconciled to the 489. How it was built:
 - **Step 1 — household seed + structureless hand-model path.** `sources/seeds/household_must_include.yaml`
   (38 must-includes). `canon.py`: `household_seed()`, `_synthetic_cid()` (hand-model rows get a stable
   **negative** CID), fetch **skips** hand-model rows; transform routes them to `assemble_handmodel()`.
@@ -71,8 +72,9 @@ already lives in `foods:` categories + the new type tags.
   `sources/seeds/scope_b_core.csv` → exactly 489, each stamped with bucket/family, ranked by CSV
   pageviews, no notability net / no `--target`. The parquet schema carries `scope_bucket`/`scope_family`/
   `is_otc`/`dual_use` so `assemble_record` stamps all 489. Ran seed→fetch (471 CIDs)→transform (2240
-  edges, 1124 hooks)→export; snapshot regenerated (489, `data/` committed). `mfetl load` **skipped**
-  (stale-125 UNIQUE(slug) collision — reconcile Supabase at ship time; static site reads the snapshot).
+  edges, 1124 hooks)→export; snapshot regenerated (489, `data/` committed). Supabase reconciled to
+  the 489 post-deploy (targeted delete of the 37 stale cids + `load_all`) after fixing a
+  `molecule_category` dup-key bug (`b882a07`; sweetener carries a bucket + a type slug `sweetener`).
 - **CAS — DONE.** `assemble._extract_cas` pulls the first checksum-valid CAS from PubChem synonyms
   (checksum rejects same-shaped EC numbers) → `record.cas`; the web shows it beside the CID + JSON-LD.
 Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferred.
@@ -103,10 +105,10 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
   the first CID.
 
 ## Next
-- **Ship the Scope B rebuild** (when Garrett approves the push): push ETL then WEB, then **reconcile
-  Supabase** — `mfetl load` was skipped on a stale-125 UNIQUE(slug) collision; wipe the `molecule`
-  table + `mfetl load` fresh, or teach `supabase_loader.load_all` to delete stale rows + reassign
-  slugs across CIDs. Only affects `/dashboard` + `/api/e`, not the static site. (Task chip filed.)
+- **489 is SHIPPED + live.** Owner action: point `moleculefinder.com` (DNS). The `load_all` slug
+  *reassignment* edge (moving a slug from one CID to another when the canon changes) is still not
+  auto-handled — it needs a manual stale-row delete first, as the 489 reconcile did. Only bites a
+  future canon change; the dup-key crash itself is fixed (`b882a07`).
 - Scale to `--target 10000` — **gated** until the marquee template earns engagement.
 - Turn on weekly `.github/workflows/etl.yml` (needs the Supabase secrets + a Vercel deploy
   hook in the repo's Actions secrets).
