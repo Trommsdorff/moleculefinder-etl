@@ -27,8 +27,9 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## Status: LIVE = 125-molecule snapshot; a 125 -> 489 Scope B rebuild is IN PROGRESS (uncommitted)
-> Resume at **step 4** — see `../scope-b-rebuild-STATUS.md` and the "IN PROGRESS" block below.
+## Status: LIVE = 125-molecule snapshot; the 125 -> 489 Scope B rebuild is BUILT + committed LOCAL, held for push
+> Steps 1-4 DONE (commits `0ad32db` + `76a05b8`); nothing pushed, live site still serves 125.
+> See `../scope-b-rebuild-STATUS.md` for the full state + the "To ship" checklist.
 
 ### Shipped + live (2026-07-10): M1 + M3-leaderboards + curation (batches 1 & 2)
 `pipeline.py`'s five stages flow fetch → transform → load → export; `transform/assemble.py`
@@ -58,23 +59,22 @@ labels, transparent bg). `transform/families.py` maps type-slug → family key (
 caffeinated drinks) are a **separate future content type**, not a board metric. The food angle
 already lives in `foods:` categories + the new type tags.
 
-**IN PROGRESS — the 125 -> 489 Scope B rebuild (uncommitted on `main`; resume at step 4).**
-Read `../scope-b-rebuild-STATUS.md` first. Steps 1 + 3 (ETL) are DONE + tested in the working tree:
+**BUILT + committed local, held for push — the 125 -> 489 Scope B rebuild.** Read
+`../scope-b-rebuild-STATUS.md` first. All four steps are DONE + tested in local `main`:
 - **Step 1 — household seed + structureless hand-model path.** `sources/seeds/household_must_include.yaml`
   (38 must-includes). `canon.py`: `household_seed()`, `_synthetic_cid()` (hand-model rows get a stable
-  **negative** CID), `build_canon` force-includes the seed. `pipeline.py` fetch **skips** hand-model
-  rows; transform routes them to `assemble.assemble_handmodel()` (no structure/MW/SMILES; every value
-  confidence-labeled). Tests: `tests/test_household_seed.py`, `tests/test_handmodel_integration.py`.
-- **Step 3 — buckets.** New `transform/buckets.py` (labels + roam ring order; mirrors web `lib/buckets.ts`).
+  **negative** CID), fetch **skips** hand-model rows; transform routes them to `assemble_handmodel()`.
+- **Step 3 — buckets.** `transform/buckets.py` (labels + roam ring order; mirrors web `lib/buckets.ts`).
   `assemble.apply_scope_bucket()` stamps `scope_bucket`/`scope_family` + a `kind:"bucket"` category +
   `neighbor_bucket` on edges. `roam_layout.py` clusters by **bucket** and emits a `groups` legend.
-- **Step 4 (NOT started) — make the 489 core the canon INPUT.** Today `build_canon` only force-includes
-  the 38 seed with buckets; the other ~451 need `scope_bucket` on their canon rows. Feed `build_canon`
-  from `../scope-b-core.csv` (cid, pageviews, bucket, family, handling) so the canon **is** the 489,
-  route the 18 `hand-model` rows to the structureless path, then `mfetl all`. **Do NOT** run to the
-  `--target 10000` default. Then `npm run sync-data` in the web repo, build, **hold the push**.
-- **Still pending — CAS numbers:** `assemble._clean_synonyms` still *drops* CAS-pattern codes; change it
-  to *extract* the CAS (validate the CAS checksum so an EC number isn't grabbed). Fold into the run.
+- **Step 4 — DONE.** The 489 core is now the canon INPUT: `canon.build_scope_b_canon()` reads
+  `sources/seeds/scope_b_core.csv` → exactly 489, each stamped with bucket/family, ranked by CSV
+  pageviews, no notability net / no `--target`. The parquet schema carries `scope_bucket`/`scope_family`/
+  `is_otc`/`dual_use` so `assemble_record` stamps all 489. Ran seed→fetch (471 CIDs)→transform (2240
+  edges, 1124 hooks)→export; snapshot regenerated (489, `data/` committed). `mfetl load` **skipped**
+  (stale-125 UNIQUE(slug) collision — reconcile Supabase at ship time; static site reads the snapshot).
+- **CAS — DONE.** `assemble._extract_cas` pulls the first checksum-valid CAS from PubChem synonyms
+  (checksum rejects same-shaped EC numbers) → `record.cas`; the web shows it beside the CID + JSON-LD.
 Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferred.
 
 ## How it flows (disk-to-disk, resumable)
@@ -103,8 +103,10 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
   the first CID.
 
 ## Next
-- **Step 4 of the Scope B rebuild** (above): 489 core as canon input, `mfetl all`, sync + build, hold push.
-- CAS-number extraction in `assemble._clean_synonyms` (fold into the step-4 run).
+- **Ship the Scope B rebuild** (when Garrett approves the push): push ETL then WEB, then **reconcile
+  Supabase** — `mfetl load` was skipped on a stale-125 UNIQUE(slug) collision; wipe the `molecule`
+  table + `mfetl load` fresh, or teach `supabase_loader.load_all` to delete stale rows + reassign
+  slugs across CIDs. Only affects `/dashboard` + `/api/e`, not the static site. (Task chip filed.)
 - Scale to `--target 10000` — **gated** until the marquee template earns engagement.
 - Turn on weekly `.github/workflows/etl.yml` (needs the Supabase secrets + a Vercel deploy
   hook in the repo's Actions secrets).
