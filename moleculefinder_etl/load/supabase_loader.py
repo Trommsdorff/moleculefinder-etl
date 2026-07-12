@@ -93,9 +93,13 @@ def build_db_rows(molecules: list[dict]) -> dict[str, list[dict]]:
             out["ghs_classification"].append({"cid": cid, "signal_word": g.get("signal_word"),
                                               "pictograms": g.get("pictograms") or [],
                                               "h_statements": g.get("h_statements") or [], "_source": "pubchem"})
+        seen_cat: set[str] = set()          # a molecule can list one slug under two kinds
         for c in m.get("categories") or []:
             categories.setdefault(c["slug"], {"slug": c["slug"], "name": c["name"], "kind": c["kind"],
                                               "_source": c.get("source", "curated")})
+            if c["slug"] in seen_cat:       # e.g. bucket 'sweetener' + type 'sweetener' → one membership
+                continue                    # (else a duplicate (molecule_id, category_id) breaks the upsert)
+            seen_cat.add(c["slug"])
             out["molecule_category"].append({"cid": cid, "category_slug": c["slug"],
                                              "confidence": c["confidence"], "_source": c.get("source", "curated")})
         for e in m.get("edges") or []:

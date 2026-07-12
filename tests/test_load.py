@@ -48,6 +48,23 @@ def test_build_db_rows_shapes():
     assert any(b["cid"] == 2519 and b["block_type"] == "editorial" for b in rows["content_block"])
 
 
+def test_molecule_category_dedupes_slug_across_kinds():
+    # A sweetener carries both a kind:"bucket" and a kind:"type" category with slug
+    # "sweetener". They must collapse to ONE molecule_category row, else the upsert on
+    # (molecule_id, category_id) raises "ON CONFLICT ... cannot affect row a second time".
+    caf, _ = _two_molecules()
+    caf["categories"] = [
+        {"slug": "sweetener", "name": "Sweetener", "kind": "bucket", "confidence": "from_source", "source": "curated"},
+        {"slug": "sweetener", "name": "Sweetener", "kind": "type", "confidence": "from_source", "source": "curated"},
+        {"slug": "stimulant", "name": "Stimulant", "kind": "type", "confidence": "from_source", "source": "curated"},
+    ]
+    rows = supabase_loader.build_db_rows([caf])
+    mc = [r for r in rows["molecule_category"] if r["cid"] == 2519]
+    slugs = [r["category_slug"] for r in mc]
+    assert slugs.count("sweetener") == 1, "duplicate (cid, slug) membership would break the upsert"
+    assert set(slugs) == {"sweetener", "stimulant"}
+
+
 def test_similarity_edges_are_intra_canon_only():
     caf, theo = _two_molecules()
     caf["edges"].append({"neighbor_cid": 999999, "neighbor_slug": "ghost",
