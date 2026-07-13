@@ -18,7 +18,7 @@ from pathlib import Path
 
 from .config import Settings, SEED_DIR, RAW_CACHE, CURATED_DIR
 from .transform import canon as canon_stage
-from .transform import toxicity, ghs, assemble, leaderboards
+from .transform import toxicity, ghs, assemble, leaderboards, relationships
 from .sources import pubchem
 from .load import supabase_loader, snapshot_export
 
@@ -159,13 +159,20 @@ def stage_transform(settings: Settings) -> list[dict]:
     assemble.attach_edges(records)
     kept, deferred = assemble.apply_filter4(records)
 
+    # Everyday Worlds + Trails (spec §2): attach each molecule's curated found_in/affects/
+    # becomes edges. Validates every world + relationship slug against the kept set and
+    # fails the build on a dangling reference. resembles = the computed `edges` above.
+    relationships.attach_trails(kept)
+
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],
                                    ensure_ascii=False))
     edges = sum(len(r["edges"]) for r in kept)
     hooks = sum(len(r["hooks"]) for r in kept)
-    log.info("  assembled %d molecules (%d edges, %d hooks); filter-4 demoted %d orphan(s)",
-             len(kept), edges, hooks, len(deferred))
+    trails = sum(len(r["trails"]["affects"]) + len(r["trails"]["becomes"]) + len(r["trails"]["found_in"])
+                 for r in kept)
+    log.info("  assembled %d molecules (%d edges, %d hooks, %d trail edges); filter-4 demoted %d orphan(s)",
+             len(kept), edges, hooks, trails, len(deferred))
     return kept
 
 

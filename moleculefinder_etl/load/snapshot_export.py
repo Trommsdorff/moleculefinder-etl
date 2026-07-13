@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from ..config import SNAPSHOTS
-from ..transform import roam_layout
+from ..transform import roam_layout, relationships
 
 
 def _prune(directory: Path, keep: set[str]) -> None:
@@ -32,6 +32,9 @@ def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
     # Roam constellation: baked node positions for the static /roam map (§5).
     (SNAPSHOTS / "roam.json").write_text(
         json.dumps(roam_layout.build_roam(molecules), ensure_ascii=False))
+    # Everyday Worlds: the 10 curated worlds (index + per-world detail) for /roam (spec §4/§5).
+    (SNAPSHOTS / "worlds.json").write_text(
+        json.dumps(relationships.build_worlds(molecules), ensure_ascii=False))
     _prune(mol_dir, {f"{m['slug']}.json" for m in molecules})
     lb_dir = SNAPSHOTS / "leaderboards"
     lb_dir.mkdir(parents=True, exist_ok=True)
