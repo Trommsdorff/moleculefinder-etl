@@ -1,0 +1,122 @@
+# Everyday Worlds — the 10 curated starter worlds for /roam (build spec §3).
+#
+# Each world is an experience-first landing page: a recognizable moment (coffee, rain,
+# sleep) unpacked into the molecules inside it. `molecules` is the exact §3 list, mapped
+# to the snapshot's real slugs. `journey` is an ordered narrative subset for the guided
+# strip (screen 2). `tint` is the world's dominant Scope B bucket (its --bucket-* hue).
+#
+# Every molecule slug below is verified present in the current 489 snapshot. The compiler
+# (transform/relationships.py) re-validates every slug against the snapshot at build time
+# and fails loudly on a typo, so this file can never ship a dangling reference.
+#
+# Captions and blurbs are neutral, no health advice, no em-dashes (house rules).
+
+worlds:
+  - slug: morning-coffee
+    title: Morning coffee
+    blurb: What's in your cup, and why it wakes you up.
+    tint: food-flavor
+    molecules: [caffeine, chlorogenic-acid, theobromine, niacin, paraxanthine, adenosine, theophylline]
+    journey:
+      - {slug: caffeine, caption: in your cup}
+      - {slug: adenosine, caption: blocks}
+      - {slug: paraxanthine, caption: becomes}
+      - {slug: chlorogenic-acid, caption: also in the cup}
+
+  - slug: spicy-dinner
+    title: A spicy dinner
+    blurb: The molecules that make food burn.
+    tint: plant-compound
+    molecules: [capsaicin, piperine, gingerol, shogaol, allicin, allyl-isothiocyanate]
+    journey:
+      - {slug: capsaicin, caption: the chili burn}
+      - {slug: piperine, caption: milder cousin}
+      - {slug: gingerol, caption: ginger heat}
+      - {slug: allicin, caption: garlic bite}
+
+  - slug: chocolate
+    title: Chocolate
+    blurb: Why chocolate feels good.
+    tint: food-flavor
+    molecules: [theobromine, caffeine, phenethylamine, anandamide, tryptophan, tyramine]
+    journey:
+      - {slug: theobromine, caption: chocolate's stimulant}
+      - {slug: caffeine, caption: cousin}
+      - {slug: phenethylamine, caption: mood lift}
+      - {slug: anandamide, caption: bliss molecule}
+
+  - slug: after-the-rain
+    title: The smell after rain
+    blurb: Petrichor, molecule by molecule.
+    tint: scent-aroma
+    molecules: [geosmin, dimethyl-sulfide, methanethiol, 2-nonenal]
+    journey:
+      - {slug: geosmin, caption: the petrichor note}
+      - {slug: dimethyl-sulfide, caption: also earthy}
+      - {slug: methanethiol, caption: sulfur note}
+
+  - slug: falling-asleep
+    title: Falling asleep
+    blurb: The chemistry of a good night.
+    tint: body-endogenous
+    molecules: [melatonin, adenosine, gamma-aminobutyric-acid, glycine, serotonin, tryptophan, 5-hydroxytryptophan]
+    journey:
+      - {slug: tryptophan, caption: starts in dinner}
+      - {slug: 5-hydroxytryptophan, caption: becomes}
+      - {slug: serotonin, caption: becomes}
+      - {slug: melatonin, caption: becomes}
+
+  - slug: glass-of-wine
+    title: A glass of wine
+    blurb: What's in the glass.
+    tint: food-flavor
+    molecules: [ethanol, resveratrol, tannic-acid, tartaric-acid, malic-acid, cyanidin]
+    journey:
+      - {slug: ethanol, caption: the alcohol}
+      - {slug: tannic-acid, caption: pairs with}
+      - {slug: cyanidin, caption: the color}
+      - {slug: tartaric-acid, caption: the tartness}
+
+  - slug: fresh-bread
+    title: Fresh-baked bread
+    blurb: The smell of the oven.
+    tint: food-flavor
+    molecules: [maltol, ethyl-maltol, furaneol, hydroxymethylfurfural, acetic-acid, acrylamide]
+    journey:
+      - {slug: maltol, caption: warm crust aroma}
+      - {slug: ethyl-maltol, caption: caramel cousin}
+      - {slug: furaneol, caption: strawberry note}
+      - {slug: hydroxymethylfurfural, caption: browning}
+
+  - slug: sunscreen-summer-skin
+    title: Sunscreen and summer skin
+    blurb: Molecules between you and the sun.
+    tint: body-endogenous
+    molecules: [zinc-oxide, melanin, cholecalciferol, retinol, salicylic-acid, hyaluronic-acid]
+    journey:
+      - {slug: zinc-oxide, caption: mineral block}
+      - {slug: melanin, caption: your own sunscreen}
+      - {slug: cholecalciferol, caption: sunlight makes}
+      - {slug: retinol, caption: skincare}
+
+  - slug: citrus
+    title: Citrus
+    blurb: A fresh orange, unpacked.
+    tint: plant-compound
+    molecules: [limonene, citral, ascorbic-acid, citric-acid, hesperidin, naringin]
+    journey:
+      - {slug: limonene, caption: the orange scent}
+      - {slug: citral, caption: peel aroma}
+      - {slug: citric-acid, caption: the tang}
+      - {slug: hesperidin, caption: the flavonoid}
+
+  - slug: your-workout
+    title: Your workout
+    blurb: What powers and burns your muscles.
+    tint: body-endogenous
+    molecules: [adenosine-triphosphate, creatine, lactic-acid, beta-hydroxybutyric-acid, epinephrine, carnitine]
+    journey:
+      - {slug: adenosine-triphosphate, caption: your fuel}
+      - {slug: creatine, caption: recharged by}
+      - {slug: lactic-acid, caption: the burn}
+      - {slug: beta-hydroxybutyric-acid, caption: backup fuel}

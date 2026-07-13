@@ -1,0 +1,17 @@
+from_slug,relation,to,note,confidence
+caffeine,becomes,paraxanthine,major metabolite,from_source
+caffeine,becomes,theobromine,minor metabolite,from_source
+caffeine,becomes,theophylline,minor metabolite,from_source
+tryptophan,becomes,5-hydroxytryptophan,hydroxylation product,from_source
+5-hydroxytryptophan,becomes,serotonin,decarboxylation product,from_source
+serotonin,becomes,melatonin,downstream product,from_source
+gingerol,becomes,shogaol,dehydration product,from_source
+ethanol,becomes,acetaldehyde,oxidation product,from_source
+adenosine-triphosphate,becomes,adenosine,dephosphorylated form,from_source
+caffeine,affects,adenosine,receptor antagonist,inferred
+caffeine,affects,dopamine,indirect signaling,inferred
+caffeine,affects,cortisol,time-linked,inferred
+theobromine,affects,adenosine,receptor antagonist,inferred
+theophylline,affects,adenosine,receptor antagonist,inferred
+ethanol,affects,gamma-aminobutyric-acid,receptor modulator,inferred
+phenethylamine,affects,dopamine,neurotransmitter modulator,inferred
