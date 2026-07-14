@@ -25,9 +25,11 @@ def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
     index = []
     for m in molecules:
         (mol_dir / f"{m['slug']}.json").write_text(json.dumps(m, ensure_ascii=False))
+        # Fold brand names into the index so a search for "Advil" finds ibuprofen (the search
+        # ranks over title + synonyms). Brands lead so they aren't truncated by the slice.
         index.append({"slug": m["slug"], "title": m["title"],
                       "formula": m.get("molecular_formula"),
-                      "synonyms": m.get("synonyms", [])[:8]})
+                      "synonyms": ((m.get("brands") or []) + m.get("synonyms", []))[:10]})
     (SNAPSHOTS / "index.json").write_text(json.dumps(index, ensure_ascii=False))
     # Roam constellation: baked node positions for the static /roam map (§5).
     (SNAPSHOTS / "roam.json").write_text(

@@ -1,6 +1,8 @@
 # Hand-authored marquee overlay: acetaminophen half-life + type.
 cid: 1983
 slug: acetaminophen
+# PubChem/Wikidata prefer the international name "Paracetamol"; US traffic wants "Acetaminophen".
+display_name: Acetaminophen
 tier: marquee
 types:
   - analgesic

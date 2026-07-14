@@ -7,6 +7,7 @@ types:
   - sugar
 relative_sweetness: 1
 foods:
+  - { category: tabletop-sweetener }
   - { category: table-sugar }
   - { category: fruit }
   - { category: honey }

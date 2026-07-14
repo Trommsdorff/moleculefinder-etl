@@ -17,7 +17,11 @@ from ..config import PUBCHEM_REST, PUBCHEM_VIEW, PUBCHEM_BATCH, PUBCHEM_MAX_RPS,
 
 PROPERTIES = (
     "MolecularFormula,MolecularWeight,CanonicalSMILES,IsomericSMILES,InChI,InChIKey,"
-    "XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,Complexity,Charge"
+    "XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,Complexity,Charge,"
+    # Volume3D is a computed 3D property PubChem returns ONLY when the compound has a 3D
+    # conformer, so its presence is our build-time "has a 3D structure" signal (the web hides
+    # the 3D toggle when absent). Large peptides / polymers (insulin, inulin) have no 3D.
+    "Volume3D"
 )
 
 _session = requests.Session()

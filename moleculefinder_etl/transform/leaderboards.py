@@ -31,16 +31,32 @@ BOARDS: dict[str, dict] = {
         "confidence": "from_source",
         "description": "Ranked by sweetness relative to table sugar (sucrose = 1×).",
     },
-    "hottest": {
-        "title": "Most pungent",
+    "spiciest": {
+        "title": "Spiciest",
         "metric": "scoville_shu",
         "direction": "desc",
         "unit": "SHU",
         "value_label": "Scoville",
-        "confidence": "computed",
+        "confidence": "from_source",
         "description": (
             "Ranked by Scoville heat units, the pungency of the pure compound: from "
-            "capsaicin's chili-pepper fire down to the milder bite of piperine in black pepper."
+            "resiniferatoxin and the capsaicinoids that make chili peppers burn, down to the "
+            "milder bite of ginger and black pepper. Values outside the capsaicinoids are "
+            "comparative estimates, since the Scoville scale is defined for capsaicin-like compounds."
+        ),
+    },
+    "pungent": {
+        "title": "Most pungent",
+        "metric": "odor_threshold",
+        "direction": "asc",  # a lower odor threshold = smellable at a tinier amount = stinkier
+        "unit": "ng/m3",
+        "value_label": "Odor threshold",
+        "confidence": "from_source",
+        "description": (
+            "The stinkiest molecules, ranked by odor detection threshold in air: the tinier the "
+            "concentration a person can smell, the higher the rank. Sulfur compounds and the fecal, "
+            "fishy, and sweaty notes top the list. Air-panel thresholds (Nagata 2003); values vary "
+            "between studies, so these are representative published figures."
         ),
     },
     "biggest": {

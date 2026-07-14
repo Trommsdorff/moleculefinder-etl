@@ -488,3 +488,12 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 487,Casein,,0,food-flavor,protein,,,yes,hand-model
 488,Albumin,,0,body-endogenous,protein,,,yes,hand-model
 489,Fibrin,,0,body-endogenous,protein,,,yes,hand-model
+490,Dihydrocapsaicin,107982,800,plant-compound,phenolic,,yes,capsaicinoid,
+491,Nonivamide,2998,600,plant-compound,phenolic,,yes,capsaicinoid,
+493,Nordihydrocapsaicin,168836,300,plant-compound,phenolic,,yes,capsaicinoid,
+494,Homocapsaicin,6442566,150,plant-compound,phenolic,,yes,capsaicinoid,
+495,Homodihydrocapsaicin,3084336,150,plant-compound,phenolic,,yes,capsaicinoid,
+496,Zingerone,31211,1200,plant-compound,phenolic,,yes,capsaicinoid,
+497,Ethanethiol,6343,400,scent-aroma,sulfur,,yes,pungent,
+498,Hydrogen sulfide,402,3000,scent-aroma,sulfur,,yes,pungent,
+499,Dimethyl disulfide,12232,300,scent-aroma,sulfur,,yes,pungent,

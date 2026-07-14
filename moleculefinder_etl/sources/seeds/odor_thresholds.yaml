@@ -1,0 +1,20 @@
+# Odor detection thresholds in AIR (nanograms per cubic metre), for the "Most pungent" (stinky)
+# leaderboard. Lower = detectable at a tinier concentration = a more potent / stinkier smell, so
+# the board ranks ascending. Scoped to malodorous compounds (sulfur, fecal, fishy, sweaty, smoky).
+# Values from the Nagata (2003) Triangle Odor Bag Method air-panel dataset, cross-checked against
+# the AIHA/van Gemert compilation; expressed in ng/m3 at 25C (= the ug/m3 air value x 1000, kept
+# as whole numbers for a clean display). Thresholds vary across studies, so these are representative
+# published values (confidence from_source, cited). Compiled by attach_odor_thresholds, which
+# validates every slug against the snapshot and fails the build on a typo.
+
+ethanethiol: 22          # skunky / gas-leak (ethyl mercaptan)
+skatole: 30              # fecal
+geosmin: 48              # earthy (petrichor, beetroot)
+trimethylamine: 77       # fishy
+guaiacol: 84             # smoky / medicinal
+methanethiol: 140        # putrid / rotten cabbage
+valeric-acid: 150        # sweaty / cheesy
+hydrogen-sulfide: 570    # rotten eggs
+indole: 1400             # fecal (floral when very dilute)
+dimethyl-sulfide: 7600   # cooked cabbage / sea
+dimethyl-disulfide: 8500 # garlicky / rotten
