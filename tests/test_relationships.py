@@ -171,3 +171,39 @@ def test_no_em_dashes_in_visible_world_copy():
         assert "—" not in blob and "–" not in blob
     for r in rel.load_relationships():
         assert "—" not in r["note"] and "–" not in r["note"]
+
+
+# ── attach_why_it_matters (follow-up #1) ───────────────────────────────────────
+def test_attach_why_it_matters_stamps_curated_line(monkeypatch):
+    monkeypatch.setattr(rel, "load_why_it_matters",
+                        lambda: {"caffeine": "The molecule behind coffee's lift."})
+    mols = _molecules()
+    rel.attach_why_it_matters(mols)
+    by = {m["slug"]: m for m in mols}
+    wim = by["caffeine"]["why_it_matters"]
+    assert wim["text"] == "The molecule behind coffee's lift."
+    assert wim["confidence"] == FROM_SOURCE and wim["source"] == "MoleculeFinder curated"
+    assert "why_it_matters" not in by["theobromine"]              # uncurated molecules are left alone
+
+
+def test_attach_why_it_matters_raises_on_unknown_slug(monkeypatch):
+    # A curated slug not in the snapshot must fail the build loudly, like the other curation.
+    monkeypatch.setattr(rel, "load_why_it_matters", lambda: {"caffeine": "ok", "nope-not-real": "bad"})
+    with pytest.raises(SystemExit, match="nope-not-real"):
+        rel.attach_why_it_matters(_molecules())
+
+
+def test_real_why_it_matters_covers_worlds_and_is_clean():
+    curated = rel.load_why_it_matters()
+    assert curated, "expected curated why-it-matters lines"
+    # Every molecule reachable while roaming the worlds (members + affects/becomes targets) is covered.
+    needed = set()
+    for w in rel.load_worlds():
+        needed.update(w["molecules"])
+    for r in rel.load_relationships():
+        needed.update((r["from_slug"], r["to"]))
+    missing = sorted(needed - set(curated))
+    assert not missing, f"why_it_matters missing lines for: {missing}"
+    for slug, text in curated.items():
+        assert text and text[0].isupper() and text.rstrip().endswith(".")   # one clean sentence
+        assert "—" not in text and "–" not in text                          # house rule: no em-dashes
