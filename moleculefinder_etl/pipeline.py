@@ -163,6 +163,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     # becomes edges. Validates every world + relationship slug against the kept set and
     # fails the build on a dangling reference. resembles = the computed `edges` above.
     relationships.attach_trails(kept)
+    # Curated plain-language "why it matters" (follow-up #1): shown in the world SELECTED panel
+    # instead of PubChem's generic description. Fails the build on an unknown curated slug.
+    relationships.attach_why_it_matters(kept)
 
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],

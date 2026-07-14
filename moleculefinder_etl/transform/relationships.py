@@ -34,6 +34,7 @@ from .confidence import FROM_SOURCE, COMPUTED, INFERRED
 
 WORLDS_YAML = SEEDS_DIR / "worlds.yaml"
 RELATIONSHIPS_CSV = SEEDS_DIR / "relationships.csv"
+WHY_IT_MATTERS_YAML = SEEDS_DIR / "why_it_matters.yaml"
 
 CURATED_RELATIONS = ("found_in", "affects", "becomes")   # the CSV / membership relations
 VALID_CONFIDENCE = {FROM_SOURCE, COMPUTED, INFERRED}
@@ -48,6 +49,14 @@ def load_worlds() -> list[dict]:
         return []
     data = yaml.safe_load(WORLDS_YAML.read_text()) or {}
     return list(data.get("worlds") or [])
+
+
+def load_why_it_matters() -> dict[str, str]:
+    """Read why_it_matters.yaml -> {slug: one-line curated 'why it matters' sentence}."""
+    if not WHY_IT_MATTERS_YAML.exists():
+        return {}
+    data = yaml.safe_load(WHY_IT_MATTERS_YAML.read_text()) or {}
+    return {str(k): str(v).strip() for k, v in data.items() if v and str(v).strip()}
 
 
 def load_relationships() -> list[dict]:
@@ -161,6 +170,28 @@ def attach_trails(molecules: list[dict]) -> None:
         })
 
 
+# ── compile: curated "why it matters" ──────────────────────────────────────────
+def attach_why_it_matters(molecules: list[dict]) -> None:
+    """Attach ``rec['why_it_matters']`` = {text, confidence, source} for each molecule that has a
+    curated line in why_it_matters.yaml (follow-up #1). Plain, experiential, non-advice wording;
+    always ``from_source`` / MoleculeFinder curated. The web shows this in the world SELECTED panel
+    instead of the generic PubChem description, falling back to that description when absent.
+
+    Validates every curated slug against the snapshot and fails the build loudly on a typo, the
+    same discipline as ``attach_trails``. Mutates in place; call once after the records are built."""
+    curated = load_why_it_matters()
+    if not curated:
+        return
+    by_slug = {m["slug"]: m for m in molecules}
+    unknown = sorted(s for s in curated if s not in by_slug)
+    if unknown:
+        raise SystemExit("why_it_matters compile failed, unknown slug(s):\n  " + "\n  ".join(unknown))
+    for slug, text in curated.items():
+        by_slug[slug]["why_it_matters"] = {
+            "text": text, "confidence": FROM_SOURCE, "source": "MoleculeFinder curated",
+        }
+
+
 # ── compile: worlds.json (screens 1 + 2) ───────────────────────────────────────
 def build_worlds(molecules: list[dict]) -> dict:
     """Compile ``worlds.json``: a lightweight index for the /roam landing (screen 1) and a
@@ -186,6 +217,7 @@ def build_worlds(molecules: list[dict]) -> dict:
             "slug": s, "title": by_slug[s]["title"],
             "bucket": by_slug[s].get("scope_bucket"), "family": by_slug[s].get("family"),
             "formula": by_slug[s].get("molecular_formula"), "summary": by_slug[s].get("summary"),
+            "why_it_matters": by_slug[s].get("why_it_matters"),
         } for s in members]
 
         edges: list[dict] = []

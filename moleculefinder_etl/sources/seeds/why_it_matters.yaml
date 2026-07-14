@@ -1,0 +1,92 @@
+# "Why it matters" — a curated, one-sentence, plain-language line per molecule (build spec
+# follow-up #1). Written experientially: what the molecule does for a person or why it is
+# interesting, NOT a chemical definition. The world-detail SELECTED panel shows this instead of
+# PubChem's generic description (which makes many molecules read as "chemical compound"); it
+# falls back to that description only when no curated line exists here.
+#
+# Scope: every molecule reachable while roaming the 10 worlds (their members + the affects/
+# becomes targets + journey steps). Each line is neutral and non-advice (no health claims, no
+# "you should"), no em-dashes (house rule). Confidence is stamped from_source / MoleculeFinder
+# curated in code. The compiler validates every slug against the snapshot and fails loudly on a
+# typo, so this file can never ship a dangling reference.
+
+# ── Morning coffee ─────────────────────────────────────────────────────────────
+caffeine: "The molecule behind coffee's lift: it keeps you feeling alert by getting in the way of your brain's own sleepiness signal."
+chlorogenic-acid: "A big part of coffee's tang and brown color, and one of the most abundant antioxidants in a typical cup."
+theobromine: "Chocolate's gentle stimulant, a milder cousin of caffeine that gives cocoa its lingering lift and faint bitterness."
+niacin: "Vitamin B3, which your cells use to turn food into usable energy; roasting even creates a little of it in coffee."
+paraxanthine: "The main thing caffeine turns into inside you, and much of what actually keeps you feeling awake after a cup."
+adenosine: "The 'time to rest' signal that slowly builds up while you are awake; caffeine works by blocking it."
+theophylline: "A close relative of caffeine that turns up in tea, and a mild stimulant of its own."
+
+# ── A spicy dinner ─────────────────────────────────────────────────────────────
+capsaicin: "The molecule that makes chili peppers hot; it trips the same nerves that sense heat, so your mouth reads a burn that is not really there."
+piperine: "The bite of black pepper, a gentler relative of chili heat that gives pepper its sharp, warming kick."
+gingerol: "The fresh, peppery heat of raw ginger."
+shogaol: "What ginger's heat becomes once it is dried or cooked, giving dried ginger a sharper, warmer bite."
+allicin: "The pungent molecule that forms the instant you crush or chop garlic, behind its sharp smell and bite."
+allyl-isothiocyanate: "The sinus-clearing sting of mustard, horseradish, and wasabi."
+
+# ── Chocolate ──────────────────────────────────────────────────────────────────
+phenethylamine: "A trace molecule in chocolate and a natural messenger in the brain, sometimes linked to the flutter of excitement."
+anandamide: "Nicknamed the bliss molecule, one of the body's own signals for a calm, contented feeling; it also turns up in tiny amounts in chocolate."
+tryptophan: "An amino acid from everyday protein foods that your body converts, step by step, into the mood and sleep molecules serotonin and melatonin."
+tyramine: "A molecule that builds up in aged cheese, cured meats, and chocolate as they ripen."
+
+# ── The smell after rain ───────────────────────────────────────────────────────
+geosmin: "The earthy smell of fresh soil and the first drops of rain; people can pick it out at astonishingly tiny amounts."
+dimethyl-sulfide: "A savory, sea-air, cooked-vegetable note that carries in the scent of the coast and of rain."
+methanethiol: "One of the smelliest molecules there is, behind the sulfur edge in breath, ripe cheese, and damp air."
+2-nonenal: "A cucumber-and-paper smell familiar from stale beer and the scent of old books."
+
+# ── Falling asleep ─────────────────────────────────────────────────────────────
+melatonin: "The body's own nightfall signal, released as it gets dark to say the day is winding down."
+gamma-aminobutyric-acid: "The brain's main calm-down messenger, quieting nervous activity so things can settle."
+glycine: "The simplest amino acid, a building block of protein and collagen that also acts as a calming signal in the nervous system."
+serotonin: "A messenger tied to mood and steadiness, and the in-between step your body uses to make the sleep molecule melatonin."
+5-hydroxytryptophan: "The halfway point as your body turns tryptophan from food into serotonin."
+
+# ── A glass of wine ────────────────────────────────────────────────────────────
+ethanol: "The alcohol in wine, beer, and spirits, and what the body reads as intoxicating."
+resveratrol: "A plant molecule in red grape skins and red wine, much studied and much debated."
+tannic-acid: "The dry, puckery grip of red wine and strong tea, the feel of tannins on your tongue."
+tartaric-acid: "The sharp fruit acid of grapes that gives wine much of its crisp tartness."
+malic-acid: "The green-apple sourness found in apples, grapes, and many other fruits."
+cyanidin: "The deep red-purple pigment that colors red grapes, berries, and red wine."
+
+# ── Fresh-baked bread ──────────────────────────────────────────────────────────
+maltol: "The warm, toasty, caramel smell of fresh bread crust and baked goods."
+ethyl-maltol: "A sweeter, more intense cousin of the bread-crust molecule, used to give foods a cotton-candy warmth."
+furaneol: "A ripe-strawberry, cooked-sugar aroma that also forms as bread bakes."
+hydroxymethylfurfural: "A signature of browning that builds up as sugars are heated in baking and in honey."
+acetic-acid: "The sour molecule that makes vinegar vinegar, and a tang in sourdough."
+acrylamide: "A molecule that forms when starchy foods are toasted or fried to a deep brown."
+
+# ── Sunscreen and summer skin ──────────────────────────────────────────────────
+zinc-oxide: "The white mineral in many sunscreens; it sits on the skin and bounces sunlight away."
+melanin: "Your body's own sunshade, the pigment that colors skin and hair and soaks up UV light."
+cholecalciferol: "The form of vitamin D your skin makes when sunlight lands on it."
+retinol: "A form of vitamin A, familiar from skincare for its part in skin renewal."
+salicylic-acid: "A plant-derived acid, a chemical relative of aspirin, familiar in skincare for clearing pores."
+hyaluronic-acid: "A water-holding molecule the body makes to keep skin and joints plump and cushioned."
+
+# ── Citrus ─────────────────────────────────────────────────────────────────────
+limonene: "The bright citrus scent locked in orange and lemon peel."
+citral: "The unmistakable lemon smell, and the heart of lemongrass."
+ascorbic-acid: "Vitamin C, the tart brightness of citrus and a nutrient your body cannot make on its own."
+citric-acid: "The mouth-watering sourness of lemons, limes, and oranges."
+hesperidin: "A flavonoid concentrated in orange peel and the white pith of citrus."
+naringin: "The molecule behind grapefruit's characteristic bitterness."
+
+# ── Your workout ───────────────────────────────────────────────────────────────
+adenosine-triphosphate: "The tiny rechargeable battery your cells spend for almost every bit of work they do."
+creatine: "A molecule your muscles keep on hand to recharge energy fast during short, hard effort."
+lactic-acid: "What builds up in hard-working muscles, and the tang in sour milk and yogurt."
+beta-hydroxybutyric-acid: "A backup fuel the liver makes from fat when carbohydrates run low, as in fasting or long exercise."
+epinephrine: "Adrenaline, the surge that readies your body for a burst of action."
+carnitine: "A shuttle molecule that carries fat into the part of the cell that burns it for energy."
+
+# ── Roaming targets (affects / becomes, not world members) ─────────────────────
+acetaldehyde: "What alcohol first turns into as the body breaks it down, and a large part of a hangover."
+dopamine: "A brain messenger tied to motivation and reward, the feeling of wanting and anticipation."
+cortisol: "The body's main stress hormone, and part of the natural rhythm that helps you wake in the morning."
