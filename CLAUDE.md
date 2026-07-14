@@ -27,10 +27,13 @@ pytest                       # offline tests must stay green
 ruff check .
 ```
 
-## Status: SHIPPED — the 125 -> 489 Scope B rebuild is LIVE (deployed 2026-07-12)
-> The live vercel.app site serves the **489**. Pushed: `76a05b8` (rebuild + CAS) + `b882a07`
-> (molecule_category dup-key fix). Supabase reconciled to the 489. See `../scope-b-rebuild-STATUS.md`.
-> Only owner action left: point `moleculefinder.com`.
+## Status: LIVE on moleculefinder.com — canon is **498** (domain pointed 2026-07-14)
+> The site is launched on its own domain and serves **498** molecules (489 Scope B core + 9 added for
+> the boards). Since the original 489 rebuild (`scope-b-rebuild-STATUS.md`, historical): Everyday Worlds
+> + Trails (`sources/seeds/{worlds.yaml,relationships.csv,why_it_matters.yaml}` compiled by
+> `transform/relationships.py` → `trails` + `worlds.json`), curated brand names + odor thresholds
+> (`sources/seeds/{brands.yaml,odor_thresholds.yaml}`), `has_3d`, greek-letter title normalization
+> (`assemble._normalize_greek`), and the split `spiciest`/`pungent` boards. Supabase reconciled.
 
 ### Shipped + live (2026-07-10): M1 + M3-leaderboards + curation (batches 1 & 2)
 `pipeline.py`'s five stages flow fetch → transform → load → export; `transform/assemble.py`
@@ -105,10 +108,10 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
   the first CID.
 
 ## Next
-- **489 is SHIPPED + live.** Owner action: point `moleculefinder.com` (DNS). The `load_all` slug
-  *reassignment* edge (moving a slug from one CID to another when the canon changes) is still not
-  auto-handled — it needs a manual stale-row delete first, as the 489 reconcile did. Only bites a
-  future canon change; the dup-key crash itself is fixed (`b882a07`).
+- **Launched on moleculefinder.com (498).** The `load_all` slug *reassignment* edge (moving a slug
+  from one CID to another when the canon changes) is still not auto-handled — it needs a manual
+  stale-row delete first, as the 489 reconcile did. Only bites a future canon change; the dup-key
+  crash itself is fixed (`b882a07`).
 - Scale to `--target 10000` — **gated** until the marquee template earns engagement.
 - Turn on weekly `.github/workflows/etl.yml` (needs the Supabase secrets + a Vercel deploy
   hook in the repo's Actions secrets).
