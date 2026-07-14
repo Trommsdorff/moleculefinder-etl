@@ -201,3 +201,20 @@ def test_filter4_demotes_orphans():
     kept, deferred = assemble.apply_filter4([good, orphan])
     assert [r["cid"] for r in kept] == [2519]
     assert [r["cid"] for r in deferred] == [999]
+
+
+# ── greek-letter title normalization (pre-launch fix #5) ───────────────────────
+def test_normalize_greek_titles():
+    g = assemble._normalize_greek
+    # mis-cased capital greek prefix (reads as a latin B) -> lowercase symbol
+    assert g("Β-Hydroxybutyric acid") == "β-Hydroxybutyric acid"
+    assert g("Α-Linolenic acid") == "α-Linolenic acid"
+    # spelled-out prefix -> symbol, including mid-name
+    assert g("alpha-Pinene") == "α-Pinene"
+    assert g("Calcium beta-hydroxy-beta-methylbutyrate") == "Calcium β-hydroxy-β-methylbutyrate"
+    # ordinary words and already-correct symbols are untouched
+    for unchanged in ("Betaine", "Alanine", "Caffeine", "Glucono-δ-lactone", "9-Methyl-β-carboline"):
+        assert g(unchanged) == unchanged
+    # capital Delta is preserved (the Δn double-bond convention)
+    assert g("Δ9-Tetrahydrocannabinol") == "Δ9-Tetrahydrocannabinol"
+    assert g(None) is None

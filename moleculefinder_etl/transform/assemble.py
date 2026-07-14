@@ -45,6 +45,26 @@ def _titleize(slug: str) -> str:
     return slug.replace("-", " ").replace("_", " ").strip().title()
 
 
+# Greek letters in chemical names. PubChem/Wikidata names arrive two broken ways: a
+# mis-cased CAPITAL greek prefix (e.g. "Β-Hydroxybutyric" — that leading char is a greek
+# capital beta, which reads as a latin "B"), and a spelled-out prefix ("alpha-Pinene").
+# Positional/stereo prefixes are conventionally a LOWERCASE greek symbol, so normalize both.
+# Capital Delta is left alone (the Δn double-bond convention, e.g. Δ9-THC). Word-bounded so
+# ordinary words are safe (Betaine, Alanine, Gamma unaffected). Display title only; synonyms
+# keep their spelled-out forms so "beta-..." stays searchable, and slugs are untouched.
+_GREEK_WORD = {"alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "epsilon": "ε", "omega": "ω"}
+_GREEK_WORD_RE = re.compile(r"\b(" + "|".join(_GREEK_WORD) + r")-", re.I)
+
+
+def _normalize_greek(name: "str | None") -> "str | None":
+    if not name:
+        return name
+    out = _GREEK_WORD_RE.sub(lambda m: _GREEK_WORD[m.group(1).lower()] + "-", name)
+    # Mis-cased capital greek (U+0391-03A9) -> lowercase (+0x20), except capital Delta.
+    return "".join(chr(ord(c) + 0x20) if (0x391 <= ord(c) <= 0x3A9 and c != "Δ") else c
+                   for c in out)
+
+
 # Type slugs whose display name _titleize would mangle (acronyms).
 _TYPE_NAMES = {"nsaid": "NSAID"}
 
@@ -220,7 +240,7 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
     slug = slugs.unique_slug(curated.get("slug") or pref or title or f"cid-{cid}", taken)
 
     rec = {
-        "cid": cid, "slug": slug, "title": title, "preferred_name": pref,
+        "cid": cid, "slug": slug, "title": _normalize_greek(title), "preferred_name": pref,
         "tier": row.get("tier", "canon"),
         "wikidata_qid": row.get("wikidata_qid"), "wikipedia_title": row.get("enwiki_title"),
         "pageviews_monthly": int(row.get("pageviews") or 0),
@@ -301,7 +321,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
     fam_slug = (meta.get("family") or "").strip().lower()
 
     rec = {
-        "cid": cid, "slug": slug, "title": name, "preferred_name": name,
+        "cid": cid, "slug": slug, "title": _normalize_greek(name), "preferred_name": name,
         "tier": row.get("tier", "marquee"),
         "wikidata_qid": row.get("wikidata_qid"), "wikipedia_title": row.get("enwiki_title"),
         "pageviews_monthly": int(row.get("pageviews") or 0),
