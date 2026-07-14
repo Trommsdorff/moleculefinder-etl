@@ -189,10 +189,16 @@ def apply_scope_bucket(rec: dict, bucket: "str | None", family: "str | None") ->
     bucket is roamable (its own /in/<bucket> page) and drives the primary color. Idempotent."""
     rec["scope_bucket"] = bucket
     rec["scope_family"] = family
-    if bucket and not any(c.get("kind") == "bucket" for c in rec["categories"]):
-        rec["categories"].append({"slug": bucket, "name": buckets.bucket_label(bucket) or _titleize(bucket),
-                                  "kind": "bucket", "confidence": label_for("curated_fact"),
-                                  "source": _src("curated")})
+    if bucket:
+        # Drop a curated type tag that duplicates the bucket slug (e.g. a type:"sweetener"
+        # alongside bucket:"sweetener"): the web shows buckets under "Category" and types under
+        # "Type", so the same word would appear twice. The bucket is the canonical membership.
+        rec["categories"] = [c for c in rec["categories"]
+                             if not (c.get("kind") == "type" and c.get("slug") == bucket)]
+        if not any(c.get("kind") == "bucket" for c in rec["categories"]):
+            rec["categories"].append({"slug": bucket, "name": buckets.bucket_label(bucket) or _titleize(bucket),
+                                      "kind": "bucket", "confidence": label_for("curated_fact"),
+                                      "source": _src("curated")})
 
 
 def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
@@ -206,6 +212,11 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
     can = _first(props, _CAN_KEYS)
     title = row.get("enwiki_title") or names.preferred_name(cid, None, syns)
     pref = names.preferred_name(cid, row.get("enwiki_title"), syns)
+    # Curated display-name override: PubChem/Wikidata sometimes prefer a non-US name
+    # (e.g. "Paracetamol"); a US audience wants "Acetaminophen". Set before _clean_synonyms
+    # so the overridden name is the title and the old name falls back into synonyms.
+    if curated.get("display_name"):
+        title = curated["display_name"]
     slug = slugs.unique_slug(curated.get("slug") or pref or title or f"cid-{cid}", taken)
 
     rec = {
@@ -223,6 +234,9 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         "cas": _extract_cas(syns),
         "synonyms": _clean_synonyms(syns, title),
         "structure_svg": structures.svg_for(iso) if iso else None,
+        # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
+        # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D).
+        "has_3d": props.get("Volume3D") is not None,
         "descriptors": _descriptors(props),
         "toxicity": list(fetched.get("toxicity") or []),
         "ghs": fetched.get("ghs"),

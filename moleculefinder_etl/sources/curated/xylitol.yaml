@@ -8,6 +8,7 @@ types:
   - sugar-alcohol
   - sweetener
 foods:
+  - { category: tabletop-sweetener }
   - { category: sugar-free-gum }
 editorial: |
   Xylitol is a sugar alcohol almost exactly as sweet as sugar, gram for gram,

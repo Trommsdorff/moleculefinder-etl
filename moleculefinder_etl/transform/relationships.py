@@ -35,6 +35,8 @@ from .confidence import FROM_SOURCE, COMPUTED, INFERRED
 WORLDS_YAML = SEEDS_DIR / "worlds.yaml"
 RELATIONSHIPS_CSV = SEEDS_DIR / "relationships.csv"
 WHY_IT_MATTERS_YAML = SEEDS_DIR / "why_it_matters.yaml"
+BRANDS_YAML = SEEDS_DIR / "brands.yaml"
+ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
 
 CURATED_RELATIONS = ("found_in", "affects", "becomes")   # the CSV / membership relations
 VALID_CONFIDENCE = {FROM_SOURCE, COMPUTED, INFERRED}
@@ -190,6 +192,55 @@ def attach_why_it_matters(molecules: list[dict]) -> None:
         by_slug[slug]["why_it_matters"] = {
             "text": text, "confidence": FROM_SOURCE, "source": "MoleculeFinder curated",
         }
+
+
+def load_brands() -> dict[str, list[str]]:
+    """Read brands.yaml -> {slug: [commercial/brand names]}."""
+    if not BRANDS_YAML.exists():
+        return {}
+    data = yaml.safe_load(BRANDS_YAML.read_text()) or {}
+    return {str(k): [str(b).strip() for b in (v or []) if str(b).strip()] for k, v in data.items()}
+
+
+def attach_brands(molecules: list[dict]) -> None:
+    """Attach ``rec['brands']`` = [commercial names] for curated OTC drugs (follow-up: "also known
+    as Advil / Benadryl"). The web shows them on an "Also sold as" line; the search index folds
+    them in so a search for a brand finds the molecule. Validates every slug against the snapshot
+    and fails the build loudly on a typo. Mutates in place; call once after the records are built."""
+    brands = load_brands()
+    if not brands:
+        return
+    by_slug = {m["slug"]: m for m in molecules}
+    unknown = sorted(s for s in brands if s not in by_slug)
+    if unknown:
+        raise SystemExit("brands compile failed, unknown slug(s):\n  " + "\n  ".join(unknown))
+    for slug, names in brands.items():
+        if names:
+            by_slug[slug]["brands"] = names
+
+
+def load_odor_thresholds() -> dict[str, float]:
+    """Read odor_thresholds.yaml -> {slug: odor detection threshold in ng/m3 air}."""
+    if not ODOR_THRESHOLDS_YAML.exists():
+        return {}
+    data = yaml.safe_load(ODOR_THRESHOLDS_YAML.read_text()) or {}
+    return {str(k): float(v) for k, v in data.items() if v is not None}
+
+
+def attach_odor_thresholds(molecules: list[dict]) -> None:
+    """Attach ``rec['odor_threshold']`` (ng/m3 air) for the malodorous compounds that power the
+    "Most pungent" (stinkiest) leaderboard. Lower = smellable at a tinier amount = more potent.
+    Validates every slug against the snapshot and fails the build loudly on a typo. Mutates in
+    place; call once after the records are built."""
+    odt = load_odor_thresholds()
+    if not odt:
+        return
+    by_slug = {m["slug"]: m for m in molecules}
+    unknown = sorted(s for s in odt if s not in by_slug)
+    if unknown:
+        raise SystemExit("odor_thresholds compile failed, unknown slug(s):\n  " + "\n  ".join(unknown))
+    for slug, value in odt.items():
+        by_slug[slug]["odor_threshold"] = value
 
 
 # ── compile: worlds.json (screens 1 + 2) ───────────────────────────────────────

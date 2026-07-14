@@ -11,7 +11,8 @@ from moleculefinder_etl.transform import canon
 def test_scope_b_csv_is_present_and_shaped():
     assert canon.SCOPE_B_CSV.exists(), "scope_b_core.csv must live in sources/seeds/"
     rows = canon._scope_b_rows()
-    assert len(rows) == 489, "the everyday core is exactly 489 molecules"
+    # 489 everyday core + 9 pungent/stinky compounds added for the spiciest + Most pungent boards.
+    assert len(rows) == 498, "the everyday core is 489 + 9 pungent/stinky additions = 498"
     # Every row carries a bucket (the primary color/roam dimension).
     assert all(r["scope_bucket"] for r in rows)
     # The 8 Scope B buckets, nothing else.
@@ -36,7 +37,7 @@ def test_scope_b_hand_model_rows_get_synthetic_cids():
 def test_build_scope_b_canon_ranks_and_orders(monkeypatch):
     monkeypatch.setattr(canon, "_descriptions_cached", lambda cids: {})  # no network
     rows = canon.build_scope_b_canon()
-    assert len(rows) == 489
+    assert len(rows) == 498
     # Ranked by descending Wikipedia pageviews, build_order following the rank.
     assert all(rows[i]["pageviews"] >= rows[i + 1]["pageviews"] for i in range(len(rows) - 1))
     assert [r["build_order"] for r in rows] == list(range(len(rows)))

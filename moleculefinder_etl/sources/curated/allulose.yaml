@@ -1,0 +1,5 @@
+# Minimal overlay: allulose, a rare sugar sold as a tabletop sweetener.
+cid: 90008
+slug: allulose
+foods:
+  - { category: tabletop-sweetener }

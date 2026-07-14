@@ -1,0 +1,43 @@
+# Curated over-the-counter brand / commercial names (follow-up: "also known as Advil / Benadryl").
+# PubChem synonyms carry brand names inconsistently, so we curate the recognizable US consumer
+# brands per generic drug. Shown on the molecule page as an "Also sold as" line and folded into
+# the search index so a search for "Advil" finds ibuprofen. slug -> [brands], most iconic first.
+# Compiled by transform/relationships.py::attach_brands, which validates every slug against the
+# snapshot and fails the build on a typo. Facts, confidence from_source / MoleculeFinder curated.
+
+acetaminophen: [Tylenol]
+aspirin: [Bayer, Bufferin, Ecotrin]
+ibuprofen: [Advil, Motrin, Nurofen]
+naproxen: [Aleve]
+diphenhydramine: [Benadryl, ZzzQuil, Sominex]
+cetirizine: [Zyrtec]
+loratadine: [Claritin, Alavert]
+fexofenadine: [Allegra]
+chlorphenamine: [Chlor-Trimeton]
+brompheniramine: [Dimetapp]
+doxylamine: [Unisom]
+dextromethorphan: [Robitussin, Delsym]
+guaifenesin: [Mucinex]
+phenylephrine: [Sudafed PE, Neo-Synephrine]
+pseudoephedrine: [Sudafed]
+oxymetazoline: [Afrin, Vicks Sinex, Zicam]
+omeprazole: [Prilosec, Zegerid]
+esomeprazole: [Nexium]
+famotidine: [Pepcid]
+cimetidine: [Tagamet]
+loperamide: [Imodium]
+bisacodyl: [Dulcolax, Correctol]
+docusate: [Colace, Surfak]
+bismuth-subsalicylate: [Pepto-Bismol, Kaopectate]
+meclizine: [Bonine, Dramamine Less Drowsy]
+dimenhydrinate: [Dramamine]
+cyclizine: [Marezine]
+ketotifen: [Zaditor, Alaway]
+ephedrine: [Bronkaid, Primatene]
+salicylic-acid: [Stridex, Clearasil, Compound W]
+benzoyl-peroxide: [Clearasil, Proactiv, PanOxyl]
+clotrimazole: [Lotrimin, Gyne-Lotrimin]
+miconazole: [Monistat, Desenex]
+aluminium-hydroxide: [AlternaGEL, Amphojel]
+magnesium-hydroxide: [Milk of Magnesia, "Phillips'"]
+zinc-oxide: [Desitin, Balmex]

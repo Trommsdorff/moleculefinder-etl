@@ -207,3 +207,36 @@ def test_real_why_it_matters_covers_worlds_and_is_clean():
     for slug, text in curated.items():
         assert text and text[0].isupper() and text.rstrip().endswith(".")   # one clean sentence
         assert "—" not in text and "–" not in text                          # house rule: no em-dashes
+
+
+# ── attach_brands + attach_odor_thresholds (follow-ups #7-9, #10) ───────────────
+def test_attach_brands_stamps_and_validates(monkeypatch):
+    monkeypatch.setattr(rel, "load_brands", lambda: {"caffeine": ["Vivarin", "NoDoz"]})
+    mols = _molecules()
+    rel.attach_brands(mols)
+    assert {m["slug"]: m.get("brands") for m in mols}["caffeine"] == ["Vivarin", "NoDoz"]
+    assert "brands" not in {m["slug"]: m for m in mols}["adenosine"]
+    monkeypatch.setattr(rel, "load_brands", lambda: {"nope-not-real": ["X"]})
+    with pytest.raises(SystemExit, match="nope-not-real"):
+        rel.attach_brands(_molecules())
+
+
+def test_attach_odor_thresholds_stamps_and_validates(monkeypatch):
+    monkeypatch.setattr(rel, "load_odor_thresholds", lambda: {"caffeine": 12.5})
+    mols = _molecules()
+    rel.attach_odor_thresholds(mols)
+    assert {m["slug"]: m.get("odor_threshold") for m in mols}["caffeine"] == 12.5
+    monkeypatch.setattr(rel, "load_odor_thresholds", lambda: {"nope-not-real": 1.0})
+    with pytest.raises(SystemExit, match="nope-not-real"):
+        rel.attach_odor_thresholds(_molecules())
+
+
+def test_real_brands_and_odor_seeds_are_well_formed():
+    brands = rel.load_brands()
+    assert brands, "expected curated brands"
+    for names in brands.values():
+        assert names and all(isinstance(n, str) and n for n in names)
+    odt = rel.load_odor_thresholds()
+    assert odt, "expected odor thresholds"
+    for v in odt.values():
+        assert isinstance(v, float) and v > 0

@@ -1,0 +1,6 @@
+# Minimal overlay: erythritol, a bulk sugar alcohol sold on its own and in stevia/monk-fruit blends.
+cid: 222285
+slug: erythritol
+foods:
+  - { category: tabletop-sweetener }
+  - { category: sugar-free-gum }

@@ -7,6 +7,7 @@ types:
   - sweetener
 relative_sweetness: 200
 foods:
+  - { category: tabletop-sweetener }
   - { category: diet-soda }
   - { category: sugar-free-gum }
 editorial: |

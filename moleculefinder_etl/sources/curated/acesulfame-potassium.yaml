@@ -1,0 +1,6 @@
+# Minimal overlay: tag acesulfame potassium (Ace-K) as a tabletop / diet-drink sweetener.
+cid: 11074431
+slug: acesulfame-potassium
+foods:
+  - { category: tabletop-sweetener }
+  - { category: diet-soda }

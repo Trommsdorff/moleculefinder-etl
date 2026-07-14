@@ -166,6 +166,10 @@ def stage_transform(settings: Settings) -> list[dict]:
     # Curated plain-language "why it matters" (follow-up #1): shown in the world SELECTED panel
     # instead of PubChem's generic description. Fails the build on an unknown curated slug.
     relationships.attach_why_it_matters(kept)
+    # Curated commercial/brand names (Advil, Benadryl...) for the "Also sold as" line + search.
+    relationships.attach_brands(kept)
+    # Odor detection thresholds for the "Most pungent" (stinkiest) leaderboard.
+    relationships.attach_odor_thresholds(kept)
 
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],
