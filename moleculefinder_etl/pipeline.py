@@ -16,7 +16,7 @@ import json
 import logging
 from pathlib import Path
 
-from .config import Settings, SEED_DIR, RAW_CACHE, CURATED_DIR
+from .config import Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships
 from .sources import pubchem
@@ -78,11 +78,14 @@ def _fetch_cached(cids: list[int], prefix: str, fetch_missing) -> dict[int, obje
         else:
             missing.append(c)
     if missing:
-        fetched = fetch_missing(missing)
-        for c in missing:
-            val = fetched.get(c)
-            (cache_dir / f"{prefix}-{c}.json").write_text(json.dumps(val))
-            out[c] = val
+        for i in range(0, len(missing), PUBCHEM_BATCH):
+            chunk = missing[i:i + PUBCHEM_BATCH]
+            fetched = fetch_missing(chunk)
+            for c in chunk:
+                val = fetched.get(c)
+                (cache_dir / f"{prefix}-{c}.json").write_text(json.dumps(val))
+                out[c] = val
+            log.info("  %s: cached %d/%d", prefix, len(out), len(cids))
     return out
 
 

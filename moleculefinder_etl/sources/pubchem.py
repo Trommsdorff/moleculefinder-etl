@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 import requests
-from tenacity import retry, wait_exponential, stop_after_attempt
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception
 
 from ..config import PUBCHEM_REST, PUBCHEM_VIEW, PUBCHEM_BATCH, PUBCHEM_MAX_RPS, USER_AGENT, RAW_CACHE
 
@@ -43,7 +43,21 @@ def _chunks(seq, n):
         yield seq[i:i + n]
 
 
-@retry(wait=wait_exponential(min=1, max=30), stop=stop_after_attempt(5))
+def _is_transient(exc: BaseException) -> bool:
+    """Retry connection blips and PubChem's busy/5xx responses; never retry a 4xx."""
+    if isinstance(exc, (requests.exceptions.ConnectionError, requests.exceptions.Timeout)):
+        return True
+    resp = getattr(exc, "response", None)
+    return resp is not None and resp.status_code in (429, 500, 502, 503, 504)
+
+
+_pubchem_retry = retry(wait=wait_exponential(multiplier=2, min=2, max=120),
+                        stop=stop_after_attempt(8),
+                        retry=retry_if_exception(_is_transient),
+                        reraise=True)
+
+
+@_pubchem_retry
 def properties(cids: list[int]) -> list[dict]:
     """Batched property fetch. Returns one dict per CID."""
     out: list[dict] = []
@@ -67,7 +81,7 @@ def _cache_dir() -> Path:
     return d
 
 
-@retry(wait=wait_exponential(min=1, max=30), stop=stop_after_attempt(4))
+@_pubchem_retry
 def name_to_cid(name: str) -> int | None:
     """Resolve a common/chemical name to its primary PubChem CID (cached).
 
@@ -91,7 +105,7 @@ def name_to_cid(name: str) -> int | None:
     return cid
 
 
-@retry(wait=wait_exponential(min=1, max=30), stop=stop_after_attempt(5))
+@_pubchem_retry
 def synonyms(cids: list[int], limit: int = 20) -> dict[int, list[str]]:
     """Batched synonym fetch. Returns {cid: [name, ...]} (at most `limit` each)."""
     out: dict[int, list[str]] = {}
@@ -110,7 +124,7 @@ def synonyms(cids: list[int], limit: int = 20) -> dict[int, list[str]]:
     return out
 
 
-@retry(wait=wait_exponential(min=1, max=30), stop=stop_after_attempt(4))
+@_pubchem_retry
 def pug_view(cid: int, heading: str) -> dict | None:
     """Fetch a PUG-View annotation heading (e.g. 'GHS Classification', 'Toxicity').
 
