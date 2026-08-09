@@ -1,0 +1,172 @@
+# ── 137 NETWORK FRESHNESS WATCHDOG (added 2026-08-08) ────────────────────────
+#
+# WHY THIS LIVES IN THIS REPO, WHICH IS OTHERWISE NOTHING TO DO WITH IT:
+# because moleculefinder-etl is the ONLY PUBLIC repo in the 137 network, and
+# public repos bill ZERO GitHub Actions minutes. Every other 137 repo is private
+# and draws on one shared 2,000-minute monthly allowance.
+#
+# That distinction is the entire point. The failure this watchdog exists to catch
+# is MINUTES EXHAUSTION: when the allowance runs out, scheduled jobs in the
+# private repos do not fail loudly — they are never scheduled at all. The run
+# appears, lasts 1-11 seconds, has an EMPTY STEP LIST, and dies. Nothing inside
+# the starved repo can report it, because nothing inside the starved repo runs.
+# GravityFinder died this way for 25 consecutive nights (2026-07-07..31) and its
+# data was frozen the entire time with nobody aware.
+#
+# So the alarm has to come from outside the budget. Running here, it cannot be
+# starved by the thing it is watching. DO NOT "tidy" this into the private repos.
+#
+# WHAT IT ASKS: not "does the site look fresh?" — the five sites expose five
+# different and partly absent freshness signals (measured 2026-08-08: TFF prints
+# a real data date, GravityFinder a build sha, JudicialFinder only a sitemap
+# lastmod, MoleculeFinder nothing). A parser over five inconsistent signals is a
+# watchdog that quietly reports green forever. It asks the ONE uniform question
+# the Actions API answers for every repo: WHEN DID THIS REFRESH LAST SUCCEED?
+#
+# FAIL-LOUD: an unreachable API, a missing workflow, or a repo it cannot read is
+# an ALARM, not a pass. A watchdog that treats "I could not check" as "fine" is
+# worse than no watchdog, because it manufactures confidence.
+#
+# ── OWNER SETUP (one-time, required — without it this workflow only alarms) ──
+#   The default GITHUB_TOKEN is scoped to THIS repo only, so it cannot read the
+#   private repos' run history. Create a fine-grained PAT and add it here:
+#     GitHub → Settings → Developer settings → Personal access tokens →
+#       Fine-grained tokens → Generate new token
+#       Resource owner: Trommsdorff
+#       Repository access: Only select repositories →
+#         judicialfinder, thefiscalfinder, gravityfinder, moleculefinder-etl
+#       Permissions → Repository → Actions: READ-ONLY   (nothing else)
+#       Expiration: set a date you will accept, or "No expiration"
+#     Then: gh secret set NETWORK_READ_TOKEN --repo Trommsdorff/moleculefinder-etl
+#   Read-only on Actions. It cannot deploy, push, or read source.
+
+name: Network freshness watchdog
+
+on:
+  schedule:
+    - cron: "0 13 * * *" # daily 13:00 UTC (~9am US Eastern) — free, public repo
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check every refresh cron across the network
+        id: check
+        env:
+          TOKEN: ${{ secrets.NETWORK_READ_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "NO_TOKEN=1" >> "$GITHUB_ENV"
+            echo "report=The NETWORK_READ_TOKEN secret is not set, so freshness could NOT be checked. See the setup block in .github/workflows/watchdog.yml." >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json, os, sys, urllib.request, datetime
+
+          TOKEN = os.environ["TOKEN"]
+
+          # repo, workflow FILE (stable across display-name edits), max age in days.
+          # Max age = 2x cadence + slack, so one skipped run is not an alarm but a
+          # genuinely stalled cron is. PolitiFinder is absent deliberately: it has
+          # no refresh cron because its sources do not republish until certified
+          # 2026 returns land (~late 2027). Nothing to watch is not the same as
+          # broken, and inventing a check for it would only ever cry wolf.
+          TARGETS = [
+              ("judicialfinder",     "refresh-data.yml", 10),   # weekly
+              ("thefiscalfinder",    "refresh-data.yml", 40),   # monthly
+              ("gravityfinder",      "freshness.yml",    10),   # weekly
+              ("moleculefinder-etl", "etl.yml",          10),   # weekly
+          ]
+
+          def api(url):
+              req = urllib.request.Request(url, headers={
+                  "Authorization": f"Bearer {TOKEN}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              })
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          now = datetime.datetime.now(datetime.timezone.utc)
+          problems, ok = [], []
+
+          for repo, wf, max_age in TARGETS:
+              url = (f"https://api.github.com/repos/Trommsdorff/{repo}"
+                     f"/actions/workflows/{wf}/runs?status=success&per_page=1")
+              try:
+                  runs = api(url).get("workflow_runs", [])
+              except Exception as e:
+                  # Could not check != fine. This is the fail-loud rule.
+                  problems.append(f"- **{repo}** — COULD NOT CHECK ({type(e).__name__}: {e}). "
+                                  f"Treat as broken until proven otherwise.")
+                  continue
+
+              if not runs:
+                  problems.append(f"- **{repo}** — no successful `{wf}` run on record at all.")
+                  continue
+
+              run = runs[0]
+              when = datetime.datetime.fromisoformat(
+                  run["updated_at"].replace("Z", "+00:00"))
+              age = (now - when).days
+              line = f"{repo} — last green {age}d ago ({when:%Y-%m-%d})"
+              if age > max_age:
+                  problems.append(
+                      f"- **{repo}** — last successful refresh was **{age} days ago** "
+                      f"({when:%Y-%m-%d}); the limit for this cron is {max_age} days.\n"
+                      f"  Last green run: {run['html_url']}")
+              else:
+                  ok.append(line)
+
+          print("OK:", *ok, sep="\n  ")
+          if problems:
+              print("PROBLEMS:", *problems, sep="\n")
+              with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                  f.write("report<<EOF\n" + "\n".join(problems) +
+                          "\n\nHealthy: " + ("; ".join(ok) if ok else "none") + "\nEOF\n")
+              sys.exit(1)
+          print("\nAll refresh crons are within their freshness window.")
+          PY
+
+      - name: Raise the alarm
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT: ${{ steps.check.outputs.report }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # Daily cron, so it MUST NOT open a new issue every day. One open issue,
+          # commented on subsequent days.
+          existing=$(gh issue list --label network-staleness --state open \
+                       --limit 1 --json number --jq '.[0].number // empty')
+          body="A 137 network data refresh has stopped running.
+
+          ${REPORT:-(no detail captured — see the run log)}
+
+          What this means: the affected site is still UP and serving its last good
+          build. Its DATA is frozen as of the date above.
+
+          Most likely causes, in order:
+          1. The shared 2,000-minute GitHub Actions allowance is exhausted. Check
+             github.com/settings/billing. Starved runs last 1-11 seconds and have
+             an empty step list.
+          2. The workflow was disabled by hand and not re-enabled.
+          3. The refresh is genuinely failing — check that repo's own issues.
+
+          Watchdog run: $RUN
+
+          Close this once the affected refresh goes green again."
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Still stale as of $(date -u +%F).
+
+          $body"
+            exit 0
+          fi
+          gh label create network-staleness --color B60205 \
+            --description "A 137 site's data refresh has stalled" 2>/dev/null || true
+          gh issue create --label network-staleness \
+            --title "137 network: a data refresh has stalled" --body "$body"
