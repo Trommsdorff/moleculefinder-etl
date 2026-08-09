@@ -136,6 +136,16 @@ jobs:
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ⚠️ REQUIRED. This job has no actions/checkout (it reads the GitHub API,
+          # not the code), so there is no .git for `gh` to infer the target repo
+          # from, and every command below dies with "failed to run git: fatal: not
+          # a git repository". That is exactly how this watchdog failed on its
+          # first real firing (2026-08-09): the check itself worked perfectly and
+          # correctly caught JudicialFinder at 33 days stale — and then the step
+          # meant to REPORT it failed, so the alarm was silent. An alarm that
+          # cannot raise itself is the failure mode this whole file exists to
+          # prevent. GH_REPO supplies the context instead.
+          GH_REPO: ${{ github.repository }}
           REPORT: ${{ steps.check.outputs.report }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |

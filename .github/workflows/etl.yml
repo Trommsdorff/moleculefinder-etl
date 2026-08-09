@@ -78,6 +78,13 @@ jobs:
       - name: Open (or reuse) a failure issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ⚠️ REQUIRED. This job deliberately has no actions/checkout (it needs no
+          # code), so there is no .git for `gh` to infer the target repo from, and
+          # every command below dies with "failed to run git: fatal: not a git
+          # repository". That is not hypothetical: it is exactly how this alarm
+          # failed on its first real firing (2026-08-09) — the step meant to report
+          # a failure failed itself. GH_REPO supplies the context instead.
+          GH_REPO: ${{ github.repository }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           existing=$(gh issue list --label refresh-failure --state open \
