@@ -28,7 +28,23 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/snapshots data/seed
           if git diff --cached --quiet; then
-            echo "no changes"
+            # HEARTBEAT (added 2026-08-08) — do NOT simplify this back to `echo`.
+            # THIS REPO IS PUBLIC, and GitHub automatically disables scheduled
+            # workflows in a PUBLIC repo after 60 days with no repository
+            # activity. It does so silently: no failed run, no email, just a cron
+            # that stops existing. A run that finds no new molecules used to
+            # commit nothing, so a quiet stretch upstream could switch this
+            # workflow off — and it is also the host of the network freshness
+            # watchdog (watchdog.yml), so losing it would blind all five sites.
+            # One commit per run resets the 60-day clock permanently.
+            # (The 137 PRIVATE repos do not need this: the 60-day rule is
+            # public-repo-only. Their silent death is minutes exhaustion, which
+            # is a different problem with a different fix.)
+            date -u +%FT%TZ > data/LAST_CHECK
+            git add data/LAST_CHECK
+            git commit -m "etl: no changes $(date -u +%F) [heartbeat]"
+            git push
+            echo "no data changes — heartbeat committed to keep the cron alive"
           else
             git commit -m "etl: refresh $(date -u +%F)"
             git push
@@ -48,3 +64,37 @@ jobs:
         with:
           path: data/raw_cache
           key: pubchem-raw-${{ github.run_id }}
+
+  # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
+  # A separate job, not `if: failure()` on a step: a step-level guard cannot run
+  # when the job itself never starts.
+  alarm:
+    needs: run
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open (or reuse) a failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          existing=$(gh issue list --label refresh-failure --state open \
+                       --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Failed again: $RUN"
+            exit 0
+          fi
+          gh label create refresh-failure --color B60205 \
+            --description "Automated data refresh failed" 2>/dev/null || true
+          gh issue create --label refresh-failure \
+            --title "MoleculeFinder ETL FAILED" \
+            --body "The weekly MoleculeFinder ETL failed.
+
+          Run: $RUN
+
+          moleculefinder.com is still serving its last good build — the DATA is
+          frozen, the site is not down.
+
+          Close this issue once a run goes green again."
