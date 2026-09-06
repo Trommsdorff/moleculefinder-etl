@@ -107,11 +107,37 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
 - Batched POSTs need ONE comma-separated `cid=1,2,3`; repeated `cid=1&cid=2` returns only
   the first CID.
 
+## Traffic build plan 2026-09-05 — phases 0-3 built on branch `traffic-2026-09` (NOT pushed)
+Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
+- **Phase 0 — the refresh now reaches the site.** `etl.yml` no longer curls a Vercel deploy
+  hook (that rebuilt the web app from its own July snapshot copy while this repo drifted 77
+  molecule files ahead). A `sync-web` job checks out `moleculefinder-web` with a repo-scoped
+  PAT, copies `data/snapshots/`, and opens a PR titled `data: weekly snapshot YYYY-MM-DD`.
+  Merging is the deploy. A heartbeat-only week opens no PR.
+  **⚠ Needs a `WEB_REPO_TOKEN` Actions secret on THIS repo before the workflow can run.**
+- **Phase 1 — `assemble.build_description`** composes a unique 100-200 char description for
+  every record from `sources/seeds/description_phrases.yaml`; a curated `why_it_matters` line
+  leads it and stands alone when it already clears the floor. `why_it_matters.yaml` went from
+  59 entries to **498**. `attach_descriptions` raises on a duplicate, a short one, or an
+  em-dash.
+- **Phase 2 — `toxicity.best_oral`** is the single LD50 selector (oral rat > oral mouse > oral
+  any; sub-1 mg/kg dropped unless the slug is a named potent toxin). It feeds the Deadliest
+  board AND the dose lens, so neither can rank an intravenous value under an oral heading
+  again. `assemble_record` now carries `is_otc`/`dual_use`. `otc_allowlist.yaml` moved INTO
+  this repo (Actions checks out one repo) and drives 7 `kind:"use"` hubs.
+  `food_hubs.yaml` curates 13 food hubs by hand.
+- **Phase 3 — 52 new hubs** (family / element / GHS-hazard / size-band / 8 more SMARTS) and
+  **3 new boards** (lightest, safest, most-searched). `unify_category_kinds` forces one slug
+  onto one kind corpus-wide; `prune_thin_categories` drops derived hubs under 3 members.
+
 ## Next
 - **Launched on moleculefinder.com (498).** The `load_all` slug *reassignment* edge (moving a slug
   from one CID to another when the canon changes) is still not auto-handled — it needs a manual
   stale-row delete first, as the 489 reconcile did. Only bites a future canon change; the dup-key
   crash itself is fixed (`b882a07`).
-- Scale to `--target 10000` — **gated** until the marquee template earns engagement.
-- Turn on weekly `.github/workflows/etl.yml` (needs the Supabase secrets + a Vercel deploy
-  hook in the repo's Actions secrets).
+- **Catalog growth is ON** (the PubChem deposition it was gated on is retired, 2026-09-05).
+  Phase 4 of the traffic plan is the next build: monthly tranches of 100-150 rows from
+  `../drugs-wing-deferred.csv` appended to `scope_b_core.csv` with a `batch` column. NOT built.
+- Scale to `--target 10000` — still gated on engagement.
+- Weekly `.github/workflows/etl.yml` is live (Supabase secrets are set; the Vercel deploy hook
+  is gone, replaced by the phase 0 PR job).
