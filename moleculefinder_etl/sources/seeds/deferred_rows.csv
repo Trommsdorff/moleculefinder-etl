@@ -1,0 +1,15 @@
+# Rows pulled back out of a built tranche, and why. Read by tests/test_deferred_rows.py,
+# which fails the build if any of them reappears in scope_b_core.csv: the whole point of
+# writing a hold down is that the next tranche, working from ../drugs-wing-deferred.csv,
+# cannot quietly re-add it.
+#
+# HOLD RULE (Garrett, 2026-09-06): not approved for human use in the US, UK or EU, or
+# veterinary-only. It is a scope decision about what MoleculeFinder is for, not a claim
+# about the chemistry, and it is deliberately narrower than "controlled substance":
+# fentanyl, amphetamine and the benzodiazepines are approved medicines and stay in.
+molecule,pubchem_cid,wikipedia_views_monthly,held_from_batch,held_on,reason
+Trenbolone,25015,22332,2026-09-A,2026-09-06,Veterinary only: a cattle growth implant. Never approved for people anywhere.
+Xylazine,5707,19218,2026-09-A,2026-09-06,"Veterinary sedative only, never approved for people, and now an illicit adulterant."
+Ibutamoren,178024,14868,2026-09-A,2026-09-06,Never approved as a medicine anywhere; sold in the grey supplement market as MK-677.
+Metandienone,6300,11670,2026-09-A,2026-09-06,"Withdrawn from human use in the US, UK and EU; black-market muscle-building only."
+Semax,122178,11455,2026-09-A,2026-09-06,"Approved only in Russia and other former Soviet states; not in the US, UK or EU."

@@ -616,7 +616,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 616,Methane,297,22679,everyday-chemistry,alkane,,yes,,,2026-09-A
 617,Celecoxib,2662,22588,prescription-medicine,nsaid,,,,,2026-09-A
 618,Radon,24857,22554,element-material,element,,,,,2026-09-A
-619,Trenbolone,25015,22332,prescription-medicine,anabolic-steroid,,yes,,,2026-09-A
 620,Osmium,23937,22160,element-material,element,,,,,2026-09-A
 621,Clopidogrel,60606,22110,prescription-medicine,anticoagulant,,,,,2026-09-A
 622,Pentobarbital,4737,21931,prescription-medicine,barbiturate,,yes,,,2026-09-A
@@ -644,7 +643,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 644,Guanfacine,3519,19288,prescription-medicine,alpha-2-agonist,,,,,2026-09-A
 645,Polonium,6328143,19284,element-material,element,,,,,2026-09-A
 646,Vortioxetine,9966051,19229,prescription-medicine,antidepressant,,,,,2026-09-A
-647,Xylazine,5707,19218,prescription-medicine,alpha-2-agonist,,yes,,,2026-09-A
 648,Beryllium,5460467,19211,element-material,element,,,,,2026-09-A
 649,Paroxetine,43815,19109,prescription-medicine,ssri,,,,,2026-09-A
 650,Flunitrazepam,3380,18773,prescription-medicine,benzodiazepine,,,,,2026-09-A
@@ -686,7 +684,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 686,Acetylcysteine,12035,14982,otc-medicine,respiratory,yes,yes,,,2026-09-A
 687,Calcium oxide,14778,14922,everyday-chemistry,inorganic,,,,,2026-09-A
 688,Levothyroxine,5819,14888,prescription-medicine,hormone-medicine,,yes,,,2026-09-A
-689,Ibutamoren,178024,14868,prescription-medicine,other,,yes,,,2026-09-A
 690,Oseltamivir,65028,14808,prescription-medicine,antiviral,,,,,2026-09-A
 691,Carisoprodol,2576,14674,prescription-medicine,muscle-relaxant,,,,,2026-09-A
 692,Poly(methyl methacrylate),3032549,14590,element-material,polymer,,,,,2026-09-A
@@ -747,13 +744,11 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 747,Ritonavir,392622,11757,prescription-medicine,antiviral,,,,,2026-09-A
 748,Desvenlafaxine,125017,11755,prescription-medicine,snri,,,,,2026-09-A
 749,Vancomycin,14969,11738,prescription-medicine,antibiotic,,,,,2026-09-A
-750,Metandienone,6300,11670,prescription-medicine,anabolic-steroid,,yes,,,2026-09-A
 751,Levofloxacin,149096,11665,prescription-medicine,antibiotic,,,,,2026-09-A
 752,Niobium,23936,11615,element-material,element,,,,,2026-09-A
 753,Terbinafine,1549008,11568,otc-medicine,antifungal,yes,,,,2026-09-A
 754,Tacrolimus,445643,11524,prescription-medicine,immunosuppressant,,,,,2026-09-A
 755,Francium,6328145,11491,element-material,element,,,,,2026-09-A
-756,Semax,122178,11455,prescription-medicine,peptide,,yes,,,2026-09-A
 757,Nortriptyline,4543,11454,prescription-medicine,tricyclic-antidepressant,,,,,2026-09-A
 758,Copper(II) sulfate,24462,11433,everyday-chemistry,inorganic,,,,,2026-09-A
 759,Metoprolol,4171,11422,prescription-medicine,beta-blocker,,,,,2026-09-A

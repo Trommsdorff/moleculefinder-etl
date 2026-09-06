@@ -141,7 +141,7 @@ Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
   onto one kind corpus-wide; `prune_thin_categories` drops derived hubs under 3 members.
 
 ## Traffic build plan phase 4 + the automatic loop — built on `traffic-2026-09-tranche1`, NOT PUSHED
-- **Catalog tranche 2026-09-A: 498 -> 793 molecules** (`27b3a12`). 295 rows appended to
+- **Catalog tranche 2026-09-A: 498 -> 788 molecules** (`27b3a12`, minus the 5-row hold below). 295 rows appended to
   `scope_b_core.csv` under a new **`batch` column** (provenance: a tranche can be identified
   and lifted back out). 184 pharmaceuticals from `../drugs-wing-deferred.csv` at >=10k
   Wikipedia views/month (the plan says "the 206 pharmaceuticals at >=10k"; **206 is ALL rows
@@ -156,7 +156,17 @@ Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
   `/in/` hubs come free through the existing family-hub emission. 141 hubs, was 102.
   Every new family slug needs an entry in `description_phrases.yaml` or the description
   falls back to the word "compound", which is what phase 1 existed to remove.
-- **295 new `why_it_matters` lines** (793 total), written from the structured record only.
+- **290 new `why_it_matters` lines** (788 total), written from the structured record only.
+- **Five rows HELD back before deploy** (Garrett, 2026-09-06) on the rule *not approved for
+  human use in the US, UK or EU, or veterinary-only*: trenbolone, metandienone, ibutamoren,
+  semax, xylazine. They live in `sources/seeds/deferred_rows.csv` with a reason each, and
+  `tests/test_deferred_rows.py` fails the build if any reappears in `scope_b_core.csv` (they
+  are high in `../drugs-wing-deferred.csv`, so the next tranche would otherwise re-add them).
+  The rule is narrower than "controlled substance": fentanyl, amphetamine and the
+  benzodiazepines are approved medicines and stayed. Oxandrolone stayed for the same reason.
+  Side effect worth knowing: it also removed TWO `/in/` hubs, `anabolic-steroid` (3 -> 1) and
+  `alpha-2-agonist` (3 -> 2), both auto-pruned under the 3-member floor. So the sitemap went
+  964 -> **957**, not 959: five molecule pages and two hubs.
 - `assemble_record` flags a fetched record with **no SMILES** as `macromolecule` (the
   no-figure page variant) while leaving `hand_model` false: pembrolizumab is an antibody with
   a real PubChem CID, and only a hand-modeled record may say "no single PubChem compound".
