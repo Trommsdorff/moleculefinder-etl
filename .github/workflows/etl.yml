@@ -14,6 +14,10 @@ jobs:
       snapshot_changed: ${{ steps.commit.outputs.snapshot_changed }}
       molecules_changed: ${{ steps.commit.outputs.molecules_changed }}
       molecules_added:   ${{ steps.commit.outputs.molecules_added }}
+      # The commit this run PUSHED. sync-web must check this out explicitly: a bare
+      # actions/checkout gets the sha that TRIGGERED the workflow, which is the state
+      # before this run refreshed anything.
+      snapshot_sha:      ${{ steps.commit.outputs.snapshot_sha }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -53,6 +57,7 @@ jobs:
             git commit -m "etl: no changes $(date -u +%F) [heartbeat]"
             git push
             echo "snapshot_changed=false" >> "$GITHUB_OUTPUT"
+            echo "snapshot_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
             echo "no data changes — heartbeat committed to keep the cron alive"
           else
             # Diff summary for the web-repo PR body, measured BEFORE the commit while
@@ -64,6 +69,7 @@ jobs:
             echo "snapshot_changed=true"              >> "$GITHUB_OUTPUT"
             echo "molecules_changed=${changed}"       >> "$GITHUB_OUTPUT"
             echo "molecules_added=${added}"           >> "$GITHUB_OUTPUT"
+            echo "snapshot_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/cache/save@v4
         if: always()
@@ -102,9 +108,16 @@ jobs:
     if: needs.run.outputs.snapshot_changed == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the ETL (fresh snapshot)
+      - name: Check out the ETL (the commit this run just pushed)
         uses: actions/checkout@v6
         with:
+          # NOT the default. A bare checkout takes the sha that TRIGGERED the workflow,
+          # which is the tree as it was BEFORE the `run` job refreshed and pushed. Syncing
+          # that would make every weekly PR carry the PREVIOUS week's data: the exact
+          # failure phase 0 was written to fix, one layer up. Caught on the 2026-09-06
+          # dispatch, where the stale tree happened to equal the web repo's copy, so the
+          # job reported "already identical, no PR" and the fresh data went nowhere.
+          ref: ${{ needs.run.outputs.snapshot_sha }}
           path: etl
 
       - name: Check out the web repo
