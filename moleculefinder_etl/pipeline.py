@@ -178,6 +178,12 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_otc_uses(kept)
     # Curated food-hub membership, so /in/coffee is a real page and not one molecule.
     relationships.attach_food_hubs(kept)
+    # Element / GHS-hazard / size-band hubs, then prune every derived hub too thin to be
+    # a page. Both run after all the curated overlays, so the prune counts the real
+    # membership and never drops a curated hub.
+    assemble.attach_derived_categories(kept)
+    assemble.unify_category_kinds(kept)
+    assemble.prune_thin_categories(kept)
     # The page description (phase 1). LAST of the attach passes on purpose: it composes
     # from the curated why_it_matters line, the foods, the odor threshold and everything
     # assembled above, so it has to see all of them. Raises on a duplicate or a

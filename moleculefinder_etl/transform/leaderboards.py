@@ -75,6 +75,51 @@ BOARDS: dict[str, dict] = {
         "confidence": "from_source",
         "description": "Ranked by molecular weight: the heaviest molecules in the canon.",
     },
+    # ── added 2026-09-05 (build plan phase 3) ────────────────────────────────
+    # Three boards over columns the snapshot already carries. No new curation, no new
+    # fetch: the data was there and simply had no page.
+    "lightest": {
+        "title": "Lightest",
+        "metric": "molecular_weight",
+        "direction": "asc",
+        "unit": "g/mol",
+        "value_label": "Mol. weight",
+        "confidence": "from_source",
+        "description": (
+            "Ranked by molecular weight, smallest first: the simplest molecules in the "
+            "canon, the gases and small acids most of everyday chemistry is built out of."
+        ),
+    },
+    "safest": {
+        "title": "Safest",
+        "metric": "ld50_mg_per_kg",
+        "direction": "desc",   # a HIGHER oral LD50 = a larger dose before harm
+        "unit": "mg/kg",
+        "value_label": "LD50",
+        "confidence": "from_source",
+        "columns": ["route", "species"],
+        "description": (
+            "The Deadliest board read the other way: ranked by the HIGHEST reported oral "
+            "LD50, so the molecules that take the largest dose per kilogram of body weight "
+            "to do harm come first. Same oral-only rule and the same route and species on "
+            "every row. A high LD50 means an animal study found a large dose tolerable, "
+            "nothing more: it is not a safety rating and not advice."
+        ),
+    },
+    "most-searched": {
+        "title": "Most searched",
+        "metric": "pageviews_monthly",
+        "direction": "desc",
+        "unit": "views/mo",
+        "value_label": "Wikipedia views",
+        "confidence": "from_source",
+        "description": (
+            "The most famous molecules in the canon, ranked by average monthly views of "
+            "their English Wikipedia article. This measures attention, not importance: it "
+            "is an honest popularity board, and the one place on the site where the "
+            "ranking says something about people rather than about molecules."
+        ),
+    },
 }
 
 
