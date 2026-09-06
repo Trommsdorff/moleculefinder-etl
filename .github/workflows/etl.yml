@@ -105,7 +105,14 @@ jobs:
   # it any number of times converges on the same single PR.
   sync-web:
     needs: run
-    if: needs.run.outputs.snapshot_changed == 'true'
+    # Deliberately NOT gated on `snapshot_changed`. That output compares this run to the
+    # ETL's OWN previous commit, which answers "did this run change anything" and not the
+    # question that matters, "is the web repo behind". They come apart the moment one
+    # sync fails to deliver: the ETL moves on, later runs report no change, and the site
+    # stays behind forever with nothing reporting it. That is what the 2026-09-06 dispatch
+    # left behind, a 217-file refresh stranded in the ETL and no run that would ever ship
+    # it. The PR step already compares against the web repo's committed copy and exits
+    # cleanly when they match, so a quiet week costs ~30 seconds and opens no PR.
     runs-on: ubuntu-latest
     steps:
       - name: Check out the ETL (the commit this run just pushed)
