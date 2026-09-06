@@ -140,7 +140,12 @@ Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
   **3 new boards** (lightest, safest, most-searched). `unify_category_kinds` forces one slug
   onto one kind corpus-wide; `prune_thin_categories` drops derived hubs under 3 members.
 
-## Traffic build plan phase 4 + the automatic loop — built on `traffic-2026-09-tranche1`, NOT PUSHED
+## Traffic build plan phase 4 + the automatic loop — DEPLOYED 2026-09-06 (`e937ca2`)
+The weekly loop closed itself end to end on 2026-09-06: run 34064809022 opened
+moleculefinder-web PR #2 (222 files), waited for its `ci` run on that exact sha, saw
+`verify` succeed, squash-merged, and Vercel deployed `4a4e1ee`, which then triggered the
+web repo's IndexNow workflow (222 URLs submitted, 222 accepted). Nobody clicked anything.
+Three defects were found and fixed getting there; see the three commits after `9f6c934`.
 - **Catalog tranche 2026-09-A: 498 -> 788 molecules** (`27b3a12`, minus the 5-row hold below). 295 rows appended to
   `scope_b_core.csv` under a new **`batch` column** (provenance: a tranche can be identified
   and lifted back out). 184 pharmaceuticals from `../drugs-wing-deferred.csv` at >=10k
