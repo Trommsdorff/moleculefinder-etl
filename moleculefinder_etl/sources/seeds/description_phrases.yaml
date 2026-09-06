@@ -26,44 +26,44 @@
 # falls back to "compound", which is exactly the generic wording this file
 # exists to eliminate, so `mfetl transform` logs a warning naming it.
 families:
-  alcohol:              {article: an, phrase: alcohol}
-  aldehyde:             {article: an, phrase: aldehyde}
-  alkaloid:             {article: a,  phrase: plant alkaloid}
-  alkene:               {article: an, phrase: alkene}
-  amide:                {article: an, phrase: amide}
-  amine:                {article: an, phrase: amine}
-  amino-acid:           {article: an, phrase: amino acid}
-  biguanide:            {article: a,  phrase: biguanide}
-  carotenoid:           {article: a,  phrase: carotenoid pigment}
-  ester:                {article: an, phrase: ester}
-  fatty-acid:           {article: a,  phrase: fatty acid}
-  flavonoid:            {article: a,  phrase: flavonoid}
-  glycoside:            {article: a,  phrase: glycoside}
-  inorganic:            {article: an, phrase: inorganic compound}
-  ketone:               {article: a,  phrase: ketone}
-  neurotransmitter:     {article: a,  phrase: neurotransmitter}
-  nucleobase:           {article: a,  phrase: nucleobase}
-  organic-acid:         {article: an, phrase: organic acid}
-  otc:                  {article: an, phrase: over-the-counter medicine}
-  peptide:              {article: a,  phrase: peptide}
-  phenolic:             {article: a,  phrase: phenolic compound}
-  phospholipid-mixture: {article: a,  phrase: phospholipid mixture}
-  pigment-polymer:      {article: a,  phrase: pigment polymer}
-  polysaccharide:       {article: a,  phrase: polysaccharide}
-  protein:              {article: a,  phrase: protein}
-  protein-mixture:      {article: a,  phrase: protein mixture}
-  steroid-hormone:      {article: a,  phrase: steroid hormone}
-  sugar:                {article: a,  phrase: sugar}
-  sugar-alcohol:        {article: a,  phrase: sugar alcohol}
-  sulfur:               {article: a,  phrase: sulfur compound}
-  surfactant:           {article: a,  phrase: surfactant}
-  sweetener:            {article: a,  phrase: sweetener}
-  terpene:              {article: a,  phrase: terpene}
-  terpenoid:            {article: a,  phrase: terpenoid}
-  vitamin:              {article: a,  phrase: vitamin}
+  alcohol:              {article: an, phrase: alcohol, hub: Alcohols}
+  aldehyde:             {article: an, phrase: aldehyde, hub: Aldehydes}
+  alkaloid:             {article: a, phrase: plant alkaloid, hub: Plant alkaloids}
+  alkene:               {article: an, phrase: alkene, hub: Alkenes}
+  amide:                {article: an, phrase: amide, hub: Amides}
+  amine:                {article: an, phrase: amine, hub: Amines}
+  amino-acid:           {article: an, phrase: amino acid, hub: Amino acids}
+  biguanide:            {article: a, phrase: biguanide, hub: Biguanides}
+  carotenoid:           {article: a, phrase: carotenoid pigment, hub: Carotenoids}
+  ester:                {article: an, phrase: ester, hub: Esters}
+  fatty-acid:           {article: a, phrase: fatty acid, hub: Fatty acids}
+  flavonoid:            {article: a, phrase: flavonoid, hub: Flavonoids}
+  glycoside:            {article: a, phrase: glycoside, hub: Glycosides}
+  inorganic:            {article: an, phrase: inorganic compound, hub: Inorganic compounds}
+  ketone:               {article: a, phrase: ketone, hub: Ketones}
+  neurotransmitter:     {article: a, phrase: neurotransmitter, hub: Neurotransmitters}
+  nucleobase:           {article: a, phrase: nucleobase, hub: Nucleobases}
+  organic-acid:         {article: an, phrase: organic acid, hub: Organic acids}
+  otc:                  {article: an, phrase: over-the-counter medicine, hub: Over-the-counter medicines}
+  peptide:              {article: a, phrase: peptide, hub: Peptides}
+  phenolic:             {article: a, phrase: phenolic compound, hub: Phenolic compounds}
+  phospholipid-mixture: {article: a, phrase: phospholipid mixture, hub: Phospholipid mixtures}
+  pigment-polymer:      {article: a, phrase: pigment polymer, hub: Pigment polymers}
+  polysaccharide:       {article: a, phrase: polysaccharide, hub: Polysaccharides}
+  protein:              {article: a, phrase: protein, hub: Proteins}
+  protein-mixture:      {article: a, phrase: protein mixture, hub: Protein mixtures}
+  steroid-hormone:      {article: a, phrase: steroid hormone, hub: Steroid hormones}
+  sugar:                {article: a, phrase: sugar, hub: Sugars}
+  sugar-alcohol:        {article: a, phrase: sugar alcohol, hub: Sugar alcohols}
+  sulfur:               {article: a, phrase: sulfur compound, hub: Sulfur compounds}
+  surfactant:           {article: a, phrase: surfactant, hub: Surfactants}
+  sweetener:            {article: a, phrase: sweetener, hub: Sweeteners}
+  terpene:              {article: a, phrase: terpene, hub: Terpenes}
+  terpenoid:            {article: a, phrase: terpenoid, hub: Terpenoids}
+  vitamin:              {article: a, phrase: vitamin, hub: Vitamins}
   # "other" is the catch-all the Scope B CSV uses when no family fits (87 rows).
   # Deliberately vague rather than wrong; the bucket clause carries the meaning.
-  other:                {article: a,  phrase: compound}
+  other:                {article: a, phrase: compound, hub: Other compounds}
 
 # ── buckets: scope_bucket -> the clause that follows the family phrase ────────
 buckets:

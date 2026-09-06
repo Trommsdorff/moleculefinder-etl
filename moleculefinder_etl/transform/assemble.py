@@ -75,6 +75,10 @@ def _normalize_greek(name: "str | None") -> "str | None":
 # Type slugs whose display name _titleize would mangle (acronyms).
 _TYPE_NAMES = {"nsaid": "NSAID"}
 
+# scope_family values that never become a /in/ hub. "other" is the Scope B CSV's
+# explicit "no family fits" marker on 87 rows, not a family.
+FAMILY_HUB_EXCLUDE = frozenset({"other"})
+
 
 # Registry/cross-reference codes that make poor display or search synonyms.
 _CODE_PREFIX = re.compile(
@@ -244,6 +248,20 @@ def apply_scope_bucket(rec: dict, bucket: "str | None", family: "str | None") ->
         if not any(c.get("kind") == "bucket" for c in rec["categories"]):
             rec["categories"].append({"slug": bucket, "name": buckets.bucket_label(bucket) or _titleize(bucket),
                                       "kind": "bucket", "confidence": label_for("curated_fact"),
+                                      "source": _src("curated")})
+    # kind:"family" (build plan 2026-09-05, phase 3). scope_family is set on 100% of
+    # records and was never emitted as a category, so 36 ready-made groupings existed in
+    # the data and none of them had a page. Thin ones are pruned later by
+    # prune_thin_categories, so a one-member family never becomes a hub.
+    #
+    # "other" is the CSV's explicit "no family fits" value on 87 rows. A hub called
+    # Other compounds holding a sixth of the canon would be a page about nothing, so it
+    # is the one family that never gets one.
+    if family and family not in FAMILY_HUB_EXCLUDE:
+        label = ((_phrases().get("families") or {}).get(family) or {}).get("hub") or _titleize(family)
+        if not any(c.get("kind") == "family" for c in rec["categories"]):
+            rec["categories"].append({"slug": family, "name": label, "kind": "family",
+                                      "confidence": label_for("curated_fact"),
                                       "source": _src("curated")})
 
 
@@ -464,6 +482,172 @@ def attach_descriptions(records: list[dict]) -> None:
     lengths = sorted(len(r["description"]) for r in records)
     log.info("  descriptions: %d unique, %d..%d chars (mean %d)", len(seen), lengths[0],
              lengths[-1], sum(lengths) // len(lengths))
+
+
+# ── Derived hubs (build plan 2026-09-05, phase 3) ────────────────────────────
+# Three more groupings that are already implicit in every record and cost nothing but
+# a pass over the snapshot: which elements a formula contains, which GHS hazard label
+# a molecule carries, and how big it is. Each becomes its own /in/<slug> page through
+# the existing category inversion, with no web change at all.
+
+# Elements worth a hub. Carbon, hydrogen and oxygen are deliberately absent: they are
+# in nearly every record, so a hub for them would list the whole canon and mean
+# nothing. What is left is the heteroatoms and metals a reader can actually use as a
+# filter.
+ELEMENT_HUBS: dict[str, str] = {
+    "N": "Nitrogen", "S": "Sulfur", "P": "Phosphorus",
+    "F": "Fluorine", "Cl": "Chlorine", "Br": "Bromine", "I": "Iodine",
+    "Na": "Sodium", "K": "Potassium", "Ca": "Calcium", "Mg": "Magnesium",
+    "Fe": "Iron", "Zn": "Zinc", "Se": "Selenium", "Co": "Cobalt",
+    "Cr": "Chromium", "Al": "Aluminium", "Bi": "Bismuth", "Li": "Lithium",
+}
+# Two-letter symbols must be tried before one-letter ones, or "Na" reads as N + a.
+_FORMULA_TOKEN = re.compile(r"([A-Z][a-z]?)")
+
+# GHS pictogram / signal word -> hub. The wording is the label's own, reported as a
+# fact about what suppliers filed, never as advice.
+GHS_HUBS: dict[str, tuple[str, str]] = {
+    "GHS01": ("explosive", "Explosive"),
+    "GHS02": ("flammable", "Flammable"),
+    "GHS03": ("oxidizing", "Oxidizing"),
+    "GHS04": ("compressed-gas", "Compressed gas"),
+    "GHS05": ("corrosive", "Corrosive"),
+    "GHS06": ("acutely-toxic", "Acutely toxic"),
+    "GHS07": ("irritant", "Irritant"),
+    "GHS08": ("health-hazard", "Health hazard"),
+    "GHS09": ("environmental-hazard", "Environmental hazard"),
+}
+SIGNAL_WORD_HUBS: dict[str, tuple[str, str]] = {
+    "Danger": ("ghs-danger", "GHS Danger"),
+    "Warning": ("ghs-warning", "GHS Warning"),
+}
+
+# Molecular-weight bands. Only the two ends: the middle of the distribution is where
+# almost everything sits, so a band there would be a hub of 400 molecules.
+SIZE_BANDS: list[tuple[str, str, float, float]] = [
+    ("under-100-g-mol", "Under 100 g/mol", 0.0, 100.0),
+    ("over-1000-g-mol", "Over 1000 g/mol", 1000.0, float("inf")),
+]
+
+
+def _elements_in(formula: "str | None") -> list[str]:
+    """Element symbols present in a molecular formula, hub-worthy ones only."""
+    if not formula:
+        return []
+    seen, out = set(), []
+    for sym in _FORMULA_TOKEN.findall(formula):
+        if sym in ELEMENT_HUBS and sym not in seen:
+            seen.add(sym)
+            out.append(sym)
+    return out
+
+
+def attach_derived_categories(records: list[dict]) -> None:
+    """Stamp the element, GHS-hazard and size-band hubs on every record."""
+    for rec in records:
+        cats = rec["categories"]
+        have = {(c.get("kind"), c.get("slug")) for c in cats}
+
+        for sym in _elements_in(rec.get("molecular_formula")):
+            # Prefix the slug so an element can never collide with a family or bucket of
+            # the same name: /in/sulfur the family (9 sulfur compounds) and /in/sulfur the
+            # element (55 molecules containing an S) are different questions.
+            slug = "element-" + ELEMENT_HUBS[sym].lower()
+            if ("element", slug) not in have:
+                cats.append({"slug": slug, "name": ELEMENT_HUBS[sym], "kind": "element",
+                             "confidence": label_for("functional_group"), "source": _src("pubchem")})
+
+        ghs = rec.get("ghs") or {}
+        for pic in ghs.get("pictograms") or []:
+            hub = GHS_HUBS.get(pic)
+            if hub and ("poison", hub[0]) not in have:
+                cats.append({"slug": hub[0], "name": hub[1], "kind": "poison",
+                             "confidence": label_for("ld50_raw"), "source": _src("pubchem")})
+        word = SIGNAL_WORD_HUBS.get(ghs.get("signal_word") or "")
+        if word and ("poison", word[0]) not in have:
+            cats.append({"slug": word[0], "name": word[1], "kind": "poison",
+                         "confidence": label_for("ld50_raw"), "source": _src("pubchem")})
+
+        mw = rec.get("molecular_weight")
+        if isinstance(mw, (int, float)):
+            for slug, label, lo, hi in SIZE_BANDS:
+                if lo <= mw < hi and ("size", slug) not in have:
+                    cats.append({"slug": slug, "name": label, "kind": "size",
+                                 "confidence": label_for("descriptor"), "source": _src("pubchem")})
+
+
+# One /in/<slug> page can only be one kind. The web inverts categories BY SLUG, so a
+# slug appearing under two kinds (family:"amino-acid" beside a curated
+# type:"amino-acid") yields a single hub with an arbitrary label and an arbitrary
+# confidence chip, depending only on which molecule file was read first. That was
+# harmless while every kind used its own vocabulary; phase 3's family hubs put 11
+# slugs into collision at once, so it is settled here instead of left to file order.
+#
+# Highest priority wins and the other memberships are rewritten onto it, so no
+# molecule ever falls out of a hub it belonged in.
+KIND_PRIORITY = ("bucket", "food", "use", "family", "type", "drug_class",
+                 "functional_group", "element", "poison", "size")
+
+
+def unify_category_kinds(records: list[dict]) -> None:
+    """Force every category slug to exactly one kind, corpus-wide."""
+    kinds_by_slug: dict[str, set] = {}
+    for rec in records:
+        for c in rec["categories"]:
+            kinds_by_slug.setdefault(c["slug"], set()).add(c.get("kind"))
+    rank = {k: i for i, k in enumerate(KIND_PRIORITY)}
+    winners = {slug: min(kinds, key=lambda k: rank.get(k, len(rank)))
+               for slug, kinds in kinds_by_slug.items() if len(kinds) > 1}
+    if not winners:
+        return
+    # The label to keep is the winning kind's own label, so /in/sweetener reads
+    # "Sweetener" (the bucket) and not "Sweeteners" (the family).
+    names = {}
+    for rec in records:
+        for c in rec["categories"]:
+            if c["slug"] in winners and c.get("kind") == winners[c["slug"]]:
+                names[c["slug"]] = c.get("name")
+    for rec in records:
+        out, seen = [], set()
+        for c in rec["categories"]:
+            slug = c["slug"]
+            if slug in winners:
+                c = {**c, "kind": winners[slug], "name": names.get(slug, c.get("name"))}
+            key = (c["kind"], slug)
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(c)
+        rec["categories"] = out
+    log.info("  hubs: unified %d slug(s) onto one kind (%s)", len(winners),
+             ", ".join(f"{s}->{k}" for s, k in sorted(winners.items())[:6]))
+
+
+# Kinds that are DERIVED (computed from data, not hand-curated) and therefore safe to
+# prune when they would make a near-empty page. A curated food or type membership is
+# never pruned: it was written on purpose and a small curated hub is still a real one.
+PRUNABLE_KINDS = ("family", "element", "poison", "size", "functional_group")
+MIN_HUB_MEMBERS = 3
+
+
+def prune_thin_categories(records: list[dict], min_members: int = MIN_HUB_MEMBERS) -> None:
+    """Drop derived memberships whose hub would have fewer than `min_members` molecules.
+
+    A one-member /in/<x> page is the thin content this whole build plan is about; it
+    would be published, indexed, and hold nothing. Curated kinds are exempt."""
+    counts: dict[tuple, int] = {}
+    for rec in records:
+        for c in rec["categories"]:
+            if c.get("kind") in PRUNABLE_KINDS:
+                counts[(c["kind"], c["slug"])] = counts.get((c["kind"], c["slug"]), 0) + 1
+    dropped = {k for k, n in counts.items() if n < min_members}
+    if not dropped:
+        return
+    for rec in records:
+        rec["categories"] = [c for c in rec["categories"]
+                             if (c.get("kind"), c.get("slug")) not in dropped]
+    log.info("  hubs: pruned %d derived hub(s) under %d members (%s)", len(dropped), min_members,
+             ", ".join(sorted(f"{k}:{s}" for k, s in dropped)[:8]))
 
 
 def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
