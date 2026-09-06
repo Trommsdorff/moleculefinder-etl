@@ -173,6 +173,11 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_brands(kept)
     # Odor detection thresholds for the "Most pungent" (stinkiest) leaderboard.
     relationships.attach_odor_thresholds(kept)
+    # The page description (phase 1). LAST of the attach passes on purpose: it composes
+    # from the curated why_it_matters line, the foods, the odor threshold and everything
+    # assembled above, so it has to see all of them. Raises on a duplicate or a
+    # sub-100-character description rather than shipping one.
+    assemble.attach_descriptions(kept)
 
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],

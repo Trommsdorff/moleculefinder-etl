@@ -1,0 +1,106 @@
+# Description phrases — the vocabulary of the templated description floor
+# (BUILD-PLAN-traffic-2026-09-05 phase 1, layer A).
+#
+# WHY THIS EXISTS. Until 2026-09 the meta description, the on-page "What is X?"
+# answer and the FAQPage JSON-LD all came from the Wikidata one-line description,
+# which for 292 of 498 molecules is literally "chemical compound". 498 pages
+# carried 164 distinct descriptions, mean length 30 characters. Search engines
+# read that as thin, duplicated content, and it is the reason the site ranked on
+# page five for its own head terms.
+#
+# `assemble.build_description` composes a sentence per molecule from fields that
+# exist on EVERY record (title, formula, weight, scope family, scope bucket, GHS,
+# and whichever measured value the molecule carries). The wording lives here, not
+# in the code, so it stays consistent and editable and a future tranche of
+# molecules inherits it for free.
+#
+# HOUSE RULES for anything added below: no em-dashes in visible site copy; no
+# medical advice and no dosing; state what a thing IS, never what a reader should
+# do about it. Phrases must read naturally in the slot they fill:
+#
+#   {Title} ({formula}, {weight} g/mol) is {article} {family} {bucket}.
+#      {hazard}. {measured value}. {structure}.
+
+# ── families: scope_family -> the noun phrase and its article ────────────────
+# Every scope_family present in the canon needs an entry. An unmapped family
+# falls back to "compound", which is exactly the generic wording this file
+# exists to eliminate, so `mfetl transform` logs a warning naming it.
+families:
+  alcohol:              {article: an, phrase: alcohol}
+  aldehyde:             {article: an, phrase: aldehyde}
+  alkaloid:             {article: a,  phrase: plant alkaloid}
+  alkene:               {article: an, phrase: alkene}
+  amide:                {article: an, phrase: amide}
+  amine:                {article: an, phrase: amine}
+  amino-acid:           {article: an, phrase: amino acid}
+  biguanide:            {article: a,  phrase: biguanide}
+  carotenoid:           {article: a,  phrase: carotenoid pigment}
+  ester:                {article: an, phrase: ester}
+  fatty-acid:           {article: a,  phrase: fatty acid}
+  flavonoid:            {article: a,  phrase: flavonoid}
+  glycoside:            {article: a,  phrase: glycoside}
+  inorganic:            {article: an, phrase: inorganic compound}
+  ketone:               {article: a,  phrase: ketone}
+  neurotransmitter:     {article: a,  phrase: neurotransmitter}
+  nucleobase:           {article: a,  phrase: nucleobase}
+  organic-acid:         {article: an, phrase: organic acid}
+  otc:                  {article: an, phrase: over-the-counter medicine}
+  peptide:              {article: a,  phrase: peptide}
+  phenolic:             {article: a,  phrase: phenolic compound}
+  phospholipid-mixture: {article: a,  phrase: phospholipid mixture}
+  pigment-polymer:      {article: a,  phrase: pigment polymer}
+  polysaccharide:       {article: a,  phrase: polysaccharide}
+  protein:              {article: a,  phrase: protein}
+  protein-mixture:      {article: a,  phrase: protein mixture}
+  steroid-hormone:      {article: a,  phrase: steroid hormone}
+  sugar:                {article: a,  phrase: sugar}
+  sugar-alcohol:        {article: a,  phrase: sugar alcohol}
+  sulfur:               {article: a,  phrase: sulfur compound}
+  surfactant:           {article: a,  phrase: surfactant}
+  sweetener:            {article: a,  phrase: sweetener}
+  terpene:              {article: a,  phrase: terpene}
+  terpenoid:            {article: a,  phrase: terpenoid}
+  vitamin:              {article: a,  phrase: vitamin}
+  # "other" is the catch-all the Scope B CSV uses when no family fits (87 rows).
+  # Deliberately vague rather than wrong; the bucket clause carries the meaning.
+  other:                {article: a,  phrase: compound}
+
+# ── buckets: scope_bucket -> the clause that follows the family phrase ────────
+buckets:
+  body-endogenous:    that occurs naturally in the human body
+  everyday-chemistry: used in everyday household chemistry
+  food-flavor:        found in everyday food and flavor
+  nutrient-vitamin:   counted among the everyday nutrients
+  otc-medicine:       sold over the counter
+  plant-compound:     made by plants
+  scent-aroma:        carried in everyday scent and aroma
+  sweetener:          used to sweeten food and drink
+
+# ── GHS pictogram -> the plain-English hazard word for the label clause ───────
+# Ordered by how much a reader cares; build_description names at most two.
+ghs_pictograms:
+  GHS01: explosive
+  GHS06: acutely toxic
+  GHS05: corrosive
+  GHS02: flammable
+  GHS08: a health hazard
+  GHS03: oxidizing
+  GHS04: a compressed gas
+  GHS09: hazardous to the environment
+  GHS07: an irritant
+
+# ── functional group -> the phrase used in the "its structure carries" clause ─
+functional_groups:
+  alcohols:          a hydroxyl group
+  aldehydes:         an aldehyde group
+  amides:            an amide bond
+  amines:            an amine group
+  aromatics:         an aromatic ring
+  carboxylic-acids:  a carboxylic acid group
+  esters:            an ester group
+  ethers:            an ether linkage
+  halogenated:       a halogen atom
+  ketones:           a ketone group
+  phenols:           a phenol group
+  phosphates:        a phosphate group
+  thiols:            a thiol group
