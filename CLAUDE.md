@@ -26,6 +26,14 @@ mfetl all
 pytest                       # offline tests must stay green
 ruff check .
 ```
+**On Garrett's machine `source .venv/bin/activate` silently gives you the WRONG python.**
+The venv predates the Dropbox -> `~/137` move (2026-07-28) and its `activate` still exports
+`VIRTUAL_ENV=/Users/garrettpoe/Dropbox/137/...`, a path that no longer exists, so the PATH it
+prepends resolves to nothing and `python3` falls through to the system framework build, where
+`rdkit` is not installed. The venv itself is fine. Call its binaries directly:
+`./.venv/bin/python3 -m moleculefinder_etl.cli all`, `./.venv/bin/python3 -m pytest`. (The
+`mfetl` console script has the same stale path baked into its shebang.) Recreating the venv
+would also fix it; nothing in the repo depends on the old one.
 
 ## Status: LIVE on moleculefinder.com — canon is **498** (domain pointed 2026-07-14)
 > The site is launched on its own domain and serves **498** molecules (489 Scope B core + 9 added for
@@ -107,7 +115,9 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
 - Batched POSTs need ONE comma-separated `cid=1,2,3`; repeated `cid=1&cid=2` returns only
   the first CID.
 
-## Traffic build plan 2026-09-05 — phases 0-3 built on branch `traffic-2026-09` (NOT pushed)
+## Traffic build plan 2026-09-05 — phases 0-3 DEPLOYED 2026-09-06 (`cd8eea1`, then `094d8e1`)
+Phases 0-3 are live. What follows describes what they changed; the phase 4 + 7 section below
+is the NEXT thing, built on `traffic-2026-09-tranche1` and NOT pushed.
 Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
 - **Phase 0 — the refresh now reaches the site.** `etl.yml` no longer curls a Vercel deploy
   hook (that rebuilt the web app from its own July snapshot copy while this repo drifted 77
@@ -130,14 +140,46 @@ Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
   **3 new boards** (lightest, safest, most-searched). `unify_category_kinds` forces one slug
   onto one kind corpus-wide; `prune_thin_categories` drops derived hubs under 3 members.
 
+## Traffic build plan phase 4 + the automatic loop — built on `traffic-2026-09-tranche1`, NOT PUSHED
+- **Catalog tranche 2026-09-A: 498 -> 793 molecules** (`27b3a12`). 295 rows appended to
+  `scope_b_core.csv` under a new **`batch` column** (provenance: a tranche can be identified
+  and lifted back out). 184 pharmaceuticals from `../drugs-wing-deferred.csv` at >=10k
+  Wikipedia views/month (the plan says "the 206 pharmaceuticals at >=10k"; **206 is ALL rows
+  at >=10k, of which 184 are pharmaceutical and 22 recreational**), plus 111 elements,
+  materials and household chemicals from the top-500 remainder. The 89 recreational-drug rows
+  stay deferred, gated on Garrett.
+- **Two new buckets**, `prescription-medicine` and `element-material`, mirrored in the web's
+  `lib/buckets.ts` + `--bucket-rx` / `--bucket-element`. The eight original buckets could not
+  hold these honestly: OTC-vs-Rx is hand-decided per `otc_allowlist.yaml`, and 70 elements in
+  `everyday-chemistry` (17 members) would be the periodic table wearing a household label.
+- **`family` is now also the drug class** (ssri, benzodiazepine, beta-blocker...), so 39 new
+  `/in/` hubs come free through the existing family-hub emission. 141 hubs, was 102.
+  Every new family slug needs an entry in `description_phrases.yaml` or the description
+  falls back to the word "compound", which is what phase 1 existed to remove.
+- **295 new `why_it_matters` lines** (793 total), written from the structured record only.
+- `assemble_record` flags a fetched record with **no SMILES** as `macromolecule` (the
+  no-figure page variant) while leaving `hand_model` false: pembrolizumab is an antibody with
+  a real PubChem CID, and only a hand-modeled record may say "no single PubChem compound".
+- **The weekly loop is now automatic** (`00e91de`). `sync-web` waits for the web repo's
+  `verify` check on the PR it opened and **squash-merges when it is green**; the merge is the
+  deploy. A red check leaves the PR open and fails the job (issue + email). It keeps exactly
+  ONE open data PR: it pushes onto the open one's branch and closes any other as superseded,
+  which is safe only because the snapshot is copied whole and never diffed.
+  **`WEB_REPO_TOKEN` needs `Checks: Read` added.** It has Contents + Pull requests read/write,
+  enough to open and merge the PR but not to see whether the check passed. Without it the wait
+  times out after 5 minutes with a message naming this first, rather than merging blind.
+- Counts: 793 molecules, 793 distinct descriptions (100-209 chars, mean 137), 0 orphans,
+  141 hubs, deadliest 232 entries, 97 tests, ruff clean.
+
 ## Next
-- **Launched on moleculefinder.com (498).** The `load_all` slug *reassignment* edge (moving a slug
+- **Launched on moleculefinder.com (498 live; 793 built and waiting on the branch above).** The `load_all` slug *reassignment* edge (moving a slug
   from one CID to another when the canon changes) is still not auto-handled — it needs a manual
   stale-row delete first, as the 489 reconcile did. Only bites a future canon change; the dup-key
   crash itself is fixed (`b882a07`).
-- **Catalog growth is ON** (the PubChem deposition it was gated on is retired, 2026-09-05).
-  Phase 4 of the traffic plan is the next build: monthly tranches of 100-150 rows from
-  `../drugs-wing-deferred.csv` appended to `scope_b_core.csv` with a `batch` column. NOT built.
+- **Catalog growth is ON and tranche 1 is BUILT** (see the section above). The next tranche
+  appends the next block of `../drugs-wing-deferred.csv` (the 566 pharmaceuticals under 10k
+  views) with a new `batch` value. The 89 recreational-drug rows are a separate tranche that
+  needs Garrett's explicit yes.
 - Scale to `--target 10000` — still gated on engagement.
 - Weekly `.github/workflows/etl.yml` is live (Supabase secrets are set; the Vercel deploy hook
   is gone, replaced by the phase 0 PR job).
