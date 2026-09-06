@@ -61,6 +61,60 @@ families:
   terpene:              {article: a, phrase: terpene, hub: Terpenes}
   terpenoid:            {article: a, phrase: terpenoid, hub: Terpenoids}
   vitamin:              {article: a, phrase: vitamin, hub: Vitamins}
+  # ── Added with catalog tranche 2026-09-A ────────────────────────────────────
+  # Drug classes. The phrase names the CLASS a prescriber would recognize; what a
+  # medicine is taken FOR belongs in its curated why_it_matters line, not here, so
+  # this file never states an indication and never implies advice.
+  alpha-2-agonist:      {article: an, phrase: alpha-2 agonist, hub: Alpha-2 agonists}
+  anabolic-steroid:     {article: an, phrase: anabolic steroid, hub: Anabolic steroids}
+  anaesthetic:          {article: an, phrase: anaesthetic, hub: Anaesthetics}
+  analgesic:            {article: a, phrase: non-opioid painkiller, hub: Non-opioid painkillers}
+  antibiotic:           {article: an, phrase: antibiotic, hub: Antibiotics}
+  anticoagulant:        {article: a, phrase: blood thinner, hub: Blood thinners}
+  anticonvulsant:       {article: an, phrase: anticonvulsant, hub: Anticonvulsants}
+  antidepressant:       {article: an, phrase: antidepressant, hub: Antidepressants}
+  antidiabetic:         {article: a, phrase: diabetes medicine, hub: Diabetes medicines}
+  antiemetic:           {article: an, phrase: anti-nausea medicine, hub: Anti-nausea medicines}
+  antifungal:           {article: an, phrase: antifungal, hub: Antifungals}
+  antihistamine:        {article: an, phrase: antihistamine, hub: Antihistamines}
+  antihypertensive:     {article: a, phrase: blood-pressure medicine, hub: Blood-pressure medicines}
+  antineoplastic:       {article: a, phrase: cancer medicine, hub: Cancer medicines}
+  antiparasitic:        {article: an, phrase: antiparasitic, hub: Antiparasitics}
+  antipsychotic:        {article: an, phrase: antipsychotic, hub: Antipsychotics}
+  antispasmodic:        {article: an, phrase: antispasmodic, hub: Antispasmodics}
+  antiviral:            {article: an, phrase: antiviral, hub: Antivirals}
+  anxiolytic:           {article: an, phrase: anti-anxiety medicine, hub: Anti-anxiety medicines}
+  barbiturate:          {article: a, phrase: barbiturate, hub: Barbiturates}
+  benzodiazepine:       {article: a, phrase: benzodiazepine, hub: Benzodiazepines}
+  beta-blocker:         {article: a, phrase: beta blocker, hub: Beta blockers}
+  corticosteroid:       {article: a, phrase: corticosteroid, hub: Corticosteroids}
+  dementia-medicine:    {article: a, phrase: dementia medicine, hub: Dementia medicines}
+  hormone-medicine:     {article: a, phrase: hormone medicine, hub: Hormone medicines}
+  hypnotic:             {article: a, phrase: sleep medicine, hub: Sleep medicines}
+  immunosuppressant:    {article: an, phrase: immunosuppressant, hub: Immunosuppressants}
+  lipid-lowering:       {article: a, phrase: cholesterol medicine, hub: Cholesterol medicines}
+  muscle-relaxant:      {article: a, phrase: muscle relaxant, hub: Muscle relaxants}
+  nsaid:                {article: a, phrase: non-steroidal anti-inflammatory, hub: NSAIDs}
+  opioid:               {article: an, phrase: opioid, hub: Opioids}
+  opioid-antagonist:    {article: an, phrase: opioid antagonist, hub: Opioid antagonists}
+  parkinsons-medicine:  {article: a, phrase: Parkinson's medicine, hub: Parkinson's medicines}
+  pde5-inhibitor:       {article: a, phrase: PDE5 inhibitor, hub: PDE5 inhibitors}
+  proton-pump-inhibitor: {article: a, phrase: proton pump inhibitor, hub: Proton pump inhibitors}
+  respiratory:          {article: a, phrase: airway medicine, hub: Airway medicines}
+  retinoid:             {article: a, phrase: retinoid, hub: Retinoids}
+  snri:                 {article: a, phrase: serotonin-norepinephrine reuptake inhibitor, hub: SNRIs}
+  ssri:                 {article: a, phrase: selective serotonin reuptake inhibitor, hub: SSRIs}
+  stimulant:            {article: a, phrase: stimulant, hub: Stimulants}
+  triptan:              {article: a, phrase: triptan, hub: Triptans}
+  tricyclic-antidepressant: {article: a, phrase: tricyclic antidepressant, hub: Tricyclic antidepressants}
+  # Elements, materials and the household-chemistry families the tranche adds.
+  alkane:               {article: an, phrase: alkane, hub: Alkanes}
+  alkyne:               {article: an, phrase: alkyne, hub: Alkynes}
+  aromatic:             {article: an, phrase: aromatic hydrocarbon, hub: Aromatic hydrocarbons}
+  element:              {article: a, phrase: chemical element, hub: Chemical elements}
+  mineral:              {article: a, phrase: hard mineral solid, hub: Hard mineral solids}
+  organohalogen:        {article: an, phrase: organohalogen, hub: Organohalogens}
+  polymer:              {article: a, phrase: polymer, hub: Polymers}
   # "other" is the catch-all the Scope B CSV uses when no family fits (87 rows).
   # Deliberately vague rather than wrong; the bucket clause carries the meaning.
   other:                {article: a, phrase: compound, hub: Other compounds}
@@ -75,6 +129,10 @@ buckets:
   plant-compound:     made by plants
   scent-aroma:        carried in everyday scent and aroma
   sweetener:          used to sweeten food and drink
+  # Added with catalog tranche 2026-09-A. The prescription clause deliberately says
+  # only where the thing is dispensed from, never what it treats or how it is used.
+  prescription-medicine: dispensed on prescription
+  element-material:      met as a pure element or an engineered material
 
 # ── GHS pictogram -> the plain-English hazard word for the label clause ───────
 # Ordered by how much a reader cares; build_description names at most two.

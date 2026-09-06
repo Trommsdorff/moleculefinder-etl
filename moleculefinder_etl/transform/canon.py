@@ -169,7 +169,12 @@ def _scope_b_rows() -> list[dict]:
     The 489 are hand-picked, so every row is marquee tier (never truncated). Real compounds
     keep their PubChem CID; ``hand-model`` rows (collagen, starch, gluten...) get a synthetic
     negative CID — the same value `household_seed()` derives from the name, so the two agree.
-    Pageviews come straight from the CSV (no Wikipedia API call needed to rank)."""
+    Pageviews come straight from the CSV (no Wikipedia API call needed to rank).
+
+    The optional `batch` column tags a catalog-growth tranche (build plan phase 4, e.g.
+    "2026-09-A"). It is provenance, not behaviour: it rides through to the record so a
+    reviewer can tell which run a molecule arrived in, and so a bad tranche can be found
+    and lifted back out in one query. Rows written before batches exist carry None."""
     if not SCOPE_B_CSV.exists():
         return []
     out: list[dict] = []
@@ -190,6 +195,7 @@ def _scope_b_rows() -> list[dict]:
                 "scope_family": (row.get("family") or "").strip() or None,
                 "is_otc": (row.get("is_otc") or "").strip().lower() == "yes",
                 "dual_use": (row.get("dual_use") or "").strip().lower() == "yes",
+                "batch": (row.get("batch") or "").strip() or None,
             })
     return out
 
@@ -298,7 +304,7 @@ def write_parquet(rows: "list[dict]", path: Path | None = None) -> Path:
     # household seed) — assemble_record reads row["scope_bucket"] straight off the canon row.
     cols = ["cid", "tier", "build_order", "has_common_name", "wikidata_qid",
             "enwiki_title", "summary", "pageviews", "hand_model",
-            "scope_bucket", "scope_family", "is_otc", "dual_use"]
+            "scope_bucket", "scope_family", "is_otc", "dual_use", "batch"]
     norm = [{**{c: r.get(c) for c in cols}, "hand_model": bool(r.get("hand_model")),
              "is_otc": bool(r.get("is_otc")), "dual_use": bool(r.get("dual_use"))} for r in rows]
     pq.write_table(pa.Table.from_pylist(norm), path)

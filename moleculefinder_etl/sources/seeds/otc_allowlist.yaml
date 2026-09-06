@@ -19,6 +19,7 @@
 # mapping there is read as a plain allowlist entry and emits no hub.
 
 analgesics_nsaids:      # pain / fever, OTC strengths
+  - Diclofenac              # OTC as the Voltaren topical gel (tranche 2026-09-A)
   - Ibuprofen
   - Aspirin                 # acetylsalicylic acid
   - Paracetamol             # = acetaminophen
@@ -31,6 +32,7 @@ sleep_and_neuro:
   - Diphenhydramine         # Benadryl / nighttime sleep aid
 
 antihistamines:           # allergy, OTC
+  - Levocetirizine          # Xyzal; the active half of cetirizine (tranche 2026-09-A)
   - Cetirizine
   - Loratadine
   - Fexofenadine
@@ -55,6 +57,7 @@ antacids_and_gi:          # heartburn / stomach, OTC
   - Bisacodyl               # laxative
 
 cough_cold_decongestant:  # OTC
+  - Acetylcysteine          # OTC mucolytic across much of the EU (tranche 2026-09-A)
   - Dextromethorphan
   - Guaifenesin
   - Pseudoephedrine
@@ -63,6 +66,13 @@ cough_cold_decongestant:  # OTC
   - Ephedrine               # borderline (behind-counter); keep, easy to drop
 
 topical_and_skin:         # OTC
+  # Added with tranche 2026-09-A. All four are sold without a prescription somewhere in
+  # US/UK/EU in a topical form, which is the allowlist's stated test; each also has
+  # prescription forms, and the allowlist does not distinguish strengths.
+  - Ketoconazole            # Nizoral anti-dandruff shampoo
+  - Terbinafine             # Lamisil AT cream
+  - Minoxidil               # Rogaine
+  - Lidocaine               # numbing creams and patches
   - Hydrocortisone
   - Benzoyl peroxide
   - Salicylic acid          # acne / wart (also a plant compound)
@@ -71,11 +81,19 @@ topical_and_skin:         # OTC
   - Zinc oxide              # diaper cream / sunscreen
   - Calamine
 
+# Recorded as an OTC decision but deliberately NOT mapped to a hub in
+# relationships.USE_GROUPS: naloxone is the only member, and a one-molecule /in/ page is
+# exactly the thin content the 2026-09 build plan exists to remove. The file's own rule
+# covers this: a group with no USE_GROUPS mapping is a plain allowlist entry.
+emergency_otc:            # added with tranche 2026-09-A
+  - Naloxone                # Narcan nasal spray, OTC in the US since 2023
+
 vitamins_supplements_otc: # sold as supplements; many also nutrients
   - Glucosamine
   - Dimenhydrinate          # Dramamine (note: technically a salt/mixture)
 
 antiseptics:              # wound / surface disinfectants, OTC (also everyday-chemistry)
+  - Povidone-iodine         # Betadine (tranche 2026-09-A)
   - Hydrogen peroxide
   - Isopropyl alcohol       # = rubbing alcohol
   - Iodine                  # tincture of iodine (molecular I2)

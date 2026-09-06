@@ -717,10 +717,21 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         # until 2026-09: `assemble_handmodel` copied them, `assemble_record` did not, so
         # 480 of 498 records shipped without the flags the CSV had set for them.
         "is_otc": bool(row.get("is_otc")), "dual_use": bool(row.get("dual_use")),
+        # Which catalog tranche this molecule arrived in (None for the original core).
+        # Provenance only; nothing branches on it.
+        "batch": row.get("batch") or None,
     }
 
     if curated:
         _merge_curated(rec, curated)
+
+    # A fetched compound with no SMILES has nothing to draw: PubChem carries the record
+    # but not a depictable structure (monoclonal antibodies and other biologics). Flag it
+    # so the web uses the structureless page variant instead of rendering an empty figure.
+    # `hand_model` stays False: this molecule DOES have a real PubChem CID, and the sheet
+    # line keys its "no single PubChem compound" wording off hand_model, not this flag.
+    if not iso and not can:
+        rec["macromolecule"] = True
 
     _apply_best_oral_ld50(rec)
 
@@ -796,6 +807,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "scope_bucket": meta.get("bucket"), "scope_family": meta.get("family"),
         "hand_model": True, "macromolecule": True,
         "is_otc": bool(meta.get("is_otc")), "dual_use": bool(meta.get("dual_use")),
+        "batch": row.get("batch") or None,
     }
     # The curated family becomes a kind:"type" membership, so the molecule groups on its
     # own /in/<family> page and survives filter-4. Confidence: hand-authored (from_source).
