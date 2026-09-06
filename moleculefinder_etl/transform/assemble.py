@@ -9,11 +9,18 @@ labeled through `confidence.py`, and every source key is run through the license
 firewall (`registry.assert_not_blocked`) as it is stamped on.
 """
 from __future__ import annotations
+import functools
+import logging
 import re
+
+import yaml
 
 from .confidence import label_for
 from . import names, slugs, categories, hooks, structures, similarity, families, buckets
+from ..config import SEEDS_DIR
 from ..sources.registry import assert_not_blocked
+
+log = logging.getLogger("mfetl")
 
 # PubChem renamed these properties (CanonicalSMILES→ConnectivitySMILES,
 # IsomericSMILES→SMILES); read the new names, fall back to the old for safety.
@@ -219,6 +226,225 @@ def apply_scope_bucket(rec: dict, bucket: "str | None", family: "str | None") ->
             rec["categories"].append({"slug": bucket, "name": buckets.bucket_label(bucket) or _titleize(bucket),
                                       "kind": "bucket", "confidence": label_for("curated_fact"),
                                       "source": _src("curated")})
+
+
+# ── Descriptions (build plan 2026-09-05, phase 1) ────────────────────────────
+# Until 2026-09 the meta description, the on-page "What is X?" answer and the
+# FAQPage JSON-LD all read from Wikidata's one-line description, which for 292 of
+# 498 molecules is the string "chemical compound": 498 pages, 164 distinct
+# descriptions, mean length 30 characters. Search engines correctly read that as
+# thin duplicated content.
+#
+# `build_description` composes a specific, unique sentence for EVERY record out of
+# fields every record already has. The wording lives in
+# sources/seeds/description_phrases.yaml so it stays consistent and editable.
+#
+# A curated `why_it_matters` line, when present, LEADS the description: it is the
+# better sentence and it is the site's own voice. The template then supplies the
+# identity clause behind it. That composition (rather than the plan's plain
+# fallback chain) is deliberate: many curated lines are short by design, because
+# they are also the roam SELECTED panel's caption, and a 41-character meta
+# description is the exact failure this phase exists to fix. Composing keeps the
+# curated voice AND clears the floor; a future short curated line cannot
+# reintroduce the problem.
+DESCRIPTION_PHRASES = SEEDS_DIR / "description_phrases.yaml"
+MIN_DESCRIPTION = 100          # the floor verify-snapshot.mjs enforces on the web side
+_warned_families: set = set()
+
+
+@functools.lru_cache(maxsize=1)
+def _phrases() -> dict:
+    if not DESCRIPTION_PHRASES.exists():
+        return {"families": {}, "buckets": {}, "ghs_pictograms": {}, "functional_groups": {}}
+    return yaml.safe_load(DESCRIPTION_PHRASES.read_text()) or {}
+
+
+def _fmt_num(v: float) -> str:
+    """1580.0 -> '1,580'; 152.15 -> '152'; 0.0006 -> '0.0006'."""
+    if v is None:
+        return ""
+    if abs(v) >= 10:
+        return f"{round(v):,}"
+    if abs(v) >= 1:
+        return f"{v:.1f}".rstrip("0").rstrip(".")
+    return f"{v:g}"
+
+
+def _family_phrase(rec: dict) -> tuple[str, str]:
+    """(article, noun phrase) for the record's scope family."""
+    fam = (rec.get("scope_family") or "").strip().lower()
+    entry = (_phrases().get("families") or {}).get(fam)
+    if entry:
+        return entry.get("article", "a"), entry.get("phrase", "compound")
+    if fam and fam not in _warned_families:
+        _warned_families.add(fam)
+        log.warning("  description: no phrase for scope_family %r (falling back to 'compound'); "
+                    "add it to description_phrases.yaml", fam)
+    return "a", "compound"
+
+
+def _identity_clause(rec: dict) -> str:
+    """'Vanillin (C8H8O3, 152 g/mol) is a phenolic compound found in everyday food
+    and flavor.' Hand-modeled macromolecules have no formula or weight, so they get
+    the same sentence without the parenthetical."""
+    article, phrase = _family_phrase(rec)
+    bucket = (_phrases().get("buckets") or {}).get(rec.get("scope_bucket") or "")
+    ident = rec["title"]
+    formula, mw = rec.get("molecular_formula"), rec.get("molecular_weight")
+    if formula and mw:
+        ident = f"{ident} ({formula}, {_fmt_num(mw)} g/mol)"
+    elif formula:
+        ident = f"{ident} ({formula})"
+    return f"{ident} is {article} {phrase}" + (f" {bucket}." if bucket else ".")
+
+
+def _hazard_clause(rec: dict) -> str:
+    """'Labeled GHS Danger: corrosive and acutely toxic.' Factual label reporting,
+    never a handling instruction (house rule: no advice)."""
+    ghs = rec.get("ghs") or {}
+    word = ghs.get("signal_word")
+    if not word:
+        return ""
+    table = _phrases().get("ghs_pictograms") or {}
+    words = [table[p] for p in table if p in set(ghs.get("pictograms") or [])][:2]
+    if not words:
+        return f"Labeled GHS signal word {word}."
+    return f"Labeled GHS {word}: {' and '.join(words)}."
+
+
+def _measure_clause(rec: dict) -> str:
+    """The one measured number this molecule actually carries, if any. Ordered by
+    how distinctive it is, so a sweetener leads with sweetness rather than LD50."""
+    if rec.get("relative_sweetness"):
+        return f"About {_fmt_num(rec['relative_sweetness'])} times as sweet as table sugar."
+    if rec.get("scoville_shu"):
+        return f"Rated {_fmt_num(rec['scoville_shu'])} Scoville heat units as a pure compound."
+    if rec.get("odor_threshold"):
+        return f"Detectable by smell at about {_fmt_num(rec['odor_threshold'])} ng per cubic metre of air."
+    if rec.get("half_life_hours"):
+        return f"Its reported half-life in the body is about {_fmt_num(rec['half_life_hours'])} hours."
+    oral = next((t for t in rec.get("toxicity") or [] if t.get("route") == "oral"), None)
+    if oral:
+        return (f"Its lowest reported oral LD50 is {_fmt_num(oral['value_num'])} mg/kg "
+                f"in the {oral['species']}.")
+    return ""
+
+
+def _structure_clause(rec: dict) -> str:
+    """'Its structure carries an aromatic ring and a hydroxyl group.' Used only when
+    the sentences above leave the description under the floor."""
+    table = _phrases().get("functional_groups") or {}
+    groups = [table[c["slug"]] for c in rec.get("categories") or []
+              if c.get("kind") == "functional_group" and c.get("slug") in table][:2]
+    if not groups:
+        return ""
+    return f"Its structure carries {' and '.join(groups)}."
+
+
+def _food_clause(rec: dict) -> str:
+    foods = [c["name"].lower() for c in rec.get("categories") or [] if c.get("kind") == "food"][:3]
+    if not foods:
+        return ""
+    if len(foods) == 1:
+        return f"On MoleculeFinder it is mapped to {foods[0]}."
+    return f"On MoleculeFinder it is mapped to {', '.join(foods[:-1])} and {foods[-1]}."
+
+
+def _synonym_clause(rec: dict) -> str:
+    """'Also known as vanillic aldehyde.' Padding that earns its place: the synonym
+    is a real query a reader might type."""
+    syns = [x for x in (rec.get("synonyms") or []) if x and x.lower() != (rec["title"] or "").lower()][:2]
+    if not syns:
+        return ""
+    return f"Also known as {' and '.join(syns).lower()}."
+
+
+def _neighbor_clause(rec: dict) -> str:
+    """'Its closest structural neighbor in the canon is ferulic acid.' Last padding
+    clause, and the one that most invites a second page view."""
+    edges = rec.get("edges") or []
+    if not edges:
+        return ""
+    return f"Its closest structural neighbor in the MoleculeFinder canon is {edges[0]['neighbor_title'].lower()}."
+
+
+def _macromolecule_clause(rec: dict) -> str:
+    if not rec.get("macromolecule"):
+        return ""
+    return ("It has no single molecular formula, so MoleculeFinder carries it as a "
+            "hand-modeled entry rather than one PubChem compound.")
+
+
+def build_description(rec: dict) -> str:
+    """The page description: unique per molecule, never under MIN_DESCRIPTION chars.
+
+    Feeds the meta description, the on-page "What is X?" answer and the FAQPage
+    acceptedAnswer (one string, so structured data can never drift from the visible
+    page). Clauses are appended in order of value to a reader and stop as soon as
+    the floor is cleared, so a molecule with a rich record does not get a padded
+    sentence it does not need.
+    """
+    curated = ((rec.get("why_it_matters") or {}).get("text") or "").strip()
+    if curated:
+        # The curated line leads and, when it already clears the floor, stands alone.
+        # A search snippet is cut around 155-160 characters, so bolting the identity
+        # clause onto an already-good sentence would only push the interesting half
+        # out of the snippet. The identity clause is the FIRST filler below instead.
+        parts = [curated if curated.endswith((".", "!", "?")) else curated + "."]
+        filler = (_identity_clause(rec),)
+    else:
+        parts = [_identity_clause(rec)]
+        filler = ()
+
+    # Optional clauses, best first. Appended only while the text is under the floor,
+    # so a description stays a description and not a data dump.
+    for clause in filler + (_macromolecule_clause(rec), _hazard_clause(rec),
+                            _measure_clause(rec), _food_clause(rec), _structure_clause(rec),
+                            _synonym_clause(rec), _neighbor_clause(rec)):
+        if len(" ".join(parts)) >= MIN_DESCRIPTION:
+            break
+        if clause:
+            parts.append(clause)
+    return " ".join(p for p in parts if p)
+
+
+def attach_descriptions(records: list[dict]) -> None:
+    """Stamp ``rec['description']`` on every record. Call after the curated overlays
+    (why_it_matters, foods, odor thresholds) are attached, so they can feed it.
+
+    Uniqueness is a build-time guarantee, not a hope: every description opens with
+    the molecule's own title, and titles are unique across the canon. This asserts
+    it anyway, because a duplicate description is the precise defect phase 1 exists
+    to remove and a silent regression would be invisible until Bing flagged it.
+    """
+    seen: dict[str, str] = {}
+    clashes: list[str] = []
+    short: list[str] = []
+    for rec in records:
+        d = build_description(rec)
+        rec["description"] = d
+        rec["description_source"] = ("MoleculeFinder curated"
+                                     if (rec.get("why_it_matters") or {}).get("text")
+                                     else "MoleculeFinder generated")
+        if len(d) < MIN_DESCRIPTION:
+            short.append(f"{rec['slug']} ({len(d)}): {d}")
+        if d in seen:
+            clashes.append(f"{rec['slug']} duplicates {seen[d]}: {d[:80]}")
+        seen[d] = rec["slug"]
+    if clashes:
+        raise SystemExit("description build failed, duplicate description(s):\n  "
+                         + "\n  ".join(clashes))
+    if short:
+        raise SystemExit(f"description build failed, {len(short)} under {MIN_DESCRIPTION} chars:\n  "
+                         + "\n  ".join(short))
+    # House rule (137 web standards): no em-dashes in visible site copy. The description
+    # is visible copy on every molecule page, so enforce it where it is built.
+    dashes = [r["slug"] for r in records if "\u2014" in r["description"]]
+    if dashes:
+        raise SystemExit("description build failed, em-dash in visible copy: " + ", ".join(dashes))
+    lengths = sorted(len(r["description"]) for r in records)
+    log.info("  descriptions: %d unique, %d..%d chars (mean %d)", len(seen), lengths[0],
+             lengths[-1], sum(lengths) // len(lengths))
 
 
 def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
