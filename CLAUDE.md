@@ -165,9 +165,12 @@ Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
   deploy. A red check leaves the PR open and fails the job (issue + email). It keeps exactly
   ONE open data PR: it pushes onto the open one's branch and closes any other as superseded,
   which is safe only because the snapshot is copied whole and never diffed.
-  **`WEB_REPO_TOKEN` needs `Checks: Read` added.** It has Contents + Pull requests read/write,
-  enough to open and merge the PR but not to see whether the check passed. Without it the wait
-  times out after 5 minutes with a message naming this first, rather than merging blind.
+  **Green is decided from the ACTIONS API by `head_sha`**, not from `gh pr checks`: *Checks is
+  not a permission a fine-grained PAT can hold at all*, so the check-runs route was never open
+  to this token. It requires the newest `ci` workflow run for the PR's exact head commit to be
+  `completed`/`success` AND its `verify` job to be `success` (a run can conclude success with
+  its only job skipped). `WEB_REPO_TOKEN` needs **Actions: Read** for this, plus **Issues: RW**
+  for the superseded-PR comment; both were granted 2026-09-06 alongside Contents + Pull requests.
 - Counts: 793 molecules, 793 distinct descriptions (100-209 chars, mean 137), 0 orphans,
   141 hubs, deadliest 232 entries, 97 tests, ruff clean.
 
