@@ -170,6 +170,11 @@ Full spec: `../BUILD-PLAN-traffic-2026-09-05.md`. What changed in THIS repo:
 - `assemble_record` flags a fetched record with **no SMILES** as `macromolecule` (the
   no-figure page variant) while leaving `hand_model` false: pembrolizumab is an antibody with
   a real PubChem CID, and only a hand-modeled record may say "no single PubChem compound".
+- **`sync-web` checks out the sha the `run` job pushed**, not the one that triggered the
+  workflow. A bare `actions/checkout` gets the triggering sha, i.e. the tree BEFORE this run
+  refreshed anything, so every weekly PR would have carried the previous week's data: the
+  phase 0 failure again, one layer up. Caught on the 2026-09-06 dispatch, where the stale
+  tree happened to equal the web repo's copy and the job said "already identical, no PR".
 - **The weekly loop is now automatic** (`00e91de`). `sync-web` waits for the web repo's
   `verify` check on the PR it opened and **squash-merges when it is green**; the merge is the
   deploy. A red check leaves the PR open and fails the job (issue + email). It keeps exactly
