@@ -405,6 +405,17 @@ def _neighbor_clause(rec: dict) -> str:
     return f"Its closest structural neighbor in the MoleculeFinder canon is {edges[0]['neighbor_title'].lower()}."
 
 
+def _provenance_clause(rec: dict) -> str:
+    """The terminal clause, and the reason the floor is structurally guaranteed rather
+    than merely observed. Every clause above depends on data a record MIGHT lack; a
+    sparsely populated molecule (no GHS, no measured value, no foods, no matched
+    functional group, no synonym, no neighbor) could otherwise land under the floor and
+    hard-fail the build on a data refresh. This one is always true and always available.
+    It is generic, so it fires last and only when nothing better is left."""
+    return ("Every value on its MoleculeFinder page carries a source and a confidence "
+            "label saying whether it was measured, computed, or inferred.")
+
+
 def _macromolecule_clause(rec: dict) -> str:
     if not rec.get("macromolecule"):
         return ""
@@ -437,7 +448,8 @@ def build_description(rec: dict) -> str:
     # so a description stays a description and not a data dump.
     for clause in filler + (_macromolecule_clause(rec), _hazard_clause(rec),
                             _measure_clause(rec), _food_clause(rec), _structure_clause(rec),
-                            _synonym_clause(rec), _neighbor_clause(rec)):
+                            _synonym_clause(rec), _neighbor_clause(rec),
+                            _provenance_clause(rec)):
         if len(" ".join(parts)) >= MIN_DESCRIPTION:
             break
         if clause:
