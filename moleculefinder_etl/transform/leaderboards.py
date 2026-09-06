@@ -16,10 +16,17 @@ BOARDS: dict[str, dict] = {
         "unit": "mg/kg",
         "value_label": "LD50",
         "confidence": "from_source",
+        # The route is now shown per row (`columns`), because until 2026-09 this board
+        # claimed oral and ranked whatever route a molecule happened to have. It now
+        # only ever ranks an oral value (transform/toxicity.best_oral), and it says so
+        # on every row instead of asking the reader to trust the header.
+        "columns": ["route", "species"],
         "description": (
-            "Ranked by the lowest reported oral LD50. The smaller the lethal dose per "
-            "kilogram of body weight, the deadlier. Animal data shown as neutral science: "
-            "an estimate, never a threshold to act on."
+            "Ranked by the lowest reported oral LD50, preferring the rat and then the "
+            "mouse so the numbers compare like with like. Every row names its route and "
+            "species. A molecule measured only by injection is not listed here, because "
+            "an injected dose is not a swallowed one. Animal data shown as neutral "
+            "science: an estimate, never a threshold to act on."
         ),
     },
     "sweetest": {
@@ -77,6 +84,10 @@ def rank(board: str, molecules: list[dict]) -> dict:
     key, direction = meta["metric"], meta["direction"]
     have = [m for m in molecules if m.get(key) is not None]
     have.sort(key=lambda m: m[key], reverse=(direction == "desc"))
+    # Extra per-row columns a board declares (the Deadliest board shows the route and
+    # species its value was measured by). Read from `ld50_route` / `ld50_species` and
+    # emitted as plain `route` / `species` so the web renders them without a mapping.
+    extra = meta.get("columns") or []
     entries = [
         {
             "rank": i + 1,
@@ -85,6 +96,7 @@ def rank(board: str, molecules: list[dict]) -> dict:
             "title": m["title"],
             "formula": m.get("molecular_formula"),
             "value_num": m[key],
+            **{c: m.get(f"ld50_{c}") for c in extra},
         }
         for i, m in enumerate(have)
     ]

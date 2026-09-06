@@ -1,0 +1,195 @@
+# Food hub membership (build plan 2026-09-05, phase 2.3)
+# ------------------------------------------------------------------------------
+# WHY: 14 of the 17 /in/<food> hubs had two molecules or fewer. /in/coffee was a
+# one-molecule page (caffeine) competing with /roam/morning-coffee, which has seven.
+#
+# HOW, and a deliberate departure from the plan. The plan said to populate a thin
+# food hub "from the world's member list". Taken literally that ships false claims:
+# the `spicy-dinner` world contains piperine, gingerol, allicin and allyl
+# isothiocyanate, which come from pepper, ginger, garlic and mustard, NOT from chili
+# peppers, and the `morning-coffee` world contains adenosine and paraxanthine, which
+# are in the DRINKER, not the drink. A world is an experience; a food hub is a
+# factual "this is in that". So the membership is hand-curated here instead, drawing
+# on the world rosters where the world genuinely is the food (coffee, chocolate,
+# wine) and on the food itself where it is not.
+#
+# Every entry is a documented component or a standard ingredient of the food named.
+# Additive and idempotent: it never removes a membership a curated/*.yaml overlay
+# already set, and every slug is validated against the snapshot, so a typo fails the
+# build rather than shipping a dangling hub.
+#
+# `name` overrides the titleized slug where title case would look wrong.
+
+coffee:
+  name: Coffee
+  molecules:
+    - caffeine              # the reason most people drink it
+    - chlorogenic-acid      # the most abundant polyphenol in a cup
+    - caffeic-acid          # chlorogenic acid's other half
+    - theobromine           # trace, alongside caffeine
+    - theophylline          # trace, alongside caffeine
+    - niacin                # formed from trigonelline during roasting
+    - guaiacol              # roast smoke note
+    - furfural              # roast note, and a staling marker
+    - hydroxymethylfurfural # forms as the sugars caramelize in the roast
+    - acrylamide            # forms from asparagine and sugars in the roast
+
+tea:
+  name: Tea
+  molecules:
+    - caffeine
+    - theophylline
+    - theobromine
+    - theanine                  # found almost nowhere but tea
+    - epigallocatechin-gallate  # the headline green tea catechin
+    - catechin
+    - gallic-acid
+    - tannic-acid               # the dry grip of strong tea
+    - quercetin
+
+chocolate:
+  name: Chocolate
+  molecules:
+    - theobromine
+    - caffeine
+    - phenethylamine
+    - anandamide
+    - tyramine
+    - catechin
+    - stearic-acid   # cocoa butter's dominant fat
+    - oleic-acid
+    - palmitic-acid
+    - lecithin       # the standard emulsifier in a bar
+    - vanillin       # the standard flavoring in a bar
+    - sucrose
+
+cocoa:
+  name: Cocoa
+  molecules:
+    - theobromine
+    - caffeine
+    - phenethylamine
+    - anandamide
+    - tyramine
+    - catechin
+    - stearic-acid
+    - palmitic-acid
+    - oleic-acid
+
+wine:
+  name: Wine
+  molecules:
+    - ethanol
+    - resveratrol
+    - tannic-acid
+    - tartaric-acid
+    - malic-acid
+    - cyanidin
+    - quercetin
+    - catechin
+    - gallic-acid
+    - succinic-acid
+    - glycerol
+    - acetic-acid            # the volatile acidity every wine carries a little of
+    - isoamyl-alcohol        # a fermentation fusel alcohol
+    - potassium-bitartrate   # the "wine diamonds" that crystallize in a cold bottle
+    - sodium-metabisulfite   # the added sulfite the label has to declare
+
+beer:
+  name: Beer
+  molecules:
+    - ethanol
+    - maltose             # what the mashed starch becomes
+    - myrcene             # hop oil
+    - caryophyllene       # hop oil
+    - isoamyl-acetate     # the banana ester of an ale yeast
+    - isoamyl-alcohol
+    - diacetyl            # the butterscotch off-flavour brewers test for
+    - acetaldehyde        # green apple, another fermentation marker
+    - 2-nonenal           # the cardboard note of a stale beer
+    - glycerol
+    - carbon-dioxide
+
+spirits:
+  name: Spirits
+  molecules:
+    - ethanol
+    - isoamyl-alcohol   # the largest fusel alcohol in a distillate
+    - acetaldehyde
+    - ethyl-acetate     # the solvent-pear note of a young spirit
+    - methanol          # a trace congener of any fruit distillate
+    - furfural          # from the barrel
+    - vanillin          # from the charred oak
+    - guaiacol          # from the char
+    - maltol
+
+chili-peppers:
+  name: Chili peppers
+  molecules:
+    - capsaicin
+    - dihydrocapsaicin
+    - nordihydrocapsaicin
+    - homocapsaicin
+    - homodihydrocapsaicin
+    - nonivamide
+    - ascorbic-acid    # peppers are among the richest sources of vitamin C
+    - beta-carotene
+    - lutein
+    - zeaxanthin
+
+hot-sauce:
+  name: Hot sauce
+  molecules:
+    - capsaicin
+    - dihydrocapsaicin
+    - nordihydrocapsaicin
+    - nonivamide
+    - acetic-acid      # the vinegar base
+    - sodium-chloride
+    - sodium-benzoate  # the usual preservative
+    - xanthan-gum      # the usual thickener
+
+black-pepper:
+  name: Black pepper
+  molecules:
+    - piperine
+    - caryophyllene
+    - limonene
+    - alpha-pinene
+    - myrcene
+    - linalool
+
+table-sugar:
+  name: Table sugar
+  molecules:
+    - sucrose
+    - glucose    # what sucrose splits into
+    - fructose
+
+honey:
+  name: Honey
+  molecules:
+    - fructose
+    - glucose
+    - sucrose
+    - maltose
+    - gluconic-acid           # honey's principal acid
+    - methylglyoxal           # the manuka activity marker
+    - hydroxymethylfurfural   # the standard freshness and heating marker
+    - phenylacetic-acid       # a honey aroma note
+
+fruit:
+  name: Fruit
+  molecules:
+    - fructose
+    - glucose
+    - sucrose
+    - citric-acid
+    - malic-acid
+    - tartaric-acid
+    - ascorbic-acid
+    - pectin
+    - quercetin
+    - beta-carotene
+    - limonene
+    - ethylene       # the hormone that ripens it

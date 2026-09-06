@@ -21,12 +21,16 @@ def hooks_for(mol: dict) -> list[dict]:
             "half_life_hours": mol["half_life_hours"],
             "serving_mg": curated.get("serving_mg"),
         }))
-    # Flagship: dose makes the poison (any molecule with an LD50)
-    if mol.get("ld50"):
-        first = mol["ld50"][0]
+    # Flagship: dose makes the poison. Fed by the SAME chosen row as the Deadliest
+    # board (assemble._apply_best_oral_ld50 -> toxicity.best_oral): a preferred oral
+    # value, never simply the first row parsed. A molecule with no usable oral row
+    # gets no dose lens, because scaling an intravenous LD50 to a reader's body weight
+    # and captioning it as a swallowed dose is the wrong answer, not a rough one.
+    if mol.get("ld50_mg_per_kg") is not None:
         out.append(_hook("dose_poison", "inferred", {
-            "ld50_mg_per_kg": first["value_num"], "species": first["species"],
-            "route": first["route"],
+            "ld50_mg_per_kg": mol["ld50_mg_per_kg"],
+            "species": mol.get("ld50_species"),
+            "route": mol.get("ld50_route"),
         }))
     # Hand-crafted interactive: BAC (ethanol only)
     if mol.get("cid") == ETHANOL_CID:

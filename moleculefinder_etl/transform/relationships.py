@@ -26,17 +26,23 @@ shipping a dangling reference (spec §9 acceptance criteria).
 """
 from __future__ import annotations
 import csv
+import logging
+import re
 
 import yaml
 
 from ..config import SEEDS_DIR
 from .confidence import FROM_SOURCE, COMPUTED, INFERRED
 
+log = logging.getLogger("mfetl")
+
 WORLDS_YAML = SEEDS_DIR / "worlds.yaml"
 RELATIONSHIPS_CSV = SEEDS_DIR / "relationships.csv"
 WHY_IT_MATTERS_YAML = SEEDS_DIR / "why_it_matters.yaml"
 BRANDS_YAML = SEEDS_DIR / "brands.yaml"
 ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
+OTC_ALLOWLIST_YAML = SEEDS_DIR / "otc_allowlist.yaml"
+FOOD_HUBS_YAML = SEEDS_DIR / "food_hubs.yaml"
 
 CURATED_RELATIONS = ("found_in", "affects", "becomes")   # the CSV / membership relations
 VALID_CONFIDENCE = {FROM_SOURCE, COMPUTED, INFERRED}
@@ -303,3 +309,119 @@ def build_worlds(molecules: list[dict]) -> dict:
         })
 
     return {"worlds": index, "detail": detail}
+
+
+# ── kind:"use" hubs from the OTC allowlist (build plan 2026-09-05, phase 2.2) ──
+# The allowlist's groups were documented as "for readability only". They are the one
+# piece of curation on the site that answers the question a person actually asks at a
+# pharmacy shelf: what do I take this FOR. Each group below becomes a /in/<slug> hub,
+# using the "use" kind whose label KIND_LABEL on the web already reserved.
+#
+# Groups deliberately not mapped: `vitamins_supplements_otc` holds two unrelated
+# molecules (a joint supplement and a motion-sickness antihistamine) and would make a
+# hub that means nothing.
+USE_GROUPS: dict[str, tuple[str, str]] = {
+    "analgesics_nsaids":       ("pain-and-fever", "Pain and fever"),
+    "sleep_and_neuro":         ("sleep-and-calm", "Sleep and calm"),
+    "antihistamines":          ("allergy", "Allergy"),
+    "antacids_and_gi":         ("heartburn-and-digestion", "Heartburn and digestion"),
+    "cough_cold_decongestant": ("cough-and-cold", "Cough and cold"),
+    "topical_and_skin":        ("skin-and-topical", "Skin and topical"),
+    "antiseptics":             ("antiseptic", "Antiseptic"),
+}
+
+
+def _name_key(name: str) -> str:
+    """Normalize an allowlist name or a molecule name to a comparable key."""
+    return re.sub(r"[^a-z0-9]+", "-", (name or "").strip().lower()).strip("-")
+
+
+def load_otc_uses() -> dict[str, list[tuple[str, str]]]:
+    """Read otc_allowlist.yaml -> {name key: [(hub slug, hub label), ...]}.
+
+    A molecule can appear in more than one group (salicylic acid is both a topical and,
+    as aspirin's parent, an analgesic), so the value is a list."""
+    if not OTC_ALLOWLIST_YAML.exists():
+        return {}
+    data = yaml.safe_load(OTC_ALLOWLIST_YAML.read_text()) or {}
+    out: dict[str, list[tuple[str, str]]] = {}
+    for group, names in data.items():
+        hub = USE_GROUPS.get(group)
+        if not hub:
+            continue
+        for name in names or []:
+            out.setdefault(_name_key(str(name)), []).append(hub)
+    return out
+
+
+def attach_otc_uses(molecules: list[dict]) -> None:
+    """Add a kind:"use" category for every allowlisted OTC molecule, from its group.
+
+    Matched on the molecule's slug, title and synonyms, because the allowlist is written
+    in ordinary pharmacy names ("Paracetamol", "Chlorphenamine") and the canon's title may
+    be the other one. Unlike the other curated overlays this does NOT fail on an unmatched
+    entry: the allowlist is a scope document that deliberately names molecules not yet in
+    the canon, so a miss is expected. It is logged instead."""
+    uses = load_otc_uses()
+    if not uses:
+        return
+    matched: set[str] = set()
+    for m in molecules:
+        keys = {_name_key(m["slug"]), _name_key(m.get("title") or "")}
+        keys |= {_name_key(s) for s in (m.get("synonyms") or [])}
+        hubs: dict[str, str] = {}
+        for k in keys:
+            for slug, label in uses.get(k, []):
+                hubs[slug] = label
+                matched.add(k)
+        for slug, label in hubs.items():
+            if not any(c.get("slug") == slug and c.get("kind") == "use" for c in m["categories"]):
+                m["categories"].append({"slug": slug, "name": label, "kind": "use",
+                                        "confidence": FROM_SOURCE, "source": "curated"})
+        if hubs:
+            m["is_otc"] = True
+    unmatched = sorted(k for k in uses if k not in matched)
+    log.info("  otc uses: %d allowlist names matched, %d not in the canon (%s)",
+             len(matched), len(unmatched), ", ".join(unmatched[:6]) or "none")
+
+
+# ── Food hubs (build plan 2026-09-05, phase 2.3) ──────────────────────────────
+def load_food_hubs() -> dict[str, dict]:
+    """Read food_hubs.yaml -> {hub slug: {"name": ..., "molecules": [...]}}."""
+    if not FOOD_HUBS_YAML.exists():
+        return {}
+    data = yaml.safe_load(FOOD_HUBS_YAML.read_text()) or {}
+    out: dict[str, dict] = {}
+    for slug, entry in data.items():
+        mols = [str(m).strip() for m in ((entry or {}).get("molecules") or []) if str(m).strip()]
+        if mols:
+            out[str(slug)] = {"name": (entry or {}).get("name") or str(slug).replace("-", " ").title(),
+                              "molecules": mols}
+    return out
+
+
+def attach_food_hubs(molecules: list[dict]) -> None:
+    """Add a kind:"food" category per curated membership, filling out the thin hubs.
+
+    14 of the 17 food hubs had two molecules or fewer; /in/coffee was a one-molecule page.
+    Additive and idempotent: a membership a curated/*.yaml overlay already set is left
+    exactly as it is, note and all. Validates every slug against the snapshot and fails the
+    build loudly on a typo, the same discipline as attach_trails."""
+    hubs = load_food_hubs()
+    if not hubs:
+        return
+    by_slug = {m["slug"]: m for m in molecules}
+    unknown = sorted({s for h in hubs.values() for s in h["molecules"] if s not in by_slug})
+    if unknown:
+        raise SystemExit("food_hubs compile failed, unknown molecule slug(s):\n  " + "\n  ".join(unknown))
+    added = 0
+    for hub, entry in hubs.items():
+        for slug in entry["molecules"]:
+            rec = by_slug[slug]
+            if any(c.get("slug") == hub and c.get("kind") == "food" for c in rec["categories"]):
+                continue
+            rec["categories"].append({"slug": hub, "name": entry["name"], "kind": "food",
+                                      "note": None, "confidence": FROM_SOURCE, "source": "curated"})
+            added += 1
+    log.info("  food hubs: %d hubs, %d memberships added", len(hubs), added)
+
