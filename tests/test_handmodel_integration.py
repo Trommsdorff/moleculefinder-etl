@@ -30,14 +30,33 @@ def _mixed_records():
     return recs
 
 
-def test_handmodel_absent_from_every_leaderboard():
+def test_handmodel_absent_from_every_intrinsic_property_leaderboard():
+    """A hand-modeled macromolecule has no structure, so it can never be ranked on one.
+
+    The invariant is about FABRICATION: collagen has no molecular weight, no LD50 and no
+    sweetness, so it must not appear on a board that ranks those. It is deliberately NOT
+    "absent from every board", because `most-searched` (added 2026-09-05) ranks Wikipedia
+    pageviews, a real measured value that collagen and starch genuinely have. Dropping
+    them from a most-searched board would be the same class of error as the Deadliest
+    board ranking an intravenous LD50 under an oral heading: a board that does not do
+    what its title says.
+    """
     recs = _mixed_records()
-    for board in leaderboards.BOARDS:
+    intrinsic = [b for b in leaderboards.BOARDS
+                 if leaderboards.BOARDS[b]["metric"] != "pageviews_monthly"]
+    for board in intrinsic:
         entries = leaderboards.rank(board, recs)["entries"]
         slugs = {e["slug"] for e in entries}
         assert "collagen" not in slugs and "starch" not in slugs, f"macromolecule leaked onto {board}"
     # the real molecule still ranks where it has data (caffeine has an LD50)
     assert any(e["slug"] == "caffeine" for e in leaderboards.rank("deadliest", recs)["entries"])
+
+
+def test_handmodel_ranks_on_the_attention_board():
+    """The converse: a macromolecule with real pageviews DOES belong on most-searched."""
+    recs = _mixed_records()
+    slugs = [e["slug"] for e in leaderboards.rank("most-searched", recs)["entries"]]
+    assert slugs == ["collagen", "caffeine", "starch"]   # 51000, 49000, 40000
 
 
 def test_snapshot_export_writes_structureless_pages(tmp_path, monkeypatch):
