@@ -7,6 +7,13 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    outputs:
+      # Did this run actually change the snapshot? The sync job downstream opens a PR on
+      # the web repo only when this is "true" — a heartbeat-only week must not open an
+      # empty PR (phase 0.3 of BUILD-PLAN-traffic-2026-09-05).
+      snapshot_changed: ${{ steps.commit.outputs.snapshot_changed }}
+      molecules_changed: ${{ steps.commit.outputs.molecules_changed }}
+      molecules_added:   ${{ steps.commit.outputs.molecules_added }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -23,6 +30,7 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GITHUB_SHA:           ${{ github.sha }}
       - name: commit snapshot
+        id: commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -44,32 +52,112 @@ jobs:
             git add data/LAST_CHECK
             git commit -m "etl: no changes $(date -u +%F) [heartbeat]"
             git push
+            echo "snapshot_changed=false" >> "$GITHUB_OUTPUT"
             echo "no data changes — heartbeat committed to keep the cron alive"
           else
+            # Diff summary for the web-repo PR body, measured BEFORE the commit while
+            # the previous snapshot is still HEAD.
+            changed=$(git diff --cached --name-only --diff-filter=M -- data/snapshots/molecules | wc -l | tr -d ' ')
+            added=$(git diff --cached --name-only --diff-filter=A -- data/snapshots/molecules | wc -l | tr -d ' ')
             git commit -m "etl: refresh $(date -u +%F)"
             git push
+            echo "snapshot_changed=true"              >> "$GITHUB_OUTPUT"
+            echo "molecules_changed=${changed}"       >> "$GITHUB_OUTPUT"
+            echo "molecules_added=${added}"           >> "$GITHUB_OUTPUT"
           fi
-      - name: trigger deploy
-        env:
-          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
-        run: |
-          if [ -z "$HOOK" ]; then
-            echo "::error::VERCEL_DEPLOY_HOOK is empty or not set on this repository"
-            exit 1
-          fi
-          curl -fsSL -X POST "$HOOK"
-          echo "deploy hook fired"
       - uses: actions/cache/save@v4
         if: always()
         with:
           path: data/raw_cache
           key: pubchem-raw-${{ github.run_id }}
 
+  # ── SYNC TO THE WEB REPO (phase 0, 2026-09-05) ───────────────────────────────
+  # Replaces the old `trigger deploy` step (a raw curl to VERCEL_DEPLOY_HOOK). That
+  # hook rebuilt the web app from ITS OWN committed snapshot copy, which had not
+  # moved since 2026-07-15 — so every "weekly refresh" redeployed July data while
+  # this repo quietly accumulated newer molecules. The fix is to move the data, not
+  # to fire a build: copy data/snapshots/ into the web repo and open a PULL REQUEST.
+  #
+  # The PR is Garrett's deploy gate. Nothing reaches moleculefinder.com until he
+  # merges it, and merging is what triggers Vercel (the web repo's own git
+  # integration deploys on push to main). No deploy hook anywhere in this file.
+  sync-web:
+    needs: run
+    if: needs.run.outputs.snapshot_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the ETL (fresh snapshot)
+        uses: actions/checkout@v6
+        with:
+          path: etl
+
+      - name: Check out the web repo
+        uses: actions/checkout@v6
+        with:
+          repository: Trommsdorff/moleculefinder-web
+          # A repo-scoped PAT: the default GITHUB_TOKEN is scoped to THIS repository
+          # only and cannot read, push to, or open a PR on another one.
+          token: ${{ secrets.WEB_REPO_TOKEN }}
+          path: web
+
+      - name: Sync the snapshot (the `npm run sync-data` equivalent)
+        run: |
+          rm -rf web/data/snapshots
+          cp -R etl/data/snapshots web/data/snapshots
+
+      - name: Open a data PR on the web repo
+        env:
+          GH_TOKEN: ${{ secrets.WEB_REPO_TOKEN }}
+          GH_REPO: Trommsdorff/moleculefinder-web
+          CHANGED: ${{ needs.run.outputs.molecules_changed }}
+          ADDED:   ${{ needs.run.outputs.molecules_added }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        working-directory: web
+        run: |
+          set -euo pipefail
+          DATE=$(date -u +%F)
+          BRANCH="data/snapshot-${DATE}"
+          # Commit as Trommsdorff / the GitHub no-reply email (repo identity rule).
+          git config user.name  "Trommsdorff"
+          git config user.email "291580674+Trommsdorff@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add data/snapshots
+          if git diff --cached --quiet; then
+            echo "web repo snapshot already identical — no PR needed"
+            exit 0
+          fi
+          # Re-measure the diff against the WEB repo's own copy: it can lag several ETL
+          # runs behind, so the run's own numbers would understate the change.
+          W_CHANGED=$(git diff --cached --name-only --diff-filter=M -- data/snapshots/molecules | wc -l | tr -d ' ')
+          W_ADDED=$(git diff --cached --name-only --diff-filter=A -- data/snapshots/molecules | wc -l | tr -d ' ')
+          W_REMOVED=$(git diff --cached --name-only --diff-filter=D -- data/snapshots/molecules | wc -l | tr -d ' ')
+          git commit -m "data: weekly snapshot ${DATE}"
+          git push --force-with-lease origin "$BRANCH"
+          BODY="Automated snapshot sync from [moleculefinder-etl](${RUN}).
+
+          | | molecule files |
+          |---|---|
+          | changed | ${W_CHANGED} |
+          | added | ${W_ADDED} |
+          | removed | ${W_REMOVED} |
+
+          (This run's own ETL commit touched ${CHANGED} changed / ${ADDED} added; the
+          numbers above are measured against the web repo's committed copy, which may
+          have been several runs behind.)
+
+          Data only: nothing outside \`data/snapshots/\` is touched. CI runs
+          \`verify-snapshot\` on this branch. **Merging this PR deploys the site.**"
+          # Reuse an open PR for the same branch rather than failing on a re-run.
+          if ! gh pr create --base main --head "$BRANCH" \
+                 --title "data: weekly snapshot ${DATE}" --body "$BODY" 2>/dev/null; then
+            gh pr edit "$BRANCH" --title "data: weekly snapshot ${DATE}" --body "$BODY"
+          fi
+
   # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
   # A separate job, not `if: failure()` on a step: a step-level guard cannot run
   # when the job itself never starts.
   alarm:
-    needs: run
+    needs: [run, sync-web]
     if: failure()
     runs-on: ubuntu-latest
     permissions:
