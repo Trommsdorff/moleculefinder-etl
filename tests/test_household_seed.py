@@ -77,11 +77,23 @@ def test_filter4_keeps_handmodel_and_edges_skip_it():
 def test_assemble_record_has_uniform_scope_keys():
     # a normal record must also carry the new keys so the snapshot schema is uniform
     row = {"cid": 962, "tier": "marquee", "enwiki_title": "Water", "pageviews": 70000}
-    rec = assemble.assemble_record(row, {"props": {}, "synonyms": [], "curated": None,
-                                         "toxicity": [], "ghs": None}, set())
-    for k in ("scope_bucket", "scope_family", "hand_model", "macromolecule"):
+    rec = assemble.assemble_record(row, {"props": {"SMILES": "O"}, "synonyms": [],
+                                         "curated": None, "toxicity": [], "ghs": None}, set())
+    for k in ("scope_bucket", "scope_family", "hand_model", "macromolecule", "batch"):
         assert k in rec
     assert rec["hand_model"] is False and rec["macromolecule"] is False
+
+
+def test_fetched_record_with_no_smiles_uses_the_structureless_variant():
+    """A biologic (pembrolizumab, an antibody) has a real PubChem CID and no depictable
+    structure. It must take the no-figure page variant without claiming to be
+    hand-modeled, or the page says "no single PubChem compound" beside a live CID."""
+    row = {"cid": 254741536, "tier": "marquee", "enwiki_title": "Pembrolizumab", "pageviews": 12478}
+    rec = assemble.assemble_record(row, {"props": {}, "synonyms": [], "curated": None,
+                                         "toxicity": [], "ghs": None}, set())
+    assert rec["macromolecule"] is True     # no figure
+    assert rec["hand_model"] is False       # but it IS a real PubChem compound
+    assert rec["cid"] > 0
 
 
 def test_build_canon_force_includes_seed(monkeypatch):
