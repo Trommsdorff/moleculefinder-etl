@@ -88,7 +88,9 @@ jobs:
   #
   # A RED CHECK STOPS EVERYTHING. The PR is left open, untouched and mergeable by
   # hand, and this job fails, which fires the `alarm` job below (an issue) and
-  # GitHub's own workflow-failure email. Nothing half-merges.
+  # GitHub's own workflow-failure email. Nothing half-merges. "Green" is decided from
+  # the ACTIONS API by head_sha, because Checks is not a permission a fine-grained PAT
+  # can hold, and because "was this exact tree verified" is the stricter question.
   #
   # IDEMPOTENT BY CONSTRUCTION. The snapshot is copied whole, never diffed, so the
   # newest data PR always contains everything every older one did. That is what
@@ -200,7 +202,11 @@ jobs:
           fi
           PR=$(gh pr view "$BRANCH" --json number --jq .number)
           echo "pr=${PR}" >> "$GITHUB_OUTPUT"
-          echo "opened/updated PR #${PR} on ${BRANCH}"
+          # The exact commit the PR now points at. The wait step gates on THIS sha, not on
+          # the PR, so a race where something else pushes to the branch cannot make a run
+          # for a different tree look like a green light.
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "opened/updated PR #${PR} on ${BRANCH} at $(git rev-parse --short HEAD)"
 
       - name: Close superseded data PRs
         if: steps.pr.outputs.pr != ''
@@ -228,57 +234,76 @@ jobs:
                 || echo "::warning::could not close superseded PR #${num}; close it by hand"
             done
 
-      - name: Wait for the web repo's verify check
+      - name: Wait for the web repo's verify run on this exact commit
         if: steps.pr.outputs.pr != ''
         env:
           GH_TOKEN: ${{ secrets.WEB_REPO_TOKEN }}
           GH_REPO: Trommsdorff/moleculefinder-web
           PR: ${{ steps.pr.outputs.pr }}
+          SHA: ${{ steps.pr.outputs.sha }}
+          # The workflow that gates the merge (.github/workflows/ci.yml, `name: ci`) and
+          # the job inside it that does the verifying. Both are checked: a workflow can
+          # conclude `success` with its only job SKIPPED, and that must not read as green.
+          CI_WORKFLOW: ci
+          CI_JOB: verify
         working-directory: web
         run: |
           set -euo pipefail
-          # Poll rather than `gh pr checks --watch`: watch reports "no checks" and exits
-          # 0 during the seconds between the push and GitHub registering the run, which
-          # would read as a green light to merge an untested snapshot.
-          APPEAR_BY=$(( $(date +%s) + 300 ))    # the check must show up within 5 minutes
+          # The ACTIONS API, not `gh pr checks`. Checks is not a permission a fine-grained
+          # PAT can be granted at all, so the check-runs route was never available to this
+          # token; workflow runs are, under Actions: Read. Querying by head_sha is also the
+          # stricter question: "was THIS tree verified green", rather than "does the PR
+          # look green right now", which a force-push can change underneath us.
+          APPEAR_BY=$(( $(date +%s) + 300 ))    # the run must show up within 5 minutes
           FINISH_BY=$(( $(date +%s) + 1800 ))   # and finish within 30
           while :; do
             now=$(date +%s)
-            # gh pr checks exits 8 while checks are pending and 1 when one failed, so the
-            # exit status is neutralized separately: `$(cmd || echo '[]')` would append []
-            # to the JSON it did print and make the whole thing unparseable.
-            checks=$(gh pr checks "$PR" --json name,bucket 2>/tmp/checks.err) || true
-            [ -n "$checks" ] || checks='[]' 
-            verify=$(echo "$checks" | jq -r '.[] | select(.name == "verify") | .bucket' | head -1)
-            if [ -z "$verify" ]; then
+            runs=$(gh run list --commit "$SHA" --limit 30 \
+                     --json workflowName,status,conclusion,databaseId 2>/tmp/runs.err) || true
+            [ -n "$runs" ] || runs='[]'
+            # Newest run for the CI workflow: a re-run supersedes its predecessor.
+            run=$(echo "$runs" | jq -c --arg w "$CI_WORKFLOW" \
+                    '[.[] | select(.workflowName == $w)] | sort_by(.databaseId) | last // empty')
+            if [ -z "$run" ]; then
               if [ "$now" -gt "$APPEAR_BY" ]; then
-                echo "::error::no 'verify' check appeared on PR #${PR} within 5 minutes. Not merging."
+                echo "::error::no '${CI_WORKFLOW}' workflow run appeared for ${SHA} within 5 minutes. Not merging."
                 echo "Three things cause this, in order of likelihood:"
-                echo " 1. WEB_REPO_TOKEN cannot READ CHECKS on moleculefinder-web. A token"
-                echo "    scoped only to Contents + Pull requests can open this PR and never"
-                echo "    see its checks, which looks exactly like this. It needs Checks: Read."
-                echo " 2. The web repo ci.yml is disabled, or its verify job was renamed."
+                echo " 1. WEB_REPO_TOKEN cannot read Actions on moleculefinder-web (needs Actions: Read)."
+                echo " 2. The web repo's ci.yml is disabled, renamed, or no longer runs on pull_request."
                 echo " 3. Actions minutes for the account are exhausted."
-                echo "gh said:"; cat /tmp/checks.err || true
+                echo "runs seen for this sha: $runs"
+                echo "gh said:"; cat /tmp/runs.err || true
                 exit 1
               fi
-              echo "waiting for the verify check to appear..."; sleep 15; continue
+              echo "waiting for the ${CI_WORKFLOW} run on ${SHA:0:8} to appear..."; sleep 15; continue
             fi
-            case "$verify" in
-              pass)
-                echo "verify: PASS"; exit 0 ;;
-              fail|cancel)
-                echo "::error::the web repo's verify check reported '${verify}' on PR #${PR}."
-                echo "The PR is left OPEN so the snapshot can be inspected and merged by hand."
-                gh pr view "$PR" --json url --jq .url
-                exit 1 ;;
-              *)
-                if [ "$now" -gt "$FINISH_BY" ]; then
-                  echo "::error::verify was still '${verify}' after 30 minutes. Not merging."
-                  exit 1
-                fi
-                echo "verify: ${verify}, waiting..."; sleep 20 ;;
-            esac
+            status=$(echo "$run" | jq -r .status)
+            conclusion=$(echo "$run" | jq -r '.conclusion // ""')
+            id=$(echo "$run" | jq -r .databaseId)
+            if [ "$status" != "completed" ]; then
+              if [ "$now" -gt "$FINISH_BY" ]; then
+                echo "::error::${CI_WORKFLOW} run ${id} was still '${status}' after 30 minutes. Not merging."
+                exit 1
+              fi
+              echo "${CI_WORKFLOW} run ${id}: ${status}, waiting..."; sleep 20; continue
+            fi
+            if [ "$conclusion" != "success" ]; then
+              echo "::error::${CI_WORKFLOW} run ${id} for ${SHA} concluded '${conclusion}'."
+              echo "The PR is left OPEN so the snapshot can be inspected and merged by hand."
+              gh pr view "$PR" --json url --jq .url || true
+              exit 1
+            fi
+            # The run is green. Confirm the job that actually verifies the snapshot RAN and
+            # passed, rather than trusting the run-level roll-up.
+            job=$(gh run view "$id" --json jobs \
+                    --jq ".jobs[] | select(.name == \"${CI_JOB}\") | .conclusion" 2>/dev/null | head -1) || true
+            if [ "$job" != "success" ]; then
+              echo "::error::${CI_WORKFLOW} run ${id} concluded success, but its '${CI_JOB}' job is"
+              echo "'${job:-absent}'. That is not a verified snapshot. Not merging; the PR stays open."
+              exit 1
+            fi
+            echo "${CI_WORKFLOW} run ${id} (${CI_JOB}): SUCCESS on ${SHA:0:8}"
+            exit 0
           done
 
       - name: Squash-merge the data PR (this is the deploy)
