@@ -71,16 +71,30 @@ jobs:
           path: data/raw_cache
           key: pubchem-raw-${{ github.run_id }}
 
-  # ── SYNC TO THE WEB REPO (phase 0, 2026-09-05) ───────────────────────────────
+  # ── SYNC TO THE WEB REPO, AND MERGE IT (phase 0 2026-09-05; closed the loop 2026-09-06)
   # Replaces the old `trigger deploy` step (a raw curl to VERCEL_DEPLOY_HOOK). That
   # hook rebuilt the web app from ITS OWN committed snapshot copy, which had not
   # moved since 2026-07-15 — so every "weekly refresh" redeployed July data while
   # this repo quietly accumulated newer molecules. The fix is to move the data, not
-  # to fire a build: copy data/snapshots/ into the web repo and open a PULL REQUEST.
+  # to fire a build: copy data/snapshots/ into the web repo, open a PULL REQUEST,
+  # wait for that repo's `verify` check, and squash-merge it when the check is green.
   #
-  # The PR is Garrett's deploy gate. Nothing reaches moleculefinder.com until he
-  # merges it, and merging is what triggers Vercel (the web repo's own git
-  # integration deploys on push to main). No deploy hook anywhere in this file.
+  # THE MERGE IS THE DEPLOY. The web repo's Vercel git integration builds on every
+  # push to main. Merging with WEB_REPO_TOKEN (a user PAT) rather than GITHUB_TOKEN
+  # is load-bearing and not interchangeable: GitHub deliberately does not raise new
+  # workflow runs from pushes made with GITHUB_TOKEN, so a GITHUB_TOKEN merge would
+  # deploy the site but silently skip every push- and deployment-triggered workflow
+  # on the web repo, starting with the IndexNow submitter.
+  #
+  # A RED CHECK STOPS EVERYTHING. The PR is left open, untouched and mergeable by
+  # hand, and this job fails, which fires the `alarm` job below (an issue) and
+  # GitHub's own workflow-failure email. Nothing half-merges.
+  #
+  # IDEMPOTENT BY CONSTRUCTION. The snapshot is copied whole, never diffed, so the
+  # newest data PR always contains everything every older one did. That is what
+  # makes it safe to keep exactly ONE open data PR: this job pushes onto the open
+  # one's branch when there is one, and closes any other as superseded. Re-running
+  # it any number of times converges on the same single PR.
   sync-web:
     needs: run
     if: needs.run.outputs.snapshot_changed == 'true'
@@ -105,7 +119,8 @@ jobs:
           rm -rf web/data/snapshots
           cp -R etl/data/snapshots web/data/snapshots
 
-      - name: Open a data PR on the web repo
+      - name: Open or update the data PR
+        id: pr
         env:
           GH_TOKEN: ${{ secrets.WEB_REPO_TOKEN }}
           GH_REPO: Trommsdorff/moleculefinder-web
@@ -116,14 +131,36 @@ jobs:
         run: |
           set -euo pipefail
           DATE=$(date -u +%F)
-          BRANCH="data/snapshot-${DATE}"
+
+          # Reuse the open data PR if there is one, so a week whose check went red does
+          # not leave a second PR behind next week. Data PRs are identified by their head
+          # branch prefix rather than a label: labelling a PR goes through the Issues API,
+          # which this token is not scoped for, and the branch prefix is ours alone.
+          # Lowest PR number wins, so the reused PR is stable run to run. Plain `head -1`
+          # rather than mapfile: this must stay runnable under bash 3 so it can be
+          # exercised offline, and the runner's bash version is not worth depending on.
+          BRANCH=$(gh pr list --state open --limit 50 --json number,headRefName --jq \
+            '.[] | select(.headRefName | startswith("data/snapshot-")) | "\(.number) \(.headRefName)"' \
+            | sort -n | head -1 | cut -d' ' -f2)
+          if [ -n "$BRANCH" ]; then
+            echo "reusing the open data PR on ${BRANCH}"
+            # Fetch it so --force-with-lease has a remote-tracking ref to check against.
+            git fetch --no-tags origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
+          else
+            BRANCH="data/snapshot-${DATE}"
+          fi
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+
           # Commit as Trommsdorff / the GitHub no-reply email (repo identity rule).
           git config user.name  "Trommsdorff"
           git config user.email "291580674+Trommsdorff@users.noreply.github.com"
+          # Branch off the CURRENT main every time, so the PR is always exactly one
+          # commit of data on top of main and never accumulates a stale history.
           git checkout -B "$BRANCH"
           git add data/snapshots
           if git diff --cached --quiet; then
             echo "web repo snapshot already identical — no PR needed"
+            echo "pr=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           # Re-measure the diff against the WEB repo's own copy: it can lag several ETL
@@ -132,7 +169,11 @@ jobs:
           W_ADDED=$(git diff --cached --name-only --diff-filter=A -- data/snapshots/molecules | wc -l | tr -d ' ')
           W_REMOVED=$(git diff --cached --name-only --diff-filter=D -- data/snapshots/molecules | wc -l | tr -d ' ')
           git commit -m "data: weekly snapshot ${DATE}"
-          git push --force-with-lease origin "$BRANCH"
+          if git rev-parse --verify -q "refs/remotes/origin/${BRANCH}" >/dev/null; then
+            git push --force-with-lease origin "$BRANCH"
+          else
+            git push --force origin "$BRANCH"
+          fi
           BODY="Automated snapshot sync from [moleculefinder-etl](${RUN}).
 
           | | molecule files |
@@ -146,12 +187,111 @@ jobs:
           have been several runs behind.)
 
           Data only: nothing outside \`data/snapshots/\` is touched. CI runs
-          \`verify-snapshot\` on this branch. **Merging this PR deploys the site.**"
-          # Reuse an open PR for the same branch rather than failing on a re-run.
+          \`verify-snapshot\` on this branch. **This PR squash-merges itself when that
+          check goes green, and merging is what deploys the site.** If the check fails
+          it stays open and the ETL run fails loudly instead."
+          # A create failure is usually just "a PR for this branch already exists", which
+          # is the reuse path. Keep the real message: any OTHER create failure would
+          # otherwise surface only as a confusing `gh pr edit` error.
           if ! gh pr create --base main --head "$BRANCH" \
-                 --title "data: weekly snapshot ${DATE}" --body "$BODY" 2>/dev/null; then
+                 --title "data: weekly snapshot ${DATE}" --body "$BODY" 2>/tmp/pr-create.err; then
+            echo "gh pr create said:"; cat /tmp/pr-create.err
             gh pr edit "$BRANCH" --title "data: weekly snapshot ${DATE}" --body "$BODY"
           fi
+          PR=$(gh pr view "$BRANCH" --json number --jq .number)
+          echo "pr=${PR}" >> "$GITHUB_OUTPUT"
+          echo "opened/updated PR #${PR} on ${BRANCH}"
+
+      - name: Close superseded data PRs
+        if: steps.pr.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ secrets.WEB_REPO_TOKEN }}
+          GH_REPO: Trommsdorff/moleculefinder-web
+          KEEP: ${{ steps.pr.outputs.pr }}
+        working-directory: web
+        run: |
+          set -euo pipefail
+          # Safe because the snapshot is copied whole: PR #KEEP contains every molecule
+          # file any older data PR contained, so closing them loses nothing.
+          gh pr list --state open --limit 50 --json number,headRefName --jq \
+            '.[] | select(.headRefName | startswith("data/snapshot-")) | "\(.number) \(.headRefName)"' \
+          | while read -r num branch; do
+              if [ "$num" = "$KEEP" ]; then continue; fi
+              echo "closing superseded PR #${num} (${branch})"
+              # Tidying, not gating: a PR that will not close must not stop the deploy.
+              # The comment is attempted first and dropped on failure, because a PR comment
+              # goes through the ISSUES comment endpoint, which a fine-grained token may not
+              # be scoped for even when it can close the PR perfectly well.
+              gh pr close "$num" --delete-branch \
+                --comment "Superseded by #${KEEP}, which carries the whole snapshot including everything in this one." \
+                || gh pr close "$num" --delete-branch \
+                || echo "::warning::could not close superseded PR #${num}; close it by hand"
+            done
+
+      - name: Wait for the web repo's verify check
+        if: steps.pr.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ secrets.WEB_REPO_TOKEN }}
+          GH_REPO: Trommsdorff/moleculefinder-web
+          PR: ${{ steps.pr.outputs.pr }}
+        working-directory: web
+        run: |
+          set -euo pipefail
+          # Poll rather than `gh pr checks --watch`: watch reports "no checks" and exits
+          # 0 during the seconds between the push and GitHub registering the run, which
+          # would read as a green light to merge an untested snapshot.
+          APPEAR_BY=$(( $(date +%s) + 300 ))    # the check must show up within 5 minutes
+          FINISH_BY=$(( $(date +%s) + 1800 ))   # and finish within 30
+          while :; do
+            now=$(date +%s)
+            # gh pr checks exits 8 while checks are pending and 1 when one failed, so the
+            # exit status is neutralized separately: `$(cmd || echo '[]')` would append []
+            # to the JSON it did print and make the whole thing unparseable.
+            checks=$(gh pr checks "$PR" --json name,bucket 2>/tmp/checks.err) || true
+            [ -n "$checks" ] || checks='[]' 
+            verify=$(echo "$checks" | jq -r '.[] | select(.name == "verify") | .bucket' | head -1)
+            if [ -z "$verify" ]; then
+              if [ "$now" -gt "$APPEAR_BY" ]; then
+                echo "::error::no 'verify' check appeared on PR #${PR} within 5 minutes. Not merging."
+                echo "Three things cause this, in order of likelihood:"
+                echo " 1. WEB_REPO_TOKEN cannot READ CHECKS on moleculefinder-web. A token"
+                echo "    scoped only to Contents + Pull requests can open this PR and never"
+                echo "    see its checks, which looks exactly like this. It needs Checks: Read."
+                echo " 2. The web repo ci.yml is disabled, or its verify job was renamed."
+                echo " 3. Actions minutes for the account are exhausted."
+                echo "gh said:"; cat /tmp/checks.err || true
+                exit 1
+              fi
+              echo "waiting for the verify check to appear..."; sleep 15; continue
+            fi
+            case "$verify" in
+              pass)
+                echo "verify: PASS"; exit 0 ;;
+              fail|cancel)
+                echo "::error::the web repo's verify check reported '${verify}' on PR #${PR}."
+                echo "The PR is left OPEN so the snapshot can be inspected and merged by hand."
+                gh pr view "$PR" --json url --jq .url
+                exit 1 ;;
+              *)
+                if [ "$now" -gt "$FINISH_BY" ]; then
+                  echo "::error::verify was still '${verify}' after 30 minutes. Not merging."
+                  exit 1
+                fi
+                echo "verify: ${verify}, waiting..."; sleep 20 ;;
+            esac
+          done
+
+      - name: Squash-merge the data PR (this is the deploy)
+        if: steps.pr.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ secrets.WEB_REPO_TOKEN }}
+          GH_REPO: Trommsdorff/moleculefinder-web
+          PR: ${{ steps.pr.outputs.pr }}
+        working-directory: web
+        run: |
+          set -euo pipefail
+          gh pr merge "$PR" --squash --delete-branch
+          echo "merged PR #${PR}; Vercel builds from the resulting push to main."
 
   # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
   # A separate job, not `if: failure()` on a step: a step-level guard cannot run
