@@ -1,0 +1,82 @@
+# MoleculeFinder OTC allowlist  (hand-maintained)
+# ------------------------------------------------------------------------------
+# COPIED INTO THE ETL 2026-09-05 (build plan phase 2.2). It previously lived only at
+# ../../otc-allowlist.yaml, outside either repo, so the pipeline could not read it:
+# a GitHub Actions run checks out this repository alone. The groups below now also
+# drive the kind:"use" hubs (/in/allergy, /in/cough-and-cold, ...) via
+# transform/relationships.attach_otc_uses, so the grouping is no longer "for
+# readability only".
+# Over-the-counter "medicine-cabinet" molecules that belong in the EVERYDAY CORE,
+# not the deferred prescription/recreational "drugs wing". Curated by hand on
+# purpose: the OTC vs prescription line is fuzzy and country-dependent, so we
+# decide it here rather than let a classifier guess. Add/remove freely.
+#
+# Rule of thumb for inclusion: a normal adult could buy it off a pharmacy or
+# grocery shelf without a prescription (US/UK/EU), and would recognize it from
+# their own bathroom cabinet.
+#
+# Group keys map to a hub slug + label in relationships.USE_GROUPS. A group with no
+# mapping there is read as a plain allowlist entry and emits no hub.
+
+analgesics_nsaids:      # pain / fever, OTC strengths
+  - Ibuprofen
+  - Aspirin                 # acetylsalicylic acid
+  - Paracetamol             # = acetaminophen
+  - Naproxen
+  - Acetaminophen           # alias of paracetamol; kept so either title matches
+
+sleep_and_neuro:
+  - Melatonin               # (also body-endogenous; belongs in core either way)
+  - Doxylamine              # OTC sleep aid / antihistamine
+  - Diphenhydramine         # Benadryl / nighttime sleep aid
+
+antihistamines:           # allergy, OTC
+  - Cetirizine
+  - Loratadine
+  - Fexofenadine
+  - Chlorphenamine          # chlorpheniramine
+  - Brompheniramine
+  - Meclizine               # motion sickness
+  - Cyclizine
+  - Ketotifen
+
+antacids_and_gi:          # heartburn / stomach, OTC
+  - Calcium carbonate       # Tums (also a mineral; OTC use keeps it in core)
+  - Magnesium hydroxide     # milk of magnesia
+  - Aluminium hydroxide
+  - Famotidine
+  - Cimetidine
+  - Omeprazole              # OTC in many markets
+  - Esomeprazole
+  - Bismuth subsalicylate   # Pepto-Bismol
+  - Loperamide              # Imodium
+  - Simethicone
+  - Docusate                # stool softener
+  - Bisacodyl               # laxative
+
+cough_cold_decongestant:  # OTC
+  - Dextromethorphan
+  - Guaifenesin
+  - Pseudoephedrine
+  - Phenylephrine
+  - Oxymetazoline
+  - Ephedrine               # borderline (behind-counter); keep, easy to drop
+
+topical_and_skin:         # OTC
+  - Hydrocortisone
+  - Benzoyl peroxide
+  - Salicylic acid          # acne / wart (also a plant compound)
+  - Clotrimazole            # antifungal
+  - Miconazole
+  - Zinc oxide              # diaper cream / sunscreen
+  - Calamine
+
+vitamins_supplements_otc: # sold as supplements; many also nutrients
+  - Glucosamine
+  - Dimenhydrinate          # Dramamine (note: technically a salt/mixture)
+
+antiseptics:              # wound / surface disinfectants, OTC (also everyday-chemistry)
+  - Hydrogen peroxide
+  - Isopropyl alcohol       # = rubbing alcohol
+  - Iodine                  # tincture of iodine (molecular I2)
+  - Chlorhexidine           # antiseptic mouthwash / skin prep

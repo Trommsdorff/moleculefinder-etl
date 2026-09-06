@@ -16,7 +16,7 @@ import re
 import yaml
 
 from .confidence import label_for
-from . import names, slugs, categories, hooks, structures, similarity, families, buckets
+from . import names, slugs, categories, hooks, structures, similarity, families, buckets, toxicity
 from ..config import SEEDS_DIR
 from ..sources.registry import assert_not_blocked
 
@@ -167,7 +167,11 @@ def _merge_curated(rec: dict, curated: dict) -> None:
         key = (row["species"], row["route"], row["value_num"])
         rec["toxicity"] = [row] + [t for t in rec["toxicity"]
                                    if (t["species"], t["route"], t["value_num"]) != key]
+        # A curated dose_poison overlay is hand-decided, so it wins outright over the
+        # parsed rows, route and all. _apply_best_oral_ld50 leaves it alone.
         rec["ld50_mg_per_kg"] = dp["ld50_mg_per_kg"]
+        rec["ld50_route"] = row["route"]
+        rec["ld50_species"] = row["species"]
 
     if curated.get("capsaicinoid_ppm") is not None:
         ppm = curated["capsaicinoid_ppm"]
@@ -209,6 +213,21 @@ def _merge_curated(rec: dict, curated: dict) -> None:
     if curated.get("tier"):
         rec["tier"] = curated["tier"]
     rec["curated"] = cur
+
+
+def _apply_best_oral_ld50(rec: dict) -> None:
+    """Stamp the headline LD50 (value + route + species) from the best oral row.
+
+    A curated dose_poison overlay already set these by hand and is left untouched.
+    A molecule with no usable oral row keeps ld50_mg_per_kg = None, which drops it
+    from the Deadliest board rather than ranking it on an intravenous value."""
+    if rec.get("ld50_mg_per_kg") is not None:
+        return
+    row = toxicity.best_oral(rec.get("toxicity"), rec.get("slug"))
+    if row:
+        rec["ld50_mg_per_kg"] = row["value_num"]
+        rec["ld50_route"] = row["route"]
+        rec["ld50_species"] = row["species"]
 
 
 def apply_scope_bucket(rec: dict, bucket: "str | None", family: "str | None") -> None:
@@ -488,16 +507,26 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         "ghs": fetched.get("ghs"),
         "properties": [], "categories": [], "hooks": [], "edges": [], "content_blocks": [],
         "half_life_hours": None,
-        "ld50_mg_per_kg": (fetched.get("toxicity") or [{}])[0].get("value_num"),
+        # The headline LD50 is the best ORAL row, not simply the first parsed row.
+        # See toxicity.best_oral: taking toxicity[0] put intravenous values on a board
+        # that says oral (stearic acid at 21.5 mg/kg IV ranked 3rd). Route and species
+        # ride alongside the number so the page and the board can show them.
+        "ld50_mg_per_kg": None, "ld50_route": None, "ld50_species": None,
         "relative_sweetness": None, "scoville_shu": None,
         # Scope B grouping (populated for must-include seed molecules); hand_model flags
         # the structureless macromolecule variant. Uniform keys so every record has them.
         "scope_bucket": None, "scope_family": None,
         "hand_model": False, "macromolecule": False,
+        # Carried off the canon row (the Scope B CSV columns). These were dropped here
+        # until 2026-09: `assemble_handmodel` copied them, `assemble_record` did not, so
+        # 480 of 498 records shipped without the flags the CSV had set for them.
+        "is_otc": bool(row.get("is_otc")), "dual_use": bool(row.get("dual_use")),
     }
 
     if curated:
         _merge_curated(rec, curated)
+
+    _apply_best_oral_ld50(rec)
 
     # Functional-group categories (RDKit SMARTS → computed membership).
     for fg in categories.functional_groups(iso or ""):
@@ -515,7 +544,8 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
     # Hooks (plan §7.1). hooks.hooks_for reads these exact keys.
     rec["hooks"] = hooks.hooks_for({
         "cid": cid, "isomeric_smiles": iso, "half_life_hours": rec["half_life_hours"],
-        "ld50": rec["toxicity"], "curated": rec.get("curated") or {},
+        "ld50_mg_per_kg": rec["ld50_mg_per_kg"], "ld50_route": rec["ld50_route"],
+        "ld50_species": rec["ld50_species"], "curated": rec.get("curated") or {},
     })
 
     used = {"pubchem", "rdkit"}
@@ -565,6 +595,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "toxicity": [], "ghs": None,
         "properties": [], "categories": [], "hooks": [], "edges": [], "content_blocks": [],
         "half_life_hours": None, "ld50_mg_per_kg": None,
+        "ld50_route": None, "ld50_species": None,
         "relative_sweetness": None, "scoville_shu": None,
         "scope_bucket": meta.get("bucket"), "scope_family": meta.get("family"),
         "hand_model": True, "macromolecule": True,

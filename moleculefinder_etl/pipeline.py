@@ -173,6 +173,11 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_brands(kept)
     # Odor detection thresholds for the "Most pungent" (stinkiest) leaderboard.
     relationships.attach_odor_thresholds(kept)
+    # kind:"use" hubs from the hand-maintained OTC allowlist (what a medicine is taken
+    # FOR), the one grouping a person browsing a pharmacy shelf actually thinks in.
+    relationships.attach_otc_uses(kept)
+    # Curated food-hub membership, so /in/coffee is a real page and not one molecule.
+    relationships.attach_food_hubs(kept)
     # The page description (phase 1). LAST of the attach passes on purpose: it composes
     # from the curated why_it_matters line, the foods, the odor threshold and everything
     # assembled above, so it has to see all of them. Raises on a duplicate or a
