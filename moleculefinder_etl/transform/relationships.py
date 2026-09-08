@@ -44,6 +44,7 @@ ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
 OTC_ALLOWLIST_YAML = SEEDS_DIR / "otc_allowlist.yaml"
 FOOD_HUBS_YAML = SEEDS_DIR / "food_hubs.yaml"
 COMPARISONS_YAML = SEEDS_DIR / "comparisons.yaml"
+PRODUCT_HUBS_YAML = SEEDS_DIR / "product_hubs.yaml"
 
 CURATED_RELATIONS = ("found_in", "affects", "becomes")   # the CSV / membership relations
 VALID_CONFIDENCE = {FROM_SOURCE, COMPUTED, INFERRED}
@@ -478,11 +479,11 @@ def attach_otc_uses(molecules: list[dict]) -> None:
 
 
 # ── Food hubs (build plan 2026-09-05, phase 2.3) ──────────────────────────────
-def load_food_hubs() -> dict[str, dict]:
-    """Read food_hubs.yaml -> {hub slug: {"name": ..., "molecules": [...]}}."""
-    if not FOOD_HUBS_YAML.exists():
+def _load_hub_yaml(path) -> dict[str, dict]:
+    """Read a hub file -> {hub slug: {"name": ..., "molecules": [...]}}."""
+    if not path.exists():
         return {}
-    data = yaml.safe_load(FOOD_HUBS_YAML.read_text()) or {}
+    data = yaml.safe_load(path.read_text()) or {}
     out: dict[str, dict] = {}
     for slug, entry in data.items():
         mols = [str(m).strip() for m in ((entry or {}).get("molecules") or []) if str(m).strip()]
@@ -492,28 +493,59 @@ def load_food_hubs() -> dict[str, dict]:
     return out
 
 
-def attach_food_hubs(molecules: list[dict]) -> None:
-    """Add a kind:"food" category per curated membership, filling out the thin hubs.
+def load_food_hubs() -> dict[str, dict]:
+    """Read food_hubs.yaml -> {hub slug: {"name": ..., "molecules": [...]}}."""
+    return _load_hub_yaml(FOOD_HUBS_YAML)
 
-    14 of the 17 food hubs had two molecules or fewer; /in/coffee was a one-molecule page.
+
+def load_product_hubs() -> dict[str, dict]:
+    """Read product_hubs.yaml, same shape as the food hubs and emitted as kind:"product".
+
+    Phase 6 needed a home for the honest answer to "where you will find it" when the
+    answer is not a food. Household bleach, a first aid kit and a can of compressed air
+    are where a reader actually meets sodium hypochlorite, hydrogen peroxide and
+    difluoroethane, and filing those as foods would have been a lie for the sake of
+    reusing a mechanism.
+    """
+    return _load_hub_yaml(PRODUCT_HUBS_YAML)
+
+
+def _attach_hubs(molecules: list[dict], hubs: dict[str, dict], kind: str, label: str) -> None:
+    """Add a category of ``kind`` per curated membership.
+
     Additive and idempotent: a membership a curated/*.yaml overlay already set is left
     exactly as it is, note and all. Validates every slug against the snapshot and fails the
     build loudly on a typo, the same discipline as attach_trails."""
-    hubs = load_food_hubs()
     if not hubs:
         return
     by_slug = {m["slug"]: m for m in molecules}
     unknown = sorted({s for h in hubs.values() for s in h["molecules"] if s not in by_slug})
     if unknown:
-        raise SystemExit("food_hubs compile failed, unknown molecule slug(s):\n  " + "\n  ".join(unknown))
+        raise SystemExit(f"{label} compile failed, unknown molecule slug(s):\n  " + "\n  ".join(unknown))
     added = 0
     for hub, entry in hubs.items():
         for slug in entry["molecules"]:
             rec = by_slug[slug]
-            if any(c.get("slug") == hub and c.get("kind") == "food" for c in rec["categories"]):
+            if any(c.get("slug") == hub and c.get("kind") == kind for c in rec["categories"]):
                 continue
-            rec["categories"].append({"slug": hub, "name": entry["name"], "kind": "food",
+            rec["categories"].append({"slug": hub, "name": entry["name"], "kind": kind,
                                       "note": None, "confidence": FROM_SOURCE, "source": "curated"})
             added += 1
-    log.info("  food hubs: %d hubs, %d memberships added", len(hubs), added)
+    log.info("  %s: %d hubs, %d memberships added", label, len(hubs), added)
+
+
+def attach_food_hubs(molecules: list[dict]) -> None:
+    """Add a kind:"food" category per curated membership, filling out the thin hubs.
+
+    14 of the 17 food hubs had two molecules or fewer; /in/coffee was a one-molecule page."""
+    _attach_hubs(molecules, load_food_hubs(), "food", "food hubs")
+
+
+def attach_product_hubs(molecules: list[dict]) -> None:
+    """Add a kind:"product" category per curated membership (phase 6).
+
+    The molecule page's "Where you will find it" box promises everyday foods OR products
+    and could only ever deliver the first half, so 705 of 788 pages carried an empty state
+    that read as a missing mapping even where no food could ever exist."""
+    _attach_hubs(molecules, load_product_hubs(), "product", "product hubs")
 

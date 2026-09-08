@@ -620,7 +620,7 @@ def attach_derived_categories(records: list[dict]) -> None:
 #
 # Highest priority wins and the other memberships are rewritten onto it, so no
 # molecule ever falls out of a hub it belonged in.
-KIND_PRIORITY = ("bucket", "food", "use", "family", "type", "drug_class",
+KIND_PRIORITY = ("bucket", "food", "product", "use", "family", "type", "drug_class",
                  "functional_group", "element", "poison", "size")
 
 

@@ -240,3 +240,51 @@ def test_real_brands_and_odor_seeds_are_well_formed():
     assert odt, "expected odor thresholds"
     for v in odt.values():
         assert isinstance(v, float) and v > 0
+
+
+# ── Product hubs (build plan phase 6, 2026-09-07) ────────────────────────────
+def test_product_hubs_emit_their_own_kind(monkeypatch):
+    """kind:"product", not kind:"food". Bleach is not a food and the /in/ page says
+    "found in" either way, so the only thing stopping this from being filed as a food was
+    the decision to keep the label honest."""
+    monkeypatch.setattr(rel, "load_product_hubs",
+                        lambda: {"first-aid-kit": {"name": "First aid kit",
+                                                   "molecules": ["hydrogen-peroxide"]}})
+    mols = [{"slug": "hydrogen-peroxide", "categories": []}]
+    rel.attach_product_hubs(mols)
+    assert mols[0]["categories"] == [{
+        "slug": "first-aid-kit", "name": "First aid kit", "kind": "product",
+        "note": None, "confidence": rel.FROM_SOURCE, "source": "curated",
+    }]
+
+
+def test_a_product_hub_typo_fails_the_build(monkeypatch):
+    monkeypatch.setattr(rel, "load_product_hubs",
+                        lambda: {"first-aid-kit": {"name": "x", "molecules": ["hydrogen-perixide"]}})
+    with pytest.raises(SystemExit, match="hydrogen-perixide"):
+        rel.attach_product_hubs([{"slug": "hydrogen-peroxide", "categories": []}])
+
+
+def test_product_membership_is_idempotent(monkeypatch):
+    monkeypatch.setattr(rel, "load_product_hubs",
+                        lambda: {"first-aid-kit": {"name": "First aid kit", "molecules": ["x"]}})
+    mols = [{"slug": "x", "categories": []}]
+    rel.attach_product_hubs(mols)
+    rel.attach_product_hubs(mols)
+    assert len(mols[0]["categories"]) == 1
+
+
+def test_the_shipped_hub_files_name_only_real_molecules():
+    """The real seeds against the real catalog: a hub naming a molecule with no page would
+    publish a /in/ row that goes nowhere."""
+    import json
+    from moleculefinder_etl.config import SNAPSHOTS
+    index = SNAPSHOTS / "index.json"
+    if not index.exists():
+        pytest.skip("no snapshot exported yet")
+    known = {m["slug"] for m in json.loads(index.read_text())}
+    for loader, label in ((rel.load_food_hubs, "food_hubs"), (rel.load_product_hubs, "product_hubs")):
+        for hub, entry in loader().items():
+            assert len(entry["molecules"]) >= 3, f"{label}:{hub} has fewer than 3 members"
+            unknown = [s for s in entry["molecules"] if s not in known]
+            assert not unknown, f"{label}:{hub} names unknown molecule(s) {unknown}"
