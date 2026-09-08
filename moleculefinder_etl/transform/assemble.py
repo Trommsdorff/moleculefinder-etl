@@ -92,18 +92,41 @@ def _is_code(s: str) -> bool:
 
 
 def _clean_synonyms(syns, title: "str | None") -> list[str]:
-    out, seen = [], set()
+    """Pick the display synonyms in PubChem's order, then STORE them in a stable one.
+
+    Two different jobs, and conflating them is what made the snapshot churn. *Selection*
+    has to follow PubChem's ordering, which is the only signal we have for which names a
+    person would recognise (its head is remarkably stable: "acetaminophen, Paracetamol,
+    4-Acetamidophenol..." for months). *Storage* must not, because further down that list
+    PubChem freely swaps neighbours between rebuilds, and a pure re-sort of the shipped
+    list removed 80 of the 156 synonym-only file changes in the 2026-09-06 weekly diff.
+
+    So: take the first 12 non-code names the way we always did, then sort those twelve
+    alphabetically with the title pinned first. An adjacent swap upstream now lands on
+    the same stored list, and only a name genuinely entering or leaving the top twelve
+    moves the file.
+    """
+    out: list[str] = []
+    seen: dict[str, int] = {}          # dedup key -> slot in `out`
     for s in ([title] + list(syns or [])):
-        if not s:
+        s = (s or "").strip()
+        if not s or _is_code(s):       # skip CAS/registry cross-reference codes
             continue
-        low = s.lower().strip()
-        if low in seen or _is_code(s):     # skip dups + CAS/registry cross-reference codes
+        low = s.lower()
+        if low in seen:
+            # "Advil" and "advil " are one name in two dresses. Which one PubChem happens
+            # to list first is not stable, so pick the representative by the string itself.
+            slot = seen[low]
+            out[slot] = min(out[slot], s)
             continue
-        seen.add(low)
+        seen[low] = len(out)
         out.append(s)
         if len(out) >= 12:
             break
-    return out
+    head = out[:1] if title and out and out[0].lower() == title.strip().lower() else []
+    rest = out[len(head):]
+    # casefold first so case alone cannot decide the order; the exact string breaks that tie.
+    return head + sorted(rest, key=lambda s: (s.casefold(), s))
 
 
 # A CAS Registry Number is 2–7 + 2 + 1 digits. The last digit is a checksum, which we verify
@@ -662,8 +685,39 @@ def prune_thin_categories(records: list[dict], min_members: int = MIN_HUB_MEMBER
              ", ".join(sorted(f"{k}:{s}" for k, s in dropped)[:8]))
 
 
-def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
-    """Build one molecule record from a canon row + its fetched PubChem payload."""
+def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
+    """``structure_svg`` + the fingerprint that says when it may be reused.
+
+    RDKit lays the same molecule out differently on macOS and on Linux for the ~7% of the
+    catalog whose depiction goes through a numerical minimiser (``structures`` docstring has
+    the measurements). Re-rendering every week therefore rewrote 53 files on any run that
+    happened on the other platform, for no change a reader could see. A record whose SMILES
+    and recipe version are unchanged now keeps the exact SVG it shipped with.
+    """
+    if not smiles:
+        return {"structure_svg": None, "structure_svg_key": None}
+    key = structures.svg_key(smiles)
+    if prior and prior.get("structure_svg"):
+        # Normal path: the fingerprint says the structure and the recipe are both unchanged.
+        # Adoption path: records exported before the key existed carry no fingerprint, so
+        # fall back to comparing the SMILES they were drawn from. Without it the very run
+        # that introduces the key would redraw all 769 structures on whatever platform it
+        # happened to run on, which is the churn this exists to stop.
+        unchanged = (prior.get("structure_svg_key") == key
+                     or (prior.get("structure_svg_key") is None
+                         and prior.get("isomeric_smiles") == smiles))
+        if unchanged:
+            return {"structure_svg": prior["structure_svg"], "structure_svg_key": key}
+    return {"structure_svg": structures.svg_for(smiles), "structure_svg_key": key}
+
+
+def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = None) -> dict:
+    """Build one molecule record from a canon row + its fetched PubChem payload.
+
+    ``prior`` is this molecule's record from the last exported snapshot, when there is one.
+    It is used for exactly one thing: carrying the drawn structure forward (see
+    ``_carried_svg``). Nothing else reads it, so a missing prior only means a redraw.
+    """
     cid = row["cid"]
     props = fetched.get("props") or {}
     curated = fetched.get("curated") or {}
@@ -694,7 +748,7 @@ def assemble_record(row: dict, fetched: dict, taken: set) -> dict:
         "inchi": props.get("InChI"), "inchikey": props.get("InChIKey"),
         "cas": _extract_cas(syns),
         "synonyms": _clean_synonyms(syns, title),
-        "structure_svg": structures.svg_for(iso) if iso else None,
+        **_carried_svg(iso, prior),
         # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
         # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D).
         "has_3d": props.get("Volume3D") is not None,
@@ -795,6 +849,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "cas": None,                 # no single compound ⇒ no CAS Registry Number
         "synonyms": [name],
         "structure_svg": None,       # no single structure — the web variant omits the render
+        "structure_svg_key": None,
         "descriptors": {"xlogp": None, "tpsa": None, "h_bond_donors": None,
                         "h_bond_acceptors": None, "rotatable_bonds": None,
                         "complexity": None, "formal_charge": None,

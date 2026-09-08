@@ -16,7 +16,7 @@ import json
 import logging
 from pathlib import Path
 
-from .config import Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH
+from .config import Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships
 from .sources import pubchem
@@ -100,7 +100,10 @@ def stage_fetch(settings: Settings) -> None:
              "%d hand-modeled molecules skip PubChem", len(cids), n_hand)
 
     props = _fetch_cached(cids, "props", lambda miss: {int(p["CID"]): p for p in pubchem.properties(miss)})
-    syns = _fetch_cached(cids, "syn", lambda miss: pubchem.synonyms(miss))
+    # Cache prefix is "syn60", not "syn": the old entries hold a 20-name window and reusing
+    # them would keep the starvation the deeper window exists to remove. Renaming the prefix
+    # re-fetches once and leaves the stale files to be evicted.
+    syns = _fetch_cached(cids, "syn60", lambda miss: pubchem.synonyms(miss))
 
     # Warm the PUG-View caches (Toxicity + GHS) so transform parses offline.
     tox_hits = ghs_hits = 0
@@ -118,6 +121,30 @@ def stage_fetch(settings: Settings) -> None:
     log.info("  fetched %d CIDs (%d with toxicity, %d with GHS) -> %s", len(cids), tox_hits, ghs_hits, FETCHED.name)
 
 
+def _prior_snapshot() -> dict[int, dict]:
+    """The last exported snapshot, keyed by CID, for fields that are carried forward.
+
+    Only ``structure_svg`` uses it today (see ``assemble._carried_svg``): RDKit draws ~7% of
+    the catalog differently on macOS than on Linux, so re-rendering on whichever machine
+    happens to run the pipeline rewrote 53 files a week with no visible change. Reading the
+    previous export makes the drawing a stored artifact. An absent or unreadable snapshot is
+    not an error: everything simply redraws, which is what a first run does anyway.
+    """
+    out: dict[int, dict] = {}
+    molecules = SNAPSHOTS / "molecules"
+    if not molecules.is_dir():
+        return out
+    for path in sorted(molecules.glob("*.json")):
+        try:
+            rec = json.loads(path.read_text())
+        except (json.JSONDecodeError, OSError):
+            continue
+        if isinstance(rec, dict) and rec.get("cid") is not None:
+            out[int(rec["cid"])] = rec
+    log.info("  carry-forward: read %d prior record(s) from %s", len(out), molecules)
+    return out
+
+
 # ── Stage 2: transform ───────────────────────────────────────────────────────
 def stage_transform(settings: Settings) -> list[dict]:
     _require(SEED_DIR / "canon.parquet", "seed")
@@ -130,6 +157,7 @@ def stage_transform(settings: Settings) -> list[dict]:
     fetched_by_cid = {f["cid"]: f for f in json.loads(FETCHED.read_text())}
     curated_by_cid = _load_curated()
     seed_by_cid = {m["cid"]: m for m in canon_stage.household_seed()}
+    prior_by_cid = _prior_snapshot()
 
     taken: set[str] = set()
     records: list[dict] = []
@@ -153,7 +181,7 @@ def stage_transform(settings: Settings) -> list[dict]:
             "toxicity": toxicity.parse_ld50(pubchem.pug_view(cid, "Toxicity")),
             "ghs": ghs.parse_ghs(pubchem.pug_view(cid, "GHS Classification")),
         }
-        rec = assemble.assemble_record(row, fetched, taken)
+        rec = assemble.assemble_record(row, fetched, taken, prior=prior_by_cid.get(cid))
         seed = seed_by_cid.get(cid)                         # carry Scope B bucket onto add-core seeds
         if seed:
             assemble.apply_scope_bucket(rec, seed.get("bucket"), seed.get("family"))
