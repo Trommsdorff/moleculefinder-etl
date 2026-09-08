@@ -14,11 +14,15 @@ def _prune(directory: Path, keep: set[str]) -> None:
             f.unlink()
 
 
-def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
+def export(molecules: list[dict], leaderboards: dict[str, dict],
+           comparisons: dict[str, dict] | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files.
 
     Each leaderboard file is a self-describing board (metadata + enriched
     entries); `leaderboards/index.json` lists the boards for the /best index.
+
+    ``comparisons`` is compiled by the caller, not here: validating the curated pairs
+    needs the whole catalog, and export is a projection of whatever it is handed.
     """
     mol_dir = SNAPSHOTS / "molecules"
     mol_dir.mkdir(parents=True, exist_ok=True)
@@ -37,6 +41,11 @@ def export(molecules: list[dict], leaderboards: dict[str, dict]) -> Path:
     # Everyday Worlds: the 10 curated worlds (index + per-world detail) for /roam (spec §4/§5).
     (SNAPSHOTS / "worlds.json").write_text(
         json.dumps(relationships.build_worlds(molecules), ensure_ascii=False))
+    # Written comparisons for /vs/<a>-vs-<b> (build plan phase 5). The two records are read
+    # straight from the molecule files by the page; only the prose needs curating, so only
+    # the prose is exported. Which pairs get a page is the web's lib/compare-pairs.ts.
+    (SNAPSHOTS / "comparisons.json").write_text(
+        json.dumps(comparisons or {}, ensure_ascii=False))
     _prune(mol_dir, {f"{m['slug']}.json" for m in molecules})
     lb_dir = SNAPSHOTS / "leaderboards"
     lb_dir.mkdir(parents=True, exist_ok=True)
