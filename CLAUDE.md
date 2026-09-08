@@ -194,7 +194,28 @@ Three defects were found and fixed getting there; see the three commits after `9
 - Counts: 793 molecules, 793 distinct descriptions (100-209 chars, mean 137), 0 orphans,
   141 hubs, deadliest 232 entries, 97 tests, ruff clean.
 
-## Run 3 (2026-09-07) — determinism + phases 5 and 6, BUILT on `traffic-2026-09-p3`, NOT pushed
+### DEPLOYED 2026-09-08 — and the local raw_cache shipped a regression the loop caught
+ETL `1b38269..aa0967b` (no deploy), then web `380c2e2..11c8bbb` (the deploy, live 13:26 UTC).
+- **The determinism work holds on Linux CI.** The proving dispatch (run 34232247646) produced
+  **zero synonym changes and zero `structure_svg` changes** against the snapshot built on macOS.
+  `/m/omeprazole`'s served SVG is byte-identical before and after the deploy (11,509 bytes,
+  sha256 `028384ff…`), which is the carry-forward doing its job across a platform change.
+- **But my LOCAL `data/raw_cache` was stale, and it regressed 26 molecules.** The Wikidata
+  cache on this machine held bulk-batch QIDs where the live source has the real items, and a
+  PUG-View miss for omeprazole. `mfetl all` read that stale cache and wrote WORSE values into
+  the snapshot I shipped: 22 `wikidata_qid` (alanine `Q218642` -> `Q106345485`, glycine
+  `Q620730` -> `Q106345678`, taurine `Q207051` -> `Q106345481`), 11 `summary` back to "chemical
+  compound" (taurine, hesperidin...), and omeprazole's oral LD50 to null. **I misread these in
+  the run-3 report as an upstream refresh; they were the opposite.**
+- **The weekly loop caught it unattended**, which is exactly what part B of run 2 was built for:
+  CI fetched fresh, corrected all 26, pushed `c01ce71`, opened web PR #3, waited for CI, and
+  squash-merged at 13:33 UTC. Live within four minutes of the regression being detected.
+- **Lesson, and why `data/raw_cache` was wiped in the cleanup:** a stale local cache silently
+  overwrites good data, and nothing in the pipeline notices, because a cache hit looks exactly
+  like a fetch. Worth an expiry on the Wikidata and PUG-View entries. The PubChem property and
+  synonym caches are safe (their content genuinely does not change); the derived ones are not.
+
+## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
   and roughly 190 of them carried nothing a reader could see. Two causes, both fixed:
   - **Synonyms.** Selection still follows PubChem's order (the only signal for which names a
