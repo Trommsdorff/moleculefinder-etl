@@ -21,6 +21,7 @@ from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships
 from .sources import pubchem
 from .load import supabase_loader, snapshot_export
+from . import freshness
 
 import yaml
 
@@ -161,6 +162,7 @@ def stage_transform(settings: Settings) -> list[dict]:
 
     taken: set[str] = set()
     records: list[dict] = []
+    tox_freshness: dict[int, object] = {}
     for row in canon:
         cid = int(row["cid"])
         if row.get("hand_model"):                          # structureless macromolecule variant
@@ -174,11 +176,15 @@ def stage_transform(settings: Settings) -> list[dict]:
             records.append(assemble.assemble_handmodel(row, meta, taken))
             continue
         f = fetched_by_cid.get(cid, {})
+        # Dated: the LD50 the export guard protects is parsed out of this annotation, so
+        # the guard has to know whether the annotation came off the network or off the disk.
+        tox_entry = pubchem.pug_view_dated(cid, "Toxicity")
+        tox_freshness[cid] = tox_entry
         fetched = {
             "props": f.get("props") or {},
             "synonyms": f.get("synonyms") or [],
             "curated": curated_by_cid.get(cid),
-            "toxicity": toxicity.parse_ld50(pubchem.pug_view(cid, "Toxicity")),
+            "toxicity": toxicity.parse_ld50(tox_entry.value),
             "ghs": ghs.parse_ghs(pubchem.pug_view(cid, "GHS Classification")),
         }
         rec = assemble.assemble_record(row, fetched, taken, prior=prior_by_cid.get(cid))
@@ -221,6 +227,11 @@ def stage_transform(settings: Settings) -> list[dict]:
     # assembled above, so it has to see all of them. Raises on a duplicate or a
     # sub-100-character description rather than shipping one.
     assemble.attach_descriptions(kept)
+
+    # Hand the PUG-View fetch dates to the export guard. Written here rather than carried
+    # on the records: a per-record timestamp would move every run and put all 788 molecule
+    # files into every weekly diff, which is the churn run 3 existed to remove.
+    freshness.merge({freshness.TOXICITY: freshness.from_entries(tox_freshness)})
 
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from ..config import SNAPSHOTS
 from ..transform import roam_layout, relationships
+from . import snapshot_guard
 
 
 def _prune(directory: Path, keep: set[str]) -> None:
@@ -23,7 +24,14 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
 
     ``comparisons`` is compiled by the caller, not here: validating the curated pairs
     needs the whole catalog, and export is a projection of whatever it is handed.
+
+    Nothing is written until ``snapshot_guard`` has compared the records against the
+    snapshot already on disk. This is the only place the snapshot is written, so it is the
+    only place the check has to be: a run that would walk a summary, an LD50 or a QID
+    backwards on the strength of a cache hit stops here with the whole previous snapshot
+    still intact, rather than half-overwriting it.
     """
+    snapshot_guard.check(molecules, SNAPSHOTS)
     mol_dir = SNAPSHOTS / "molecules"
     mol_dir.mkdir(parents=True, exist_ok=True)
     index = []

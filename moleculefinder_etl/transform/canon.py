@@ -19,13 +19,18 @@ and resumable. Emits data/seed/canon.parquet.
 from __future__ import annotations
 import csv
 import json
+import logging
 import zlib
 from pathlib import Path
 
 import yaml
 
-from ..config import SEED_DIR, CANON_TARGET, RAW_CACHE, CURATED_DIR, SEEDS_DIR
-from ..sources import wikidata, pageviews, pubchem
+from ..config import (SEED_DIR, CANON_TARGET, RAW_CACHE, CURATED_DIR, SEEDS_DIR,
+                      WIKIDATA_CACHE_TTL_DAYS)
+from ..sources import wikidata, pageviews, pubchem, cache
+from .. import freshness
+
+log = logging.getLogger("mfetl")
 
 # ~household-name molecules forced into the marquee tier, spanning families that
 # cluster structurally (xanthines, sugars, alcohols, NSAIDs, catecholamines,
@@ -78,11 +83,18 @@ def _cache(path: Path):
 
 
 def _notable_cached() -> list[dict]:
+    """The notability net, cached with an expiry (``WIKIDATA_CACHE_TTL_DAYS``).
+
+    Wikidata is a live wiki: items are created, merged and split, so a copy of this query
+    is only true as of the moment it ran. It used to be kept forever, which meant a machine
+    that had run the query once was pinned to that day's answer indefinitely.
+    """
     path = _cache(RAW_CACHE / "wikidata" / "notable.json")
-    if path.exists():
-        return json.loads(path.read_text())
+    hit = cache.read_json(path, WIKIDATA_CACHE_TTL_DAYS)
+    if hit is not None:
+        return hit.value
     rows = wikidata.notable_compounds()
-    path.write_text(json.dumps(rows))
+    cache.write_json(path, rows)
     return rows
 
 
@@ -101,19 +113,75 @@ def _pageviews_cached(title: str) -> int:
     return v
 
 
+DESCRIPTIONS_CACHE = RAW_CACHE / "wikidata" / "descriptions.json"
+
+
+def _read_descriptions_cache(path: Path) -> dict[str, dict]:
+    """Per-CID entries, each with its own ``fetched_at``.
+
+    Entries written before dates existed come back undated, which ``cache.is_fresh``
+    treats as unknown age and therefore never fresh. That is the migration: the first run
+    after this change re-fetches the whole map once, and the undated entries that caused
+    the 2026-09-08 regression cannot be reused even once more.
+    """
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+    if isinstance(raw, dict) and raw.get(cache.ENVELOPE_KEY):
+        entries = raw.get("entries") or {}
+        return entries if isinstance(entries, dict) else {}
+    # Legacy flat {cid: {desc, qid}} — adopt it, undated.
+    return {str(k): dict(v or {}) for k, v in raw.items()} if isinstance(raw, dict) else {}
+
+
 def _descriptions_cached(cids: list[int]) -> dict[int, dict]:
-    path = _cache(RAW_CACHE / "wikidata" / "descriptions.json")
-    cache: dict[str, dict] = json.loads(path.read_text()) if path.exists() else {}
-    missing = [c for c in cids if str(c) not in cache]
+    """CC0 descriptions + QIDs per CID, cached **with a per-entry expiry**.
+
+    This is the cache that shipped the regression. It held bulk-batch items
+    (alanine ``Q106345485`` where Wikidata now has ``Q218642``) and null descriptions where
+    Wikidata now has prose, and because a hit was indistinguishable from a fetch the
+    pipeline wrote those over 22 QIDs and 11 summaries that were already correct in the
+    snapshot. An entry now states when it was fetched and stops being a hit once it is
+    older than ``WIKIDATA_CACHE_TTL_DAYS``.
+
+    Misses are still recorded so a CID with genuinely no Wikidata item is not re-queried
+    every run, but a recorded miss expires exactly like a recorded value: omeprazole's
+    nulled LD50 came from the same "we asked once and got nothing" shape.
+
+    Each returned entry carries ``fetched_at`` and ``live``; they are handed to the
+    freshness map so the export guard can tell an upstream change from a stale overwrite.
+    """
+    path = _cache(DESCRIPTIONS_CACHE)
+    stored = _read_descriptions_cache(path)
+    at = cache.now()
+    missing = [c for c in cids
+               if not cache.is_fresh((stored.get(str(c)) or {}).get("fetched_at"),
+                                     WIKIDATA_CACHE_TTL_DAYS, at)]
+    live: set[int] = set()
     if missing:
         try:
             fetched = wikidata.descriptions_for_cids(missing)
         except Exception:
             fetched = {}
-        for c in missing:                       # record misses too, so we don't refetch
-            cache[str(c)] = fetched.get(c, {"desc": None, "qid": None})
-        path.write_text(json.dumps(cache))
-    return {int(k): v for k, v in cache.items()}
+            log.warning("wikidata descriptions: query failed; %d CID(s) keep their cached "
+                        "values and are marked not-freshly-fetched", len(missing))
+        else:
+            live = set(missing)
+            for c in missing:                   # record misses too, so we don't refetch
+                d = fetched.get(c) or {"desc": None, "qid": None}
+                stored[str(c)] = {"desc": d.get("desc"), "qid": d.get("qid"), "fetched_at": at}
+            path.write_text(json.dumps({cache.ENVELOPE_KEY: cache.ENVELOPE_VERSION,
+                                        "fetched_at": at, "entries": stored}, sort_keys=True))
+            log.info("  wikidata descriptions: %d fetched, %d still fresh in cache",
+                     len(missing), len(cids) - len(missing))
+    out = {int(k): {**v, "live": int(k) in live} for k, v in stored.items()}
+    freshness.merge({freshness.WIKIDATA: {
+        c: {"fetched_at": (out.get(c) or {}).get("fetched_at"), "live": c in live}
+        for c in cids}})
+    return out
 
 
 def _curated_seed() -> dict[int, dict]:
