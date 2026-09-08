@@ -194,6 +194,53 @@ Three defects were found and fixed getting there; see the three commits after `9
 - Counts: 793 molecules, 793 distinct descriptions (100-209 chars, mean 137), 0 orphans,
   141 hubs, deadliest 232 entries, 97 tests, ruff clean.
 
+## Run 3 (2026-09-07) — determinism + phases 5 and 6, BUILT on `traffic-2026-09-p3`, NOT pushed
+- **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
+  and roughly 190 of them carried nothing a reader could see. Two causes, both fixed:
+  - **Synonyms.** Selection still follows PubChem's order (the only signal for which names a
+    reader recognises, and its head is stable for months); STORAGE no longer does, the chosen
+    twelve are sorted with the title first. The fetch window went 20 -> 60, which costs
+    nothing at the API and drops starved lists (fewer than 12 display names, so the tail sat
+    on the truncation boundary) from 209 to 73. Cache prefix is `syn60`, so the old 20-name
+    entries are not reused. Measured on the real lists under a realistic perturbation:
+    671 of 751 changed under the old rule, 95 under the new one, and every survivor is a real
+    membership change. Side effect: 20 CAS numbers the 20-name window had been hiding.
+  - **`structure_svg`.** **The rdkit VERSION is not the variable, the PLATFORM is.** rdkit
+    2026.03.3 and 2026.03.6 on macOS agree on all 769 structures and both disagree with the
+    Linux CI output on the same 53, the fused and bridged polycyclics whose layout goes
+    through a numerical minimiser. **Pinning the version would fix nothing.** So the drawing is
+    now a stored artifact: `structures.svg_key()` fingerprints the SMILES plus
+    `RECIPE_VERSION`, and `assemble._carried_svg` reuses the previously exported SVG when the
+    fingerprint matches. Records from before the key are adopted by their SMILES, so the
+    migration did NOT redraw the catalog: all 53 Linux drawings carried across byte-for-byte.
+    **Bump `RECIPE_VERSION` to force a redraw on purpose.**
+  - Proof: `mfetl all` twice from the same `fetched.json` leaves the snapshot, `canon.parquet`
+    and `fetched.json` byte-identical. `tests/test_determinism.py` pins both rules.
+  - One-time cost: every one of the 788 files changed once (each gains `structure_svg_key`
+    and its synonyms settle into the stored order). Real content moving with it: 20 CAS,
+    22 `wikidata_qid`, 11 `summary`, 3 GHS, omeprazole's LD50, eugenol's categories.
+- **Phase 5, the written half.** `sources/seeds/comparisons.yaml`, 122 pairs, compiled to
+  `data/snapshots/comparisons.json` keyed `a-vs-b`. The pair LIST lives in the web repo
+  (`lib/compare-pairs.ts`); the web build fails if the two disagree. Fenced like every other
+  curated seed: unknown slug, self-comparison and the same pair in both orders all fail the
+  run. Prose rules are enforced (`_comparison_prose_errors`): 4 to 6 sentences, 320+ chars, no
+  em-dash, no dosing, no "which one to take". Half these pairs are medicines. The dosing
+  pattern has a negative lookahead so "636 mg/kg" reads as the LD50 it is and "500 mg" trips.
+  Every numeric claim was audited against the two records; four were wrong and are fixed.
+- **Phase 6, everyday sources.** The plan asked for foods on the 60 highest-demand molecules
+  still saying "Not yet mapped". After tranche 1 that list is 47 prescription medicines,
+  elements and body molecules, so taken literally it would have meant inventing foods. Three
+  parts instead: 18 new **food** hubs where a food genuinely exists (including several of
+  those elements as the dietary minerals they are), 9 new **product** hubs under a new
+  `kind:"product"` (`sources/seeds/product_hubs.yaml`, sharing the food hubs' validated
+  additive machinery), and a web-side honest answer for the four buckets where neither is ever
+  coming. 83 -> 191 molecules name a curated food or product; pages saying "Not yet mapped"
+  705 -> 217 (plan target: under 420). All 60 of the top 60 stop saying it, 13 by curation and
+  47 by the honest answer. `/in/coffee` 10 -> 14, `/in/wine` 15 -> 21, `/in/chocolate` 12 -> 17.
+- Counts: 788 molecules, 788 distinct descriptions (100-209, mean 137), 168 hubs, 8 boards,
+  122 comparisons, 127 tests, ruff clean, `mfetl all` idempotent.
+- **Deploy order (unchanged): ETL main first (no deploy), then web main (the deploy).**
+
 ## Next
 - **Launched on moleculefinder.com (498 live; 793 built and waiting on the branch above).** The `load_all` slug *reassignment* edge (moving a slug
   from one CID to another when the canon changes) is still not auto-handled — it needs a manual
