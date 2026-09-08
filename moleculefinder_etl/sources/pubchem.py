@@ -13,7 +13,9 @@ from urllib.parse import quote
 import requests
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception
 
-from ..config import PUBCHEM_REST, PUBCHEM_VIEW, PUBCHEM_BATCH, PUBCHEM_MAX_RPS, USER_AGENT, RAW_CACHE
+from ..config import (PUBCHEM_REST, PUBCHEM_VIEW, PUBCHEM_BATCH, PUBCHEM_MAX_RPS, USER_AGENT,
+                      RAW_CACHE, PUGVIEW_CACHE_TTL_DAYS)
+from . import cache
 
 PROPERTIES = (
     "MolecularFormula,MolecularWeight,CanonicalSMILES,IsomericSMILES,InChI,InChIKey,"
@@ -133,22 +135,33 @@ def synonyms(cids: list[int], limit: int = 60) -> dict[int, list[str]]:
 
 
 @_pubchem_retry
-def pug_view(cid: int, heading: str) -> dict | None:
-    """Fetch a PUG-View annotation heading (e.g. 'GHS Classification', 'Toxicity').
+def pug_view_dated(cid: int, heading: str) -> "cache.Entry":
+    """Fetch a PUG-View annotation heading, and say how old the answer is.
 
-    Cached under data/raw_cache/pubchem/<cid>-<heading>.json.
+    Cached under data/raw_cache/pubchem/<cid>-<heading>.json, and **the entry expires**
+    (``PUGVIEW_CACHE_TTL_DAYS``). Unlike a CID's formula or its name list, an annotation is
+    a curated view that upstream adds to and corrects: omeprazole's oral LD50 was nulled in
+    the 2026-09-08 snapshot because this cache held a miss recorded before PubChem had the
+    value. A 404 is still cached, so a compound with genuinely no annotation is not
+    re-requested every run, but that miss now expires like anything else.
+
+    The returned ``Entry`` carries ``fetched_at``, which the freshness map and
+    ``load.snapshot_guard`` use to tell an upstream change from a stale cache overwriting
+    a good value.
     """
-    RAW_CACHE.joinpath("pubchem").mkdir(parents=True, exist_ok=True)
-    cache = RAW_CACHE / "pubchem" / f"{cid}-{heading.replace(' ', '_')}.json"
-    if cache.exists():
-        return json.loads(cache.read_text())
+    path = RAW_CACHE / "pubchem" / f"{cid}-{heading.replace(' ', '_')}.json"
+    hit = cache.read_json(path, PUGVIEW_CACHE_TTL_DAYS)
+    if hit is not None:
+        return hit
     _throttle()
     url = f"{PUBCHEM_VIEW}/data/compound/{cid}/JSON"
     r = _session.get(url, params={"heading": heading}, timeout=60)
     if r.status_code == 404:
-        cache.write_text("null")
-        return None
+        return cache.write_json(path, None)
     r.raise_for_status()
-    data = r.json()
-    cache.write_text(json.dumps(data))
-    return data
+    return cache.write_json(path, r.json())
+
+
+def pug_view(cid: int, heading: str) -> dict | None:
+    """``pug_view_dated`` without the date, for callers that only want the annotation."""
+    return pug_view_dated(cid, heading).value

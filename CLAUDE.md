@@ -215,6 +215,52 @@ ETL `1b38269..aa0967b` (no deploy), then web `380c2e2..11c8bbb` (the deploy, liv
   like a fetch. Worth an expiry on the Wikidata and PUG-View entries. The PubChem property and
   synonym caches are safe (their content genuinely does not change); the derived ones are not.
 
+## Run 4 (2026-09-08) — the raw_cache can no longer ship a regression
+Built on `traffic-2026-09-p4`, NOT pushed. Answers the lesson at the end of the run 3
+section: "a stale local cache silently overwrites good data, and nothing in the pipeline
+notices, because a cache hit looks exactly like a fetch."
+
+- **`sources/cache.py`** — every cached entry now carries the UTC instant it was fetched
+  and whether THIS run fetched it. An entry written before the envelope existed reads back
+  as *unknown age*, and unknown age is never fresh, so the very entries that caused the
+  incident cannot be reused even once more.
+- **Only the DERIVED sources expire.** Wikidata items get merged and split and PUG-View
+  annotations get added to, so a stale copy of either is a claim about the past presented
+  as the present: `descriptions.json`, `notable.json` and the per-CID PUG-View files now
+  have a TTL (`MFETL_WIKIDATA_TTL_DAYS`, default **6**; `MFETL_PUGVIEW_TTL_DAYS`, default
+  **30**). **The PubChem property and synonym caches are unchanged, on purpose** — a CID's
+  formula, weight and name list are what that CID *is*, and a test pins that they keep no
+  date. 6 and not 7 because the cron is weekly and CI carries `data/raw_cache` forward
+  (`actions/cache` save+restore, so a stale entry can persist in CI too): a 7-day window
+  would sit on the boundary and scheduler jitter would decide whether Wikidata got re-read.
+- **`load/snapshot_guard.py`, the backstop.** `snapshot_export.export()` writes nothing
+  until it has compared the records against the snapshot already on disk. The rule is not
+  "these fields may never change", it is: **a protected field may only regress if the input
+  behind the new value was fetched live in this run.** Three protected shapes, which are
+  the three the incident had: a `summary` reverting to "chemical compound", an existing
+  `ld50_mg_per_kg` going null, an existing `wikidata_qid` changing to a different one
+  (filling a null is not a regression). A live fetch is by definition fresher than anything
+  on disk, so **the weekly CI run that corrected all 26 passes untouched**; a cache hit is
+  not, so the run that caused them stops. `MFETL_ALLOW_REGRESSION=1` overrides and logs
+  every molecule it let through, because a deliberate rule change (tightening
+  `toxicity.best_oral`) legitimately drops values and must stay shippable.
+- **Freshness is NOT stored on the records or in `canon.parquet`.** Both are committed, and
+  a timestamp that moves every run would put all 788 molecule files (or the parquet, which
+  gates the workflow's heartbeat) into every weekly diff: exactly the churn run 3 removed.
+  It goes in gitignored `data/seed/freshness.json` beside `fetched.json`, merged across
+  stages so `seed` records Wikidata and `transform` records PUG-View without either
+  erasing the other. An input a run never touched counts as not-live, so a partial re-run
+  cannot launder a stale value in.
+- **`tests/test_cache_safety.py` replays 2026-09-08 with the real values** (alanine
+  `Q218642` -> `Q106345485`, taurine's summary back to "chemical compound", omeprazole's
+  4000 mg/kg nulled) and asserts the export is refused *and* that the good snapshot is
+  still whole on disk afterwards. Verified the test is load-bearing: remove the one
+  `snapshot_guard.check` line and it fails. 24 tests here, 151 in the repo, ruff clean.
+- **Not run:** a live `mfetl all`. `data/raw_cache` is empty after the run-3 cleanup, so a
+  full run would be a fresh fetch of the whole catalog and therefore a data refresh riding
+  on a code deploy. Data refreshes belong to the weekly cron. The wiring is proven by
+  offline tests against mocked WDQS/PUG-View instead, which is what CI runs anyway.
+
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
   and roughly 190 of them carried nothing a reader could see. Two causes, both fixed:

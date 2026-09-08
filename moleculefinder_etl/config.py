@@ -27,6 +27,20 @@ PUBCHEM_MAX_RPS = 5
 PUBCHEM_BATCH = 150                 # CIDs per property POST
 USER_AGENT = "MoleculeFinderBot/0.1 (137 Finder LLC; contact: garrett@137finder.com)"
 
+# ── Raw-cache expiry (sources/cache.py) ──────────────────────────────────────
+# Only the DERIVED sources expire. Wikidata items are merged and split upstream and
+# PUG-View annotations get added to, so a stale copy of either is a claim about the past
+# presented as the present: that is what regressed 26 molecules on 2026-09-08. PubChem
+# properties and synonyms describe what a CID *is* and are cached forever, on purpose.
+# 6 days, not 7: the cron runs weekly and CI carries data/raw_cache forward between runs
+# (actions/cache save+restore), so a 7-day window would sit exactly on the boundary and a
+# few minutes of scheduler jitter would decide whether a scheduled run re-read Wikidata.
+# 6 makes it unconditional, for the cost of one batched SPARQL query per run. PUG-View is
+# 30 because re-warming 788 CIDs x 2 headings costs ~5 minutes of the rate limit and an
+# annotation moves far more slowly than a wiki item.
+WIKIDATA_CACHE_TTL_DAYS = float(os.getenv("MFETL_WIKIDATA_TTL_DAYS", "6"))
+PUGVIEW_CACHE_TTL_DAYS = float(os.getenv("MFETL_PUGVIEW_TTL_DAYS", "30"))
+
 # ── Canon selection ──────────────────────────────────────────────────────────
 CANON_TARGET = int(os.getenv("MFETL_CANON_TARGET", "10000"))
 SIMILARITY_TOP_N = 30
