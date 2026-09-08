@@ -43,6 +43,7 @@ BRANDS_YAML = SEEDS_DIR / "brands.yaml"
 ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
 OTC_ALLOWLIST_YAML = SEEDS_DIR / "otc_allowlist.yaml"
 FOOD_HUBS_YAML = SEEDS_DIR / "food_hubs.yaml"
+COMPARISONS_YAML = SEEDS_DIR / "comparisons.yaml"
 
 CURATED_RELATIONS = ("found_in", "affects", "becomes")   # the CSV / membership relations
 VALID_CONFIDENCE = {FROM_SOURCE, COMPUTED, INFERRED}
@@ -65,6 +66,97 @@ def load_why_it_matters() -> dict[str, str]:
         return {}
     data = yaml.safe_load(WHY_IT_MATTERS_YAML.read_text()) or {}
     return {str(k): str(v).strip() for k, v in data.items() if v and str(v).strip()}
+
+
+# ── Comparisons (/vs/<pair>, build plan phase 5) ──────────────────────────────
+def load_comparisons() -> dict[str, str]:
+    """Read comparisons.yaml -> {"slug-a/slug-b": written comparison}.
+
+    The prose only. Which pairs get a page is the web's curated list
+    (``lib/compare-pairs.ts``); the two are held together by the web build, which
+    fails when a listed pair has no text here or a text here is not listed there.
+    """
+    if not COMPARISONS_YAML.exists():
+        return {}
+    data = yaml.safe_load(COMPARISONS_YAML.read_text()) or {}
+    return {str(k).strip(): " ".join(str(v).split()) for k, v in data.items() if v and str(v).strip()}
+
+
+def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
+    """Compile comparisons.yaml into the snapshot, keyed by the URL slug ``a-vs-b``.
+
+    Validates the way every other curated file here is validated, and for the same
+    reason: a typo must fail the build, not ship a page comparing a molecule with
+    nothing. Both slugs must exist, a pair may not be written twice in either
+    direction, and the text must obey the house rules it is written under (no
+    em-dash, no dosing, no "which should I take").
+    """
+    curated = load_comparisons()
+    if not curated:
+        return {}
+    by_slug = {m["slug"]: m for m in molecules}
+    errors: list[str] = []
+    seen: dict[frozenset[str], str] = {}
+    out: dict[str, dict] = {}
+    for key, text in sorted(curated.items()):
+        parts = key.split("/")
+        if len(parts) != 2 or not all(parts):
+            errors.append(f"{key}: not a 'slug-a/slug-b' pair")
+            continue
+        a, b = parts
+        missing = [s for s in (a, b) if s not in by_slug]
+        if missing:
+            errors.append(f"{key}: unknown slug(s) {', '.join(missing)}")
+            continue
+        if a == b:
+            errors.append(f"{key}: a molecule cannot be compared with itself")
+            continue
+        unordered = frozenset((a, b))
+        if unordered in seen:
+            errors.append(f"{key}: same pair as {seen[unordered]}, one page per pair")
+            continue
+        seen[unordered] = key
+        errors.extend(f"{key}: {e}" for e in _comparison_prose_errors(text))
+        out[f"{a}-vs-{b}"] = {
+            "pair": key, "a": a, "b": b, "text": text,
+            "confidence": FROM_SOURCE, "source": "MoleculeFinder curated",
+        }
+    if errors:
+        raise SystemExit("comparisons compile failed:\n  " + "\n  ".join(errors))
+    log.info("  comparisons: %d pair(s) compiled", len(out))
+    return out
+
+
+# Phrases that turn a description into advice. The comparison pages exist to line two
+# records up beside each other, not to help anyone choose between two medicines, so the
+# rule is enforced rather than remembered.
+_ADVICE_PATTERNS = (
+    # Narrow on purpose. An earlier, looser "which (to|should)" flagged ordinary prose like
+    # "which should be enough", and a rule that cries wolf gets switched off.
+    r"\byou should\b", r"\bshould (?:you|i) (?:take|use|choose|pick)\b",
+    r"\bwhich (?:one )?(?:to (?:take|use|choose|pick|buy|go for)|should (?:i|you|a person))\b",
+    r"\bconsult\b", r"\bask your doctor\b", r"\bwe recommend\b", r"\brecommended dose\b",
+    # "500 mg" is a dose; "636 mg/kg" is the LD50 off the record, which these pages exist
+    # to show. The negative lookahead keeps the second and still catches the first.
+    r"\btake \d", r"\b\d+(?:\.\d+)?\s*mg\b(?!\s*/)", r"\bper day\b", r"\bdaily dose\b",
+    r"\btwice a day\b",
+    r"\bbetter (?:choice|option) (?:for|if)\b", r"\bsafer to take\b",
+)
+
+
+def _comparison_prose_errors(text: str) -> list[str]:
+    errors = []
+    if "\u2014" in text or "\u2013" in text:
+        errors.append("em-dash or en-dash in visible copy (house rule)")
+    sentences = [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s]
+    if not 4 <= len(sentences) <= 6:
+        errors.append(f"{len(sentences)} sentences, the rule is 4 to 6")
+    if len(text) < 320:
+        errors.append(f"{len(text)} characters, too thin to be worth a page")
+    for pat in _ADVICE_PATTERNS:
+        if re.search(pat, text, re.I):
+            errors.append(f"reads as advice or dosing: /{pat}/")
+    return errors
 
 
 def load_relationships() -> list[dict]:
