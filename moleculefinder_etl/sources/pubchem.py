@@ -106,8 +106,16 @@ def name_to_cid(name: str) -> int | None:
 
 
 @_pubchem_retry
-def synonyms(cids: list[int], limit: int = 20) -> dict[int, list[str]]:
-    """Batched synonym fetch. Returns {cid: [name, ...]} (at most `limit` each)."""
+def synonyms(cids: list[int], limit: int = 60) -> dict[int, list[str]]:
+    """Batched synonym fetch. Returns {cid: [name, ...]} (at most `limit` each).
+
+    The window was 20, which starved the transform: registry codes are dense near the top
+    of a PubChem synonym list, so 209 of 788 records ended up with fewer than the 12 display
+    names ``_clean_synonyms`` wants, and their tail therefore sat exactly on the truncation
+    boundary. Any upstream shuffle then pushed a name across it, which is where most of the
+    snapshot's synonym churn came from. 60 leaves the selection room to settle. It costs
+    nothing at the API: PubChem returns the whole list either way and the cut is ours.
+    """
     out: dict[int, list[str]] = {}
     for chunk in _chunks(cids, PUBCHEM_BATCH):
         _throttle()

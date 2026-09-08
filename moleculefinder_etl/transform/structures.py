@@ -6,8 +6,21 @@ transparent background. Verified recipe for RDKit MolDraw2DSVG: updateAtomPalett
 (carbon = key 6) + singleColourBonds + setSymbolColour(carbon) so bonds stay one
 light color while N/O/S/... labels carry their element hue; clearBackground=False
 so the SVG sits on the panel with no white box (the web CSS no longer inverts).
+
+**The rendered SVG is a stored artifact, not a re-derived one** (determinism, 2026-09-07).
+RDKit's 2D depiction is deterministic for a given SMILES *on a given platform build*, but
+for ~7% of the catalog (fused/bridged polycyclics, where the layout falls through to a
+numerical minimiser) the macOS-arm64 and Linux-x86_64 wheels converge on different
+coordinates. Measured: rdkit 2026.03.3 and 2026.03.6 on macOS agree on all 769 structures,
+and both disagree with the Linux CI output on the same 53 — so the variable is the platform,
+not the version, and pinning the version fixes nothing. Instead `svg_key()` fingerprints the
+inputs and the caller reuses the previously exported SVG whenever the fingerprint matches, so
+a molecule is drawn once and then carried forward byte-for-byte. Bump RECIPE_VERSION to force
+a redraw of the whole catalog when the recipe below actually changes.
 """
 from __future__ import annotations
+
+import hashlib
 
 # CPK atom colors as hex (Color System Brief §2a). Keys are atomic numbers.
 CPK_HEX: dict[int, str] = {
@@ -22,6 +35,22 @@ CPK_HEX: dict[int, str] = {
     53: "#c79af0",  # iodine (violet)
     1: "#dbe9f2",   # hydrogen (if shown; usually implicit)
 }
+
+
+# Bump when anything below changes the pixels: the palette, the draw options, the canvas.
+# Every molecule redraws on the next run, which is the point.
+RECIPE_VERSION = "2026-09-07.1"
+
+
+def svg_key(smiles: str, width: int = 400, height: int = 300) -> str:
+    """Fingerprint of everything that decides what ``svg_for`` draws.
+
+    Two records with the same key must get byte-identical SVGs, so a record whose key is
+    unchanged since the last export can keep the SVG it already has instead of re-rendering
+    it on a different platform and churning the snapshot.
+    """
+    payload = f"{RECIPE_VERSION}|{width}x{height}|{smiles}"
+    return hashlib.sha1(payload.encode("utf-8")).hexdigest()
 
 
 def _rgb01(hex_str: str) -> tuple[float, float, float]:
