@@ -1,0 +1,137 @@
+# Everyday PRODUCT hubs (build plan 2026-09-05, phase 6). Same shape as food_hubs.yaml,
+# emitted as kind:"product" instead of kind:"food".
+# ------------------------------------------------------------------------------
+# WHY: the molecule page's "Where you will find it" box has always promised everyday
+# foods OR products, and only the foods half existed. So 705 of 788 pages carried
+# "Not yet mapped to everyday foods or products", which reads as a mapping that is
+# pending. For household bleach, rubbing alcohol or a can of compressed air, no food
+# will ever arrive; the honest answer was simply missing.
+#
+# Phase 6 as written asked for foods on the 60 highest-demand unmapped molecules.
+# After tranche 1 that list is mostly prescription medicines and pure elements, so
+# taking it literally would have meant inventing foods. This file is the half of the
+# answer that is true.
+#
+# SAME RULE as the food hubs: every entry is a documented component or a standard
+# ingredient of the product named. A molecule that is merely manufactured INTO
+# something is not a member; a reader looking at the bottle would find it there.
+# Hubs are kept to three members or more so none is a page about nothing.
+
+household-cleaner:
+  name: Household cleaners
+  molecules:
+    - sodium-hypochlorite   # chlorine bleach
+    - ammonia               # glass and grease cleaners
+    - sodium-hydroxide      # caustic drain and oven cleaner
+    - sodium-carbonate      # washing soda
+    - sodium-bicarbonate    # the mild abrasive and deodoriser
+    - borax                 # laundry booster and water softener
+    - hydrogen-peroxide     # oxygen bleach
+    - acetic-acid           # vinegar, descaler and limescale remover
+    - citric-acid           # descaler, and the acid in many "natural" cleaners
+    - ethylenediaminetetraacetic-acid  # binds hard-water metals so detergent works
+    - sodium-lauryl-sulfate # the foaming surfactant
+    - triclosan             # antibacterial agent, now restricted in many products
+
+first-aid-kit:
+  name: First aid kit
+  molecules:
+    - hydrogen-peroxide     # the 3 percent solution
+    - isopropyl-alcohol     # the 70 percent solution
+    - povidone-iodine       # antiseptic
+    - acetaminophen
+    - ibuprofen
+    - aspirin
+    - diphenhydramine       # for allergic reactions
+    - loperamide
+
+skincare:
+  name: Skincare
+  molecules:
+    - glycerol              # the humectant in most moisturisers
+    - hyaluronic-acid
+    - salicylic-acid        # the beta hydroxy acid in acne products
+    - nicotinamide          # listed as niacinamide
+    - retinol
+    - tretinoin
+    - urea                  # keratolytic and humectant
+    - tocopherol            # vitamin E
+    - 4-aminobenzoic-acid   # PABA, the original sunscreen filter
+    - zinc-oxide            # mineral sunscreen and nappy cream
+    - lactic-acid           # alpha hydroxy acid
+    - ascorbic-acid         # vitamin C serums
+
+toothpaste:
+  name: Toothpaste
+  molecules:
+    - sodium-fluoride       # the anticaries agent
+    - sodium-lauryl-sulfate # the foam
+    - glycerol              # keeps the paste from drying out
+    - calcium-carbonate     # the abrasive
+    - silicon-dioxide       # the abrasive in clear gels
+    - xylitol               # sweetener that mouth bacteria cannot ferment
+    - sorbitol
+    - menthol               # with the flavour oils, the cooling finish
+
+paint-and-solvent:
+  name: Paint and solvent
+  molecules:
+    - acetone               # nail polish remover, and a general resin solvent
+    - toluene               # thinner, and the smell of model glue
+    - ethyl-acetate         # the acetone-free remover
+    - isopropyl-alcohol
+    - methanol              # in methylated spirit
+    - benzene               # historic solvent, now restricted as a carcinogen
+    - dichloromethane       # paint stripper
+    - titanium              # as titanium dioxide, the white of nearly all white paint
+    - poly-methyl-methacrylate  # acrylic paint binder
+    - shellac               # the traditional sealing varnish
+
+garden-and-pest:
+  name: Garden and pest control
+  molecules:
+    - glyphosate            # the most used herbicide in the world
+    - permethrin            # insecticide, and the treatment on outdoor clothing
+    - deet                  # the insect repellent
+    - boric-acid            # ant and cockroach bait
+    - sulfur                # fungicide, and the oldest one still in use
+    - potassium-nitrate     # fertiliser, the K and the N of NPK
+    - phosphorus            # the P
+    - calcium-hydroxide     # garden lime, for raising soil pH
+
+fuel-and-flame:
+  name: Fuel and flame
+  molecules:
+    - methane               # mains gas
+    - propane               # the barbecue bottle
+    - butane                # lighter fuel and camping cartridges
+    - ethanol               # blended into petrol, and the fuel in a spirit stove
+    - carbon-monoxide       # the product of burning any of them without enough air
+    - benzene               # a component of petrol
+    - toluene
+    - carbon                # charcoal
+
+battery-and-electronics:
+  name: Batteries and electronics
+  molecules:
+    - lithium               # the ion in every rechargeable phone battery
+    - cobalt                # the cathode metal
+    - nickel
+    - copper                # the wiring
+    - silicon               # the chip
+    - gold                  # contact plating, because it does not corrode
+    - tin                   # solder
+    - tantalum              # capacitors
+    - gallium               # LEDs and high frequency chips
+    - manganese             # alkaline cell cathode
+    - zinc                  # alkaline cell anode
+
+aerosol-can:
+  name: Aerosol cans
+  molecules:
+    - propane               # propellant
+    - butane                # propellant
+    - 1-1-difluoroethane    # the gas in canned air, and the reason it frosts
+    - nitrous-oxide         # whipped cream chargers
+    - carbon-dioxide
+    - ethanol               # the carrier in deodorant and hairspray

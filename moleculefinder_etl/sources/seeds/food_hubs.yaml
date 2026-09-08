@@ -33,6 +33,10 @@ coffee:
     - furfural              # roast note, and a staling marker
     - hydroxymethylfurfural # forms as the sugars caramelize in the roast
     - acrylamide            # forms from asparagine and sugars in the roast
+    - water                 # about 98 percent of the cup by weight
+    - potassium             # coffee is a leading dietary source in many diets
+    - magnesium
+    - acetaldehyde          # a roast volatile, and it fades as the coffee stales
 
 tea:
   name: Tea
@@ -46,6 +50,8 @@ tea:
     - gallic-acid
     - tannic-acid               # the dry grip of strong tea
     - quercetin
+    - water
+    - manganese             # tea leaves concentrate it; a notable dietary source
 
 chocolate:
   name: Chocolate
@@ -62,6 +68,11 @@ chocolate:
     - lecithin       # the standard emulsifier in a bar
     - vanillin       # the standard flavoring in a bar
     - sucrose
+    - magnesium             # dark chocolate is among the densest food sources
+    - iron
+    - copper
+    - lactose               # milk chocolate
+    - casein                # milk chocolate
 
 cocoa:
   name: Cocoa
@@ -75,6 +86,10 @@ cocoa:
     - stearic-acid
     - palmitic-acid
     - oleic-acid
+    - magnesium
+    - iron
+    - copper
+    - theophylline          # trace, alongside theobromine
 
 wine:
   name: Wine
@@ -94,6 +109,12 @@ wine:
     - isoamyl-alcohol        # a fermentation fusel alcohol
     - potassium-bitartrate   # the "wine diamonds" that crystallize in a cold bottle
     - sodium-metabisulfite   # the added sulfite the label has to declare
+    - water                 # roughly 86 percent by weight
+    - sulfur-dioxide        # the preservative, declared on every label
+    - acetaldehyde          # the marker of oxidation, and of sherry on purpose
+    - histamine             # forms in the malolactic fermentation
+    - tyramine
+    - methanol              # trace, released from grape pectin
 
 beer:
   name: Beer
@@ -109,6 +130,9 @@ beer:
     - 2-nonenal           # the cardboard note of a stale beer
     - glycerol
     - carbon-dioxide
+    - water                 # roughly 92 percent by weight
+    - niacin                # from the brewing yeast
+    - riboflavin
 
 spirits:
   name: Spirits
@@ -193,3 +217,224 @@ fruit:
     - beta-carotene
     - limonene
     - ethylene       # the hormone that ripens it
+
+# ── Phase 6 additions (2026-09-07) ─────────────────────────────────────────────
+# The build plan asked for curated foods on the 60 highest-demand molecules still showing
+# "Not yet mapped". After tranche 1 that list is mostly prescription medicines and pure
+# elements, which have no food and never will, so the honest half of the job is here (the
+# foods that genuinely exist, including several of those elements as dietary minerals) and
+# the other half is in product_hubs.yaml and in the web's fallback for medicines.
+#
+# Same rule as above and it is the whole discipline of this file: every entry is a
+# documented component or a standard ingredient of the food named. Where a molecule is in
+# a food only as a contaminant or a trace, it is left out rather than implied.
+
+red-meat:
+  name: Red meat
+  molecules:
+    - creatine              # muscle stores it; beef is the densest common source
+    - carnosine             # a dipeptide concentrated in skeletal muscle
+    - taurine               # abundant in muscle tissue
+    - cholesterol           # in every animal cell membrane
+    - vitamin-b12           # essentially absent from plants
+    - iron                  # haem iron, the readily absorbed form
+    - zinc
+    - coenzyme-q10          # highest in heart and other organ meat
+    - palmitic-acid         # the main saturated fat in beef fat
+    - stearic-acid
+    - oleic-acid            # about half the fat in beef is monounsaturated
+
+fish:
+  name: Fish
+  molecules:
+    - docosahexaenoic-acid  # the long-chain omega-3 oily fish is eaten for
+    - taurine
+    - creatine
+    - vitamin-b12
+    - selenium
+    - iodine                # sea fish concentrate it from seawater
+    - cholesterol
+    - histamine             # forms in poorly chilled scombroid fish
+
+eggs:
+  name: Eggs
+  molecules:
+    - cholesterol           # the yolk is one of the densest dietary sources
+    - choline               # as phosphatidylcholine in the yolk
+    - lutein                # with zeaxanthin, the yellow of the yolk
+    - zeaxanthin
+    - biotin
+    - riboflavin
+    - vitamin-b12
+    - tryptophan
+
+milk:
+  name: Milk
+  molecules:
+    - lactose               # the sugar that gives milk its name
+    - casein                # about 80 percent of milk protein
+    - calcium
+    - riboflavin
+    - vitamin-b12
+    - tryptophan
+    - water                 # roughly 87 percent of milk by weight
+
+cheese:
+  name: Cheese
+  molecules:
+    - casein                # the curd itself
+    - calcium
+    - sodium-chloride       # salt is a required step, not a seasoning
+    - monosodium-glutamate  # free glutamate, which is why parmesan tastes savoury
+    - tyramine              # forms as the protein breaks down in ageing
+    - histamine
+    - butyric-acid          # the sharp note of aged and blue cheeses
+
+nuts:
+  name: Nuts
+  molecules:
+    - oleic-acid            # the dominant fat in almonds, cashews and macadamias
+    - linoleic-acid
+    - tocopherol            # vitamin E, which is why nut oils resist rancidity
+    - magnesium
+    - copper
+    - selenium              # brazil nuts are the densest food source known
+    - phytic-acid           # binds minerals; the reason for soaking
+    - biotin
+
+shellfish:
+  name: Shellfish
+  molecules:
+    - copper                # their blood carries copper, not iron
+    - zinc                  # oysters are the densest common source
+    - taurine
+    - vitamin-b12
+    - iodine
+    - glycine               # much of the sweetness of crab and prawn
+    - cholesterol
+
+leafy-greens:
+  name: Leafy greens
+  molecules:
+    - folic-acid            # folate, named after foliage
+    - lutein
+    - oxalic-acid           # the chalky feel of spinach on the teeth
+    - magnesium             # the metal at the centre of chlorophyll
+    - iron
+    - beta-carotene
+    - quercetin
+    - calcium
+
+mushrooms:
+  name: Mushrooms
+  molecules:
+    - monosodium-glutamate  # free glutamate, the savoury depth of dried shiitake
+    - ergocalciferol        # vitamin D2, formed when ultraviolet light hits ergosterol
+    - chitin                # the cell wall, which is why they are chewy
+    - selenium
+    - copper
+    - riboflavin
+    - agaritine             # in the common button mushroom
+
+bread:
+  name: Bread
+  molecules:
+    - starch                # the flour itself
+    - gluten                # the protein network that holds the crumb open
+    - ethanol               # a fermentation product, mostly baked off
+    - sodium-chloride       # controls the yeast as well as the taste
+    - acrylamide            # forms in the crust as it browns
+    - thiamine              # fortification, standard in the US and UK
+    - niacin
+    - folic-acid
+    - iron
+
+breakfast-cereal:
+  name: Breakfast cereal
+  molecules:
+    - starch
+    - iron                  # fortification; the powder a magnet can lift from crushed flakes
+    - folic-acid
+    - thiamine
+    - riboflavin
+    - niacin
+    - nicotinamide
+    - pyridoxine
+    - zinc
+    - sucrose
+
+cured-meat:
+  name: Cured meat
+  molecules:
+    - sodium-nitrite        # the cure itself, and the source of the pink colour
+    - potassium-nitrate     # saltpetre, the traditional cure that becomes nitrite
+    - sodium-chloride
+    - tyramine
+    - histamine
+    - creatine
+    - palmitic-acid
+
+soy-sauce:
+  name: Soy sauce
+  molecules:
+    - monosodium-glutamate  # free glutamate from the fermented soy protein
+    - sodium-chloride
+    - lactic-acid           # from the fermentation
+    - ethanol
+    - histamine
+    - tyramine
+
+soft-drinks:
+  name: Soft drinks
+  molecules:
+    - carbon-dioxide        # the carbonation
+    - citric-acid
+    - phosphoric-acid       # the tang of a cola specifically
+    - sucrose
+    - caffeine
+    - sodium-benzoate       # preservative
+    - allura-red-ac         # Red 40
+    - aspartame
+    - water
+
+tonic-water:
+  name: Tonic water
+  molecules:
+    - quinine               # the bitterness, and the reason it fluoresces under UV
+    - carbon-dioxide
+    - citric-acid
+    - sucrose
+    - sodium-benzoate
+
+citrus:
+  name: Citrus
+  molecules:
+    - citric-acid           # named for it
+    - ascorbic-acid
+    - limonene              # the peel oil
+    - linalool
+    - hesperidin            # the flavonoid of the white pith
+    - pectin                # the peel is a commercial source
+    - sucrose
+
+processed-snacks:
+  name: Processed snacks
+  molecules:
+    - monosodium-glutamate
+    - sodium-chloride
+    - maltodextrin
+    - silicon-dioxide       # anti-caking
+    - allura-red-ac
+    - propylene-glycol      # carries flavour and holds moisture
+    - acrylamide            # forms when starch is fried or baked hot
+    - sodium-benzoate
+    - potassium-sorbate
+
+whipped-cream:
+  name: Whipped cream
+  molecules:
+    - nitrous-oxide         # E942, the propellant in an aerosol can
+    - cholesterol
+    - casein
+    - sucrose
+    - vanillin

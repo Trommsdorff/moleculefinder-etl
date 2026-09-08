@@ -206,6 +206,10 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_otc_uses(kept)
     # Curated food-hub membership, so /in/coffee is a real page and not one molecule.
     relationships.attach_food_hubs(kept)
+    # Curated non-food sources (phase 6): the household cleaner, the first aid kit, the
+    # pharmacy shelf. "Where you will find it" promised foods OR products from the start
+    # and only ever had the foods.
+    relationships.attach_product_hubs(kept)
     # Element / GHS-hazard / size-band hubs, then prune every derived hub too thin to be
     # a page. Both run after all the curated overlays, so the prune counts the real
     # membership and never drops a curated hub.
