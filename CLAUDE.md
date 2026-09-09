@@ -215,10 +215,14 @@ ETL `1b38269..aa0967b` (no deploy), then web `380c2e2..11c8bbb` (the deploy, liv
   like a fetch. Worth an expiry on the Wikidata and PUG-View entries. The PubChem property and
   synonym caches are safe (their content genuinely does not change); the derived ones are not.
 
-## Run 4 (2026-09-08) — the raw_cache can no longer ship a regression
-Built on `traffic-2026-09-p4`, NOT pushed. Answers the lesson at the end of the run 3
-section: "a stale local cache silently overwrites good data, and nothing in the pipeline
-notices, because a cache hit looks exactly like a fetch."
+## Run 4 (2026-09-08) — the raw_cache can no longer ship a regression. DEPLOYED 2026-09-09
+ETL `main` at `be1e92e`, web at `e40eb22` (its own deploy; nothing deploys from this repo).
+Answers the lesson at the end of the run 3 section: "a stale local cache silently overwrites
+good data, and nothing in the pipeline notices, because a cache hit looks exactly like a
+fetch." **Verified after deploy:** dispatch 34341534405 ran 11m12s against the previous
+4m52s (+6m20s, the one-time PUG-View re-warm of 770 CIDs whose restored cache entries were
+undated), the guard logged no refusal, the snapshot came out byte-identical, and sync-web
+reported "web repo snapshot already identical — no PR needed".
 
 - **`sources/cache.py`** — every cached entry now carries the UTC instant it was fetched
   and whether THIS run fetched it. An entry written before the envelope existed reads back
@@ -256,10 +260,61 @@ notices, because a cache hit looks exactly like a fetch."
   4000 mg/kg nulled) and asserts the export is refused *and* that the good snapshot is
   still whole on disk afterwards. Verified the test is load-bearing: remove the one
   `snapshot_guard.check` line and it fails. 24 tests here, 151 in the repo, ruff clean.
-- **Not run:** a live `mfetl all`. `data/raw_cache` is empty after the run-3 cleanup, so a
-  full run would be a fresh fetch of the whole catalog and therefore a data refresh riding
-  on a code deploy. Data refreshes belong to the weekly cron. The wiring is proven by
-  offline tests against mocked WDQS/PUG-View instead, which is what CI runs anyway.
+- **Not run at the time:** a live `mfetl all`. `data/raw_cache` was empty after the run-3
+  cleanup, so a full run would have been a fresh fetch of the whole catalog and therefore a
+  data refresh riding on a code deploy. The wiring was proven by offline tests against
+  mocked WDQS/PUG-View. **That gap hid a real bug for a full deploy cycle — see run 5.**
+
+## Run 5 (2026-09-09) — the Wikidata refresh was dead, and had been since run 2
+Branch `fix-wikidata-post`. Run 4's TTL work exposed a latent bug and then a second one
+behind it. Neither was caused by run 4; run 4 is what made them visible.
+
+- **HTTP 414: the refresh had silently stopped happening.** `descriptions_for_cids` inlines
+  one `VALUES` entry per CID, so the query LENGTH is the size of the catalog, and it was
+  sent as a GET, i.e. in the URL. Measured: **the GET form breaks between 612 and 613 real
+  CIDs** (~4,757 chars of query; the ceiling is characters, not CIDs, since real CIDs run 4
+  to 8 digits). The catalog reached 770 in run 2's tranche. Before run 4 this never fired
+  because the cache only ever queried the *missing* CIDs, which was 0 on a warm cache; the
+  6-day TTL expires all 770 at once, and every run since had been failing with a warning
+  nobody read, producing an identical snapshot and reporting success.
+  **Fixed by POSTing** the query (`sparql(..., method="POST")`), where there is no URL
+  ceiling and which stays correct as the catalog grows. Live: 770 fetched in one request,
+  1.5 s.
+- **A failed Wikidata query is now a FAILED RUN**, not a warning, and the message carries
+  the exception class and text. The fallback is safe (values kept, marked not-live, so
+  `snapshot_guard` refuses any regression built on them) and *that safety is exactly what
+  let this hide*. `MFETL_ALLOW_STALE_WIKIDATA=1` restores the warning for a deliberately
+  offline run.
+- **One PubChem CID is not one Wikidata item, and "first binding wins" was arbitrary.**
+  With the POST working, the first live run wanted to change **15 QIDs and 13 summaries**
+  and three of those summaries were `"chemical compound"` written over good prose
+  (fluorine, mercury, vasopressin), plus carbon, phosphorus and lead swapped off their
+  element items onto allotropes. Cause: **70 of the 769 CIDs have two Wikidata items sharing
+  the same P662** (element vs allotrope, hormone vs compound), and the code took whatever
+  order WDQS returned. That order is stable between back-to-back queries but had already
+  moved for 15 CIDs since the snapshot was built. **The export guard would have allowed all
+  of it**, correctly by its own rule: it asks whether a value came from a live fetch, and
+  these did. Fresh is not the same as right.
+  `wikidata._choose_item` now decides: **never a placeholder description over a real one,
+  then the lowest Q-number** (the oldest item, a good proxy for canonical: Q623 carbon,
+  Q650 fluorine, Q674 phosphorus, Q708 lead, Q925 mercury all predate the items shadowing
+  them, and the `Q1063456xx` bulk-import items behind the 2026-09-08 regression sort last by
+  construction). Result against the committed snapshot: **759 of 769 CIDs keep the QID they
+  had; 10 change; 7 of the 8 summary changes remove a `"chemical compound"`; none add one.**
+  Repeating the query picks the same item for all 769.
+- Live proof from the Mac (`mfetl seed`, the Wikidata stage alone): 770 queried, **769
+  returned a QID** (1 CID has no Wikidata item), **770/770 recorded live** so the guard
+  accepts them as fresh fetches. `canon.parquet` was restored afterwards so the branch is
+  code-only and CI produces the data change through the normal loop.
+- 163 tests (was 155), ruff clean. New tests pin: a 900-CID query is built as a POST with
+  the query in the body and the bare endpoint as the URL; a failed query raises with the
+  exception class and message; the override downgrades it; and item selection is stable
+  under row reordering, prefers a real description, sorts Q-numbers numerically, and never
+  lets a bulk-batch item displace a real one.
+- **Worth knowing:** the guard cannot tell "fresh and correct" from "fresh and arbitrary".
+  Making the placeholder-summary check freshness-independent (a `"chemical compound"`
+  summary is never an improvement, however fresh) would have caught this class directly.
+  Not done here; it is a real hardening option.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
