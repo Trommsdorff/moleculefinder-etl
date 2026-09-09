@@ -20,6 +20,7 @@ from __future__ import annotations
 import csv
 import json
 import logging
+import os
 import zlib
 from pathlib import Path
 
@@ -31,6 +32,10 @@ from ..sources import wikidata, pageviews, pubchem, cache
 from .. import freshness
 
 log = logging.getLogger("mfetl")
+
+# Downgrade a failed Wikidata refresh from a failed run back to a warning. For a
+# deliberately offline or degraded run only; the default is to fail.
+ALLOW_STALE_WIKIDATA_ENV = "MFETL_ALLOW_STALE_WIKIDATA"
 
 # ~household-name molecules forced into the marquee tier, spanning families that
 # cluster structurally (xanthines, sugars, alcohols, NSAIDs, catecholamines,
@@ -164,10 +169,28 @@ def _descriptions_cached(cids: list[int]) -> dict[int, dict]:
     if missing:
         try:
             fetched = wikidata.descriptions_for_cids(missing)
-        except Exception:
-            fetched = {}
-            log.warning("wikidata descriptions: query failed; %d CID(s) keep their cached "
-                        "values and are marked not-freshly-fetched", len(missing))
+        except Exception as exc:
+            # A failed refresh is a FAILED RUN, not a warning. The fallback below is safe
+            # (cached values are kept and marked not-live, so `snapshot_guard` will refuse
+            # any regression built on them), and that safety is exactly what let this hide:
+            # on 2026-09-09 every run was failing with HTTP 414 and each one logged a line
+            # nobody read, produced an identical snapshot, and reported success. Silence
+            # that looks like a healthy no-op is worse than a red run.
+            detail = f"{type(exc).__name__}: {exc}"
+            if os.getenv(ALLOW_STALE_WIKIDATA_ENV) == "1":
+                fetched = {}
+                log.warning("wikidata descriptions: query failed for %d CID(s) (%s); "
+                            "%s=1, so they keep their cached values and are marked "
+                            "not-freshly-fetched", len(missing), detail,
+                            ALLOW_STALE_WIKIDATA_ENV)
+            else:
+                raise wikidata.WikidataQueryError(
+                    f"wikidata descriptions: query failed for {len(missing)} CID(s) "
+                    f"({detail}). The snapshot would be built from cached descriptions and "
+                    f"QIDs of unknown age, which is the shape of the 2026-09-08 regression. "
+                    f"Set {ALLOW_STALE_WIKIDATA_ENV}=1 to continue with the cached values "
+                    f"anyway (the export guard still refuses any regression built on them)."
+                ) from exc
         else:
             live = set(missing)
             for c in missing:                   # record misses too, so we don't refetch

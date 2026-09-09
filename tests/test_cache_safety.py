@@ -308,20 +308,6 @@ def test_a_legacy_descriptions_file_is_refetched_not_reused(tmp_path, monkeypatc
     assert json.loads(path.read_text())[cache.ENVELOPE_KEY] == cache.ENVELOPE_VERSION
 
 
-def test_a_failed_wikidata_query_keeps_the_cache_and_marks_it_not_live(tmp_path, monkeypatch):
-    """A network failure must not silently look like a fresh fetch to the guard."""
-    canon, _ = _redirect_caches(monkeypatch, tmp_path)
-    monkeypatch.setattr(canon, "WIKIDATA_CACHE_TTL_DAYS", 7)
-
-    def boom(cids):
-        raise RuntimeError("WDQS timeout")
-
-    monkeypatch.setattr(canon.wikidata, "descriptions_for_cids", boom)
-    canon._descriptions_cached([5950])
-    assert not freshness.is_live(freshness.load(tmp_path / "freshness.json"),
-                                 freshness.WIKIDATA, 5950)
-
-
 def test_pug_view_expires_and_reports_liveness(tmp_path, monkeypatch):
     _, pubchem = _redirect_caches(monkeypatch, tmp_path)
     monkeypatch.setattr(pubchem, "PUGVIEW_CACHE_TTL_DAYS", 30)
@@ -376,3 +362,186 @@ def test_the_pubchem_property_and_synonym_caches_are_left_alone(tmp_path, monkey
     assert cache.ENVELOPE_KEY not in raw                    # no envelope, no expiry
     pipeline._fetch_cached([2519], "props", fetch)
     assert len(calls) == 1                                  # still a permanent hit
+
+
+# ── The Wikidata query must not outgrow its own request ─────────────────────
+# The descriptions query inlines one VALUES entry per CID, so its LENGTH is the size of the
+# catalog. Sent as a GET it lives in the URL, and WDQS answers HTTP 414 URI Too Long above
+# roughly 612 CIDs. The catalog passed that in run 2 (498 -> 788), so from 2026-09-09 every
+# Wikidata refresh failed, logged one warning, and reported success. These pin the shape
+# that cannot come back.
+
+def _capture_request(monkeypatch):
+    """Record the outgoing WDQS request instead of sending it."""
+    from moleculefinder_etl.sources import wikidata
+    seen: dict = {}
+
+    class Resp:
+        status_code = 200
+
+        @staticmethod
+        def raise_for_status():
+            return None
+
+        @staticmethod
+        def json():
+            return {"results": {"bindings": []}}
+
+    def post(url, data=None, headers=None, timeout=None, **kw):
+        seen.update(method="POST", url=url, body=data, headers=headers or {})
+        return Resp()
+
+    def get(url, params=None, headers=None, timeout=None, **kw):
+        seen.update(method="GET", url=url, params=params or {}, headers=headers or {})
+        return Resp()
+
+    monkeypatch.setattr(wikidata.requests, "post", post)
+    monkeypatch.setattr(wikidata.requests, "get", get)
+    return wikidata, seen
+
+
+def test_a_900_cid_query_is_built_as_a_post(monkeypatch):
+    """The whole point: the query goes in the BODY, so its length has no URL ceiling."""
+    wikidata, seen = _capture_request(monkeypatch)
+    cids = list(range(1, 901))
+
+    wikidata.descriptions_for_cids(cids)
+
+    assert seen["method"] == "POST"
+    query = seen["body"]["query"]
+    assert "VALUES ?cid" in query
+    assert '"1"' in query and '"900"' in query          # every CID made it into the body
+    # 900 quoted values plus the template's own "en" language filter.
+    assert query.count('"') == 900 * 2 + 2              # nothing dropped
+    # And the URL carries none of it: the request line is the bare endpoint, which is
+    # what makes the 414 unreachable. (The endpoint host is literally "query.wikidata.org",
+    # so test the URL for equality, not for the absence of the word "query".)
+    assert seen["url"] == wikidata.WDQS_ENDPOINT
+    assert "params" not in seen
+    assert len(query) > 4757                            # past where the GET form broke
+    assert seen["headers"]["Content-Type"] == "application/x-www-form-urlencoded"
+
+
+def test_the_whole_catalog_would_have_broken_the_get_form(monkeypatch):
+    """A guard on the reasoning, not just the code.
+
+    Note what the ceiling is actually made of: CHARACTERS, not CIDs. The measured break was
+    612 *real* CIDs, which are 4 to 8 digits each; 612 two-digit CIDs would have fit. So the
+    invariant worth pinning is that a catalog-sized query in realistic CIDs exceeds the
+    length at which the GET form was observed to fail.
+    """
+    wikidata, _ = _capture_request(monkeypatch)
+    catalog = [2519 + i * 137 for i in range(770)]      # 770 CIDs of realistic magnitude
+    query = wikidata.DESCRIPTIONS_BY_CID_SPARQL % " ".join(f'"{c}"' for c in catalog)
+    assert len(query) > 4757                            # measured GET ceiling, at 612 CIDs
+
+
+def test_an_empty_cid_list_sends_no_request(monkeypatch):
+    wikidata, seen = _capture_request(monkeypatch)
+    assert wikidata.descriptions_for_cids([]) == {}
+    assert seen == {}
+
+
+def test_a_failed_wikidata_query_fails_the_run(tmp_path, monkeypatch):
+    """A silent skip is how the 414 stayed hidden for a whole deploy cycle."""
+    from moleculefinder_etl.transform import canon
+    from moleculefinder_etl.sources import wikidata
+    canon_mod, _ = _redirect_caches(monkeypatch, tmp_path)
+    monkeypatch.setattr(canon_mod, "WIKIDATA_CACHE_TTL_DAYS", 7)
+    monkeypatch.delenv(canon.ALLOW_STALE_WIKIDATA_ENV, raising=False)
+
+    def boom(cids):
+        raise RuntimeError("414 Client Error: URI Too Long")
+
+    monkeypatch.setattr(canon_mod.wikidata, "descriptions_for_cids", boom)
+    with pytest.raises(wikidata.WikidataQueryError) as err:
+        canon_mod._descriptions_cached([5950])
+    message = str(err.value)
+    assert "RuntimeError: 414 Client Error: URI Too Long" in message   # class AND message
+    assert canon.ALLOW_STALE_WIKIDATA_ENV in message                   # says how to proceed
+
+
+def test_the_stale_override_downgrades_it_to_a_warning(tmp_path, monkeypatch, caplog):
+    """The old behaviour stays reachable for a deliberately offline run, and the values it
+    keeps are still marked not-live, so the export guard still refuses a regression."""
+    from moleculefinder_etl.transform import canon
+    canon_mod, _ = _redirect_caches(monkeypatch, tmp_path)
+    monkeypatch.setattr(canon_mod, "WIKIDATA_CACHE_TTL_DAYS", 7)
+    monkeypatch.setenv(canon.ALLOW_STALE_WIKIDATA_ENV, "1")
+
+    def boom(cids):
+        raise RuntimeError("WDQS timeout")
+
+    monkeypatch.setattr(canon_mod.wikidata, "descriptions_for_cids", boom)
+    with caplog.at_level("WARNING"):
+        canon_mod._descriptions_cached([5950])
+    assert "RuntimeError: WDQS timeout" in caplog.text
+    assert not freshness.is_live(freshness.load(tmp_path / "freshness.json"),
+                                 freshness.WIKIDATA, 5950)
+
+
+# ── One PubChem CID, several Wikidata items ─────────────────────────────────
+# 70 of the catalog's 769 CIDs carry two items with the same P662: the element and its
+# allotrope, the hormone and the compound. "First binding wins" therefore picked whatever
+# order WDQS returned, and that order had already moved for 15 of them by 2026-09-09.
+
+def test_a_real_description_beats_the_placeholder():
+    """fluorine: Q650 'chemical element...' vs Q81978300 'chemical compound'."""
+    from moleculefinder_etl.sources.wikidata import _choose_item
+    chosen = _choose_item([("Q81978300", "chemical compound"),
+                           ("Q650", "chemical element with symbol F and atomic number 9")])
+    assert chosen["qid"] == "Q650"
+
+
+def test_the_placeholder_loses_whichever_order_it_arrives_in():
+    from moleculefinder_etl.sources.wikidata import _choose_item
+    items = [("Q925", "chemical element with symbol Hg and atomic number 80"),
+             ("Q6818555", "chemical compound")]
+    assert _choose_item(items)["qid"] == _choose_item(list(reversed(items)))["qid"] == "Q925"
+
+
+def test_the_older_item_wins_when_both_descriptions_are_real():
+    """carbon: the element Q623, not the 'pure substance' item Q866179."""
+    from moleculefinder_etl.sources.wikidata import _choose_item
+    assert _choose_item([("Q866179", "pure substance"),
+                         ("Q623", "chemical element with symbol C")])["qid"] == "Q623"
+
+
+def test_qids_sort_numerically_not_as_strings():
+    """The whole rule turns on this: as strings, 'Q6818555' < 'Q925'."""
+    from moleculefinder_etl.sources.wikidata import _qid_sort_key
+    assert _qid_sort_key("Q925") < _qid_sort_key("Q6818555")
+    assert _qid_sort_key("Q674") < _qid_sort_key("Q106345485")   # the bulk-batch shape
+
+
+def test_a_bulk_batch_item_never_wins_against_a_real_one():
+    """The 2026-09-08 regression in miniature: Q106345xxx must not displace Q218642."""
+    from moleculefinder_etl.sources.wikidata import _choose_item
+    assert _choose_item([("Q106345485", "chemical compound"),
+                         ("Q218642", "alpha-amino acid")])["qid"] == "Q218642"
+
+
+def test_a_lone_placeholder_is_still_returned():
+    """Where the placeholder is all Wikidata has, it is the answer; the description
+    builder falls back to the curated line anyway."""
+    from moleculefinder_etl.sources.wikidata import _choose_item
+    assert _choose_item([("Q2462", "chemical compound")]) == {"qid": "Q2462", "desc": "chemical compound"}
+
+
+def test_an_item_with_no_description_is_not_preferred_over_one_with_a_real_one():
+    from moleculefinder_etl.sources.wikidata import _choose_item
+    assert _choose_item([("Q1", None), ("Q9999", "a real description")])["qid"] == "Q9999"
+
+
+def test_selection_is_stable_under_reordering(monkeypatch):
+    """End to end through descriptions_for_cids: WDQS row order must not reach the record."""
+    from moleculefinder_etl.sources import wikidata
+    rows = [{"cid": "5462309", "compound": "http://www.wikidata.org/entity/Q457556",
+             "desc": "allotrope of phosphorus"},
+            {"cid": "5462309", "compound": "http://www.wikidata.org/entity/Q674",
+             "desc": "chemical element with symbol P and atomic number 15"}]
+    for order in (rows, list(reversed(rows))):
+        monkeypatch.setattr(wikidata, "sparql", lambda *a, **k: order)
+        out = wikidata.descriptions_for_cids([5462309])
+        assert out[5462309]["qid"] == "Q674"
+        assert out[5462309]["desc"].startswith("chemical element")

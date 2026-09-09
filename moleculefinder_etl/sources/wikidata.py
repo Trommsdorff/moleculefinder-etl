@@ -23,14 +23,35 @@ SELECT ?compound ?compoundLabel ?desc ?cid ?formula ?inchikey ?cas WHERE {
 """
 
 
-def sparql(query: str, timeout: int = 120) -> list[dict]:
-    """Run a SPARQL query against WDQS, return simplified bindings."""
-    r = requests.get(
-        WDQS_ENDPOINT,
-        params={"query": query, "format": "json"},
-        headers={"User-Agent": USER_AGENT, "Accept": "application/sparql-results+json"},
-        timeout=timeout,
-    )
+class WikidataQueryError(RuntimeError):
+    """WDQS did not answer. Raised so a run fails loudly instead of skipping quietly."""
+
+
+def sparql(query: str, timeout: int = 120, method: str = "GET") -> list[dict]:
+    """Run a SPARQL query against WDQS, return simplified bindings.
+
+    ``method="POST"`` sends the query in the request BODY instead of the URL. WDQS accepts
+    both and returns the same answer; the difference is that a GET carries the whole query
+    in the query string, and WDQS rejects the request with **HTTP 414 URI Too Long** once
+    that gets big. Measured on the real catalog: the descriptions query breaks between 612
+    and 613 CIDs (about 4,757 characters of query). Any caller whose query grows with the
+    catalog must POST, or it works until the catalog crosses a line and then stops.
+    """
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/sparql-results+json"}
+    if method.upper() == "POST":
+        r = requests.post(
+            WDQS_ENDPOINT,
+            data={"query": query, "format": "json"},
+            headers={**headers, "Content-Type": "application/x-www-form-urlencoded"},
+            timeout=timeout,
+        )
+    else:
+        r = requests.get(
+            WDQS_ENDPOINT,
+            params={"query": query, "format": "json"},
+            headers=headers,
+            timeout=timeout,
+        )
     r.raise_for_status()
     rows = []
     for b in r.json()["results"]["bindings"]:
@@ -56,17 +77,67 @@ SELECT ?cid ?desc ?compound WHERE {
 
 
 def descriptions_for_cids(cids: list[int]) -> dict[int, dict]:
-    """Return {cid: {"desc": <CC0 description|None>, "qid": <Qxxxx>}} for the given CIDs."""
+    """Return {cid: {"desc": <CC0 description|None>, "qid": <Qxxxx>}} for the given CIDs.
+
+    **POSTed, always.** This query inlines one ``VALUES`` entry per CID, so its length is
+    the size of the catalog. As a GET it returned HTTP 414 above ~612 CIDs, and the catalog
+    is 770: on 2026-09-09 every Wikidata refresh was failing for this reason and the run
+    logged a warning and carried on with cached values. POST puts the query in the body,
+    where there is no such ceiling, and it stays correct as the catalog grows.
+    """
     if not cids:
         return {}
     values = " ".join(f'"{int(c)}"' for c in cids)
-    out: dict[int, dict] = {}
-    for row in sparql(DESCRIPTIONS_BY_CID_SPARQL % values):
+    candidates: dict[int, list[tuple[str, str | None]]] = {}
+    for row in sparql(DESCRIPTIONS_BY_CID_SPARQL % values, method="POST"):
         c = row.get("cid")
         if not c:
             continue
-        c = int(c)
-        # First binding wins, but prefer one that actually carries a description.
-        if c not in out or (row.get("desc") and not out[c].get("desc")):
-            out[c] = {"desc": row.get("desc"), "qid": row["compound"].rsplit("/", 1)[-1]}
-    return out
+        candidates.setdefault(int(c), []).append(
+            (row["compound"].rsplit("/", 1)[-1], row.get("desc")))
+    return {c: _choose_item(items) for c, items in candidates.items()}
+
+
+PLACEHOLDER_DESCRIPTION = "chemical compound"
+
+
+def _choose_item(items: list[tuple[str, str | None]]) -> dict:
+    """Pick ONE Wikidata item for a PubChem CID, deterministically.
+
+    A PubChem CID does not identify a Wikidata item: **70 of the catalog's 769 CIDs have two
+    items carrying the same P662**, because Wikidata models the element and its allotrope,
+    or the hormone and the compound, as separate things that share a PubChem entry. The old
+    rule was "first binding wins", i.e. whatever order WDQS happened to return, which is
+    arbitrary and moves when Wikidata's index is rebuilt. Measured on 2026-09-09 it had
+    moved for 15 of them since the snapshot was built, and would have written
+    ``"chemical compound"`` over the real summaries of fluorine, mercury and vasopressin,
+    and swapped carbon, phosphorus and lead off their element items onto allotropes.
+
+    Two rules, in order:
+
+    1. **Never pick a placeholder over a real description.** ``"chemical compound"`` is the
+       string phase 1 exists to remove from the site; it is never the better answer.
+    2. **Then the lowest Q-number**, which is the oldest item. Older is a good proxy for
+       canonical: the element items (Q623 carbon, Q650 fluorine, Q674 phosphorus, Q708 lead,
+       Q925 mercury) all long predate the allotrope and bulk-import items that shadow them,
+       and the bulk-batch ``Q1063456xx`` items behind the 2026-09-08 regression sort last by
+       construction.
+
+    Measured against the committed snapshot: 759 of 769 CIDs keep the QID they already had,
+    7 of the 10 changes replace a ``"chemical compound"`` summary with a real one, and none
+    introduce a placeholder. Repeating the query returns the same choice for all 769.
+    """
+    def is_placeholder(desc: str | None) -> bool:
+        return bool(desc) and desc.strip().lower().rstrip(".") == PLACEHOLDER_DESCRIPTION
+
+    real = [i for i in items if i[1] and not is_placeholder(i[1])] or items
+    qid, desc = min(real, key=lambda i: (_qid_sort_key(i[0]), i[0]))
+    return {"desc": desc, "qid": qid}
+
+
+def _qid_sort_key(qid: str) -> int:
+    """Numeric part of a Qid, so Q925 sorts before Q6818555 (string order would not)."""
+    try:
+        return int(qid.lstrip("Qq"))
+    except ValueError:
+        return 1 << 62                      # an unparseable id sorts last, never chosen first
