@@ -27,6 +27,28 @@
 # an ALARM, not a pass. A watchdog that treats "I could not check" as "fine" is
 # worse than no watchdog, because it manufactures confidence.
 #
+# ── 2026-09-09: QUIETER, NOT WEAKER ──────────────────────────────────────────
+# The rules above are unchanged. What changed is HOW OFTEN a live problem mails
+# Garrett. Until today every daily run of an ongoing problem exited 1, so an
+# episode that lasted 24 days sent 24 identical "All jobs have failed" emails
+# (TheFiscalFinder, 2026-08-16 onward) — and a watchdog whose mail you have
+# learned to delete is not a watchdog. The job now emails at the START of an
+# episode and then goes quiet, while still writing the daily evidence:
+#
+#   1. NEW staleness, no open issue      -> open the issue, exit 1  (email)
+#   2. SAME staleness, issue already open -> comment, exit 0        (silent)
+#   3. EVERYTHING back in its window      -> comment "recovered", close, exit 0
+#   4. COULD NOT CHECK                    -> alarm EVERY day, exit 1  (email)
+#
+# (4) is deliberately exempt. Could-not-check is the starvation case this file
+# exists for, and it is exactly the case where an issue sitting open must NOT
+# buy silence — the day the allowance runs out is the day you want the mail.
+#
+# The report logic moved to .github/watchdog/network_freshness.py so it can be
+# tested offline against a stubbed API (tests/test_watchdog_report.py drives all
+# four states above, plus the monthly carve-out). It could not be exercised in
+# place: to see the "recovered" branch you would have to break a sibling site.
+#
 # ── OWNER SETUP (one-time, required — without it this workflow only alarms) ──
 #   The default GITHUB_TOKEN is scoped to THIS repo only, so it cannot read the
 #   private repos' run history. Create a fine-grained PAT and add it here:
@@ -35,10 +57,26 @@
 #       Resource owner: Trommsdorff
 #       Repository access: Only select repositories →
 #         judicialfinder, thefiscalfinder, gravityfinder, moleculefinder-etl
-#       Permissions → Repository → Actions: READ-ONLY   (nothing else)
+#       Permissions → Repository → Actions: READ-ONLY
+#                     Repository → Issues:  READ-ONLY   (added 2026-09-09; see
+#                       the monthly carve-out below. WITHOUT IT NOTHING BREAKS —
+#                       the watchdog just reports a known monthly failure as
+#                       plain staleness and says so in the issue.)
 #       Expiration: set a date you will accept, or "No expiration"
 #     Then: gh secret set NETWORK_READ_TOKEN --repo Trommsdorff/moleculefinder-etl
-#   Read-only on Actions. It cannot deploy, push, or read source.
+#   Read-only. It cannot deploy, push, or read source.
+#
+# ── THE MONTHLY CARVE-OUT (2026-09-09) ───────────────────────────────────────
+# TheFiscalFinder refreshes on the 1st of the month. When its 2026-09-01 run
+# failed, the watchdog had no way to say anything but "stale for 66 days and
+# counting", every day, until 2026-10-01 — which reads like a lost cron when it
+# is really a known failure with a known next attempt. So: a MONTHLY target
+# whose last scheduled run failed, whose own repo carries an open issue about
+# that failure, and whose next scheduled run has not yet come due, is reported
+# as "known, waiting" and does not alarm. It becomes a full alarm the moment
+# that next run also fails, or does not appear at all. Three conditions, all
+# required, all falsifiable — this is a narrower claim than "stale", not a
+# softer one.
 
 name: Network freshness watchdog
 
@@ -49,38 +87,53 @@ on:
 
 permissions:
   issues: write
+  contents: read # the job now checks out, for the report module only
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      # Read before deciding: the decision table needs to know whether this is
+      # day one of an episode or day twenty.
+      - name: Find the open episode issue
+        id: episode
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          n=$(gh issue list --label network-staleness --state open \
+                --limit 1 --json number --jq '.[0].number // empty')
+          echo "number=$n" >> "$GITHUB_OUTPUT"
+          echo "Open episode issue: ${n:-none}"
+
       - name: Check every refresh cron across the network
         id: check
         env:
           TOKEN: ${{ secrets.NETWORK_READ_TOKEN }}
+          ISSUE: ${{ steps.episode.outputs.number }}
         run: |
+          # A missing token is the could-not-check case, so it alarms every day —
+          # but it must still respect an open episode, or it opens a fresh issue
+          # daily. Same rule the decision table applies.
           if [ -z "$TOKEN" ]; then
-            echo "NO_TOKEN=1" >> "$GITHUB_ENV"
-            echo "report=The NETWORK_READ_TOKEN secret is not set, so freshness could NOT be checked. See the setup block in .github/workflows/watchdog.yml." >> "$GITHUB_OUTPUT"
-            exit 1
+            {
+              echo "action=$([ -n "$ISSUE" ] && echo comment || echo create)"
+              echo "exit_code=1"
+              echo "report<<WATCHDOG_REPORT"
+              echo "- **all four targets** — COULD NOT CHECK: the NETWORK_READ_TOKEN secret is not"
+              echo "  set, so nothing was verified. See the setup block in .github/workflows/watchdog.yml."
+              echo "WATCHDOG_REPORT"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           python3 - <<'PY'
-          import json, os, sys, urllib.request, datetime
+          import datetime, json, os, sys, urllib.request
+          sys.path.insert(0, ".github/watchdog")
+          import network_freshness as nf
 
           TOKEN = os.environ["TOKEN"]
-
-          # repo, workflow FILE (stable across display-name edits), max age in days.
-          # Max age = 2x cadence + slack, so one skipped run is not an alarm but a
-          # genuinely stalled cron is. PolitiFinder is absent deliberately: it has
-          # no refresh cron because its sources do not republish until certified
-          # 2026 returns land (~late 2027). Nothing to watch is not the same as
-          # broken, and inventing a check for it would only ever cry wolf.
-          TARGETS = [
-              ("judicialfinder",     "refresh-data.yml", 10),   # weekly
-              ("thefiscalfinder",    "refresh-data.yml", 40),   # monthly
-              ("gravityfinder",      "freshness.yml",    10),   # weekly
-              ("moleculefinder-etl", "etl.yml",          10),   # weekly
-          ]
 
           def api(url):
               req = urllib.request.Request(url, headers={
@@ -91,71 +144,58 @@ jobs:
               with urllib.request.urlopen(req, timeout=30) as r:
                   return json.load(r)
 
-          now = datetime.datetime.now(datetime.timezone.utc)
-          problems, ok = [], []
+          report = nf.build_report(api, datetime.datetime.now(datetime.timezone.utc))
+          decision = nf.decide(report, issue_open=bool(os.environ.get("ISSUE")))
 
-          for repo, wf, max_age in TARGETS:
-              url = (f"https://api.github.com/repos/Trommsdorff/{repo}"
-                     f"/actions/workflows/{wf}/runs?status=success&per_page=1")
-              try:
-                  runs = api(url).get("workflow_runs", [])
-              except Exception as e:
-                  # Could not check != fine. This is the fail-loud rule.
-                  problems.append(f"- **{repo}** — COULD NOT CHECK ({type(e).__name__}: {e}). "
-                                  f"Treat as broken until proven otherwise.")
-                  continue
+          for f in report.findings:
+              print(f"{f.state.upper():<14} {f.line.splitlines()[0]}")
+          print(f"\n-> {decision.action} (exit {decision.exit_code}): {decision.why}")
 
-              if not runs:
-                  problems.append(f"- **{repo}** — no successful `{wf}` run on record at all.")
-                  continue
-
-              run = runs[0]
-              when = datetime.datetime.fromisoformat(
-                  run["updated_at"].replace("Z", "+00:00"))
-              age = (now - when).days
-              line = f"{repo} — last green {age}d ago ({when:%Y-%m-%d})"
-              if age > max_age:
-                  problems.append(
-                      f"- **{repo}** — last successful refresh was **{age} days ago** "
-                      f"({when:%Y-%m-%d}); the limit for this cron is {max_age} days.\n"
-                      f"  Last green run: {run['html_url']}")
-              else:
-                  ok.append(line)
-
-          print("OK:", *ok, sep="\n  ")
-          if problems:
-              print("PROBLEMS:", *problems, sep="\n")
-              with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-                  f.write("report<<EOF\n" + "\n".join(problems) +
-                          "\n\nHealthy: " + ("; ".join(ok) if ok else "none") + "\nEOF\n")
-              sys.exit(1)
-          print("\nAll refresh crons are within their freshness window.")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"action={decision.action}\n")
+              fh.write(f"exit_code={decision.exit_code}\n")
+              fh.write(f"why={decision.why}\n")
+              fh.write("report<<WATCHDOG_REPORT\n" + report.detail() + "\nWATCHDOG_REPORT\n")
           PY
 
-      - name: Raise the alarm
-        if: failure()
+      # `always()` because the step above must be able to crash without this one
+      # being skipped. A crash leaves `action` empty, which is treated as an
+      # alarm below — the watchdog's own failure is never silent.
+      - name: Act on the verdict
+        if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # ⚠️ REQUIRED. This job has no actions/checkout (it reads the GitHub API,
-          # not the code), so there is no .git for `gh` to infer the target repo
-          # from, and every command below dies with "failed to run git: fatal: not
-          # a git repository". That is exactly how this watchdog failed on its
-          # first real firing (2026-08-09): the check itself worked perfectly and
-          # correctly caught JudicialFinder at 33 days stale — and then the step
-          # meant to REPORT it failed, so the alarm was silent. An alarm that
-          # cannot raise itself is the failure mode this whole file exists to
-          # prevent. GH_REPO supplies the context instead.
+          # ⚠️ REQUIRED, even though this job now checks out. The alarm must not
+          # depend on a .git being present: on 2026-08-09 this workflow had no
+          # checkout, `gh` could not infer the repo, and every command here died
+          # with "failed to run git: fatal: not a git repository". The check had
+          # worked perfectly and caught JudicialFinder at 33 days stale — and the
+          # step meant to REPORT it failed, so the alarm was silent. An alarm
+          # that cannot raise itself is the failure mode this whole file exists
+          # to prevent. GH_REPO supplies the context unconditionally.
           GH_REPO: ${{ github.repository }}
+          ACTION: ${{ steps.check.outputs.action }}
+          EXIT: ${{ steps.check.outputs.exit_code }}
           REPORT: ${{ steps.check.outputs.report }}
+          ISSUE: ${{ steps.episode.outputs.number }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          # Daily cron, so it MUST NOT open a new issue every day. One open issue,
-          # commented on subsequent days.
-          existing=$(gh issue list --label network-staleness --state open \
-                       --limit 1 --json number --jq '.[0].number // empty')
+          set -u
+          today=$(date -u +%F)
+
+          if [ -z "${ACTION:-}" ]; then
+            # The check step crashed. That is a could-not-check about all four
+            # targets, so it alarms — onto the open episode if there is one.
+            ACTION=$([ -n "${ISSUE:-}" ] && echo comment || echo create); EXIT=1
+            REPORT="- **the watchdog itself** — COULD NOT CHECK: its check step did not finish.
+            Nothing about the four refresh crons was verified."
+          fi
+
+          detail="${REPORT:-(no detail captured — see the run log)}"
+
           body="A 137 network data refresh has stopped running.
 
-          ${REPORT:-(no detail captured — see the run log)}
+          $detail
 
           What this means: the affected site is still UP and serving its last good
           build. Its DATA is frozen as of the date above.
@@ -169,14 +209,42 @@ jobs:
 
           Watchdog run: $RUN
 
-          Close this once the affected refresh goes green again."
-          if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "Still stale as of $(date -u +%F).
+          This issue will close itself when every target is back inside its window.
+          While it is open the watchdog comments here daily and does NOT email, so
+          that one episode is one email. A target it CANNOT CHECK still emails every
+          day — that is the starvation case, and silence there is the bug."
 
-          $body"
-            exit 0
-          fi
-          gh label create network-staleness --color B60205 \
-            --description "A 137 site's data refresh has stalled" 2>/dev/null || true
-          gh issue create --label network-staleness \
-            --title "137 network: a data refresh has stalled" --body "$body"
+          case "$ACTION" in
+            none)
+              echo "Nothing to do: every target is inside its window and no episode is open."
+              ;;
+            create)
+              gh label create network-staleness --color B60205 \
+                --description "A 137 site's data refresh has stalled" 2>/dev/null || true
+              gh issue create --label network-staleness \
+                --title "137 network: a data refresh has stalled" --body "$body"
+              ;;
+            comment)
+              gh issue comment "$ISSUE" --body "Still open as of $today.
+
+          $detail
+
+          Watchdog run: $RUN"
+              ;;
+            close)
+              gh issue comment "$ISSUE" --body "Recovered as of $today. Every refresh cron is back
+          inside its freshness window.
+
+          $detail
+
+          Watchdog run: $RUN
+
+          Closing. The watchdog will open a new issue if anything falls behind again."
+              gh issue close "$ISSUE"
+              ;;
+            *)
+              echo "::error::unknown action '$ACTION'"; exit 1
+              ;;
+          esac
+
+          exit "${EXIT:-1}"
