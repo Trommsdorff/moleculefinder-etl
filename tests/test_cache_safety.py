@@ -585,6 +585,7 @@ def test_an_item_with_no_description_is_not_preferred_over_one_with_a_real_one()
 def test_selection_is_stable_under_reordering(monkeypatch):
     """End to end through descriptions_for_cids: WDQS row order must not reach the record."""
     from moleculefinder_etl.sources import wikidata
+    monkeypatch.setattr(wikidata, "names_for_qids", lambda qids: {})     # stay offline
     rows = [{"cid": "5462309", "compound": "http://www.wikidata.org/entity/Q457556",
              "desc": "allotrope of phosphorus"},
             {"cid": "5462309", "compound": "http://www.wikidata.org/entity/Q674",
