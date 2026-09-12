@@ -207,7 +207,7 @@ molecules:
     handling: add-core
     tier: 2
   - name: "Iodine"
-    cid: 24841
+    cid: 807              # elemental iodine, I2 (was 24841, hydrogen iodide, until 2026-09-12)
     bucket: everyday-chemistry
     family: inorganic
     is_otc: true
