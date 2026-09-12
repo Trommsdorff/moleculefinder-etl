@@ -221,7 +221,34 @@ def _wikidata_names(row: dict) -> list:
 # Run 6 put the first display synonym in the title wherever it fit: 608 of 788, including
 # "Caffeine (Guaranine)", "Sucrose (Saccharose)" and "Aciclovir (Acyclovir)". It is selective
 # now, and chosen here because its first rule needs the Wikidata label, which the web never sees.
-def title_synonym(title: "str | None", label: "str | None", names, texts) -> "str | None":
+TITLE_SYNONYM_DO_NOT_USE = SEEDS_DIR / "title_synonym_do_not_use.yaml"
+
+
+@functools.lru_cache(maxsize=1)
+def title_synonym_do_not_use() -> frozenset:
+    """The casefolded names a title's parenthetical never uses (seeds/title_synonym_do_not_use.yaml):
+    synonyms PubChem lists that name a plant, an insect, a class or a material instead of the
+    molecule. Every entry needs a name and a reason, and a duplicate fails the run."""
+    if not TITLE_SYNONYM_DO_NOT_USE.exists():
+        return frozenset()
+    names: list[str] = []
+    problems: list[str] = []
+    for entry in yaml.safe_load(TITLE_SYNONYM_DO_NOT_USE.read_text()) or []:
+        name = str((entry or {}).get("name") or "").strip()
+        if not name or not str((entry or {}).get("why") or "").strip():
+            problems.append(f"an entry needs a name and a why: {entry!r}")
+            continue
+        names.append(name.casefold())
+    dupes = sorted({n for n in names if names.count(n) > 1})
+    if dupes:
+        problems.append("listed twice: " + ", ".join(dupes))
+    if problems:
+        raise SystemExit(f"{TITLE_SYNONYM_DO_NOT_USE.name}: " + "; ".join(problems))
+    return frozenset(names)
+
+
+def title_synonym(title: "str | None", label: "str | None", names, texts,
+                  do_not_use=frozenset()) -> "str | None":
     """The name in the title's parenthetical, or None.
 
     Never when the title already has a parenthesis ("Estradiol (medication)"). Otherwise the
@@ -229,12 +256,13 @@ def title_synonym(title: "str | None", label: "str | None", names, texts) -> "st
     label differs when it survived display_synonyms, which drops the title and its near
     duplicates, so a respelled or unreadable label does not count. Otherwise the first display
     synonym that the page's own description or why_it_matters text also uses, as a whole word
-    in any case: "Sodium bicarbonate (Baking soda)". Otherwise None. ``names`` is the display
-    list and the name comes back spelled as it is there; the web capitalises it.
+    in any case: "Sodium bicarbonate (Baking soda)". Otherwise None. A name on the do-not-use
+    list (casefolded, see title_synonym_do_not_use) is passed over by both rules. ``names`` is the
+    display list and the name comes back spelled as it is there; the web capitalises it.
     """
     if not title or "(" in title:
         return None
-    names = [n for n in (names or []) if n]
+    names = [n for n in (names or []) if n and n.casefold() not in do_not_use]
     key = (label or "").strip().casefold()
     for n in names:
         if key and n.casefold() == key:
@@ -251,13 +279,16 @@ def _uses_name(text: str, name: str) -> bool:
     return re.search(rf"(?<![^\W\d_]){re.escape(name)}(?![^\W\d_])", text, re.IGNORECASE) is not None
 
 
-def attach_title_synonyms(records: list[dict], labels: dict) -> None:
+def attach_title_synonyms(records: list[dict], labels: dict, do_not_use=None) -> None:
     """Stamp ``rec['title_synonym']`` on every record. Call after attach_descriptions, because
-    the second rule reads the description. ``labels`` maps a CID to its Wikidata English label."""
+    the second rule reads the description. ``labels`` maps a CID to its Wikidata English label;
+    ``do_not_use`` defaults to the seed list."""
+    skip = title_synonym_do_not_use() if do_not_use is None else do_not_use
     for rec in records:
         why = (rec.get("why_it_matters") or {}).get("text")
         rec["title_synonym"] = title_synonym(rec.get("title"), labels.get(rec["cid"]),
-                                             rec.get("display_synonyms"), [rec.get("description"), why])
+                                             rec.get("display_synonyms"), [rec.get("description"), why],
+                                             skip)
 
 
 # A CAS Registry Number is 2–7 + 2 + 1 digits. The last digit is a checksum, which we verify

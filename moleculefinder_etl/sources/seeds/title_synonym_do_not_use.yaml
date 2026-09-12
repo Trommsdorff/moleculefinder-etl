@@ -1,0 +1,23 @@
+# The title parenthetical's do-not-use list (Garrett, 2026-09-12).
+#
+# assemble.title_synonym puts one of a molecule's display synonyms in its <title>:
+# "Acetaminophen (Paracetamol)". PubChem lists some names as synonyms that are not the molecule at
+# all: the plant or insect it comes from, a class it belongs to, one material made of it. When the
+# page's own text mentions such a name, the parenthetical rule picks it and the title calls the
+# molecule something it is not ("Apigenin (Chamomile)").
+#
+# Matched case-insensitively against the whole name, for the parenthetical only: the name can still
+# appear on the synonym line under the H1. Every entry needs a reason. Brand names are deliberately
+# not listed: "Fluoxetine (Prozac)" names the molecule as it is sold, and it stays.
+- name: chamomile
+  why: a plant; apigenin is one of the flavonoids in it
+- name: ephedra
+  why: the plant ephedrine is extracted from
+- name: estrogen
+  why: the class of hormones estradiol belongs to
+- name: cochineal
+  why: the insect carmine is made from
+- name: vitamin A
+  why: a group of compounds (retinol, retinal, retinoic acid and others), of which retinol is one
+- name: fused quartz
+  why: a glass made of silicon dioxide, one material form of it rather than the compound's name
