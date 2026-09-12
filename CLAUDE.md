@@ -316,7 +316,7 @@ behind it. Neither was caused by run 4; run 4 is what made them visible.
   summary is never an improvement, however fresh) would have caught this class directly.
   Not done here; done in run 6 (next section).
 
-## Run 6 (2026-09-12) — feedback triage: the classifier, the placeholder, the date. BUILT, NOT pushed
+## Run 6 (2026-09-12) — feedback triage: the classifier, the placeholder, the date. DEPLOYED 2026-09-12
 Branch `traffic-2026-09-feedback` from `56d3342`. Scope: the MF 6 items of
 `../network/FEEDBACK-TRIAGE-2026-09-12.md` that live in this repo (the web half is in the web
 CLAUDE.md). Four commits:
@@ -430,6 +430,20 @@ CLAUDE.md). Four commits:
     environmental-hazard; it gains the dose hook, so the web shows its Relative acute toxicity
     block. Its synonym line reads "Jod · Eranol · Iosan superdip · Jood", and it has no
     parenthetical ("diiodine" contains the title).
+- **DEPLOYED 2026-09-12 on Garrett's word.** This repo's `main` fast-forwarded to `6ea1d68` (no
+  deploy), then web `main` to `ee090a5`, Vercel Production ready at 22:34:51 UTC. Live checks,
+  IndexNow and Lighthouse are recorded in the web CLAUDE.md. **The ETL dispatch was not run**, for the
+  reason below.
+  - **Open, needs Garrett before the Monday 06:00 UTC cron: Supabase still keys slug `iodine` to CID
+    24841** (molecule id 809, formula HI). `load_all` upserts `molecule` on `cid`, and `molecule.slug`
+    is unique, so the next `mfetl all` with Supabase credentials (the cron or a dispatch) will fail at
+    stage 3 when it inserts CID 807 as `iodine`: before export and sync-web, so the weekly loop stops.
+    This is the slug-reassignment edge listed under Next. The smallest fix is one reversible update,
+    `update molecule set cid = 807 where id = 809 and cid = 24841`, after which the load refreshes
+    that row and its child tables in place; nothing else references `molecule.id` (the `event` table
+    stores paths). The deploy session tried to apply it, the session's permission rules blocked the
+    write, and so neither the update nor the dispatch happened. After the fix: `gh workflow run
+    etl.yml --ref main` once, and check whether sync-web finds the web copy identical.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
