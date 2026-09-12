@@ -117,6 +117,55 @@ def build_db_rows(molecules: list[dict]) -> dict[str, list[dict]]:
     return out
 
 
+# ── A slug the catalog moved to a new compound ──────────────────────────────
+def _molecule_keys(client, page: int = 1000) -> list[dict]:
+    """Every existing molecule row's id, cid and slug, a page at a time (PostgREST caps a response)."""
+    rows: list[dict] = []
+    start = 0
+    while True:
+        batch = (client.table("molecule").select("id,cid,slug").order("id")
+                 .range(start, start + page - 1).execute().data)
+        rows.extend(batch)
+        if len(batch) < page:
+            return rows
+        start += page
+
+
+def rekey_moved_slugs(client, mol_rows: list[dict]) -> list[dict]:
+    """Move an existing molecule row to its new CID when the catalog re-points its slug.
+
+    The load upserts `molecule` on `cid`, and `slug` is unique. When the catalog corrects which
+    compound a molecule is (Iodine, 2026-09-12: CID 24841, hydrogen iodide, became CID 807, I2),
+    the upsert inserts the new CID under a slug an existing row still holds, and the whole load
+    fails on the unique constraint. That stopped the weekly loop until a person re-keyed the row
+    by hand. This does the same thing first, `update molecule set cid = <new> where id = <id> and
+    cid = <old>`, so the upsert that follows refreshes the row in place and its child rows stay
+    attached. A new CID that another row already holds is ambiguous (two rows would claim one
+    compound), so it fails loudly instead of guessing. Returns the moves it made.
+    """
+    existing = _molecule_keys(client)
+    by_slug = {r["slug"]: r for r in existing}
+    by_cid = {r["cid"]: r for r in existing}
+    moves: list[dict] = []
+    for r in mol_rows:
+        old = by_slug.get(r["slug"])
+        if old is None or old["cid"] == r["cid"]:
+            continue
+        holder = by_cid.get(r["cid"])
+        if holder is not None:
+            raise RuntimeError(
+                f"cannot re-key slug {r['slug']!r} from CID {old['cid']} to {r['cid']}: CID {r['cid']} "
+                f"already belongs to molecule id {holder['id']} (slug {holder['slug']!r}); resolve by hand")
+        moves.append({"id": old["id"], "slug": r["slug"], "from": old["cid"], "to": r["cid"]})
+    for m in moves:
+        changed = (client.table("molecule").update({"cid": m["to"]})
+                   .eq("id", m["id"]).eq("cid", m["from"]).execute().data)
+        if len(changed) != 1:
+            raise RuntimeError(f"re-keying {m['slug']!r} changed {len(changed)} rows, expected 1")
+        log.info("  re-keyed molecule %s (%s) from CID %s to %s", m["id"], m["slug"], m["from"], m["to"])
+    return moves
+
+
 # ── Orchestrated load (idempotent) ───────────────────────────────────────────
 def load_all(client, molecules: list[dict]) -> dict[str, int]:
     """Upsert every table by natural key. Returns per-table row counts. Idempotent."""
@@ -132,6 +181,8 @@ def load_all(client, molecules: list[dict]) -> dict[str, int]:
     mol_rows = tables["molecule"]
     for r in mol_rows:
         r["summary_source_id"] = src_id.get(r.pop("_summary_source", None))
+    # Before the upsert: a slug the catalog re-pointed at a new CID keeps its row.
+    moves = rekey_moved_slugs(client, mol_rows)
     mol_id = {r["cid"]: r["id"] for r in
               client.table("molecule").upsert(mol_rows, on_conflict="cid").execute().data}
 
@@ -140,7 +191,8 @@ def load_all(client, molecules: list[dict]) -> dict[str, int]:
         cat_id = {r["slug"]: r["id"] for r in
                   client.table("category").upsert(sid(tables["category"]), on_conflict="slug").execute().data}
 
-    counts = {"source": len(src_id), "molecule": len(mol_id), "category": len(cat_id)}
+    counts = {"source": len(src_id), "molecule": len(mol_id), "category": len(cat_id),
+              "rekeyed": len(moves)}
 
     def mol(rows):  # attach molecule_id from cid
         for r in rows:
