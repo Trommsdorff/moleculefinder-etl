@@ -172,6 +172,38 @@ def test_every_record_gets_its_parenthetical_after_its_description():
     assert [r["title_synonym"] for r in recs] == ["paracetamol", "baking soda", None]
 
 
+def test_a_do_not_use_name_is_passed_over_by_both_rules():
+    """Apigenin's page mentions chamomile and PubChem lists "chamomile" as a synonym, but a plant
+    is not another name for the molecule."""
+    skip = frozenset({"chamomile", "vitamin a"})
+    assert _title_synonym("Apigenin", "apigenin", ["chamomile", "versulin"],
+                          ["The yellow flavonoid in chamomile tea."], skip) is None
+    # a listed label falls through to the text rule, which can still find a real name
+    assert _title_synonym("Retinol", "vitamin A", ["vitamin A", "axerophthol"],
+                          ["Also called axerophthol."], skip) == "axerophthol"
+
+
+def test_the_seed_list_carries_its_names_with_reasons():
+    import yaml
+    from moleculefinder_etl.transform import assemble
+    names = assemble.title_synonym_do_not_use()
+    assert {"chamomile", "ephedra", "estrogen", "cochineal"} <= names
+    assert all(n == n.casefold() for n in names)
+    assert all(e["why"].strip() for e in yaml.safe_load(assemble.TITLE_SYNONYM_DO_NOT_USE.read_text()))
+
+
+def test_no_title_in_the_snapshot_uses_a_listed_name():
+    from moleculefinder_etl.config import SNAPSHOTS
+    from moleculefinder_etl.transform import assemble
+    listed = assemble.title_synonym_do_not_use()
+    used = []
+    for path in sorted((SNAPSHOTS / "molecules").glob("*.json")):
+        name = json.loads(path.read_text()).get("title_synonym")
+        if name and name.casefold() in listed:
+            used.append(f"{path.stem}: {name}")
+    assert used == []
+
+
 # ── The record ──────────────────────────────────────────────────────────────
 def test_the_record_carries_display_synonyms_and_keeps_its_search_list():
     from moleculefinder_etl.transform import assemble
