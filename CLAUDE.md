@@ -407,10 +407,29 @@ CLAUDE.md). Four commits:
   - 354 tests (was 322): `tests/test_one_ld50.py` pins the selector and that the panel row, the
     hook and the boards read one row; `tests/test_display_synonyms.py` pins the near-duplicate
     rule and the parenthetical. Ruff clean.
-  - **Found, not fixed: the Iodine record is hydroiodic acid.** `scope_b_core.csv` row 475 maps
-    Iodine to CID 24841, hydrogen iodide (formula HI, CAS 10034-85-2, Wikidata Q908093); elemental
-    iodine should be CID 807. The page has shown HI's formula and CAS since the Scope B rebuild,
-    and the label rule now also prints "Iodine (Hydroiodic acid)" in its title.
+  - **Found here, fixed in round three: the Iodine record was hydroiodic acid.** `scope_b_core.csv`
+    row 475 mapped Iodine to CID 24841, hydrogen iodide (formula HI, CAS 10034-85-2, Wikidata
+    Q908093). The page had shown HI's formula and CAS since the Scope B rebuild, and the label rule
+    printed "Iodine (Hydroiodic acid)" in its title.
+- **Round three before the deploy (Garrett, same day): a do-not-use list, and Iodine as I2.**
+  Code `f62a953`, seeds `6574ccd`, data `daabe56`.
+  - **`seeds/title_synonym_do_not_use.yaml`** lists names the parenthetical never uses, each with a
+    reason, passed over by both rules (`assemble.title_synonym_do_not_use`, casefolded): the four
+    Garrett named (chamomile, ephedra, estrogen, cochineal) and two found re-reading every
+    remaining parenthetical, vitamin A (a group of compounds, under Retinol) and fused quartz (one
+    glass made of silicon dioxide). Brand names stay, and so do everyday product names on the same
+    reasoning (Bleach, Mothballs). The listed names still show on the synonym line under the H1.
+    A test fails if any committed snapshot title uses a listed name. 357 tests, ruff clean.
+  - **Iodine is CID 807 (I2)** in both `scope_b_core.csv` and `household_must_include.yaml`. Only
+    CID 807 was fetched live (Wikidata Q2064483 "diiodine" and its PubChem properties, synonyms,
+    Toxicity and GHS); the rest came from the cache. The swap changed iodine's own file, its
+    search-index entry, the six leaderboard files its row moved in (its oral rat LD50 of 14,000
+    mg/kg puts it on Deadliest at #222 and Safest at #13) and its canon.parquet row, and nothing
+    else: no hub gained or lost a member other than iodine, and roam, worlds, comparisons and meta
+    are byte-identical. Iodine leaves the compressed-gas and corrosive hubs and joins irritant and
+    environmental-hazard; it gains the dose hook, so the web shows its Relative acute toxicity
+    block. Its synonym line reads "Jod · Eranol · Iosan superdip · Jood", and it has no
+    parenthetical ("diiodine" contains the title).
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
