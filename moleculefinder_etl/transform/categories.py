@@ -10,7 +10,12 @@ from __future__ import annotations
 # cost nothing but a substructure match over data already in the snapshot.
 FUNCTIONAL_GROUPS = {
     "alcohols": "[CX4][OX2H]",
-    "carboxylic-acids": "[CX3](=O)[OX2H1]",
+    # The carboxyl carbon must carry a carbon or a single hydrogen (formic acid). The bare
+    # [CX3](=O)[OX2H1] also matched a carbonyl carbon bonded only to oxygen or nitrogen, so
+    # bicarbonate and its sodium, potassium and ammonium salts sat in /in/carboxylic-acids
+    # until 2026-09-12 (feedback triage MF-3); carbonic and carbamic acid would have joined
+    # them. tests/test_categories.py pins every pattern in this table.
+    "carboxylic-acids": "[CX3;$([CX3H1]),$([CX3][#6])](=O)[OX2H1]",
     "amines": "[NX3;H2,H1;!$(NC=O)]",
     "aromatics": "c1ccccc1",
     "ketones": "[#6][CX3](=O)[#6]",
