@@ -434,16 +434,39 @@ CLAUDE.md). Four commits:
   deploy), then web `main` to `ee090a5`, Vercel Production ready at 22:34:51 UTC. Live checks,
   IndexNow and Lighthouse are recorded in the web CLAUDE.md. **The ETL dispatch was not run**, for the
   reason below.
-  - **Open, needs Garrett before the Monday 06:00 UTC cron: Supabase still keys slug `iodine` to CID
-    24841** (molecule id 809, formula HI). `load_all` upserts `molecule` on `cid`, and `molecule.slug`
-    is unique, so the next `mfetl all` with Supabase credentials (the cron or a dispatch) will fail at
-    stage 3 when it inserts CID 807 as `iodine`: before export and sync-web, so the weekly loop stops.
-    This is the slug-reassignment edge listed under Next. The smallest fix is one reversible update,
-    `update molecule set cid = 807 where id = 809 and cid = 24841`, after which the load refreshes
-    that row and its child tables in place; nothing else references `molecule.id` (the `event` table
-    stores paths). The deploy session tried to apply it, the session's permission rules blocked the
-    write, and so neither the update nor the dispatch happened. After the fix: `gh workflow run
-    etl.yml --ref main` once, and check whether sync-web finds the web copy identical.
+  - **Resolved the same evening: the Supabase iodine row.** Supabase still keyed slug `iodine` to CID
+    24841 (molecule id 809), and `load_all` upserts on `cid` with `molecule.slug` unique, so the next
+    load would have failed inserting CID 807. Garrett authorized the one-row fix, sent as exactly
+    `update molecule set cid = 807 where id = 809 and cid = 24841` through the REST API with the
+    service key (no direct database password is kept locally): 1 row changed, and row 809 is the only
+    row carrying CID 807 or 24841.
+- **After the deploy, same evening: the loop, the loader, and the synonym line.**
+  - **ETL dispatch 34724364616:** the load succeeded (788 molecules; `toxicity_value` 831 with iodine's
+    three rows). Its snapshot differed from `main` in 12 molecules' PubChem synonym lists plus
+    index.json (`90cdb69`), so sync-web opened web PR #5, which the loop verified and merged; Vercel
+    deployed it and IndexNow accepted its 17 URLs. Two of those changes show on pages: doxycycline's
+    line has Vibramycin where Doxychel was, and pantoprazole's gains Protonix and with it the title
+    "Pantoprazole (Protonix)". **Why they moved:** the local raw_cache was wiped and re-fetched live
+    on 2026-09-12, while CI's `syn60` entries are older and never expire, so the two caches disagree
+    for those 12 molecules (cannabigerol, coenzyme-q10, doxycycline, erythromycin, etomidate,
+    lisdexamfetamine, methadone, montelukast, naproxen, natamycin, pantoprazole,
+    sodium-lauryl-sulfate). Any local regeneration flips them back: restore those files and
+    index.json from `main` before committing local data, or the next weekly run opens a PR to undo it.
+  - **`supabase_loader.rekey_moved_slugs`** (`0a83290`): before the molecule upsert, a slug whose
+    existing row carries a different CID is re-keyed, `update molecule set cid = <new> where id = <id>
+    and cid = <old>`, checked to change exactly one row, so a catalog correction like Iodine no longer
+    stops the loop. A new CID another row already holds fails loudly instead of guessing. Counted as
+    `rekeyed` in the ingest_run notes; `tests/test_load_rekey.py`.
+  - **The do-not-use names leave the synonym line too** (`2b42778`): `display_synonyms` drops them
+    and the next name moves up; the list is now `seeds/synonym_do_not_use.yaml`
+    (`synonym_do_not_use()`). Data `20d4c23`: apigenin, carmine, ephedrine, estradiol, retinol and
+    silicon-dioxide change that line and nothing else, and the snapshot differs from `90cdb69` only
+    there. 363 tests, ruff clean.
+  - **Two slips on `main`, both corrected forward; nothing ran or deployed in between.** `0a83290`
+    also carried the staged seed rename, so for a few minutes the code read a missing file (an empty
+    list) until `2b42778`. `bcafea3` meant to carry only the six lines but also carried the 12
+    local-cache synonym lists and index.json (a restore step failed on zsh word splitting and its exit
+    code went unchecked); `20d4c23` put those back exactly as `90cdb69` has them.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
@@ -494,9 +517,10 @@ CLAUDE.md). Four commits:
 
 ## Next
 - **Launched on moleculefinder.com (498 live; 793 built and waiting on the branch above).** The `load_all` slug *reassignment* edge (moving a slug
-  from one CID to another when the canon changes) is still not auto-handled — it needs a manual
-  stale-row delete first, as the 489 reconcile did. Only bites a future canon change; the dup-key
-  crash itself is fixed (`b882a07`).
+  from one CID to another when the canon changes) is handled since 2026-09-12:
+  `supabase_loader.rekey_moved_slugs` re-keys the existing row before the upsert. It still fails
+  loudly, and needs a person, when the new CID already belongs to another row. The dup-key crash
+  itself is fixed (`b882a07`).
 - **Catalog growth is ON and tranche 1 is BUILT** (see the section above). The next tranche
   appends the next block of `../drugs-wing-deferred.csv` (the 566 pharmaceuticals under 10k
   views) with a new `batch` value. The 89 recreational-drug rows are a separate tranche that
