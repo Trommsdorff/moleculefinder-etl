@@ -102,13 +102,19 @@ def _shipped() -> list[dict]:
     ]
 
 
-def _regressed() -> list[dict]:
-    """The same four as the stale cache rebuilt them: the actual values that shipped."""
+def _regressed(*, placeholder: bool = True) -> list[dict]:
+    """The same four as the stale cache rebuilt them: the actual values that shipped.
+
+    ``placeholder=False`` leaves taurine's summary alone, for the tests about the two shapes
+    a live fetch is allowed to change; the placeholder summary is refused whatever the
+    provenance and has its own test below.
+    """
     recs = {r["slug"]: dict(r) for r in _shipped()}
     recs["alanine"]["wikidata_qid"] = "Q106345485"          # a bulk-batch item
     recs["glycine"]["wikidata_qid"] = "Q106345678"
     recs["taurine"]["wikidata_qid"] = "Q106345481"
-    recs["taurine"]["summary"] = "chemical compound"        # phase 1 exists to remove this
+    if placeholder:
+        recs["taurine"]["summary"] = "chemical compound"    # phase 1 exists to remove this
     recs["omeprazole"]["ld50_mg_per_kg"] = None             # PUG-View miss, cached
     return list(recs.values())
 
@@ -155,17 +161,60 @@ def test_the_2026_09_08_regression_is_rejected(tmp_path, monkeypatch):
 
 
 def test_the_same_change_is_allowed_when_the_fetch_is_live(tmp_path, monkeypatch):
-    """The weekly CI run fetches fresh, so its corrections must sail through. This is the
-    same diff as the test above; only the provenance of the values differs."""
+    """The weekly CI run fetches fresh, so its QID and LD50 corrections must sail through.
+    This is the diff above minus the placeholder summary, which no provenance excuses
+    (see the next test); only the provenance of the values differs."""
+    monkeypatch.delenv(snapshot_guard.OVERRIDE_ENV, raising=False)
     monkeypatch.setattr(snapshot_export, "SNAPSHOTS", tmp_path)
     _plant_prior(tmp_path)
     live = {source: {str(cid): {"fetched_at": cache.now(), "live": True} for cid in CIDS}
             for source in freshness.SOURCES}
     monkeypatch.setattr(freshness, "load", lambda path=None: live)
 
-    snapshot_export.export(_regressed(), {})
+    snapshot_export.export(_regressed(placeholder=False), {})
     taurine = json.loads((tmp_path / "molecules" / "taurine.json").read_text())
     assert taurine["wikidata_qid"] == "Q106345481"
+    omeprazole = json.loads((tmp_path / "molecules" / "omeprazole.json").read_text())
+    assert omeprazole["ld50_mg_per_kg"] is None
+
+
+def test_a_placeholder_summary_is_refused_even_when_the_fetch_is_live(tmp_path, monkeypatch):
+    """Fresh is not the same as right. On 2026-09-09 a live WDQS query wanted to write
+    "chemical compound" over fluorine, mercury and vasopressin, and the live-fetch rule would
+    have let it through. The placeholder is refused whatever its provenance, including the
+    capitalized, punctuated spelling."""
+    monkeypatch.delenv(snapshot_guard.OVERRIDE_ENV, raising=False)
+    monkeypatch.setattr(snapshot_export, "SNAPSHOTS", tmp_path)
+    _plant_prior(tmp_path)
+    live = {source: {str(cid): {"fetched_at": cache.now(), "live": True} for cid in CIDS}
+            for source in freshness.SOURCES}
+    monkeypatch.setattr(freshness, "load", lambda path=None: live)
+    recs = {r["slug"]: dict(r) for r in _shipped()}
+    recs["taurine"]["summary"] = "Chemical compound."
+
+    with pytest.raises(SnapshotRegression) as err:
+        snapshot_export.export(list(recs.values()), {})
+
+    message = str(err.value)
+    assert "taurine (summary):" in message
+    assert "fetched live" in message and "refused even when fetched live" in message
+    assert not (tmp_path / "index.json").exists()                # nothing was written
+    on_disk = json.loads((tmp_path / "molecules" / "taurine.json").read_text())
+    assert on_disk["summary"] == "organic compound widely distributed in animal tissues"
+
+
+def test_a_placeholder_summary_on_a_molecule_that_always_had_one_is_not_a_regression(tmp_path, monkeypatch):
+    """The rule protects a real summary from being walked back, and nothing more: a record
+    whose shipped summary was already the placeholder can keep it."""
+    monkeypatch.setattr(snapshot_export, "SNAPSHOTS", tmp_path)
+    prior = [dict(r, summary="chemical compound") if r["slug"] == "taurine" else r for r in _shipped()]
+    mol = tmp_path / "molecules"
+    mol.mkdir(parents=True)
+    for rec in prior:
+        (mol / f"{rec['slug']}.json").write_text(json.dumps(rec))
+    monkeypatch.setattr(freshness, "load", lambda path=None: {})
+    snapshot_export.export(prior, {})
+    assert (tmp_path / "index.json").exists()
 
 
 def test_the_override_ships_it_and_says_so(tmp_path, monkeypatch, caplog):
