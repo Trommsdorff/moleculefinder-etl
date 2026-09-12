@@ -349,9 +349,29 @@ CLAUDE.md). Four commits:
   3. The 12 drifted files, `index.json` and `canon.parquet` (content-identical, re-encoded)
      restored from HEAD, so the commit carries the classifier's effect and nothing upstream.
      Monday's scheduled run publishes the synonym refresh through the normal loop.
-- 293 tests, ruff clean. **Deploy order unchanged: ETL main first (no deploy), then web main.**
-  The first CI run after the merge keeps `refreshed: 2026-09-12` unless the data moves; the
-  12-molecule synonym refresh will move it.
+- **Second pass before the deploy (Garrett, same day): `display_synonyms` on every record.**
+  `assemble.display_synonyms`: Wikidata's English label, then its aliases in Wikidata's order,
+  then the stored PubChem synonyms; a name is kept only if it starts with a letter, holds only
+  letters, spaces, hyphens and apostrophes, is 25 characters or fewer, is not all capitals
+  beyond 5 characters, and is not the title in any case; case-insensitive de-dup, first four.
+  756 of 788 records get at least one (652 get four). The web prints them under the H1 and
+  takes the first, capitalised, as the title's parenthetical.
+  - **The names come from the Wikidata API (`wbgetentities`), not GROUP_CONCAT in the POST
+    query**, which is what the prompt named. Measured: WDQS returns an item's aliases in a
+    server-dependent order (the same query three times, a minute apart, three backend servers:
+    13 of 136 items came back reordered, same sets), so it cannot be both "Wikidata order" and
+    deterministic. `sources/wikidata.py::names_for_qids` reads each item's stored order, 50 ids a
+    request, for the QID the unchanged run-5 selection chose. Cached in the same descriptions
+    entry (an entry with no `aliases` key is a miss), carried through `canon.parquet` as
+    `wikidata_label` and `wikidata_aliases` with pinned types.
+  - **The label leads the aliases** because for acetaminophen "paracetamol" is Wikidata's English
+    label and "acetaminophen" only an alias; from aliases alone, Paracetamol never appears.
+  - Data: the cache had been wiped at the last cleanup, so this fetched live again (7 min).
+    Against the same inputs the only change is `display_synonyms` on all 788 files plus the two
+    parquet columns. The 12-molecule PubChem synonym refresh rides along this time: restoring
+    those files from HEAD would have dropped the new field from them.
+- 322 tests, ruff clean. **Deploy order unchanged: ETL main first (no deploy), then web main.**
+  The first CI run after the merge keeps `refreshed: 2026-09-12` unless the data moves.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
