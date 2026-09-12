@@ -372,6 +372,45 @@ CLAUDE.md). Four commits:
     those files from HEAD would have dropped the new field from them.
 - 322 tests, ruff clean. **Deploy order unchanged: ETL main first (no deploy), then web main.**
   The first CI run after the merge keeps `refreshed: 2026-09-12` unless the data moves.
+- **Round two before the deploy (Garrett, same day): near duplicates, the parenthetical, one
+  LD50.** Code `8e8dd8c`, data `3a80ffb`, regenerated from the kept `data/raw_cache` in seconds
+  (fetch, transform, export; no seed, so `canon.parquet` did not move). Against the previous
+  snapshot only molecule files changed; index, roam, worlds, comparisons, meta and all eight
+  boards are byte-identical.
+  - **`display_synonyms` drops a near duplicate of the title**, case-insensitively: a name that
+    contains the title, sits inside it, or is within two letters of it (Levenshtein), also
+    compared with the title's Greek letters spelled out ("beta-alanine" under β-Alanine). The
+    four are counted after the filter. 996 names left 526 lines; 708 records keep a line (was
+    756). The rule is literal and takes some real names with it: "Cipro" (inside
+    Ciprofloxacin), "Naprosyn" and "chlorpheniramine" (two letters from Naproxen and
+    Chlorphenamine), "sodium citrate" (inside Trisodium citrate).
+  - **`title_synonym`, the title's parenthetical, is chosen here** (`assemble.title_synonym`,
+    stamped by `attach_title_synonyms` after the descriptions), because its first rule needs the
+    Wikidata label and the web never sees it: never when the title has a parenthesis; the label
+    when it survived the display filters; else the first display synonym the description or
+    why_it_matters text uses as a whole word; else none. 135 chosen (34 label, 101 text); the web
+    renders 111 (24 would pass 65 characters). **44 of the 111 are drug brand names** (Fluoxetine
+    (Prozac), Ibuprofen (Advil)), and a few name something other than the molecule because
+    PubChem lists it as a synonym: Apigenin (Chamomile), Ephedrine (Ephedra), Estradiol
+    (Estrogen). Both are Garrett's call and not decided.
+  - **`toxicity.primary_ld50` is the one LD50**: oral rat, then oral mouse, then any oral
+    (`best_oral`; a sub-floor oral value is dropped, not demoted), then the lowest value by any
+    other route, ties broken on route then species. `_apply_primary_ld50` stamps `ld50_*` and
+    moves that row to the front of `toxicity`, so the Safety panel's first row is the value the
+    dose hook, the boards and the /vs tables read. **The dose hook and the Deadliest and Safest
+    boards take it only when it is oral** (`leaderboards.ORAL_ONLY`): the boards' copy says oral,
+    and the lens must never scale an injected dose. Effect: `toxicity` order on 56 records,
+    `ld50_*` filled on 42 whose values are all by another route (oxymetazoline's 0.8 mg/kg oral
+    is a sub-floor artifact, so its 1.1 by another route leads). No LD50 value, hook, description
+    or board entry changed. A curated `dose_poison` overlay still pins the value (caffeine,
+    capsaicin), each the row the rule picks anyway.
+  - 354 tests (was 322): `tests/test_one_ld50.py` pins the selector and that the panel row, the
+    hook and the boards read one row; `tests/test_display_synonyms.py` pins the near-duplicate
+    rule and the parenthetical. Ruff clean.
+  - **Found, not fixed: the Iodine record is hydroiodic acid.** `scope_b_core.csv` row 475 maps
+    Iodine to CID 24841, hydrogen iodide (formula HI, CAS 10034-85-2, Wikidata Q908093); elemental
+    iodine should be CID 807. The page has shown HI's formula and CAS since the Scope B rebuild,
+    and the label rule now also prints "Iodine (Hydroiodic acid)" in its title.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
