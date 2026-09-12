@@ -1,14 +1,16 @@
-# The title parenthetical's do-not-use list (Garrett, 2026-09-12).
+# The do-not-use list for a molecule's other names (Garrett, 2026-09-12). Renamed from
+# title_synonym_do_not_use.yaml when it came to cover the synonym line as well as the title.
 #
-# assemble.title_synonym puts one of a molecule's display synonyms in its <title>:
-# "Acetaminophen (Paracetamol)". PubChem lists some names as synonyms that are not the molecule at
-# all: the plant or insect it comes from, a class it belongs to, one material made of it. When the
-# page's own text mentions such a name, the parenthetical rule picks it and the title calls the
-# molecule something it is not ("Apigenin (Chamomile)").
+# PubChem lists some names as synonyms that are not the molecule at all: the plant or insect it
+# comes from, a class it belongs to, one material made of it. assemble.display_synonyms builds the
+# line under the H1 from those synonyms, and assemble.title_synonym puts one of them in the <title>
+# when the page's own text mentions it, so such a name would read as another name for the molecule
+# ("Apigenin (Chamomile)", "chamomile · versulin").
 #
-# Matched case-insensitively against the whole name, for the parenthetical only: the name can still
-# appear on the synonym line under the H1. Every entry needs a reason. Brand names are deliberately
-# not listed: "Fluoxetine (Prozac)" names the molecule as it is sold, and it stays.
+# Matched case-insensitively against the whole name, and kept off both the synonym line and the
+# title's parenthetical. The search list (`synonyms`) is untouched. Every entry needs a reason.
+# Brand names are deliberately not listed: "Fluoxetine (Prozac)" names the molecule as it is sold,
+# and it stays.
 - name: chamomile
   why: a plant; apigenin is one of the flavonoids in it
 - name: ephedra

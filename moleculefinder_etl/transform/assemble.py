@@ -187,23 +187,28 @@ def _near_title(key: str, forms: list[str]) -> bool:
     return any(t in key or key in t or _within_edits(key, t, NEAR_TITLE_EDITS) for t in forms)
 
 
-def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms) -> list[str]:
+def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms,
+                     do_not_use=None) -> list[str]:
     """Up to four names for the line under the H1; the title's parenthetical is one of them.
 
     ``wikidata_names`` is the chosen item's English label followed by its aliases, in that
     order; ``pubchem_synonyms`` the stored synonym list. A near duplicate of the title is
     dropped (Garrett, 2026-09-12), case-insensitively: a name that contains the title
     ("Aluminium flake"), sits inside it ("Al"), or is within two letters of it ("aluminum" under
-    Aluminium, "acyclovir" under Aciclovir). Duplicates are compared case-insensitively and the
-    first one kept. The four are counted after the filter, so a dropped name makes room.
+    Aluminium, "acyclovir" under Aciclovir). So is a name on the do-not-use list, which names
+    something other than the molecule ("chamomile" under Apigenin): ``do_not_use`` is the
+    casefolded list, the seed file by default (see synonym_do_not_use). Duplicates are compared
+    case-insensitively and the first one kept. The four are counted after the filters, so a
+    dropped name makes room.
     """
     forms = _title_forms(title)
+    skip = synonym_do_not_use() if do_not_use is None else do_not_use
     out: list[str] = []
     seen: set[str] = set()
     for raw in [*(wikidata_names or []), *(pubchem_synonyms or [])]:
         name = (raw or "").strip()
         key = name.casefold()
-        if not _readable_name(name) or key in seen or _near_title(key, forms):
+        if not _readable_name(name) or key in seen or key in skip or _near_title(key, forms):
             continue
         seen.add(key)
         out.append(name)
@@ -217,23 +222,23 @@ def _wikidata_names(row: dict) -> list:
     return [row.get("wikidata_label"), *(row.get("wikidata_aliases") or [])]
 
 
-# ── The title's parenthetical (Garrett, 2026-09-12) ──────────────────────────────────────────
-# Run 6 put the first display synonym in the title wherever it fit: 608 of 788, including
-# "Caffeine (Guaranine)", "Sucrose (Saccharose)" and "Aciclovir (Acyclovir)". It is selective
-# now, and chosen here because its first rule needs the Wikidata label, which the web never sees.
-TITLE_SYNONYM_DO_NOT_USE = SEEDS_DIR / "title_synonym_do_not_use.yaml"
+# ── Names that are not the molecule (Garrett, 2026-09-12) ────────────────────────────────────
+# PubChem lists some synonyms that name something else: the plant a compound is found in, the
+# insect a pigment is made from, a class of compounds, a material. They stay off the synonym line
+# (display_synonyms) and out of the title's parenthetical (title_synonym).
+SYNONYM_DO_NOT_USE = SEEDS_DIR / "synonym_do_not_use.yaml"
 
 
 @functools.lru_cache(maxsize=1)
-def title_synonym_do_not_use() -> frozenset:
-    """The casefolded names a title's parenthetical never uses (seeds/title_synonym_do_not_use.yaml):
-    synonyms PubChem lists that name a plant, an insect, a class or a material instead of the
-    molecule. Every entry needs a name and a reason, and a duplicate fails the run."""
-    if not TITLE_SYNONYM_DO_NOT_USE.exists():
+def synonym_do_not_use() -> frozenset:
+    """The casefolded names never shown as another name for a molecule (seeds/synonym_do_not_use.yaml):
+    not on the synonym line and not in the title's parenthetical. Every entry needs a name and a
+    reason, and a duplicate fails the run."""
+    if not SYNONYM_DO_NOT_USE.exists():
         return frozenset()
     names: list[str] = []
     problems: list[str] = []
-    for entry in yaml.safe_load(TITLE_SYNONYM_DO_NOT_USE.read_text()) or []:
+    for entry in yaml.safe_load(SYNONYM_DO_NOT_USE.read_text()) or []:
         name = str((entry or {}).get("name") or "").strip()
         if not name or not str((entry or {}).get("why") or "").strip():
             problems.append(f"an entry needs a name and a why: {entry!r}")
@@ -243,10 +248,14 @@ def title_synonym_do_not_use() -> frozenset:
     if dupes:
         problems.append("listed twice: " + ", ".join(dupes))
     if problems:
-        raise SystemExit(f"{TITLE_SYNONYM_DO_NOT_USE.name}: " + "; ".join(problems))
+        raise SystemExit(f"{SYNONYM_DO_NOT_USE.name}: " + "; ".join(problems))
     return frozenset(names)
 
 
+# ── The title's parenthetical (Garrett, 2026-09-12) ──────────────────────────────────────────
+# Run 6 put the first display synonym in the title wherever it fit: 608 of 788, including
+# "Caffeine (Guaranine)", "Sucrose (Saccharose)" and "Aciclovir (Acyclovir)". It is selective
+# now, and chosen here because its first rule needs the Wikidata label, which the web never sees.
 def title_synonym(title: "str | None", label: "str | None", names, texts,
                   do_not_use=frozenset()) -> "str | None":
     """The name in the title's parenthetical, or None.
@@ -257,8 +266,9 @@ def title_synonym(title: "str | None", label: "str | None", names, texts,
     duplicates, so a respelled or unreadable label does not count. Otherwise the first display
     synonym that the page's own description or why_it_matters text also uses, as a whole word
     in any case: "Sodium bicarbonate (Baking soda)". Otherwise None. A name on the do-not-use
-    list (casefolded, see title_synonym_do_not_use) is passed over by both rules. ``names`` is the
-    display list and the name comes back spelled as it is there; the web capitalises it.
+    list (casefolded, see synonym_do_not_use) is passed over by both rules, even though
+    display_synonyms has already dropped it. ``names`` is the display list and the name comes
+    back spelled as it is there; the web capitalises it.
     """
     if not title or "(" in title:
         return None
@@ -283,7 +293,7 @@ def attach_title_synonyms(records: list[dict], labels: dict, do_not_use=None) ->
     """Stamp ``rec['title_synonym']`` on every record. Call after attach_descriptions, because
     the second rule reads the description. ``labels`` maps a CID to its Wikidata English label;
     ``do_not_use`` defaults to the seed list."""
-    skip = title_synonym_do_not_use() if do_not_use is None else do_not_use
+    skip = synonym_do_not_use() if do_not_use is None else do_not_use
     for rec in records:
         why = (rec.get("why_it_matters") or {}).get("text")
         rec["title_synonym"] = title_synonym(rec.get("title"), labels.get(rec["cid"]),
