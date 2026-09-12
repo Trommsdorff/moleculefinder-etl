@@ -21,12 +21,13 @@ def hooks_for(mol: dict) -> list[dict]:
             "half_life_hours": mol["half_life_hours"],
             "serving_mg": curated.get("serving_mg"),
         }))
-    # Flagship: dose makes the poison. Fed by the SAME chosen row as the Deadliest
-    # board (assemble._apply_best_oral_ld50 -> toxicity.best_oral): a preferred oral
-    # value, never simply the first row parsed. A molecule with no usable oral row
-    # gets no dose lens, because scaling an intravenous LD50 to a reader's body weight
-    # and captioning it as a swallowed dose is the wrong answer, not a rough one.
-    if mol.get("ld50_mg_per_kg") is not None:
+    # Flagship: dose makes the poison. Its parameter is the molecule's one LD50
+    # (assemble._apply_primary_ld50 -> toxicity.primary_ld50), the row the Safety panel
+    # leads with and the Deadliest board ranks. Only an ORAL one: that LD50 falls back to
+    # an injected value when a molecule has no oral row, and scaling an intravenous LD50
+    # to a reader's body weight and captioning it as a swallowed dose is the wrong
+    # answer, not a rough one. Such a molecule gets no hook.
+    if mol.get("ld50_mg_per_kg") is not None and mol.get("ld50_route") == "oral":
         out.append(_hook("dose_poison", "inferred", {
             "ld50_mg_per_kg": mol["ld50_mg_per_kg"],
             "species": mol.get("ld50_species"),

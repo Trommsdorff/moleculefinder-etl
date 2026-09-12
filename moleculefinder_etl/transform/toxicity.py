@@ -123,9 +123,9 @@ def _iter_strings(node):
 # mouse value of 57. Both are ordinary dietary fats; eaten, neither is remotely that
 # toxic. The board is the second most-visited page on the site.
 #
-# `best_oral` is now the single selector for both the board and the per-molecule
-# dose lens, and it returns the whole row, so the route and species travel with the
-# number and can be displayed beside it.
+# `best_oral` returns the whole row, so the route and species travel with the number
+# and can be displayed beside it. It is the oral half of `primary_ld50` below, the one
+# LD50 every surface reads.
 ORAL_FLOOR_MG_PER_KG = 1.0
 
 # Slugs allowed below that floor. A sub-1 mg/kg ORAL LD50 is real for a handful of
@@ -163,5 +163,38 @@ def best_oral(rows: list[dict] | None, slug: str | None = None) -> dict | None:
         return None
     oral.sort(key=lambda r: (_ORAL_SPECIES_RANK.get(r.get("species"), 2), r["value_num"]))
     return oral[0]
+
+
+# ── The one LD50 a molecule shows (Garrett, 2026-09-12) ──────────────────────
+# `best_oral` fixed what the boards and the dose lens read, but not the Safety panel, which
+# kept leading with `toxicity[0]`: the parser's first row, the lowest oral value in ANY
+# species. So 53 molecules printed one LD50 on their own page and another on the Deadliest and
+# Safest boards, in the /vs tables and, on 11 of them, in the dose lens right above the panel.
+# Acetaminophen's panel read 338 mg/kg in the mouse; its comparison tables read 1,944 in the
+# rat. `primary_ld50` is the one choice: `assemble._apply_primary_ld50` stamps it on the record
+# and leads the toxicity list with it, and every reader takes that row.
+def primary_ld50(rows: list[dict] | None, slug: str | None = None) -> dict | None:
+    """The molecule's one LD50: oral rat, then oral mouse, then any oral, then any other route.
+
+    The oral tiers are `best_oral` (the lowest value in the first tier that has one). With no
+    usable oral row it is the lowest value reported by any other route, so a molecule measured
+    only by injection still shows one number, and its route says so. The whole row comes back,
+    species and route with it.
+
+    A sub-floor oral value is dropped, not demoted: it is a parsing artifact or a units error,
+    and falling through to "any other route" must not bring it back. A value by another route
+    has no floor, because an injected dose under 1 mg/kg is ordinary for a potent drug. Ties
+    break on route and then species, so the choice never follows the order PubChem happens to
+    list its strings in. Only mg/kg values compete.
+    """
+    rows = [r for r in (rows or []) if (r.get("unit") or "mg/kg") == "mg/kg"]
+    oral = best_oral(rows, slug)
+    if oral:
+        return oral
+    other = [r for r in rows
+             if r.get("route") != "oral" and isinstance(r.get("value_num"), (int, float))]
+    if not other:
+        return None
+    return min(other, key=lambda r: (r["value_num"], r.get("route") or "", r.get("species") or ""))
 
 
