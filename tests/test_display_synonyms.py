@@ -186,22 +186,32 @@ def test_a_do_not_use_name_is_passed_over_by_both_rules():
 def test_the_seed_list_carries_its_names_with_reasons():
     import yaml
     from moleculefinder_etl.transform import assemble
-    names = assemble.title_synonym_do_not_use()
+    names = assemble.synonym_do_not_use()
     assert {"chamomile", "ephedra", "estrogen", "cochineal"} <= names
     assert all(n == n.casefold() for n in names)
-    assert all(e["why"].strip() for e in yaml.safe_load(assemble.TITLE_SYNONYM_DO_NOT_USE.read_text()))
+    assert all(e["why"].strip() for e in yaml.safe_load(assemble.SYNONYM_DO_NOT_USE.read_text()))
 
 
-def test_no_title_in_the_snapshot_uses_a_listed_name():
+def test_a_do_not_use_name_leaves_the_synonym_line_and_the_next_name_moves_up():
+    """Apigenin's line read "chamomile · versulin"; a plant is not another name for it."""
+    assert display_synonyms("Apigenin", ["apigenin", "Chamomile"], ["versulin", "Apigenine"],
+                            frozenset({"chamomile"})) == ["versulin"]
+    assert display_synonyms("Estradiol", [], ["estrogen", "Menorest", "Gynergon", "Estrace", "Climara"],
+                            frozenset({"estrogen"})) == ["Menorest", "Gynergon", "Estrace", "Climara"]
+
+
+def test_no_page_in_the_snapshot_shows_a_listed_name():
+    """Neither on the synonym line nor in the title's parenthetical."""
     from moleculefinder_etl.config import SNAPSHOTS
     from moleculefinder_etl.transform import assemble
-    listed = assemble.title_synonym_do_not_use()
-    used = []
+    listed = assemble.synonym_do_not_use()
+    shown = []
     for path in sorted((SNAPSHOTS / "molecules").glob("*.json")):
-        name = json.loads(path.read_text()).get("title_synonym")
-        if name and name.casefold() in listed:
-            used.append(f"{path.stem}: {name}")
-    assert used == []
+        rec = json.loads(path.read_text())
+        for name in [rec.get("title_synonym"), *(rec.get("display_synonyms") or [])]:
+            if name and name.casefold() in listed:
+                shown.append(f"{path.stem}: {name}")
+    assert shown == []
 
 
 # ── The record ──────────────────────────────────────────────────────────────
