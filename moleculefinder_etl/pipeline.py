@@ -227,6 +227,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     # assembled above, so it has to see all of them. Raises on a duplicate or a
     # sub-100-character description rather than shipping one.
     assemble.attach_descriptions(kept)
+    # The title's parenthetical: the Wikidata label where it differs from the title, else a
+    # name on the synonym line that the description itself uses. After the description.
+    assemble.attach_title_synonyms(kept, {int(r["cid"]): r.get("wikidata_label") for r in canon})
 
     # Hand the PUG-View fetch dates to the export guard. Written here rather than carried
     # on the records: a per-record timestamp would move every run and put all 788 molecule

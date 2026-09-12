@@ -151,20 +151,59 @@ def _readable_name(s: str) -> bool:
     return not (len(s) > 5 and s == s.upper())
 
 
+# A name this many single-letter edits from the title, or fewer, is the title respelled.
+NEAR_TITLE_EDITS = 2
+_GREEK_SPELLED = {letter: word for word, letter in _GREEK_WORD.items()}    # "β" -> "beta"
+
+
+def _title_forms(title: "str | None") -> list[str]:
+    """The title as names are compared with it: casefolded, plus a copy with its Greek letters
+    spelled out. The page prints "β-Alanine" (_normalize_greek) where the sources say
+    "beta-alanine", and that is the title, not another name for it."""
+    own = (title or "").strip().casefold()
+    if not own:
+        return []
+    spelled = "".join(_GREEK_SPELLED.get(c, c) for c in own)
+    return [own] if spelled == own else [own, spelled]
+
+
+def _within_edits(a: str, b: str, limit: int) -> bool:
+    """True when ``a`` and ``b`` are at most ``limit`` single-letter edits apart (Levenshtein)."""
+    if abs(len(a) - len(b)) > limit:
+        return False
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        if min(cur) > limit:
+            return False
+        prev = cur
+    return prev[-1] <= limit
+
+
+def _near_title(key: str, forms: list[str]) -> bool:
+    """A casefolded name that contains the title, sits inside it, or is within two letters of it."""
+    return any(t in key or key in t or _within_edits(key, t, NEAR_TITLE_EDITS) for t in forms)
+
+
 def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms) -> list[str]:
-    """Up to four names for the line under the H1 and the title's parenthetical.
+    """Up to four names for the line under the H1; the title's parenthetical is one of them.
 
     ``wikidata_names`` is the chosen item's English label followed by its aliases, in that
-    order; ``pubchem_synonyms`` the stored synonym list. A name equal to the title in any case
-    is dropped, duplicates are compared case-insensitively and the first one kept.
+    order; ``pubchem_synonyms`` the stored synonym list. A near duplicate of the title is
+    dropped (Garrett, 2026-09-12), case-insensitively: a name that contains the title
+    ("Aluminium flake"), sits inside it ("Al"), or is within two letters of it ("aluminum" under
+    Aluminium, "acyclovir" under Aciclovir). Duplicates are compared case-insensitively and the
+    first one kept. The four are counted after the filter, so a dropped name makes room.
     """
-    own = (title or "").strip().casefold()
+    forms = _title_forms(title)
     out: list[str] = []
     seen: set[str] = set()
     for raw in [*(wikidata_names or []), *(pubchem_synonyms or [])]:
         name = (raw or "").strip()
         key = name.casefold()
-        if not _readable_name(name) or key == own or key in seen:
+        if not _readable_name(name) or key in seen or _near_title(key, forms):
             continue
         seen.add(key)
         out.append(name)
@@ -176,6 +215,49 @@ def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms) -> l
 def _wikidata_names(row: dict) -> list:
     """The canon row's Wikidata label, then its aliases."""
     return [row.get("wikidata_label"), *(row.get("wikidata_aliases") or [])]
+
+
+# ── The title's parenthetical (Garrett, 2026-09-12) ──────────────────────────────────────────
+# Run 6 put the first display synonym in the title wherever it fit: 608 of 788, including
+# "Caffeine (Guaranine)", "Sucrose (Saccharose)" and "Aciclovir (Acyclovir)". It is selective
+# now, and chosen here because its first rule needs the Wikidata label, which the web never sees.
+def title_synonym(title: "str | None", label: "str | None", names, texts) -> "str | None":
+    """The name in the title's parenthetical, or None.
+
+    Never when the title already has a parenthesis ("Estradiol (medication)"). Otherwise the
+    Wikidata English label when it differs from our title: "Acetaminophen (Paracetamol)". The
+    label differs when it survived display_synonyms, which drops the title and its near
+    duplicates, so a respelled or unreadable label does not count. Otherwise the first display
+    synonym that the page's own description or why_it_matters text also uses, as a whole word
+    in any case: "Sodium bicarbonate (Baking soda)". Otherwise None. ``names`` is the display
+    list and the name comes back spelled as it is there; the web capitalises it.
+    """
+    if not title or "(" in title:
+        return None
+    names = [n for n in (names or []) if n]
+    key = (label or "").strip().casefold()
+    for n in names:
+        if key and n.casefold() == key:
+            return n
+    for n in names:
+        if any(_uses_name(text, n) for text in (texts or []) if text):
+            return n
+    return None
+
+
+def _uses_name(text: str, name: str) -> bool:
+    """``name`` appears in ``text`` as a whole word or phrase, in any case: "baking soda" is in
+    "Baking soda. It releases...", and "tea" is not in "steam"."""
+    return re.search(rf"(?<![^\W\d_]){re.escape(name)}(?![^\W\d_])", text, re.IGNORECASE) is not None
+
+
+def attach_title_synonyms(records: list[dict], labels: dict) -> None:
+    """Stamp ``rec['title_synonym']`` on every record. Call after attach_descriptions, because
+    the second rule reads the description. ``labels`` maps a CID to its Wikidata English label."""
+    for rec in records:
+        why = (rec.get("why_it_matters") or {}).get("text")
+        rec["title_synonym"] = title_synonym(rec.get("title"), labels.get(rec["cid"]),
+                                             rec.get("display_synonyms"), [rec.get("description"), why])
 
 
 # A CAS Registry Number is 2–7 + 2 + 1 digits. The last digit is a checksum, which we verify
@@ -291,19 +373,27 @@ def _merge_curated(rec: dict, curated: dict) -> None:
     rec["curated"] = cur
 
 
-def _apply_best_oral_ld50(rec: dict) -> None:
-    """Stamp the headline LD50 (value + route + species) from the best oral row.
+def _apply_primary_ld50(rec: dict) -> None:
+    """Stamp the molecule's one LD50 (value, route, species) and lead the toxicity list with it.
 
-    A curated dose_poison overlay already set these by hand and is left untouched.
-    A molecule with no usable oral row keeps ld50_mg_per_kg = None, which drops it
-    from the Deadliest board rather than ranking it on an intravenous value."""
-    if rec.get("ld50_mg_per_kg") is not None:
+    toxicity.primary_ld50 chooses it; a curated dose_poison overlay has already pinned one by
+    hand and keeps it (caffeine and capsaicin, each the row the rule would choose anyway).
+    Leading the list with that row is what makes the Safety panel's first row the same LD50
+    the dose hook, the boards and the /vs tables read. The other rows keep their order."""
+    if rec.get("ld50_mg_per_kg") is None:
+        row = toxicity.primary_ld50(rec.get("toxicity"), rec.get("slug"))
+        if row:
+            rec["ld50_mg_per_kg"] = row["value_num"]
+            rec["ld50_route"] = row["route"]
+            rec["ld50_species"] = row["species"]
+    if rec.get("ld50_mg_per_kg") is None:
         return
-    row = toxicity.best_oral(rec.get("toxicity"), rec.get("slug"))
-    if row:
-        rec["ld50_mg_per_kg"] = row["value_num"]
-        rec["ld50_route"] = row["route"]
-        rec["ld50_species"] = row["species"]
+    chosen = (rec["ld50_mg_per_kg"], rec["ld50_route"], rec["ld50_species"])
+    rows = rec["toxicity"]
+    at = next((i for i, t in enumerate(rows)
+               if (t.get("value_num"), t.get("route"), t.get("species")) == chosen), None)
+    if at:
+        rows.insert(0, rows.pop(at))
 
 
 def apply_scope_bucket(rec: dict, bucket: "str | None", family: "str | None") -> None:
@@ -432,10 +522,11 @@ def _measure_clause(rec: dict) -> str:
         return f"Detectable by smell at about {_fmt_num(rec['odor_threshold'])} ng per cubic metre of air."
     if rec.get("half_life_hours"):
         return f"Its reported half-life in the body is about {_fmt_num(rec['half_life_hours'])} hours."
-    oral = next((t for t in rec.get("toxicity") or [] if t.get("route") == "oral"), None)
-    if oral:
-        return (f"Its lowest reported oral LD50 is {_fmt_num(oral['value_num'])} mg/kg "
-                f"in the {oral['species']}.")
+    # The molecule's one LD50, and only an oral one, since the sentence says oral. This used to
+    # read the first oral row and call it the lowest; no current description reaches the clause.
+    if rec.get("ld50_mg_per_kg") is not None and rec.get("ld50_route") == "oral":
+        return (f"Its reported oral LD50 is {_fmt_num(rec['ld50_mg_per_kg'])} mg/kg "
+                f"in the {rec['ld50_species']}.")
     return ""
 
 
@@ -797,9 +888,11 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "inchi": props.get("InChI"), "inchikey": props.get("InChIKey"),
         "cas": _extract_cas(syns),
         "synonyms": _clean_synonyms(syns, title),
-        # The line under the H1 and the title's parenthetical (see display_synonyms).
+        # The line under the H1 (see display_synonyms) and the title's parenthetical, which
+        # attach_title_synonyms fills in once the description exists.
         "display_synonyms": display_synonyms(_normalize_greek(title), _wikidata_names(row),
                                              _clean_synonyms(syns, title)),
+        "title_synonym": None,
         **_carried_svg(iso, prior),
         # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
         # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D).
@@ -809,10 +902,10 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "ghs": fetched.get("ghs"),
         "properties": [], "categories": [], "hooks": [], "edges": [], "content_blocks": [],
         "half_life_hours": None,
-        # The headline LD50 is the best ORAL row, not simply the first parsed row.
-        # See toxicity.best_oral: taking toxicity[0] put intravenous values on a board
-        # that says oral (stearic acid at 21.5 mg/kg IV ranked 3rd). Route and species
-        # ride alongside the number so the page and the board can show them.
+        # The molecule's one LD50 (_apply_primary_ld50 -> toxicity.primary_ld50), which also
+        # leads `toxicity`, so the Safety panel, the dose hook, the boards and the /vs tables
+        # read the same row. Route and species ride alongside the number so each of them can
+        # show them; the boards and the hook take it only when it is oral.
         "ld50_mg_per_kg": None, "ld50_route": None, "ld50_species": None,
         "relative_sweetness": None, "scoville_shu": None,
         # Scope B grouping (populated for must-include seed molecules); hand_model flags
@@ -839,7 +932,7 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
     if not iso and not can:
         rec["macromolecule"] = True
 
-    _apply_best_oral_ld50(rec)
+    _apply_primary_ld50(rec)
 
     # Functional-group categories (RDKit SMARTS → computed membership).
     for fg in categories.functional_groups(iso or ""):
@@ -901,6 +994,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "cas": None,                 # no single compound ⇒ no CAS Registry Number
         "synonyms": [name],
         "display_synonyms": display_synonyms(_normalize_greek(name), _wikidata_names(row), []),
+        "title_synonym": None,       # attach_title_synonyms; a macromolecule's title never shows it
         "structure_svg": None,       # no single structure — the web variant omits the render
         "structure_svg_key": None,
         "descriptors": {"xlogp": None, "tpsa": None, "h_bond_donors": None,

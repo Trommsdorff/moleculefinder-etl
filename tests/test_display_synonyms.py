@@ -30,8 +30,10 @@ def test_acetaminophen_leads_with_paracetamol():
                 "p-hydroxyacetanilide", "p-acetaminophenol", "acetaminophen", "APAP"]
     pubchem = ["Acetaminophen", "4'-Hydroxyacetanilide", "4-Acetamidophenol", "Acetaminofen",
                "Paracetamol", "Tylenol"]
+    # "p-acetaminophenol" contains the title and "Acetaminofen" is two letters from it, so both go
+    # (the near-duplicate rule, below) and APAP takes the fourth place.
     assert display_synonyms("Acetaminophen", wikidata, pubchem) == \
-        ["paracetamol", "p-acetylaminophenol", "p-hydroxyacetanilide", "p-acetaminophenol"]
+        ["paracetamol", "p-acetylaminophenol", "p-hydroxyacetanilide", "APAP"]
 
 
 @pytest.mark.parametrize("name", ["4-acetamidophenol", "(RS)-ibuprofen", "Qutenza®", "U-18573",
@@ -84,7 +86,90 @@ def test_the_same_inputs_give_the_same_line():
     args = ("Ibuprofen", ["ibuprofen", "p-isobutylhydratropate", "ibuprophen"],
             ["Ibuprofen", "Advil", "Anflagen", "Brufen"])
     assert display_synonyms(*args) == display_synonyms(*args) == \
-        ["p-isobutylhydratropate", "ibuprophen", "Advil", "Anflagen"]
+        ["p-isobutylhydratropate", "Advil", "Anflagen", "Brufen"]
+
+
+# ── Near duplicates of the title (Garrett, 2026-09-12) ──────────────────────
+@pytest.mark.parametrize("title,name", [
+    ("Aciclovir", "Acyclovir"),                 # one letter, any case
+    ("Aluminium", "aluminum"),                  # one letter
+    ("Ibuprofen", "ibuprophen"),                # two letters
+    ("Sulfur", "sulphur"),                      # two letters
+    ("Aluminium", "Aluminium flake"),           # contains the title
+    ("Caffeine", "anhydrous Caffeine"),         # contains it, any case
+    ("Sodium bicarbonate", "bicarbonate"),      # sits inside it
+    ("Aluminium", "Al"),                        # sits inside it, however short
+    ("β-Alanine", "beta-alanine"),              # the title with its Greek letter spelled out
+    ("β-Alanine", "Beta Alanine"),              # ...and one letter from that
+])
+def test_a_near_duplicate_of_the_title_is_dropped(title, name):
+    assert display_synonyms(title, [name], []) == []
+
+
+@pytest.mark.parametrize("title,name", [
+    ("Caffeine", "Koffein"),                    # three letters away
+    ("Aciclovir", "acycloguanosine"),
+    ("Sodium bicarbonate", "baking soda"),
+])
+def test_three_letters_away_or_a_different_name_stays(title, name):
+    assert display_synonyms(title, [name], []) == [name]
+
+
+def test_the_four_are_counted_after_the_filter():
+    """Aciclovir's names: the respelling goes and the next name moves up."""
+    assert display_synonyms("Aciclovir", ["aciclovir", "acyclovir", "acycloguanosine", "zovirax", "ACV"],
+                            ["Aciclovir", "Acyclovir", "Zovirax", "Zovir"]) == \
+        ["acycloguanosine", "zovirax", "ACV", "Zovir"]
+
+
+# ── The title's parenthetical (Garrett, 2026-09-12) ─────────────────────────
+def _title_synonym(*args):
+    from moleculefinder_etl.transform.assemble import title_synonym
+    return title_synonym(*args)
+
+
+def test_the_wikidata_label_when_it_differs_from_the_title():
+    names = display_synonyms("Acetaminophen", ["paracetamol", "APAP"], ["Tylenol"])
+    assert _title_synonym("Acetaminophen", "paracetamol", names, ["Sold as Tylenol."]) == "paracetamol"
+
+
+def test_otherwise_the_first_name_the_page_itself_uses():
+    names = ["sodium hydrogencarbonate", "baking soda", "monosodium carbonate", "bicarbonate of soda"]
+    text = "Baking soda. It releases carbon dioxide when it meets an acid."
+    assert _title_synonym("Sodium bicarbonate", "sodium bicarbonate", names, [text, None]) == "baking soda"
+    # the why_it_matters text counts as much as the description
+    assert _title_synonym("Sodium bicarbonate", None, names, [None, "Also bicarbonate of soda."]) == \
+        "bicarbonate of soda"
+
+
+def test_a_respelled_label_is_not_a_parenthetical():
+    names = display_synonyms("Aluminum", ["aluminium", "element 13"], [])
+    assert names == []
+    assert _title_synonym("Aluminum", "aluminium", names, ["Aluminium is a light metal."]) is None
+
+
+def test_a_name_counts_only_as_a_whole_word_in_any_case():
+    assert _title_synonym("Title", None, ["tea"], ["Steam rises from it."]) is None
+    assert _title_synonym("Title", None, ["tea"], ["TEA is mostly water."]) == "tea"
+
+
+def test_never_a_second_parenthesis_and_nothing_when_nothing_matches():
+    assert _title_synonym("Estradiol (medication)", "oestradiol", ["oestradiol"], ["oestradiol"]) is None
+    assert _title_synonym("Caffeine", "caffeine", ["guaranine", "theine"],
+                          ["The molecule behind coffee's lift."]) is None
+    assert _title_synonym(None, "x", ["x"], ["x"]) is None
+
+
+def test_every_record_gets_its_parenthetical_after_its_description():
+    from moleculefinder_etl.transform import assemble
+    recs = [{"cid": 1983, "title": "Acetaminophen", "display_synonyms": ["paracetamol", "APAP"],
+             "description": "The pain reliever.", "why_it_matters": None},
+            {"cid": 516892, "title": "Sodium bicarbonate", "display_synonyms": ["baking soda"],
+             "description": "Baking soda.", "why_it_matters": {"text": "Baking soda."}},
+            {"cid": 2519, "title": "Caffeine", "display_synonyms": ["guaranine"],
+             "description": "Coffee's lift.", "why_it_matters": None}]
+    assemble.attach_title_synonyms(recs, {1983: "paracetamol", 516892: "sodium bicarbonate"})
+    assert [r["title_synonym"] for r in recs] == ["paracetamol", "baking soda", None]
 
 
 # ── The record ──────────────────────────────────────────────────────────────

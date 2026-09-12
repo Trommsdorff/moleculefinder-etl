@@ -18,8 +18,9 @@ BOARDS: dict[str, dict] = {
         "confidence": "from_source",
         # The route is now shown per row (`columns`), because until 2026-09 this board
         # claimed oral and ranked whatever route a molecule happened to have. It now
-        # only ever ranks an oral value (transform/toxicity.best_oral), and it says so
-        # on every row instead of asking the reader to trust the header.
+        # ranks each molecule's one LD50 (toxicity.primary_ld50) only when that is oral
+        # (ORAL_ONLY, below), and says so on every row instead of asking the reader to
+        # trust the header.
         "columns": ["route", "species"],
         "description": (
             "Ranked by the lowest reported oral LD50, preferring the rat and then the "
@@ -123,11 +124,20 @@ BOARDS: dict[str, dict] = {
 }
 
 
+# The LD50 boards rank each molecule's one LD50 (toxicity.primary_ld50), and only an oral one.
+# That LD50 falls back to an injected or skin value for a molecule with no oral row, which is
+# right on the molecule's own page and wrong under a heading that says oral: it would put
+# stearic acid's 21.5 mg/kg intravenous value back among the deadliest. Kept out of BOARDS,
+# whose every key is written into the board file.
+ORAL_ONLY = frozenset({"deadliest", "safest"})
+
+
 def rank(board: str, molecules: list[dict]) -> dict:
     """Return a self-describing board: its metadata plus ranked, enriched entries."""
     meta = BOARDS[board]
     key, direction = meta["metric"], meta["direction"]
-    have = [m for m in molecules if m.get(key) is not None]
+    have = [m for m in molecules if m.get(key) is not None
+            and (board not in ORAL_ONLY or m.get("ld50_route") == "oral")]
     have.sort(key=lambda m: m[key], reverse=(direction == "desc"))
     # Extra per-row columns a board declares (the Deadliest board shows the route and
     # species its value was measured by). Read from `ld50_route` / `ld50_species` and
