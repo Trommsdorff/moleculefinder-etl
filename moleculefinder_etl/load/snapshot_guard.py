@@ -11,17 +11,24 @@ the 2026-09-08 incident rather than against a general idea of "data got worse":
   ``Q218642`` -> ``Q106345485``, glycine ``Q620730`` -> ``Q106345678``, taurine
   ``Q207051`` -> ``Q106345481``, all of them a real item replaced by a bulk-batch one).
 
-The rule is not "these fields may never change". It is:
+The rule is not "these fields may never change". For the LD50 and the QID it is:
 
     a protected field may only regress if the input that produced the new value was
     **fetched live in this run**.
 
-That is the whole test, and it needs no timestamp stored in the snapshot. A live fetch is
-by definition fresher than anything already on disk, so the weekly CI run that corrected
-all 26 of these passes untouched. A cache hit is not fresher than the value it would
-replace: if the two disagree, the shipped value came from somewhere newer, which is
-exactly the direction that must not be written. An input this run never touched counts as
-not-live, so a partial re-run cannot launder a stale value either.
+That test needs no timestamp stored in the snapshot. A live fetch is by definition fresher
+than anything already on disk, so the weekly CI run that corrected all 26 of these passes
+untouched. A cache hit is not fresher than the value it would replace: if the two disagree,
+the shipped value came from somewhere newer, which is exactly the direction that must not be
+written. An input this run never touched counts as not-live, so a partial re-run cannot
+launder a stale value either.
+
+**The placeholder summary is stricter: it is refused however fresh the fetch** (2026-09-12,
+feedback triage MF-6). Freshness cannot tell "fresh and correct" from "fresh and arbitrary".
+On 2026-09-09 a live WDQS query wanted to write "chemical compound" over fluorine, mercury and
+vasopressin, because one PubChem CID can map to two Wikidata items and the placeholder item
+came back first, and the live-fetch rule would have let it through. A summary reverting to
+the placeholder is never an improvement, so no provenance makes it one.
 
 Set ``MFETL_ALLOW_REGRESSION=1`` to export anyway. It exists because a deliberate change
 to the pipeline can legitimately drop a value (tightening ``toxicity.best_oral`` is the
@@ -77,13 +84,14 @@ def _regressions(new: list[dict], prior: dict[str, dict], fresh: dict) -> list[d
             continue
         cid = rec.get("cid")
 
-        # 1. summary back to the placeholder phase 1 exists to remove.
+        # 1. summary back to the placeholder phase 1 exists to remove. No freshness clause:
+        #    a live fetch of the placeholder is refused exactly like a cached one.
         if (_is_placeholder(rec.get("summary")) and old.get("summary")
-                and not _is_placeholder(old.get("summary"))
-                and not freshness.is_live(fresh, freshness.WIKIDATA, cid)):
+                and not _is_placeholder(old.get("summary"))):
             found.append({"slug": rec["slug"], "cid": cid, "field": "summary",
                           "was": old.get("summary"), "now": rec.get("summary"),
-                          "why": freshness.describe(fresh, freshness.WIKIDATA, cid)})
+                          "why": freshness.describe(fresh, freshness.WIKIDATA, cid)
+                          + "; the placeholder is refused even when fetched live"})
 
         # 2. an LD50 that was published, nulled.
         if (rec.get("ld50_mg_per_kg") is None and old.get("ld50_mg_per_kg") is not None
@@ -128,10 +136,12 @@ def check(molecules: list[dict], snapshots: Path, fresh: dict | None = None) -> 
                     OVERRIDE_ENV, len(found), _report(found, limit=len(found)))
         return found
     raise SnapshotRegression(
-        f"refusing to export: {len(found)} value(s) would go backwards without a fresh "
-        f"fetch behind them.\n{_report(found)}\n"
+        f"refusing to export: {len(found)} value(s) would go backwards.\n{_report(found)}\n"
         "A cache hit is not evidence of an upstream change. Re-fetch the derived sources "
         "and run again:\n"
         "  rm -rf data/raw_cache/wikidata && mfetl seed && mfetl transform && mfetl export\n"
+        "A summary reverting to the placeholder is refused even when it was fetched live: "
+        "look at which Wikidata item won (sources/wikidata.py::_choose_item) rather than "
+        "re-fetching.\n"
         f"If the change is deliberate (a pipeline rule that drops values on purpose), set "
         f"{OVERRIDE_ENV}=1.")
