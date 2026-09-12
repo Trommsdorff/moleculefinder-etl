@@ -314,7 +314,44 @@ behind it. Neither was caused by run 4; run 4 is what made them visible.
 - **Worth knowing:** the guard cannot tell "fresh and correct" from "fresh and arbitrary".
   Making the placeholder-summary check freshness-independent (a `"chemical compound"`
   summary is never an improvement, however fresh) would have caught this class directly.
-  Not done here; it is a real hardening option.
+  Not done here; done in run 6 (next section).
+
+## Run 6 (2026-09-12) — feedback triage: the classifier, the placeholder, the date. BUILT, NOT pushed
+Branch `traffic-2026-09-feedback` from `56d3342`. Scope: the MF 6 items of
+`../network/FEEDBACK-TRIAGE-2026-09-12.md` that live in this repo (the web half is in the web
+CLAUDE.md). Four commits:
+- **MF-3, `d00bcf3`: a carboxylic acid needs a carbon or a hydrogen on the carboxyl carbon.**
+  `[CX3](=O)[OX2H1]` matched a carbonyl carbon bonded only to oxygen, so bicarbonate and its
+  sodium, potassium and ammonium salts sat in `/in/carboxylic-acids` (carbonic and carbamic
+  acid would have too). Now `[CX3;$([CX3H1]),$([CX3][#6])](=O)[OX2H1]`.
+  `tests/test_categories.py` pins all 13 functional groups (107 cases, at least two positives
+  and two negatives each), plus a test that the OLD pattern really matched the carbonates, so
+  the negatives are load-bearing. A group added to `FUNCTIONAL_GROUPS` without cases fails.
+- **MF-6, `12b857b`: the placeholder summary is refused even when fetched live** (run 5's
+  open item; tranche 2 no longer carries it). The LD50 and QID keep the live-fetch rule. A
+  summary reverting to "chemical compound" never passes, whatever its provenance, because
+  fresh is not the same as right. `MFETL_ALLOW_REGRESSION=1` still overrides.
+- **`0fc0080`: `data/snapshots/meta.json` = `{"refreshed": "YYYY-MM-DD"}`,** which the web
+  prints as "Data refreshed" (MF-9). Not in the prompt's ETL list: the web item needed a
+  snapshot field and none existed. `export()` renders every output first, compares it with
+  disk, and moves the date only when a file differs or is pruned, so a quiet week stays
+  byte-identical (tested). No per-record timestamp, for the run-3 churn reason.
+- **Data, `8798ebb`: exactly four molecule files, plus meta.json.** The prompt said "from the
+  cache", but `data/raw_cache` was empty (the run-3 cleanup wiped it), so:
+  1. **Pass 1** at origin/main code, live: seed, fetch, transform, export called directly (no
+     Supabase load). 18 minutes, most of it PubChem backing off at the start. Upstream drift
+     since the 2026-09-09 snapshot: the synonym lists of 12 molecules. No summary, QID, LD50 or
+     category moved; the guard was silent.
+  2. **Pass 2** at the new code from that cache: 1.9 s, no network. Pass 1 to pass 2 changes
+     `ammonium-bicarbonate`, `bicarbonate`, `potassium-bicarbonate` and `sodium-bicarbonate`,
+     each losing `carboxylic-acids` and nothing else (descriptions included). 165 of 166 hubs
+     unchanged; `/in/carboxylic-acids` 150 to 146; nothing joins any hub.
+  3. The 12 drifted files, `index.json` and `canon.parquet` (content-identical, re-encoded)
+     restored from HEAD, so the commit carries the classifier's effect and nothing upstream.
+     Monday's scheduled run publishes the synonym refresh through the normal loop.
+- 293 tests, ruff clean. **Deploy order unchanged: ETL main first (no deploy), then web main.**
+  The first CI run after the merge keeps `refreshed: 2026-09-12` unless the data moves; the
+  12-molecule synonym refresh will move it.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
