@@ -162,9 +162,13 @@ def _descriptions_cached(cids: list[int]) -> dict[int, dict]:
     path = _cache(DESCRIPTIONS_CACHE)
     stored = _read_descriptions_cache(path)
     at = cache.now()
+    # An entry written before the names were cached (2026-09-12) has no "aliases" key. It is a
+    # miss however fresh, or the first week after the change would build every synonym line
+    # from no Wikidata names at all.
     missing = [c for c in cids
                if not cache.is_fresh((stored.get(str(c)) or {}).get("fetched_at"),
-                                     WIKIDATA_CACHE_TTL_DAYS, at)]
+                                     WIKIDATA_CACHE_TTL_DAYS, at)
+               or "aliases" not in (stored.get(str(c)) or {})]
     live: set[int] = set()
     if missing:
         try:
@@ -195,7 +199,10 @@ def _descriptions_cached(cids: list[int]) -> dict[int, dict]:
             live = set(missing)
             for c in missing:                   # record misses too, so we don't refetch
                 d = fetched.get(c) or {"desc": None, "qid": None}
-                stored[str(c)] = {"desc": d.get("desc"), "qid": d.get("qid"), "fetched_at": at}
+                stored[str(c)] = {"desc": d.get("desc"), "qid": d.get("qid"),
+                                  "label": d.get("label"),
+                                  "aliases": list(d.get("aliases") or []),
+                                  "fetched_at": at}
             path.write_text(json.dumps({cache.ENVELOPE_KEY: cache.ENVELOPE_VERSION,
                                         "fetched_at": at, "entries": stored}, sort_keys=True))
             log.info("  wikidata descriptions: %d fetched, %d still fresh in cache",
@@ -205,6 +212,18 @@ def _descriptions_cached(cids: list[int]) -> dict[int, dict]:
         c: {"fetched_at": (out.get(c) or {}).get("fetched_at"), "live": c in live}
         for c in cids}})
     return out
+
+
+def _apply_wikidata(r: dict, d: dict | None) -> None:
+    """Fill a canon row from its cached Wikidata entry. The label and aliases belong to the
+    item the entry chose, so they ride only when the row carries that same item."""
+    if not d:
+        return
+    r["summary"] = r["summary"] or d.get("desc")
+    r["wikidata_qid"] = r["wikidata_qid"] or d.get("qid")
+    if r["wikidata_qid"] and r["wikidata_qid"] == d.get("qid"):
+        r["wikidata_label"] = d.get("label")
+        r["wikidata_aliases"] = list(d.get("aliases") or [])
 
 
 def _curated_seed() -> dict[int, dict]:
@@ -305,10 +324,7 @@ def build_scope_b_canon() -> "list[dict]":
 
     desc = _descriptions_cached([r["cid"] for r in canon if r["cid"] > 0])
     for r in canon:
-        d = desc.get(r["cid"])
-        if d:
-            r["summary"] = r["summary"] or d.get("desc")
-            r["wikidata_qid"] = r["wikidata_qid"] or d.get("qid")
+        _apply_wikidata(r, desc.get(r["cid"]))
 
     canon.sort(key=lambda r: -r["pageviews"])
     for i, r in enumerate(canon):
@@ -369,10 +385,7 @@ def build_canon(target: int = CANON_TARGET) -> "list[dict]":
     #    Skip synthetic (negative) CIDs — hand-modeled molecules have no PubChem/Wikidata row.
     desc = _descriptions_cached([r["cid"] for r in canon if r["cid"] > 0])
     for r in canon:
-        d = desc.get(r["cid"])
-        if d:
-            r["summary"] = r["summary"] or d.get("desc")
-            r["wikidata_qid"] = r["wikidata_qid"] or d.get("qid")
+        _apply_wikidata(r, desc.get(r["cid"]))
 
     # 5. Rank by pageviews (cached). Keep all marquee, fill with top canon to target.
     for r in canon:
@@ -395,10 +408,21 @@ def write_parquet(rows: "list[dict]", path: Path | None = None) -> Path:
     # household seed) — assemble_record reads row["scope_bucket"] straight off the canon row.
     cols = ["cid", "tier", "build_order", "has_common_name", "wikidata_qid",
             "enwiki_title", "summary", "pageviews", "hand_model",
-            "scope_bucket", "scope_family", "is_otc", "dual_use", "batch"]
+            "scope_bucket", "scope_family", "is_otc", "dual_use", "batch",
+            # The chosen Wikidata item's English label and aliases (Wikidata's order), read by
+            # assemble.display_synonyms. Carried here because seed and transform can run as
+            # separate processes and the parquet is their hand-off.
+            "wikidata_label", "wikidata_aliases"]
     norm = [{**{c: r.get(c) for c in cols}, "hand_model": bool(r.get("hand_model")),
-             "is_otc": bool(r.get("is_otc")), "dual_use": bool(r.get("dual_use"))} for r in rows]
-    pq.write_table(pa.Table.from_pylist(norm), path)
+             "is_otc": bool(r.get("is_otc")), "dual_use": bool(r.get("dual_use")),
+             "wikidata_aliases": [str(a) for a in (r.get("wikidata_aliases") or [])]} for r in rows]
+    table = pa.Table.from_pylist(norm)
+    # Pin the two new columns' types: inferred from an all-empty column they would come out as
+    # null types, and the committed parquet would change schema with nothing else moving.
+    for name, typ in (("wikidata_label", pa.string()), ("wikidata_aliases", pa.list_(pa.string()))):
+        i = table.schema.get_field_index(name)
+        table = table.set_column(i, name, table.column(i).cast(typ))
+    pq.write_table(table, path)
     return path
 
 

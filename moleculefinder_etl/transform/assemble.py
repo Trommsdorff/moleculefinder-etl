@@ -129,6 +129,55 @@ def _clean_synonyms(syns, title: "str | None") -> list[str]:
     return head + sorted(rest, key=lambda s: (s.casefold(), s))
 
 
+# ── Display synonyms (Garrett, 2026-09-12) ───────────────────────────────────────────────────
+# `synonyms` above is the search list, stored alphabetically for determinism since run 3, and
+# the page used to print its first four, so acetaminophen's line under the H1 led with
+# "4'-Hydroxyacetanilide". This is a separate list for reading: Wikidata's English label and
+# aliases in Wikidata's order, then those stored PubChem synonyms, kept only when a reader can
+# use the name. Every input is deterministic (the label and aliases come in each item's own
+# stored order, see sources/wikidata.py::names_for_qids), so the line is too.
+DISPLAY_SYNONYMS_MAX = 4
+DISPLAY_SYNONYM_MAX_LEN = 25
+_NAME_PUNCTUATION = frozenset(" -'’")      # space, hyphen, straight and curly apostrophe
+
+
+def _readable_name(s: str) -> bool:
+    """Starts with a letter; only letters, spaces, hyphens and apostrophes; 25 characters or
+    fewer; not all capitals beyond 5 characters ("APAP" stays, "CAFFEINE" does not)."""
+    if not s or len(s) > DISPLAY_SYNONYM_MAX_LEN or not s[0].isalpha():
+        return False
+    if not all(c.isalpha() or c in _NAME_PUNCTUATION for c in s):
+        return False
+    return not (len(s) > 5 and s == s.upper())
+
+
+def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms) -> list[str]:
+    """Up to four names for the line under the H1 and the title's parenthetical.
+
+    ``wikidata_names`` is the chosen item's English label followed by its aliases, in that
+    order; ``pubchem_synonyms`` the stored synonym list. A name equal to the title in any case
+    is dropped, duplicates are compared case-insensitively and the first one kept.
+    """
+    own = (title or "").strip().casefold()
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in [*(wikidata_names or []), *(pubchem_synonyms or [])]:
+        name = (raw or "").strip()
+        key = name.casefold()
+        if not _readable_name(name) or key == own or key in seen:
+            continue
+        seen.add(key)
+        out.append(name)
+        if len(out) == DISPLAY_SYNONYMS_MAX:
+            break
+    return out
+
+
+def _wikidata_names(row: dict) -> list:
+    """The canon row's Wikidata label, then its aliases."""
+    return [row.get("wikidata_label"), *(row.get("wikidata_aliases") or [])]
+
+
 # A CAS Registry Number is 2–7 + 2 + 1 digits. The last digit is a checksum, which we verify
 # so a same-shaped code (an EC number, a random dashed id) is never mistaken for a CAS.
 _CAS_RE = re.compile(r"\b(\d{2,7}-\d{2}-\d)\b")
@@ -748,6 +797,9 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "inchi": props.get("InChI"), "inchikey": props.get("InChIKey"),
         "cas": _extract_cas(syns),
         "synonyms": _clean_synonyms(syns, title),
+        # The line under the H1 and the title's parenthetical (see display_synonyms).
+        "display_synonyms": display_synonyms(_normalize_greek(title), _wikidata_names(row),
+                                             _clean_synonyms(syns, title)),
         **_carried_svg(iso, prior),
         # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
         # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D).
@@ -848,6 +900,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "canonical_smiles": None, "isomeric_smiles": None, "inchi": None, "inchikey": None,
         "cas": None,                 # no single compound ⇒ no CAS Registry Number
         "synonyms": [name],
+        "display_synonyms": display_synonyms(_normalize_greek(name), _wikidata_names(row), []),
         "structure_svg": None,       # no single structure — the web variant omits the render
         "structure_svg_key": None,
         "descriptors": {"xlogp": None, "tpsa": None, "h_bond_donors": None,

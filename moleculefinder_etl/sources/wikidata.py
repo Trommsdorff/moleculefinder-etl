@@ -77,7 +77,9 @@ SELECT ?cid ?desc ?compound WHERE {
 
 
 def descriptions_for_cids(cids: list[int]) -> dict[int, dict]:
-    """Return {cid: {"desc": <CC0 description|None>, "qid": <Qxxxx>}} for the given CIDs.
+    """Return {cid: {"desc", "qid", "label", "aliases"}} for the given CIDs: the CC0
+    description and QID of the item chosen for each CID, and that item's English label and
+    aliases in Wikidata's order (see ``names_for_qids``).
 
     **POSTed, always.** This query inlines one ``VALUES`` entry per CID, so its length is
     the size of the catalog. As a GET it returned HTTP 414 above ~612 CIDs, and the catalog
@@ -95,7 +97,54 @@ def descriptions_for_cids(cids: list[int]) -> dict[int, dict]:
             continue
         candidates.setdefault(int(c), []).append(
             (row["compound"].rsplit("/", 1)[-1], row.get("desc")))
-    return {c: _choose_item(items) for c, items in candidates.items()}
+    chosen = {c: _choose_item(items) for c, items in candidates.items()}
+    # The chosen item's English label and aliases ride along (display synonyms, 2026-09-12).
+    # They are read by QID AFTER selection, so which item a CID maps to is decided exactly as
+    # before and never by its names.
+    names = names_for_qids([d["qid"] for d in chosen.values()])
+    return {c: {**d, **names.get(d["qid"], {"label": None, "aliases": []})}
+            for c, d in chosen.items()}
+
+
+# An item's English label and aliases, IN THE ORDER WIKIDATA STORES THEM, from the Wikidata API
+# rather than from SPARQL. The obvious route was GROUP_CONCAT(skos:altLabel) inside the query
+# above, and it cannot give that order: RDF has no order for an item's aliases, so WDQS
+# concatenates them in whatever order its index yields, and that differs between its backend
+# servers. Measured 2026-09-12: the same query three times, a minute apart, answered by three
+# servers, came back with a different alias order for 13 of 136 items (the same set every
+# time). A synonym line built on it would reshuffle on about one page in ten every week, which
+# is the churn run 3 removed. wbgetentities returns each item's own stored order; it is CC0 like
+# everything else here and is keyed by the QID the query above already chose.
+WIKIDATA_API = "https://www.wikidata.org/w/api.php"
+NAMES_BATCH = 50                        # wbgetentities accepts at most 50 ids per request
+
+
+def names_for_qids(qids: list[str]) -> dict[str, dict]:
+    """Return {qid: {"label": <English label|None>, "aliases": [<English aliases>]}}, aliases
+    in the item's own order. An id Wikidata reports missing is left out."""
+    ids = sorted({q for q in qids if q}, key=lambda q: (_qid_sort_key(q), q))
+    out: dict[str, dict] = {}
+    for i in range(0, len(ids), NAMES_BATCH):
+        r = requests.get(
+            WIKIDATA_API,
+            params={"action": "wbgetentities", "ids": "|".join(ids[i:i + NAMES_BATCH]),
+                    "props": "labels|aliases", "languages": "en", "format": "json"},
+            headers={"User-Agent": USER_AGENT},
+            timeout=60,
+        )
+        r.raise_for_status()
+        body = r.json()
+        if "error" in body:
+            err = body["error"]
+            raise RuntimeError(f"wbgetentities {err.get('code')}: {err.get('info')}")
+        for qid, entity in (body.get("entities") or {}).items():
+            if "missing" in entity:
+                continue
+            label = ((entity.get("labels") or {}).get("en") or {}).get("value")
+            aliases = [a["value"] for a in ((entity.get("aliases") or {}).get("en") or [])
+                       if a.get("value")]
+            out[qid] = {"label": label, "aliases": aliases}
+    return out
 
 
 PLACEHOLDER_DESCRIPTION = "chemical compound"
