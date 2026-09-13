@@ -214,6 +214,71 @@ def test_no_page_in_the_snapshot_shows_a_listed_name():
     assert shown == []
 
 
+# ── Garbled names, and the do-not-use list's siblings (Garrett, 2026-09-12) ──
+@pytest.mark.parametrize("name", [
+    "C ochineal",                   # a space dropped into cochineal (carmine's line)
+    "N acetylcysteine",             # N-acetylcysteine with its hyphen lost
+    "L Thyroxin beta",              # a one-letter word followed by a space at the start...
+    "neovitamin A acid",            # ...or anywhere: the rule is literal, and this one is a real name
+])
+def test_a_one_letter_word_followed_by_a_space_is_garbled(name):
+    assert display_synonyms("Title", [name], [], frozenset()) == []
+
+
+@pytest.mark.parametrize("name", [
+    "vitamin A",                    # the letter ends the name, so no space follows it
+    "Micorvit E",
+    "N-acetylcysteine",             # joined by a hyphen: one word, not two
+    "E-Z Prep",
+    "baker's ammonia",              # an apostrophe's s belongs to its word
+    "Kendall's compound F",
+])
+def test_a_letter_that_is_not_a_word_followed_by_a_space_stays(name):
+    # No do-not-use list, so this tests the rule alone ("vitamin A" is on the seed list).
+    assert display_synonyms("Title", [name], [], frozenset()) == [name]
+
+
+def test_levothyroxines_line_loses_its_garbled_brand_names():
+    """The names that matter from the committed record. PubChem stores the brands L-Thyrox,
+    L-Thyroxin beta, L-Thyroxin Henning and L-Thyroxine Roche with their hyphens lost, and the line
+    showed three of them."""
+    wikidata = ["L-thyroxine", "levothyroxine sodium", "Levothyroxin", "LT4", "Levothyroxine", "T4",
+                "L-T4", "L-Thyroxine"]
+    pubchem = ["Levothyroxine", "L Thyrox", "L Thyroxin beta", "L Thyroxin Henning", "L Thyroxine Roche",
+               "L-thyroxine", "Levothyroxin Delalande", "thyroxin", "thyroxine"]
+    assert display_synonyms("Levothyroxine", wikidata, pubchem, frozenset()) == \
+        ["L-thyroxine", "Levothyroxin Delalande"]
+
+
+def test_the_rule_and_the_list_each_keep_c_ochineal_off_carmines_line():
+    wikidata = ["carmine", "crimson lake", "cochineal", "natural red 4", "red food coloring"]
+    pubchem = ["Carmine", "C ochineal", "CARMINE (ALUM LAKE)", "Carmine Red", "Cochineal (dye)", "FEMA 2330"]
+    assert display_synonyms("Carmine", wikidata, pubchem, frozenset()) == \
+        ["crimson lake", "cochineal", "red food coloring"]            # the rule alone
+    assert display_synonyms("Carmine", wikidata, pubchem) == ["crimson lake"]   # with the seed list
+
+
+def test_the_siblings_are_on_the_list():
+    """The names that moved up onto four lines once the first six left them."""
+    from moleculefinder_etl.transform import assemble
+    assert {"oestrogen", "mormon tea", "mahuang", "c ochineal", "red food coloring", "quartz glass",
+            "vitreous silica", "fused silica"} <= assemble.synonym_do_not_use()
+
+
+def test_no_page_in_the_snapshot_shows_a_name_the_filters_drop():
+    """The committed snapshot agrees with the current rules: no garbled or otherwise unreadable name
+    on any synonym line or in any parenthetical."""
+    from moleculefinder_etl.config import SNAPSHOTS
+    from moleculefinder_etl.transform import assemble
+    shown = []
+    for path in sorted((SNAPSHOTS / "molecules").glob("*.json")):
+        rec = json.loads(path.read_text())
+        for name in [rec.get("title_synonym"), *(rec.get("display_synonyms") or [])]:
+            if name and not assemble._readable_name(name):
+                shown.append(f"{path.stem}: {name}")
+    assert shown == []
+
+
 # ── The record ──────────────────────────────────────────────────────────────
 def test_the_record_carries_display_synonyms_and_keeps_its_search_list():
     from moleculefinder_etl.transform import assemble

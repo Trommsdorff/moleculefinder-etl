@@ -23,3 +23,21 @@
   why: a group of compounds (retinol, retinal, retinoic acid and others), of which retinol is one
 - name: fused quartz
   why: a glass made of silicon dioxide, one material form of it rather than the compound's name
+# Their siblings (Garrett, 2026-09-12): the names that moved up onto the line once the six above
+# left it.
+- name: oestrogen
+  why: the British spelling of estrogen, the class of hormones estradiol belongs to
+- name: Mormon Tea
+  why: a North American ephedra shrub and the tea brewed from it, not the molecule
+- name: Mahuang
+  why: ma huang, the Chinese ephedra plant ephedrine is extracted from
+- name: C ochineal
+  why: cochineal with a stray space, the insect carmine is made from (the garbled-name rule in assemble._readable_name drops it as well)
+- name: red food coloring
+  why: what carmine is used as, a label many other red dyes share, not a name for the molecule
+- name: quartz glass
+  why: another name for fused quartz, a glass made of silicon dioxide
+- name: vitreous silica
+  why: another name for fused quartz, a glass made of silicon dioxide
+- name: fused silica
+  why: another name for fused quartz, a glass made of silicon dioxide
