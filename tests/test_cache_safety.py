@@ -10,8 +10,9 @@ the bad write.
 Two mechanisms, tested here:
 
 * ``sources.cache`` — every entry records when it was fetched, and the derived sources
-  (Wikidata, PUG-View) stop hitting once an entry is older than its expiry. An entry
-  written before dates existed is unknown-age, and unknown age is never fresh.
+  (Wikidata, PUG-View) and, since 2026-09-12, the PubChem synonym lists stop hitting once an
+  entry is older than its expiry. An entry written before dates existed is unknown-age, and
+  unknown age is never fresh.
 * ``load.snapshot_guard`` — the backstop. ``replay`` below is the real incident, with the
   real values, and it must not be exportable.
 """
@@ -395,9 +396,9 @@ def test_pug_view_keeps_its_plain_signature_for_existing_callers(tmp_path, monke
     assert pubchem.pug_view(4594, "Toxicity") == {"Record": {"x": 1}}
 
 
-def test_the_pubchem_property_and_synonym_caches_are_left_alone(tmp_path, monkeypatch):
-    """Explicitly pinned: a CID's formula and name list are what that CID IS, so those
-    caches keep no date and never expire. Only the derived sources do."""
+def test_the_pubchem_property_cache_is_left_alone(tmp_path, monkeypatch):
+    """Explicitly pinned: a CID's formula is what that CID IS, so the property cache keeps no
+    date and never expires."""
     from moleculefinder_etl import pipeline
     monkeypatch.setattr(pipeline, "RAW_CACHE", tmp_path)
     calls: list[list[int]] = []
@@ -411,6 +412,82 @@ def test_the_pubchem_property_and_synonym_caches_are_left_alone(tmp_path, monkey
     assert cache.ENVELOPE_KEY not in raw                    # no envelope, no expiry
     pipeline._fetch_cached([2519], "props", fetch)
     assert len(calls) == 1                                  # still a permanent hit
+
+
+# ── The synonym lists expire too (Garrett, 2026-09-12) ──────────────────────
+# PubChem's synonym lists do move: 12 molecules' lists changed between 2026-09-09 and 2026-09-12.
+# CI carries data/raw_cache forward and its synonym entries never expired, so a fresh local fetch
+# and the weekly run disagreed for those 12, and every local regeneration had to restore CI's
+# versions by hand or the next weekly run opened a PR undoing it.
+
+def test_the_synonym_cache_is_dated_and_expires_after_its_ttl(tmp_path, monkeypatch):
+    from moleculefinder_etl import pipeline
+    monkeypatch.setattr(pipeline, "RAW_CACHE", tmp_path)
+    calls: list[list[int]] = []
+
+    def fetch(miss):
+        calls.append(list(miss))
+        return {c: ["caffeine", "Guaranine"] for c in miss}
+
+    assert pipeline._fetch_cached([2519], "syn60", fetch, 30)[2519] == ["caffeine", "Guaranine"]
+    path = tmp_path / "pubchem" / "syn60-2519.json"
+    stored = json.loads(path.read_text())
+    assert stored[cache.ENVELOPE_KEY] == cache.ENVELOPE_VERSION and cache.parse(stored["fetched_at"])
+
+    for days_old, fetches in ((0, 1), (29, 1), (31, 2)):
+        stored["fetched_at"] = _stamp(days_old)
+        path.write_text(json.dumps(stored))
+        pipeline._fetch_cached([2519], "syn60", fetch, 30)
+        assert len(calls) == fetches, f"an entry {days_old} days old"
+
+
+def test_an_undated_synonym_list_is_fetched_again_in_one_pass(tmp_path, monkeypatch):
+    """The migration, which is also CI's first run after the change: every syn60 entry in the
+    restored cache is a bare list with no date, i.e. unknown age, so every one is fetched again,
+    once, and the run after that is a plain hit. A CID PubChem returns nothing for is kept as a
+    dated miss, not asked for again every run."""
+    from moleculefinder_etl import pipeline
+    monkeypatch.setattr(pipeline, "RAW_CACHE", tmp_path)
+    (tmp_path / "pubchem").mkdir()
+    cids = [2519, 5988, 1983]
+    for c in cids:
+        (tmp_path / "pubchem" / f"syn60-{c}.json").write_text(json.dumps(["a name from last month"]))
+    calls: list[list[int]] = []
+
+    def fetch(miss):
+        calls.append(list(miss))
+        return {c: [f"fresh {c}"] for c in miss if c != 1983}
+
+    expected = {2519: ["fresh 2519"], 5988: ["fresh 5988"], 1983: None}
+    assert pipeline._fetch_cached(cids, "syn60", fetch, 30) == expected
+    assert calls == [cids]
+    assert pipeline._fetch_cached(cids, "syn60", fetch, 30) == expected
+    assert calls == [cids]
+
+
+def test_the_fetch_stage_gives_synonyms_the_expiry_and_properties_none(tmp_path, monkeypatch):
+    """The wiring, not only the mechanism: the stage passes the synonym TTL for syn60 and no
+    expiry for props, and the TTL defaults to PUG-View's 30 days."""
+    import os
+    from moleculefinder_etl import pipeline
+    from moleculefinder_etl.config import Settings
+    from moleculefinder_etl.sources import pubchem
+    seen: dict[str, object] = {}
+
+    def recording(cids, prefix, fetch_missing, max_age_days=None):
+        seen[prefix] = max_age_days
+        return {}
+
+    monkeypatch.setattr(pipeline, "_fetch_cached", recording)
+    monkeypatch.setattr(pipeline, "SEED_DIR", tmp_path)
+    monkeypatch.setattr(pipeline, "FETCHED", tmp_path / "fetched.json")
+    (tmp_path / "canon.parquet").write_bytes(b"")          # _require only checks that it exists
+    monkeypatch.setattr(pipeline.canon_stage, "read_parquet", lambda: [{"cid": 2519}])
+    monkeypatch.setattr(pipeline.pubchem, "pug_view", lambda cid, heading: None)
+    pipeline.stage_fetch(Settings(None, None))
+    assert seen == {"props": None, "syn60": pipeline.SYNONYMS_CACHE_TTL_DAYS}
+    if not {"MFETL_SYNONYMS_TTL_DAYS", "MFETL_PUGVIEW_TTL_DAYS"} & set(os.environ):
+        assert pipeline.SYNONYMS_CACHE_TTL_DAYS == pubchem.PUGVIEW_CACHE_TTL_DAYS == 30
 
 
 # ── The Wikidata query must not outgrow its own request ─────────────────────

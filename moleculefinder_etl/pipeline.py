@@ -16,10 +16,11 @@ import json
 import logging
 from pathlib import Path
 
-from .config import Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS
+from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
+                     SYNONYMS_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships
-from .sources import pubchem
+from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export
 from . import freshness
 
@@ -66,25 +67,44 @@ def stage_seed(settings: Settings) -> list[dict]:
 
 
 # ── Stage 1: fetch ───────────────────────────────────────────────────────────
-def _fetch_cached(cids: list[int], prefix: str, fetch_missing) -> dict[int, object]:
-    """Per-CID disk cache under raw_cache/pubchem; fetch only the misses in bulk."""
+def _fetch_cached(cids: list[int], prefix: str, fetch_missing,
+                  max_age_days: float | None = None) -> dict[int, object]:
+    """Per-CID disk cache under raw_cache/pubchem; fetch only the misses in bulk.
+
+    With no ``max_age_days`` an entry is bare JSON and a hit forever: the property cache, since
+    a CID's formula is what the CID is. With one, entries are dated and expire through
+    ``sources.cache``: the synonym cache since 2026-09-12. An entry written before that has no
+    date, which is unknown age and never fresh, so the first run after the change fetches every
+    list once.
+    """
     cache_dir = RAW_CACHE / "pubchem"
     cache_dir.mkdir(parents=True, exist_ok=True)
     out: dict[int, object] = {}
     missing = []
     for c in cids:
         p = cache_dir / f"{prefix}-{c}.json"
-        if p.exists():
-            out[c] = json.loads(p.read_text())
+        if max_age_days is None:
+            if p.exists():
+                out[c] = json.loads(p.read_text())
+                continue
         else:
-            missing.append(c)
+            hit = cache.read_json(p, max_age_days)
+            if hit is not None:
+                out[c] = hit.value
+                continue
+        missing.append(c)
     if missing:
+        log.info("  %s: %d of %d not cached or expired, fetching", prefix, len(missing), len(cids))
         for i in range(0, len(missing), PUBCHEM_BATCH):
             chunk = missing[i:i + PUBCHEM_BATCH]
             fetched = fetch_missing(chunk)
             for c in chunk:
                 val = fetched.get(c)
-                (cache_dir / f"{prefix}-{c}.json").write_text(json.dumps(val))
+                p = cache_dir / f"{prefix}-{c}.json"
+                if max_age_days is None:
+                    p.write_text(json.dumps(val))
+                else:
+                    cache.write_json(p, val)
                 out[c] = val
             log.info("  %s: cached %d/%d", prefix, len(out), len(cids))
     return out
@@ -103,8 +123,9 @@ def stage_fetch(settings: Settings) -> None:
     props = _fetch_cached(cids, "props", lambda miss: {int(p["CID"]): p for p in pubchem.properties(miss)})
     # Cache prefix is "syn60", not "syn": the old entries hold a 20-name window and reusing
     # them would keep the starvation the deeper window exists to remove. Renaming the prefix
-    # re-fetches once and leaves the stale files to be evicted.
-    syns = _fetch_cached(cids, "syn60", lambda miss: pubchem.synonyms(miss))
+    # re-fetches once and leaves the stale files to be evicted. The lists expire after
+    # SYNONYMS_CACHE_TTL_DAYS, so the weekly run's cache cannot keep an old list forever.
+    syns = _fetch_cached(cids, "syn60", lambda miss: pubchem.synonyms(miss), SYNONYMS_CACHE_TTL_DAYS)
 
     # Warm the PUG-View caches (Toxicity + GHS) so transform parses offline.
     tox_hits = ghs_hits = 0
