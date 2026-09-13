@@ -18,10 +18,14 @@ Which caches get an expiry is a judgement about the SOURCE, not a blanket policy
 * **Wikidata** (descriptions, QIDs) and **PUG-View** (Toxicity, GHS) are *derived* views
   that upstream rewrites: items get merged and split, annotations get added. A month-old
   copy is a claim about the past presented as the present. These expire.
-* **PubChem properties and synonyms** do not: a CID's formula, weight, InChI and name list
-  are what that CID *is*. Those caches are left exactly as they were, on purpose. Re-fetching
-  788 CIDs weekly to re-learn that caffeine is still C8H10N4O2 buys nothing and spends the
-  rate limit that the annotation warm-up actually needs.
+* **PubChem synonyms** expire too, since 2026-09-12, on PUG-View's 30 days. A name list was
+  treated as what a CID *is*, but depositors add and reorder names: 12 molecules' lists moved
+  between 2026-09-09 and 2026-09-12, CI's copies never expired, and so every fresh local
+  fetch disagreed with the weekly run until someone restored CI's versions by hand.
+* **PubChem properties** do not: a CID's formula, weight and InChI are what that CID *is*.
+  That cache is left exactly as it was, on purpose. Re-fetching 788 CIDs weekly to re-learn
+  that caffeine is still C8H10N4O2 buys nothing and spends the rate limit that the
+  annotation warm-up actually needs.
 
 The envelope is discriminated by the ``_mfetl_cache`` key, so an entry written before this
 module existed still reads back: it comes back with ``fetched_at`` of None, which means

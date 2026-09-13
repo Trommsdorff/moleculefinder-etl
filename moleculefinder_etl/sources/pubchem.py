@@ -139,7 +139,7 @@ def pug_view_dated(cid: int, heading: str) -> "cache.Entry":
     """Fetch a PUG-View annotation heading, and say how old the answer is.
 
     Cached under data/raw_cache/pubchem/<cid>-<heading>.json, and **the entry expires**
-    (``PUGVIEW_CACHE_TTL_DAYS``). Unlike a CID's formula or its name list, an annotation is
+    (``PUGVIEW_CACHE_TTL_DAYS``). Unlike a CID's formula, an annotation is
     a curated view that upstream adds to and corrects: omeprazole's oral LD50 was nulled in
     the 2026-09-08 snapshot because this cache held a miss recorded before PubChem had the
     value. A 404 is still cached, so a compound with genuinely no annotation is not
