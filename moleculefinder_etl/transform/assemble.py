@@ -139,14 +139,23 @@ def _clean_synonyms(syns, title: "str | None") -> list[str]:
 DISPLAY_SYNONYMS_MAX = 4
 DISPLAY_SYNONYM_MAX_LEN = 25
 _NAME_PUNCTUATION = frozenset(" -'’")      # space, hyphen, straight and curly apostrophe
+# A one-letter word followed by a space marks a garbled name (Garrett, 2026-09-12): a space dropped
+# into a word ("C ochineal") or a hyphen lost ("N acetylcysteine", "L Thyroxin beta"). Words are
+# split on spaces, so a letter joined by a hyphen or an apostrophe is not a word ("E-Z Prep",
+# "baker's ammonia"), and a letter that ends the name has no space after it ("vitamin A"). The rule
+# is literal: it also drops real names written that way ("neovitamin A acid", "K citrate").
+_GARBLED_NAME = re.compile(r"(?:^| )[^\W\d_] ")
 
 
 def _readable_name(s: str) -> bool:
     """Starts with a letter; only letters, spaces, hyphens and apostrophes; 25 characters or
-    fewer; not all capitals beyond 5 characters ("APAP" stays, "CAFFEINE" does not)."""
+    fewer; not all capitals beyond 5 characters ("APAP" stays, "CAFFEINE" does not); no
+    one-letter word followed by a space ("C ochineal" is garbled)."""
     if not s or len(s) > DISPLAY_SYNONYM_MAX_LEN or not s[0].isalpha():
         return False
     if not all(c.isalpha() or c in _NAME_PUNCTUATION for c in s):
+        return False
+    if _GARBLED_NAME.search(s):
         return False
     return not (len(s) > 5 and s == s.upper())
 
