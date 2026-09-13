@@ -452,6 +452,8 @@ CLAUDE.md). Four commits:
     lisdexamfetamine, methadone, montelukast, naproxen, natamycin, pantoprazole,
     sodium-lauryl-sulfate). Any local regeneration flips them back: restore those files and
     index.json from `main` before committing local data, or the next weekly run opens a PR to undo it.
+    (Since `5031441` the synonym entries expire, so this split should close with the first weekly
+    run after it; see the last follow-up below.)
   - **`supabase_loader.rekey_moved_slugs`** (`0a83290`): before the molecule upsert, a slug whose
     existing row carries a different CID is re-keyed, `update molecule set cid = <new> where id = <id>
     and cid = <old>`, checked to change exactly one row, so a catalog correction like Iodine no longer
@@ -467,6 +469,48 @@ CLAUDE.md). Four commits:
     list) until `2b42778`. `bcafea3` meant to carry only the six lines but also carried the 12
     local-cache synonym lists and index.json (a restore step failed on zsh word splitting and its exit
     code went unchecked); `20d4c23` put those back exactly as `90cdb69` has them.
+- **Last follow-up (2026-09-13 UTC, Garrett): the siblings, garbled names, and a synonym expiry.**
+  Code `5a67549` (names and rule) and `5031441` (expiry), data `b50cc75`.
+  - **Eight more do-not-use names**, the ones that moved up once the first six left their lines:
+    oestrogen (estradiol); Mormon Tea and Mahuang (ephedrine); C ochineal and red food coloring
+    (carmine); quartz glass, vitreous silica and fused silica (silicon dioxide).
+  - **A one-letter word followed by a space marks a garbled name** (`assemble._GARBLED_NAME`, checked
+    in `_readable_name`, so it governs the synonym line and the parenthetical; the search list is
+    untouched). Words split on spaces, so "E-Z Prep", "baker's ammonia" and "vitamin A" stay. On the
+    committed lines it took C ochineal, L Thyrox, L Thyroxin beta and L Thyroxin Henning
+    (levothyroxine), E Mulsin and E Vicotrat (tocopherol), L Valylacyclovir (valaciclovir), and,
+    being literal, two real names: neovitamin A acid (isotretinoin) and K citrate (potassium
+    citrate). Isotretinoin's next name is Accutane, which its description uses, so its title is now
+    "Isotretinoin (Accutane)". Data: nine molecule files (display_synonyms, plus isotretinoin's
+    title_synonym) and meta.json (refreshed 2026-09-13, the UTC date). No other field or file moved.
+  - **The PubChem synonym cache expires after 30 days** (`SYNONYMS_CACHE_TTL_DAYS`, env
+    `MFETL_SYNONYMS_TTL_DAYS`), the same as PUG-View. `pipeline._fetch_cached(..., max_age_days)`
+    writes syn60 entries in the `sources.cache` envelope; the props cache stays undated and permanent.
+    The prefix is still syn60: an existing entry is a bare list, unknown age, never fresh, so the first
+    run after this re-fetches every list once. Synonyms record no freshness; the export guard does not
+    protect them.
+  - **The cold case, measured at full size before relying on it** (the run-4 lesson): every syn60
+    entry undated, all 770 PubChem CIDs (788 minus the 18 hand-modeled), through `mfetl fetch` against
+    live PubChem: 6 batched POSTs (150 CIDs each, then 20), all HTTP 200, 6.1 MB of responses, 7.1 s
+    for the whole stage. PubChem's X-Throttling-Control read Green on every response (request count
+    and request time at most 1%). The warm re-run made 0 requests in 0.6 s. The weekly `run` job has
+    no `timeout-minutes` (GitHub's 360-minute default); its `mfetl all` step took 94 s on 2026-09-12
+    and 625 s on the 2026-09-09 PUG-View re-warm, so a synonym re-warm adds seconds. Locally the one
+    undated syn60 file left is CID 24841, iodine's old record, which nothing fetches now.
+  - **The 12-file split, restored once more.** The regeneration flipped the same 12 files and
+    index.json; they were put back from `main` and checked identical before `b50cc75`.
+    **Monday's scheduled run (2026-09-14) is the one that closes it:** CI's syn60 entries are all
+    undated, so it re-fetches every list and should open and merge a data PR carrying those 12 as
+    PubChem has them now. On pages that means doxycycline's line has Doxychel again where Vibramycin
+    is, and pantoprazole's line has Zovanta where Protonix is, which takes "(Protonix)" off its title.
+    That PR is the loop working, not a regression. Afterwards a local and a CI fetch can still disagree
+    if upstream moves between them, but for at most one expiry window instead of forever; keep diffing
+    synonym-only files against `main` before committing local data.
+  - 380 tests (was 363), ruff clean. New tests pin both sides of the rule, replay levothyroxine's and
+    carmine's lines, check that no committed page shows a name the filters drop, and pin the expiry:
+    a dated entry, a hit at 29 days and a re-fetch at 31, an undated list re-fetched once in one pass,
+    a CID with no synonyms kept as a dated miss, and `stage_fetch` passing the TTL for syn60 and none
+    for props (that test caught the call site missing its argument before the commit).
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
