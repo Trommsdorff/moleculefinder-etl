@@ -609,6 +609,28 @@ web CLAUDE.md). A reason to come back and a thing to share.
   origin: the refresh path, the no-change heartbeat, the failed-run heartbeat publishing only
   LAST_CHECK, and the step wiring). 433 tests, ruff clean. Mutation-checked: disabling the twin
   rule, or leaving featured.json out of the change decision, fails the matching tests.
+- **Three small things from the Sep 23 review, same branch:**
+  - **`all-clear` job in etl.yml** (`3aae86e`), the mirror of `alarm`: `needs: [run, sync-web]`,
+    runs only when both succeed, `issues: write`, and closes every open `refresh-failure` issue
+    with a comment naming the run ("Run <url> (schedule, date) went green..."). Issue #2, the Sep 14
+    failure, stayed open through the green Sep 21 run until it was closed by hand on 2026-09-23.
+    It cannot fail a green run: no open issue is a clean exit, and a list or close failure is a
+    `::warning::`. Tested with a stub `gh` on PATH running the step's own script.
+  - **PubChem logs its throttle** (`939ffd4`). Each batched properties or synonyms POST logs one
+    line, `pubchem POST synonyms: 150 CIDs from 2244, HTTP 200 in 1.3 s, X-Throttling-Control:
+    Request Count status: Green (0%), ...` (logger `mfetl.pubchem`), and the retry decorator logs a
+    warning before every retry. Never per PUG-View GET. A cold run's log now says what the throttle
+    read and whether any POST was sent twice (a repeated batch prints a second line with the same
+    first CID). Tested through the real decorator with real `requests.Response` objects.
+  - The web CLAUDE.md's prediction that pantoprazole's title would lose "(Protonix)" is corrected in
+    place there: it keeps it.
+  - 442 tests after these (433 + 5 PubChem log + 4 all-clear), ruff clean.
+- **Deploy order (for the separate deploy prompt):** push this repo's `main` before or together
+  with web `main`, and before the next Monday cron (06:00 UTC scheduled, in practice about 11:30).
+  Pushing here deploys nothing by itself. `sync-web` copies the snapshot WHOLE, so a Monday run on
+  the old code would ship a snapshot without featured.json and its data PR would remove the web's
+  copy (the block, the archive and the feed would then render nothing until this code is merged).
+  With both merged, the first Monday run moves to week 40 and opens the data PR on its own.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
