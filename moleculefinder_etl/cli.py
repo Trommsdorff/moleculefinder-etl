@@ -15,6 +15,8 @@ STAGES = {
     "load": pipeline.stage_load,
     "export": pipeline.stage_export,
     "all": pipeline.run_all,
+    # Offline: rebuild featured.json (molecule of the week) from the snapshot on disk.
+    "featured": pipeline.stage_featured,
 }
 
 

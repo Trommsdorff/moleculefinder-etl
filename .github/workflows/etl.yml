@@ -40,6 +40,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/snapshots data/seed
           if git diff --cached --quiet; then
+            # SINCE 2026-09-23 A MONDAY RUN ALWAYS TAKES THE OTHER BRANCH: featured.json (the
+            # molecule of the week) names the ISO week of the snapshot's date, so a run in a
+            # new week always changes the snapshot and opens a data PR. This branch now fires
+            # only for a run that changes nothing, a second run in the same week (a dispatch).
+            # It is not dead code; keep it. A run that FAILS is covered by the next step.
+            #
             # HEARTBEAT (added 2026-08-08) — do NOT simplify this back to `echo`.
             # THIS REPO IS PUBLIC, and GitHub automatically disables scheduled
             # workflows in a PUBLIC repo after 60 days with no repository
@@ -71,6 +77,24 @@ jobs:
             echo "molecules_added=${added}"           >> "$GITHUB_OUTPUT"
             echo "snapshot_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
+      # HEARTBEAT FOR A FAILED RUN (added 2026-09-23). A run that fails commits nothing, and
+      # the featured.yaml compiler fails the run on purpose when the seed is wrong (an unknown
+      # slug, a missing week). A seed error nobody fixes fails every week, and sixty days of
+      # that switches this cron off, and the network watchdog with it, for the reason in the
+      # HEARTBEAT note above. So a failed run throws away everything it computed and commits
+      # only the timestamp. The job still fails, so the `alarm` job below still fires.
+      - name: heartbeat after a failed run
+        if: failure()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Back to the commit this run started from: nothing half-written is published.
+          # Untracked files (data/raw_cache) survive, so the cache save below still has them.
+          git reset --hard "$GITHUB_SHA"
+          date -u +%FT%TZ > data/LAST_CHECK
+          git add data/LAST_CHECK
+          git commit -m "etl: run failed $(date -u +%F) [heartbeat]"
+          git push || echo "::warning::could not push the failed-run heartbeat, so this week did not reset the 60-day clock"
       - uses: actions/cache/save@v4
         if: always()
         with:

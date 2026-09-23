@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Callable
 from ..config import SNAPSHOTS
 from ..transform import roam_layout, relationships
 from . import snapshot_guard
@@ -11,8 +12,14 @@ from . import snapshot_guard
 # triage MF-9, 2026-09-12). One small file beside index.json rather than a field on each
 # record, and it moves ONLY when the exported content moves: a date stamped on every run would
 # change a committed file every week, and that is the churn run 3 removed (a data PR, a Vercel
-# build and a deploy for nothing). A week with no data change leaves it byte-identical.
+# build and a deploy for nothing). A run with no content change leaves it byte-identical.
+#
+# Since 2026-09-23 the content includes featured.json (molecule of the week), which names the
+# ISO week of this very date, so a run in a NEW week always changes the snapshot and moves the
+# date: every Monday run now opens a data PR. A second run in the same week with no data change
+# still leaves everything byte-identical, which is what the workflow's heartbeat path is for.
 META = "meta.json"
+FEATURED = "featured.json"
 
 
 def _prune(directory: Path, keep: set[str]) -> None:
@@ -40,7 +47,8 @@ def _prior_refreshed(path: Path) -> str | None:
 
 
 def export(molecules: list[dict], leaderboards: dict[str, dict],
-           comparisons: dict[str, dict] | None = None, *, today: str | None = None) -> Path:
+           comparisons: dict[str, dict] | None = None, *,
+           featured: Callable[[str], dict] | None = None, today: str | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files + meta.json.
 
     Each leaderboard file is a self-describing board (metadata + enriched
@@ -59,6 +67,13 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     is rendered before anything is written so it can be compared with what is on disk: a
     difference in any file, or a file that is about to be pruned, stamps ``today`` (default:
     the current UTC date); otherwise the previous date is kept.
+
+    ``featured`` builds featured.json for a given refreshed date (``featured.build_featured``,
+    already compiled against this catalog by the caller). It is rendered for ``today`` and
+    compared like everything else, which keeps it keyed to the date meta.json ends up with: a
+    new ISO week always differs, so the date moves to ``today``; an unchanged file means the
+    stored date is already in today's week. None means there is no seed, and a featured.json
+    left from an earlier run is removed.
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
     mol_dir = SNAPSHOTS / "molecules"
@@ -98,12 +113,19 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
         })
     outputs[lb_dir / "index.json"] = json.dumps(lb_index, ensure_ascii=False)
 
+    candidate = today or datetime.now(timezone.utc).date().isoformat()
+    featured_path = SNAPSHOTS / FEATURED
+    if featured is not None:
+        outputs[featured_path] = json.dumps(featured(candidate), ensure_ascii=False)
+
     stale = [f for d in (mol_dir, lb_dir) if d.is_dir() for f in d.glob("*.json") if f not in outputs]
+    if featured is None and featured_path.exists():
+        stale.append(featured_path)
     changed = bool(stale) or any(_read_text(path) != text for path, text in outputs.items())
     meta_path = SNAPSHOTS / META
     refreshed = _prior_refreshed(meta_path)
     if changed or refreshed is None:
-        refreshed = today or datetime.now(timezone.utc).date().isoformat()
+        refreshed = candidate
     outputs[meta_path] = json.dumps({"refreshed": refreshed}, ensure_ascii=False)
 
     mol_dir.mkdir(parents=True, exist_ok=True)
@@ -112,4 +134,6 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
         path.write_text(text)
     _prune(mol_dir, {f"{m['slug']}.json" for m in molecules})
     _prune(lb_dir, {f"{slug}.json" for slug in leaderboards} | {"index.json"})
+    if featured is None and featured_path.exists():
+        featured_path.unlink()
     return SNAPSHOTS
