@@ -511,6 +511,47 @@ CLAUDE.md). Four commits:
     a dated entry, a hit at 29 days and a re-fetch at 31, an undated list re-fetched once in one pass,
     a CID with no synonyms kept as a dated miss, and `stage_fetch` passing the TTL for syn60 and none
     for props (that test caught the call site missing its argument before the commit).
+- **The first weekly runs after it, recorded 2026-09-23: Sep 14 failed in the load, Sep 21 went
+  green cold.** Code `6548a72`.
+  - **Why Sep 14 failed (run 34838019124, issue #2):** stage 3, the Supabase load. The per-molecule
+    synonym DELETE for molecule 3 (the child-table replace in `load_all`) came back **504 Gateway
+    Timeout** from the proxy in front of PostgREST, 5 s after the DELETE before it succeeded, and
+    nothing retried it: the loader called `.execute()` once, and postgrest's own `send_with_retry`
+    covers only a GET answered 503 or 520. Stages 1 and 2 had finished, including the predicted
+    re-fetch of all 770 synonym lists.
+  - **Decision: a bounded retry on that call**, `supabase_loader._execute_idempotent`: 3 attempts,
+    5 s and 10 s apart, on a dropped connection or a 429/500/502/503/504 from the gateway (the set
+    `pubchem` retries). Each retry logs a warning and the third failure raises the gateway's own
+    error, so the run still fails loudly. A database error is never retried. The DELETE is 1,085 of
+    the load's 1,099 requests. The other 14 are not wrapped: the 9 upserts and the one read are
+    idempotent and could take the same wrapper if one ever times out; **the 4 inserts must not** (a
+    timeout does not say whether the rows landed, and a second insert could store them twice).
+    `tests/test_load_retry.py` replays the 504 through the real postgrest client; with the old call
+    site its load test fails on the exact Sep 14 error. 386 tests, ruff clean.
+  - **Sep 21 (run 35595148008) was a full cold run, not a restore of Sep 14's cache.** GitHub
+    deletes an Actions cache nobody has read for 7 days: Sep 14's was saved at 11:25 UTC, the Sep 21
+    restore ran at 11:38 UTC and found nothing. So everything was fetched live: Wikidata (770),
+    PubChem properties and synonyms (6 batched POSTs each, 150 CIDs a POST; synonyms took 9.4 s)
+    and PUG-View (770 CIDs, 6 minutes); 8m23s in all, green. The PubChem client logs neither the
+    X-Throttling-Control header nor its own retries, so the CI log cannot say what the throttle read
+    or prove that no POST was repeated. **The cron sits on that 7-day boundary:** it is set for 06:00
+    UTC, but GitHub started it at 11:24 and 11:38 these two Mondays, so whether a weekly run starts
+    warm is decided by scheduler delay. Cold costs about 6 minutes and ~1,550 PubChem requests,
+    inside the limits.
+  - **The prediction above was half right.** The Sep 21 data PR (web #6; Production deployment of
+    `a4939ba` succeeded; IndexNow 50 submitted, 50 accepted, audit exact at 1107) took the local
+    Sep 12 lists for 5 of the 12 split files (cannabigerol, etomidate, montelukast, naproxen,
+    natamycin), a third version for sodium-lauryl-sulfate (a stored name only; its page line did not
+    change), and **kept CI's lists for the other 6** (coenzyme-q10, doxycycline, erythromycin,
+    lisdexamfetamine, methadone, pantoprazole). Doxycycline still shows Vibramycin, and pantoprazole
+    keeps Protonix and "(Protonix)" in its title. A live PubChem request from the Mac on 2026-09-23
+    selects CI's version for both, so it was the local Sep 12 fetch that caught a state PubChem no
+    longer serves. Either way the split is closed: CI and a local fetch agree today. The PR also
+    carried the cold PUG-View refresh: LD50s for chlordiazepoxide (537 mg/kg, oral rat) and
+    ketoconazole (702, oral mouse), both gaining the dose block; more GHS for carfentanil (joins
+    health-hazard and irritant) and formic acid (joins environmental-hazard); and four synonym lines
+    (clindamycin gains Cleocin, daraxonrasib Rasonque, oxytocin Pitocin, galactose's "cerebrose" is
+    capitalised).
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
