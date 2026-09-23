@@ -362,6 +362,44 @@ jobs:
           gh pr merge "$PR" --squash --delete-branch
           echo "merged PR #${PR}; Vercel builds from the resulting push to main."
 
+  # ── ALL CLEAR (added 2026-09-23) — the mirror of `alarm` below.
+  # A run that ends green (the refresh AND the web sync) closes every open refresh-failure
+  # issue with a comment naming the run, so an open issue always means "still failing", never
+  # "failed once, three weeks ago". Issue #2 (the Sep 14 load failure) stayed open through the
+  # green Sep 21 run because nothing did this. Tidying, not a gate: nothing here may turn a
+  # green run red, and no open issue, which is the normal week, is a clean exit.
+  all-clear:
+    needs: [run, sync-web]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close any open refresh-failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No checkout in this job either, so `gh` needs the repo named (see `alarm`).
+          GH_REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          err="${RUNNER_TEMP:-/tmp}/list.err"
+          if ! open=$(gh issue list --label refresh-failure --state open --limit 50 \
+                        --json number --jq '.[].number' 2>"$err"); then
+            echo "::warning::could not list refresh-failure issues, so none were closed: $(cat "$err")"
+            exit 0
+          fi
+          if [ -z "$open" ]; then
+            echo "no open refresh-failure issue, nothing to close"
+            exit 0
+          fi
+          for n in $open; do
+            if gh issue close "$n" --comment "Run $RUN ($EVENT, $(date -u +%F)) went green: the refresh and the web sync both succeeded. Closing."; then
+              echo "closed #$n"
+            else
+              echo "::warning::could not close refresh-failure issue #$n; close it by hand"
+            fi
+          done
+
   # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
   # A separate job, not `if: failure()` on a step: a step-level guard cannot run
   # when the job itself never starts.
