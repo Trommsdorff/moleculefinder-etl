@@ -9,6 +9,11 @@ without a live database.
 from __future__ import annotations
 import logging
 import os
+
+import httpx
+from postgrest.exceptions import APIError
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+
 from ..config import Settings
 from ..sources.registry import source_rows
 
@@ -166,6 +171,38 @@ def rekey_moved_slugs(client, mol_rows: list[dict]) -> list[dict]:
     return moves
 
 
+# ── A request the gateway dropped is sent again (2026-09-14) ────────────────
+# The weekly run of 2026-09-14 died here on one request of about 1,100: the synonym DELETE for
+# molecule 3 came back 504 Gateway Timeout from the proxy in front of PostgREST, and nothing
+# retried it. The client's own retry covers only a GET answered 503 or 520.
+LOAD_ATTEMPTS = 3
+
+
+def _is_transient(exc: BaseException) -> bool:
+    """A dropped connection, or a busy or 5xx status from the gateway (the set `pubchem` retries).
+    PostgREST's own errors carry a database code ("23503", "PGRST116"), so a bare HTTP status means
+    the proxy answered instead and the database never gave the request a verdict."""
+    if isinstance(exc, httpx.TransportError):
+        return True
+    return isinstance(exc, APIError) and str(exc.code) in {"429", "500", "502", "503", "504"}
+
+
+def _warn_retry(state) -> None:
+    log.warning("  supabase: attempt %d of %d failed (%s), retrying in %.0f s",
+                state.attempt_number, LOAD_ATTEMPTS, state.outcome.exception(), state.next_action.sleep)
+
+
+@retry(wait=wait_exponential(multiplier=5, max=60), stop=stop_after_attempt(LOAD_ATTEMPTS),
+       retry=retry_if_exception(_is_transient), before_sleep=_warn_retry, reraise=True)
+def _execute_idempotent(query):
+    """Send a request that leaves the same table however many times it lands, up to three times
+    with 5 s and 10 s between; the last error is raised as it came, so the run still fails.
+
+    Only the child-row DELETE goes through here. The INSERT after it does not: a gateway timeout
+    does not say whether the rows landed, and sending them again could store every row twice."""
+    return query.execute()
+
+
 # ── Orchestrated load (idempotent) ───────────────────────────────────────────
 def load_all(client, molecules: list[dict]) -> dict[str, int]:
     """Upsert every table by natural key. Returns per-table row counts. Idempotent."""
@@ -226,7 +263,7 @@ def load_all(client, molecules: list[dict]) -> dict[str, int]:
     for table in ("synonym", "toxicity_value", "content_block"):
         rows = sid(mol(tables[table])) if table != "content_block" else mol(tables[table])
         for cid_mol_id in {r["molecule_id"] for r in rows}:
-            client.table(table).delete().eq("molecule_id", cid_mol_id).execute()
+            _execute_idempotent(client.table(table).delete().eq("molecule_id", cid_mol_id))
         if rows:
             client.table(table).insert(rows).execute()
         counts[table] = len(rows)
