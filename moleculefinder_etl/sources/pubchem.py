@@ -5,17 +5,20 @@ Raw responses are cached to disk so re-runs are cheap and resumable.
 """
 from __future__ import annotations
 import json
+import logging
 import re
 import time
 from pathlib import Path
 from urllib.parse import quote
 
 import requests
-from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception, before_sleep_log
 
 from ..config import (PUBCHEM_REST, PUBCHEM_VIEW, PUBCHEM_BATCH, PUBCHEM_MAX_RPS, USER_AGENT,
                       RAW_CACHE, PUGVIEW_CACHE_TTL_DAYS)
 from . import cache
+
+log = logging.getLogger("mfetl.pubchem")
 
 PROPERTIES = (
     "MolecularFormula,MolecularWeight,CanonicalSMILES,IsomericSMILES,InChI,InChIKey,"
@@ -53,10 +56,27 @@ def _is_transient(exc: BaseException) -> bool:
     return resp is not None and resp.status_code in (429, 500, 502, 503, 504)
 
 
+# before_sleep logs every retry (2026-09-23): the Sep 21 cold run could not show from its log
+# whether any request had been repeated, because nothing said so.
 _pubchem_retry = retry(wait=wait_exponential(multiplier=2, min=2, max=120),
                         stop=stop_after_attempt(8),
                         retry=retry_if_exception(_is_transient),
+                        before_sleep=before_sleep_log(log, logging.WARNING),
                         reraise=True)
+
+
+def _log_post(kind: str, chunk: list[int], r: requests.Response, started: float) -> None:
+    """One line per batched POST, answered or not, with PubChem's own throttle reading.
+
+    The X-Throttling-Control header reports how close this client is to PubChem's limits
+    ("Request Count status: Green (0%), Request Time status: Green (0%), ..."). Logged once per
+    POST, never per PUG-View GET (1,540 of those on a cold run would bury it), so a cold run's
+    log answers the two questions the Sep 21 one could not: what the throttle read, and whether
+    any POST was sent twice (a retried batch prints a second line with the same first CID).
+    """
+    log.info("pubchem POST %s: %d CIDs from %d, HTTP %d in %.1f s, X-Throttling-Control: %s",
+             kind, len(chunk), chunk[0], r.status_code, time.monotonic() - started,
+             r.headers.get("X-Throttling-Control") or "(absent)")
 
 
 @_pubchem_retry
@@ -69,9 +89,11 @@ def properties(cids: list[int]) -> list[dict]:
         # params silently return only the first CID.
         body = "cid=" + ",".join(str(c) for c in chunk)
         url = f"{PUBCHEM_REST}/compound/cid/property/{PROPERTIES}/JSON"
+        started = time.monotonic()
         r = _session.post(url, data=body,
                           headers={"Content-Type": "application/x-www-form-urlencoded"},
                           timeout=60)
+        _log_post("properties", chunk, r, started)
         r.raise_for_status()
         out.extend(r.json()["PropertyTable"]["Properties"])
     return out
@@ -123,9 +145,11 @@ def synonyms(cids: list[int], limit: int = 60) -> dict[int, list[str]]:
         _throttle()
         body = "cid=" + ",".join(str(c) for c in chunk)     # comma-separated, not repeated params
         url = f"{PUBCHEM_REST}/compound/cid/synonyms/JSON"
+        started = time.monotonic()
         r = _session.post(url, data=body,
                           headers={"Content-Type": "application/x-www-form-urlencoded"},
                           timeout=60)
+        _log_post("synonyms", chunk, r, started)
         if r.status_code == 404:
             continue
         r.raise_for_status()
