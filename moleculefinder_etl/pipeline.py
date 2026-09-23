@@ -9,17 +9,19 @@ a failed run resumes cheaply:
     transform → data/seed/molecules.json         (assembled records, filter-4 applied)
                 data/seed/deferred.json          (orphans demoted by filter-4)
     load      → Supabase (idempotent upserts; skipped if creds absent)
-    export    → data/snapshots/                  (per-molecule JSON + index + boards)
+    export    → data/snapshots/                  (per-molecule JSON + index + boards +
+                                                  featured.json, the molecule of the week)
 """
 from __future__ import annotations
 import json
 import logging
+from functools import partial
 from pathlib import Path
 
 from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
                      SYNONYMS_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
-from .transform import toxicity, ghs, assemble, leaderboards, relationships
+from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export
 from . import freshness
@@ -299,11 +301,51 @@ def stage_export(settings: Settings) -> Path:
     # Compiled here, against the whole catalog, so a curated pair naming a molecule that is
     # not in it fails the run instead of quietly exporting one fewer page.
     comparisons = relationships.build_comparisons(molecules)
-    path = snapshot_export.export(molecules, boards, comparisons)
+    # Molecule of the week, validated against the same catalog; a bad seed stops the run here,
+    # before anything is written. The builder runs inside export, for the date meta.json gets.
+    queue = featured.compile_queue(molecules)
+    builder = partial(featured.build_featured, queue, molecules) if queue is not None else None
+    path = snapshot_export.export(molecules, boards, comparisons, featured=builder)
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)
     log.info("  boards: %s", non_empty)
+    _log_featured()
     return path
+
+
+def _log_featured() -> None:
+    path = SNAPSHOTS / snapshot_export.FEATURED
+    if not path.exists():
+        log.info("  molecule of the week: no featured.yaml, so no featured.json")
+        return
+    data = json.loads(path.read_text())
+    cur = data["current"]
+    log.info("  molecule of the week: %s (Monday %s) %s; archive %d week(s) from %s",
+             cur["week"], cur["monday"], cur["slug"], len(data["weeks"]), data["start"])
+
+
+def stage_featured(settings: Settings) -> Path:
+    """Rebuild featured.json from the snapshot already on disk, offline, and nothing else.
+
+    For editing the seed and previewing the result without a full run. It compiles the seed
+    against the exported molecule files and keys the file to meta.json's `refreshed` date, the
+    same rule export follows, so the next export in the same ISO week finds it byte-identical.
+    It never moves meta.json: only a real export decides the snapshot changed.
+    """
+    molecules_dir = SNAPSHOTS / "molecules"
+    meta = SNAPSHOTS / snapshot_export.META
+    if not molecules_dir.is_dir() or not meta.exists():
+        raise SystemExit("no exported snapshot with a meta.json; run `mfetl export` first")
+    molecules = [json.loads(p.read_text()) for p in sorted(molecules_dir.glob("*.json"))]
+    refreshed = json.loads(meta.read_text())["refreshed"]
+    queue = featured.compile_queue(molecules)
+    if queue is None:
+        raise SystemExit(f"no {featured.FEATURED_YAML.name}; nothing to build")
+    out = SNAPSHOTS / snapshot_export.FEATURED
+    out.write_text(json.dumps(featured.build_featured(queue, molecules, refreshed), ensure_ascii=False))
+    log.info("featured: rebuilt from %d exported molecules for refreshed %s", len(molecules), refreshed)
+    _log_featured()
+    return out
 
 
 def run_all(settings: Settings) -> None:

@@ -97,7 +97,10 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
   Toxicity/GHS warmed into `data/raw_cache/`.
 - `stage_transform` → `data/seed/molecules.json` — `assemble.py`; filter-4 applied.
 - `stage_load` → Supabase upserts (idempotent) + `ingest_run`; **skips if no creds.**
-- `stage_export` → `data/snapshots/` — per-molecule JSON + index + leaderboards.
+- `stage_export` → `data/snapshots/` — per-molecule JSON + index + leaderboards + `featured.json`
+  (molecule of the week, compiled from `sources/seeds/featured.yaml`; see its section below).
+- `mfetl featured` (offline, not part of `all`) rebuilds only `featured.json` from the snapshot
+  already on disk, keyed to its `meta.json` date, for previewing a seed edit. It never moves meta.json.
 
 ## Supabase / DB
 - Creds in `.env` (gitignored): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (= the `sb_secret_…`
@@ -552,6 +555,60 @@ CLAUDE.md). Four commits:
     health-hazard and irritant) and formic acid (joins environmental-hazard); and four synonym lines
     (clindamycin gains Cleocin, daraxonrasib Rasonque, oxytocin Pitocin, galactose's "cerebrose" is
     capitalised).
+
+## Molecule of the week (2026-09-23) — built on `traffic-2026-09-motw`, NOT pushed
+A weekly pick for the home page, `/molecule-of-the-week` and its RSS feed (the web half is in the
+web CLAUDE.md). A reason to come back and a thing to share.
+- **Seed: `sources/seeds/featured.yaml`**, a `weeks:` list, one entry per ISO week 1 to 53: `slug`
+  plus an optional one-line `hook`. All 53 are filled and all 53 have a hook; the seasonal ones are
+  anchored to the 2026-27 calendar (pumpkin spice W39, Halloween candy W44, Thanksgiving W48,
+  Christmas tree scent W52, Valentine's chocolate W06, spring pollen W15, sunscreen W22, chili
+  W30, back-to-school coffee W35), each entry's comment giving its first Monday. The same week
+  number repeats every year; W53 exists only in some ISO years (2026, 2032, 2037) and is skipped
+  in the rest.
+- **The compiler, `transform/featured.py::compile_queue`**, runs in `stage_export` against the
+  catalog being exported and fails the run listing every problem, like `why_it_matters`: all 53
+  weeks exactly once; an unknown slug; a slug twice; **a molecule that appears twice in the
+  catalog**, meaning two records sharing an InChIKey skeleton (17 such pairs today: estradiol and
+  estradiol-medication, vitamin-b12 and cyanocobalamin, omeprazole and esomeprazole, but also
+  real stereoisomer pairs like glucose and galactose, which the rule also keeps out); a
+  hand-modeled macromolecule or no structure; no why_it_matters line; a row held in
+  `deferred_rows.csv` (by CID or name); a hook outside 40 to 170 characters, not one line, not
+  ending in a full stop, with an em or en dash, or matching the /vs advice-and-dosing patterns
+  (`relationships._ADVICE_PATTERNS`). A failed compile writes nothing. No held or recreational
+  (drugs-wing, gated) row is in the catalog, so none can be picked.
+- **Selection is deterministic and stateless.** The featured molecule is the entry for the ISO
+  week of the snapshot's own `refreshed` date, never a clock: `export()` renders featured.json for
+  the candidate date and compares it like every other file, so featured.json always names the
+  week of the date meta.json ends up with (tested across a sequence of runs). The history is
+  rebuilt from the seed every run, from `START_WEEK` = 2026-W39 (Monday 2026-09-21, the launch
+  week) to the current week, so **editing a week that has already run rewrites the archive and
+  re-issues its RSS item**; the seed's header says so.
+- **`data/snapshots/featured.json`**: `{start, current, weeks}`, `weeks` newest first with
+  `weeks[0] == current`; each item `week` ("2026-W39"), `iso_year`, `iso_week`, `monday`
+  (YYYY-MM-DD), `slug`, `title`, `formula`, `line` (the hook, else the why_it_matters text),
+  `line_source` ("hook" or "why_it_matters"), `confidence` from_source, `source` "MoleculeFinder
+  curated". 819 bytes today, about 370 more per week (about 20 KB after the first year).
+- **Every Monday run now changes the snapshot and opens a data PR.** A new ISO week always
+  changes featured.json, so meta.json's `refreshed` moves every week too (the "Data refreshed" line
+  on every molecule page now advances weekly, since the weekly run re-reads Wikidata anyway), the
+  weekly PR is never empty, and every Monday is a Vercel deploy plus an IndexNow ping for `/` and
+  `/molecule-of-the-week`. **The heartbeat still exists, twice.** The no-change branch of `commit
+  snapshot` now fires only for a second run in the same ISO week (a dispatch), and is not dead
+  code. And a new `heartbeat after a failed run` step (`if: failure()`) resets to `$GITHUB_SHA`,
+  throws away whatever the failed run half-wrote, and commits only `data/LAST_CHECK`, because a
+  seed error nobody fixes would otherwise fail, and commit nothing, every week until GitHub
+  disabled the public repo's cron and the watchdog with it. The job still fails, so the alarm
+  still fires.
+- `mfetl featured` built today's file offline from the committed snapshot: 2026-W39,
+  cinnamaldehyde, archive of one week, meta.json untouched (still 2026-09-21, the same week).
+- Tests: `tests/test_featured.py` (42: every rule, the committed seed against the committed
+  snapshot, the week arithmetic across 2026-W53 and a year without one, the clock never read, a
+  same-week re-run byte-identical, a new week moving exactly featured.json and meta.json) and
+  `tests/test_etl_workflow.py` (the workflow's own shell run against a throwaway repo and a bare
+  origin: the refresh path, the no-change heartbeat, the failed-run heartbeat publishing only
+  LAST_CHECK, and the step wiring). 433 tests, ruff clean. Mutation-checked: disabling the twin
+  rule, or leaving featured.json out of the change decision, fails the matching tests.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files

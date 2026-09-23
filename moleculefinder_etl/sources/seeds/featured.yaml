@@ -1,0 +1,194 @@
+# Molecule of the week (2026-09-23): one molecule per ISO week, 1 to 53, compiled by
+# transform/featured.py into data/snapshots/featured.json, which the web renders as the home
+# page block, /molecule-of-the-week and its RSS feed.
+#
+# WHICH WEEK IS "THIS WEEK". The ISO week of the snapshot's own `refreshed` date (meta.json),
+# never the clock of the machine that builds the site, so the weekly CI run, a local run and the
+# Vercel build all agree. The same week number repeats every year; week 53 only exists in some
+# ISO years (2026 is one) and is simply skipped in the others.
+#
+# THE HISTORY IS REBUILT FROM THIS FILE EVERY RUN. Nothing is stored between runs, so editing a
+# week that has already run rewrites the archive page and re-issues that week's RSS item.
+# Change future weeks only.
+#
+# RULES THE COMPILER ENFORCES (it fails the run, listing every problem, like why_it_matters):
+#   - all 53 weeks, each exactly once, each with a slug that exists in the snapshot
+#   - no slug twice, and no molecule that appears twice in the catalog (two records sharing a
+#     structure skeleton, the first block of the InChIKey: estradiol and estradiol-medication,
+#     vitamin-b12 and cyanocobalamin, glucose and galactose)
+#   - no hand-modeled macromolecule and nothing without a drawable structure
+#   - every molecule has a why_it_matters line (the fallback when a week has no hook)
+#   - nothing held in deferred_rows.csv
+#   - a hook is one line of 40 to 170 characters, ends with a period, and has no em or en dash
+#     and no advice or dosing wording (the same patterns the /vs comparisons are held to)
+# Editorial rules the compiler cannot check: plain language, neutral, no health advice, a story
+# a general reader would share. Seasonal weeks are anchored to the 2026-27 calendar; the
+# comment on each gives its first Monday.
+
+weeks:
+  # ── January to March ────────────────────────────────────────────────────────────────────
+  - week: 1           # 2027-01-04, midwinter
+    slug: water
+    hook: "Winter's odd fact: water expands as it freezes, which is why ice floats and ponds freeze from the top down."
+  - week: 2           # 2027-01-11, icy roads
+    slug: calcium-chloride
+    hook: "Icy-road season: calcium chloride keeps melting ice at temperatures well below the point where ordinary rock salt stops working."
+  - week: 3           # 2027-01-18, the low winter sun
+    slug: cholecalciferol
+    hook: "Midwinter, when the sun sits low: this is the form of vitamin D your skin makes when sunlight lands on it."
+  - week: 4           # 2027-01-25, citrus season
+    slug: limonene
+    hook: "Citrus season: the oil that sprays from a peeled orange is mostly limonene, stored in tiny glands in the peel."
+  - week: 5           # 2027-02-01, tea weather
+    slug: theanine
+    hook: "Tea weather: theanine is an amino acid found almost nowhere in nature except in tea leaves."
+  - week: 6           # 2027-02-08, Valentine's Day is Sunday 2027-02-14
+    slug: theobromine
+    hook: "Valentine's week: theobromine is chocolate's own gentle stimulant, a close cousin of caffeine, and the reason chocolate is risky for dogs."
+  - week: 7           # 2027-02-15
+    slug: trimethylamine-n-oxide
+    hook: "Deep-sea fish load up on TMAO to protect their proteins from crushing pressure. When bacteria break it down after the catch, it smells of old fish."
+  - week: 8           # 2027-02-22, science fair season
+    slug: sodium-bicarbonate
+    hook: "Science fair season: baking soda gives off carbon dioxide when it meets an acid like vinegar, the fizz behind every classroom volcano."
+  - week: 9           # 2027-03-01
+    slug: urea
+    hook: "In 1828 Friedrich Wöhler made urea, a molecule found in urine, from inorganic salts: a landmark in showing that living things run on ordinary chemistry."
+  - week: 10          # 2027-03-08, US clocks spring forward Sunday 2027-03-14
+    slug: adenosine
+    hook: "Spring forward and lose an hour: adenosine is the sleepiness signal that builds up in the brain the longer you stay awake."
+  - week: 11          # 2027-03-15, bees are flying again
+    slug: isoamyl-acetate
+    hook: "Bees are back: isoamyl acetate smells like banana candy, and it is also part of the alarm signal a honeybee gives off when it stings."
+  - week: 12          # 2027-03-22, early spring flowers
+    slug: beta-ionone
+    hook: "Violets are blooming: β-ionone is a key part of their scent, and it briefly tires the nose to itself, so the perfume seems to fade in and out."
+  - week: 13          # 2027-03-29, spring cleaning
+    slug: acetic-acid
+    hook: "Spring cleaning: household vinegar is about 5 percent acetic acid, enough to dissolve the chalky scale that hard water leaves behind."
+
+  # ── April to June ───────────────────────────────────────────────────────────────────────
+  - week: 14          # 2027-04-05, April showers
+    slug: geosmin
+    hook: "April showers: the earthy smell of rain on dry ground comes largely from geosmin, made by soil bacteria, and people notice it at a few parts per trillion."
+  - week: 15          # 2027-04-12, SPRING POLLEN
+    slug: histamine
+    hook: "Pollen season: the itching, sneezing and runny nose of hay fever are histamine at work, released by the body's own immune cells."
+  - week: 16          # 2027-04-19, Earth Day is Thursday 2027-04-22
+    slug: ozone
+    hook: "Earth Day week: high in the sky ozone blocks most of the sun's ultraviolet light, while at ground level the same molecule is part of smog."
+  - week: 17          # 2027-04-26, mint is back in the garden
+    slug: carvone
+    hook: "Mint season in the garden: carvone comes in two mirror-image forms, and one smells of spearmint while the other smells of caraway."
+  - week: 18          # 2027-05-03, roses in bloom
+    slug: geraniol
+    hook: "Roses in bloom: geraniol is one of the main molecules in the scent of a rose, and in citronella oil too."
+  - week: 19          # 2027-05-10
+    slug: dopamine
+    hook: "The brain's messenger for wanting: dopamine is tied more to motivation and anticipation than to pleasure itself."
+  - week: 20          # 2027-05-17, new-season garlic
+    slug: allicin
+    hook: "Garlic's bite is not there until you cut it: crushing a clove lets an enzyme make allicin within seconds."
+  - week: 21          # 2027-05-24, grilling season opens (Memorial Day weekend)
+    slug: propane
+    hook: "Grilling season: propane turns liquid under modest pressure, which is how a small barbecue tank holds so much fuel."
+  - week: 22          # 2027-05-31, SUNSCREEN SEASON (Memorial Day is Monday 2027-05-31)
+    slug: zinc-oxide
+    hook: "Sunscreen season: zinc oxide is one of the two mineral sunscreen filters, a white powder that blocks ultraviolet light at the skin's surface."
+  - week: 23          # 2027-06-07, strawberry season
+    slug: furaneol
+    hook: "Strawberry season: furaneol gives a ripe strawberry its sweet, cooked-sugar note, and the same molecule forms as bread bakes."
+  - week: 24          # 2027-06-14, lavender in bloom
+    slug: linalool
+    hook: "Lavender in bloom: linalool is its floral note, and one of the most common scent molecules in soap and shampoo."
+  - week: 25          # 2027-06-21, the summer solstice
+    slug: chlorophyll-a
+    hook: "The longest day of the year: chlorophyll a is the green molecule in every leaf that catches sunlight and starts photosynthesis."
+  - week: 26          # 2027-06-28, July 4 is Sunday 2027-07-04
+    slug: strontium
+    hook: "Fireworks week: the deep red in a firework comes from strontium, which burns crimson."
+
+  # ── July to September ───────────────────────────────────────────────────────────────────
+  - week: 27          # 2027-07-05, barbecue season
+    slug: guaiacol
+    hook: "Barbecue season: guaiacol is the core of smoke flavor, laid down by wood smoke on grilled meat and smoked fish."
+  - week: 28          # 2027-07-12, mosquito season
+    slug: deet
+    hook: "Mosquito season: DEET does not kill mosquitoes. It works on their sense of smell, which they use to find people."
+  - week: 29          # 2027-07-19, ice cream season
+    slug: vanillin
+    hook: "Ice cream season: nearly all the world's vanillin is made from wood pulp or petrochemicals, not taken from the vanilla orchid."
+  - week: 30          # 2027-07-26, SUMMER CHILI
+    slug: capsaicin
+    hook: "Chili season: capsaicin burns nothing. It triggers the same nerve sensor that real heat does, so your mouth reports a fire that is not there."
+  - week: 31          # 2027-08-02, International Cat Day is Sunday 2027-08-08
+    slug: nepetalactone
+    hook: "Catnip's secret: nepetalactone sends many cats, though not all, into a rolling, purring frenzy."
+  - week: 32          # 2027-08-09, watermelon season
+    slug: citrulline
+    hook: "Watermelon season: citrulline was first found in watermelon juice, and its name comes from the fruit's Latin name, Citrullus."
+  - week: 33          # 2027-08-16, beach season
+    slug: dimethyl-sulfide
+    hook: "Beach season: much of the smell of the seaside is dimethyl sulfide, given off by tiny ocean plankton."
+  - week: 34          # 2027-08-23, tomato season
+    slug: lycopene
+    hook: "Tomato season: lycopene is the red of a ripe tomato, and the same pigment colors watermelon and pink grapefruit."
+  - week: 35          # 2027-08-30, BACK TO SCHOOL COFFEE
+    slug: caffeine
+    hook: "Back to school, back to coffee: caffeine keeps you feeling alert by blocking adenosine, the brain's own sleepiness signal."
+  - week: 36          # 2027-09-06, harvest season
+    slug: ethylene
+    hook: "Harvest season: one ripe banana gives off enough ethylene, a plant hormone, to hurry the ripening of the fruit around it."
+  - week: 37          # 2027-09-13, the school chemistry lab
+    slug: copper-ii-sulfate
+    hook: "School's back: copper sulfate grows vivid blue crystals, and heating them drives off their water and turns them white."
+  - week: 38          # 2027-09-20, apple season
+    slug: malic-acid
+    hook: "Apple season: the sharp sourness of a green apple is malic acid, named from malum, the Latin word for apple."
+
+  # ── September to December (weeks 39 to 53 run first, from 2026-09-21) ─────────────────
+  - week: 39          # 2026-09-21, PUMPKIN SPICE, the first week of autumn and of this feature
+    slug: cinnamaldehyde
+    hook: "Pumpkin spice has no pumpkin in it. It leads with cinnamon, and cinnamaldehyde is the molecule that makes cinnamon taste like cinnamon."
+  - week: 40          # 2026-09-28
+    slug: quinine
+    hook: "Tonic water gets its bitterness from quinine, which also makes the drink glow blue under a black light."
+  - week: 41          # 2026-10-05, US Fire Prevention Week (the week of October 9)
+    slug: americium
+    hook: "Fire Prevention Week: many home smoke alarms hold a speck of americium, a synthetic element whose radiation helps the alarm sense smoke."
+  - week: 42          # 2026-10-12, autumn leaves
+    slug: beta-carotene
+    hook: "Leaf-peeping season: as leaves stop renewing their green chlorophyll, pigments like β-carotene show through as yellow and orange."
+  - week: 43          # 2026-10-19, haunted houses
+    slug: epinephrine
+    hook: "Haunted-house season: a good scare releases adrenaline, the surge that readies the body for a burst of action."
+  - week: 44          # 2026-10-26, HALLOWEEN CANDY (Halloween is Saturday 2026-10-31)
+    slug: sucrose
+    hook: "Trick-or-treat week: most Halloween candy is built on sucrose, the table sugar every other sweetener is measured against."
+  - week: 45          # 2026-11-02, US clocks went back Sunday 2026-11-01
+    slug: melatonin
+    hook: "Darker evenings are here: melatonin is the body's own nightfall signal, released as the light fades."
+  - week: 46          # 2026-11-09
+    slug: aspirin
+    hook: "Aspirin went on sale in 1899, but the idea is ancient: it is a modified form of salicylic acid, the compound behind willow bark."
+  - week: 47          # 2026-11-16, the week before Thanksgiving
+    slug: benzoic-acid
+    hook: "Cranberry sauce season: cranberries carry their own benzoic acid, the same preservative that is added to sodas and pickles."
+  - week: 48          # 2026-11-23, THANKSGIVING (Thursday 2026-11-26)
+    slug: tryptophan
+    hook: "Thanksgiving week: turkey takes the blame for tryptophan, but chicken and beef contain about as much of this amino acid."
+  - week: 49          # 2026-11-30, cold hands
+    slug: sodium-acetate
+    hook: "Cold hands season: click the metal disc in a reusable hand warmer and sodium acetate crystallizes, giving off heat as it does."
+  - week: 50          # 2026-12-07, candy canes
+    slug: menthol
+    hook: "Candy cane season: menthol is the cool in peppermint, and it works by switching on the same nerve sensor that real cold does."
+  - week: 51          # 2026-12-14, holiday baking
+    slug: ammonium-bicarbonate
+    hook: "Holiday baking week: hartshorn, the old leavening in many Scandinavian and German Christmas cookies, bakes away entirely into gas."
+  - week: 52          # 2026-12-21, CHRISTMAS TREE SCENT (Christmas is Friday 2026-12-25)
+    slug: alpha-pinene
+    hook: "Christmas tree week: a big part of that fresh pine smell is α-pinene, the most widespread terpene in nature."
+  - week: 53          # 2026-12-28, New Year's Eve (only in 53-week ISO years: 2026, 2032, 2037)
+    slug: carbon-dioxide
+    hook: "New Year's toast: the bubbles in champagne are carbon dioxide, made by yeast fermenting sugar inside the sealed bottle."
