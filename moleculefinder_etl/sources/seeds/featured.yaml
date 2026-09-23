@@ -170,7 +170,7 @@ weeks:
     hook: "Darker evenings are here: melatonin is the body's own nightfall signal, released as the light fades."
   - week: 46          # 2026-11-09
     slug: aspirin
-    hook: "Aspirin went on sale in 1899, but the idea is ancient: it is a modified form of salicylic acid, the compound behind willow bark."
+    hook: "Aspirin went on sale in 1899, but the idea is ancient: willow bark carries salicin, which the body turns into salicylic acid, the compound aspirin is made from."
   - week: 47          # 2026-11-16, the week before Thanksgiving
     slug: benzoic-acid
     hook: "Cranberry sauce season: cranberries carry their own benzoic acid, the same preservative that is added to sodas and pickles."
