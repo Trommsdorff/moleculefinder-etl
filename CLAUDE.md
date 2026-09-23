@@ -556,7 +556,7 @@ CLAUDE.md). Four commits:
     (clindamycin gains Cleocin, daraxonrasib Rasonque, oxytocin Pitocin, galactose's "cerebrose" is
     capitalised).
 
-## Molecule of the week (2026-09-23) — built on `traffic-2026-09-motw`, NOT pushed
+## Molecule of the week (2026-09-23) — DEPLOYED 2026-09-23 (`e09a853`, then heartbeat `5cc2a62`)
 A weekly pick for the home page, `/molecule-of-the-week` and its RSS feed (the web half is in the
 web CLAUDE.md). A reason to come back and a thing to share.
 - **Seed: `sources/seeds/featured.yaml`**, a `weeks:` list, one entry per ISO week 1 to 53: `slug`
@@ -631,6 +631,19 @@ web CLAUDE.md). A reason to come back and a thing to share.
   the old code would ship a snapshot without featured.json and its data PR would remove the web's
   copy (the block, the archive and the feed would then render nothing until this code is merged).
   With both merged, the first Monday run moves to week 40 and opens the data PR on its own.
+- **Deployed 2026-09-23, on Garrett's word, with one seed fix first** (`e09a853`): week 46's hook
+  (aspirin) now says willow bark carries salicin, which the body turns into salicylic acid, the
+  compound aspirin is made from. Week 46 is outside the exported window, so `mfetl featured` rebuilt
+  featured.json byte-identical (`cmp` against HEAD); 42 featured tests, then all 442, pass; ruff
+  clean. `main` fast-forwarded `2f29561` -> `e09a853` and was pushed before web `main`; no workflow
+  runs on push. **The pre-Monday dispatch** (run 35912517716, 19:55 UTC) was green in about 90 s: the
+  Sep 21 cold run's cache restored (`pubchem-raw-35595148008`), nothing fetched, so **zero PubChem
+  POSTs and zero X-Throttling-Control lines** (the throttle log is still unexercised; the first run
+  that POSTs is the first cold one, or the first after about Oct 21); Supabase load 788 molecules, 0
+  re-keyed; CI compiled the corrected seed (53 weeks, 53 with a hook); export identical, so heartbeat
+  `5cc2a62` touching only `data/LAST_CHECK`; `sync-web` "web repo snapshot already identical — no PR
+  needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
+  cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
