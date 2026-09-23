@@ -141,6 +141,77 @@ def test_a_heartbeat_that_cannot_push_warns_instead_of_failing(repo, tmp_path):
     assert "::warning::could not push the failed-run heartbeat" in proc.stdout
 
 
+# ── all-clear: a green run closes any open refresh-failure issue ─────────────
+FAKE_GH = """#!/bin/bash
+# Stands in for the GitHub CLI: records each call, answers `issue list` from FAKE_GH_LIST.
+printf '%s\\n' "$*" >> "$FAKE_GH_LOG"
+case "$1 $2" in
+  "issue list")
+    if [ -n "$FAKE_GH_LIST_RC" ]; then echo "HTTP 502: Bad Gateway" >&2; exit "$FAKE_GH_LIST_RC"; fi
+    printf '%s' "$FAKE_GH_LIST"; exit 0 ;;
+  "issue close")
+    case " $FAKE_GH_CLOSE_FAIL " in *" $3 "*) echo "HTTP 403: Resource not accessible" >&2; exit 1 ;; esac
+    exit 0 ;;
+esac
+echo "unexpected gh call: $*" >&2; exit 2
+"""
+RUN_URL = "https://github.com/Trommsdorff/moleculefinder-etl/actions/runs/123"
+
+
+def _all_clear(tmp_path, **fake) -> tuple[subprocess.CompletedProcess, list[str]]:
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(exist_ok=True)
+    gh = bin_dir / "gh"
+    gh.write_text(FAKE_GH)
+    gh.chmod(0o755)
+    calls = tmp_path / "gh-calls.log"
+    calls.write_text("")
+    env = {"PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}", "FAKE_GH_LOG": str(calls),
+           "RUNNER_TEMP": str(tmp_path), "RUN": RUN_URL, "EVENT": "schedule",
+           "FAKE_GH_LIST": "", "FAKE_GH_LIST_RC": "", "FAKE_GH_CLOSE_FAIL": "", **fake}
+    step = _step("all-clear", "Close any open refresh-failure issue")
+    proc = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=tmp_path, capture_output=True, text=True,
+                          env={**os.environ, **env})
+    return proc, calls.read_text().splitlines()
+
+
+def test_a_green_run_with_no_open_issue_exits_clean(tmp_path):
+    proc, calls = _all_clear(tmp_path)
+    assert proc.returncode == 0, proc.stderr
+    assert "nothing to close" in proc.stdout
+    assert len(calls) == 1 and calls[0].startswith("issue list --label refresh-failure --state open")
+
+
+def test_a_green_run_closes_every_open_issue_naming_the_run(tmp_path):
+    proc, calls = _all_clear(tmp_path, FAKE_GH_LIST="2\n7\n")
+    assert proc.returncode == 0, proc.stderr
+    closes = [c for c in calls if c.startswith("issue close")]
+    assert [c.split()[2] for c in closes] == ["2", "7"]
+    for c in closes:
+        assert f"--comment Run {RUN_URL} (schedule, " in c and "went green" in c
+
+
+def test_a_failure_to_list_or_close_warns_and_never_fails_the_run(tmp_path):
+    proc, _ = _all_clear(tmp_path, FAKE_GH_LIST_RC="1")
+    assert proc.returncode == 0
+    assert "::warning::could not list refresh-failure issues" in proc.stdout
+    assert "HTTP 502" in proc.stdout
+
+    proc, calls = _all_clear(tmp_path, FAKE_GH_LIST="2\n7\n", FAKE_GH_CLOSE_FAIL="2")
+    assert proc.returncode == 0
+    assert "::warning::could not close refresh-failure issue #2" in proc.stdout
+    assert "closed #7" in proc.stdout
+
+
+def test_all_clear_runs_only_after_a_green_run_and_alarm_only_after_a_red_one():
+    jobs = _workflow()["jobs"]
+    clear, alarm = jobs["all-clear"], jobs["alarm"]
+    assert clear["needs"] == ["run", "sync-web"] and "if" not in clear      # default: success()
+    assert clear["permissions"] == {"issues": "write"}
+    assert clear["steps"][0]["env"]["GH_REPO"] == "${{ github.repository }}"
+    assert alarm["needs"] == ["run", "sync-web"] and alarm["if"] == "failure()"
+
+
 def test_both_heartbeats_are_wired_where_they_can_run():
     """The commit step runs only on success and still has its no-change branch; the failed-run
     step runs only on failure, after it, and before the cache is saved."""
