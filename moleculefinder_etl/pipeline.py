@@ -148,11 +148,13 @@ def stage_fetch(settings: Settings) -> None:
 def _prior_snapshot() -> dict[int, dict]:
     """The last exported snapshot, keyed by CID, for fields that are carried forward.
 
-    Only ``structure_svg`` uses it today (see ``assemble._carried_svg``): RDKit draws ~7% of
+    Two fields use it. ``structure_svg`` (see ``assemble._carried_svg``): RDKit draws ~7% of
     the catalog differently on macOS than on Linux, so re-rendering on whichever machine
     happens to run the pipeline rewrote 53 files a week with no visible change. Reading the
-    previous export makes the drawing a stored artifact. An absent or unreadable snapshot is
-    not an error: everything simply redraws, which is what a first run does anyway.
+    previous export makes the drawing a stored artifact. And ``summary``, only when Wikidata
+    edits the same item down to the placeholder (``assemble._carried_summary``, 2026-09-28).
+    An absent or unreadable snapshot is not an error: everything simply redraws and takes
+    the row's summary, which is what a first run does anyway.
     """
     out: dict[int, dict] = {}
     molecules = SNAPSHOTS / "molecules"

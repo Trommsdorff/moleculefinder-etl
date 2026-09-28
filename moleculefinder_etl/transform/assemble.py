@@ -19,6 +19,7 @@ from .confidence import label_for
 from . import names, slugs, categories, hooks, structures, similarity, families, buckets, toxicity
 from ..config import SEEDS_DIR
 from ..sources.registry import assert_not_blocked
+from ..sources.wikidata import is_placeholder
 
 log = logging.getLogger("mfetl")
 
@@ -901,17 +902,49 @@ def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
     return {"structure_svg": structures.svg_for(smiles), "structure_svg_key": key}
 
 
+def _carried_summary(row: dict, prior: dict | None) -> "str | None":
+    """The canon row's Wikidata summary, unless a live read walked the SAME item back to the
+    placeholder, in which case the summary this molecule shipped with.
+
+    On 2026-09-25 a Wikidata editor reset Q414619's English description from "chemical
+    compound CaHPO₄" to "chemical compound" (the formula became an alias). The Monday run read
+    it live, and the export guard, which refuses a summary reverting to the placeholder however
+    fresh the fetch, failed the whole week over dicalcium phosphate: a field no page shows
+    (the page reads ``description`` first, and every record has one). Nothing a later run did
+    would change the answer, so every Monday would have failed the same way.
+
+    The guard's rule stands, the placeholder never replaces a real summary; this applies it
+    instead of failing on it. The kept text was this item's own description until the edit.
+    Everything else flows through: a real description replaces the old one, a record that
+    shipped the placeholder keeps getting it, and a placeholder arriving with a DIFFERENT item
+    is left to the guard, because that is the 2026-09-09 shape (one CID, two items, the wrong
+    one won) and wants a person to look at ``wikidata._choose_item``.
+    """
+    summary = row.get("summary")
+    if not (prior and is_placeholder(summary)):
+        return summary
+    shipped = prior.get("summary")
+    same_item = bool(row.get("wikidata_qid")) and row.get("wikidata_qid") == prior.get("wikidata_qid")
+    if same_item and shipped and not is_placeholder(shipped):
+        log.info("  summary: kept %s's shipped %r; Wikidata %s now has only the placeholder",
+                 prior.get("slug"), shipped, row["wikidata_qid"])
+        return shipped
+    return summary
+
+
 def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = None) -> dict:
     """Build one molecule record from a canon row + its fetched PubChem payload.
 
     ``prior`` is this molecule's record from the last exported snapshot, when there is one.
-    It is used for exactly one thing: carrying the drawn structure forward (see
-    ``_carried_svg``). Nothing else reads it, so a missing prior only means a redraw.
+    It is used for exactly two things: carrying the drawn structure forward (see
+    ``_carried_svg``) and keeping a real summary that Wikidata edited down to the placeholder
+    (``_carried_summary``). A missing prior only means a redraw and the row's summary as is.
     """
     cid = row["cid"]
     props = fetched.get("props") or {}
     curated = fetched.get("curated") or {}
     syns = fetched.get("synonyms") or []
+    summary = _carried_summary(row, prior)
 
     iso = _first(props, _ISO_KEYS)
     can = _first(props, _CAN_KEYS)
@@ -929,8 +962,8 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "tier": row.get("tier", "canon"),
         "wikidata_qid": row.get("wikidata_qid"), "wikipedia_title": row.get("enwiki_title"),
         "pageviews_monthly": int(row.get("pageviews") or 0),
-        "summary": row.get("summary"),
-        "summary_source": _src("wikidata") if row.get("summary") else None,
+        "summary": summary,
+        "summary_source": _src("wikidata") if summary else None,
         "iupac_name": None,
         "molecular_formula": props.get("MolecularFormula"),
         "molecular_weight": _to_float(props.get("MolecularWeight")),

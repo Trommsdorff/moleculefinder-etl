@@ -150,6 +150,12 @@ def names_for_qids(qids: list[str]) -> dict[str, dict]:
 PLACEHOLDER_DESCRIPTION = "chemical compound"
 
 
+def is_placeholder(desc: object) -> bool:
+    """True for Wikidata's generic "chemical compound", in any case, with or without a full
+    stop. Item selection, record assembly and the export guard all ask this one question."""
+    return isinstance(desc, str) and desc.strip().lower().rstrip(".") == PLACEHOLDER_DESCRIPTION
+
+
 def _choose_item(items: list[tuple[str, str | None]]) -> dict:
     """Pick ONE Wikidata item for a PubChem CID, deterministically.
 
@@ -176,10 +182,7 @@ def _choose_item(items: list[tuple[str, str | None]]) -> dict:
     7 of the 10 changes replace a ``"chemical compound"`` summary with a real one, and none
     introduce a placeholder. Repeating the query returns the same choice for all 769.
     """
-    def is_placeholder(desc: str | None) -> bool:
-        return bool(desc) and desc.strip().lower().rstrip(".") == PLACEHOLDER_DESCRIPTION
-
-    real = [i for i in items if i[1] and not is_placeholder(i[1])] or items
+    real =[i for i in items if i[1] and not is_placeholder(i[1])] or items
     qid, desc = min(real, key=lambda i: (_qid_sort_key(i[0]), i[0]))
     return {"desc": desc, "qid": qid}
 

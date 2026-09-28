@@ -30,6 +30,11 @@ vasopressin, because one PubChem CID can map to two Wikidata items and the place
 came back first, and the live-fetch rule would have let it through. A summary reverting to
 the placeholder is never an improvement, so no provenance makes it one.
 
+Since 2026-09-28 assembly applies that rule before this guard sees it, for the one shape that
+needs no person: the SAME Wikidata item edited down to the placeholder keeps its shipped
+summary (``assemble._carried_summary``). What still reaches this check is a placeholder that
+arrived with a different item, which is the 2026-09-09 shape and stops the run.
+
 Set ``MFETL_ALLOW_REGRESSION=1`` to export anyway. It exists because a deliberate change
 to the pipeline can legitimately drop a value (tightening ``toxicity.best_oral`` is the
 obvious one: it nulls LD50s on purpose), and a guard with no override would make that
@@ -43,10 +48,10 @@ import os
 from pathlib import Path
 
 from .. import freshness
+from ..sources.wikidata import is_placeholder as _is_placeholder
 
 log = logging.getLogger("mfetl")
 
-PLACEHOLDER_SUMMARY = "chemical compound"
 OVERRIDE_ENV = "MFETL_ALLOW_REGRESSION"
 
 
@@ -69,10 +74,6 @@ def _prior(snapshots: Path) -> dict[str, dict]:
         if isinstance(rec, dict) and rec.get("slug"):
             out[rec["slug"]] = rec
     return out
-
-
-def _is_placeholder(summary: object) -> bool:
-    return isinstance(summary, str) and summary.strip().lower().rstrip(".") == PLACEHOLDER_SUMMARY
 
 
 def _regressions(new: list[dict], prior: dict[str, dict], fresh: dict) -> list[dict]:

@@ -555,6 +555,40 @@ CLAUDE.md). Four commits:
     health-hazard and irritant) and formic acid (joins environmental-hazard); and four synonym lines
     (clindamycin gains Cleocin, daraxonrasib Rasonque, oxytocin Pitocin, galactose's "cerebrose" is
     capitalised).
+- **Sep 28 failed in the EXPORT, not the load: the guard refused an upstream Wikidata edit.**
+  Run 36422607328 (schedule, started 12:33 UTC, warm cache `pubchem-raw-35912517716`), issue #3,
+  failure heartbeat `be338df`. Stage 4, `snapshot_guard.check`, raised `SnapshotRegression`:
+  `dicalcium-phosphate (summary): 'chemical compound CaHPO₄' -> 'chemical compound'`, fetched live.
+  **Not the Sep 14 DELETE and not transient:** all 1,099 Supabase requests answered 2xx, the load
+  finished (788 molecules), and the retry logged no warning. Zero PubChem POSTs (warm cache), so no
+  throttle lines; the throttle log is still unexercised. **Cause, upstream and legitimate:** on
+  2026-09-25 08:19 UTC a Wikidata editor reset Q414619's English description to "chemical compound"
+  (the formula became a `mul` alias; ~20 languages in one sweep). Same item, same QID, one item for
+  CID 24441, so `_choose_item` had nothing to choose. The guard's placeholder rule (run 6, MF-6)
+  refuses that however fresh, and nothing a later run does changes the answer, so **every Monday
+  would have failed the same way** until a person stepped in, over a field no page shows (the page
+  reads `description` first; all 788 have one). The retry stays at 3 attempts: this was not the DELETE.
+  - **Fix, `assemble._carried_summary`** (beside `_carried_svg`, fed by the same prior snapshot): when
+    the canon row carries the SAME QID as the shipped record and only the placeholder, the shipped
+    summary is kept and the run logs `summary: kept <slug>'s shipped ...`. A real new description
+    still replaces the old one; a record that shipped the placeholder keeps getting it; a placeholder
+    arriving with a DIFFERENT item (the 2026-09-09 shape) is left to the guard and still stops the
+    run. It happens at assembly, so Supabase and `worlds.json` get the kept text too (on Sep 28 the
+    load had already written the placeholder to Supabase before the export refused).
+    `wikidata.is_placeholder` is now the one predicate that item selection, assembly and the guard
+    share. `tests/test_summary_carry.py` (11) replays the day with the real values end to end through
+    the export; with the carry disabled 3 of them fail, including the Sep 28 export. 453 tests, ruff
+    clean.
+  - **Local full-size check before the push:** `seed` (Wikidata live, 770), `fetch`, `transform`, then
+    the guard read-only against the committed snapshot. The carry fired for dicalcium phosphate only;
+    no summary or QID regression. The guard did flag chlordiazepoxide's and ketoconazole's LD50s: this
+    Mac's PUG-View cache is from Sep 12 and predates the Sep 21 CI refresh that found them (the guard
+    catching a stale local cache, as built; CI's cache has both). One real upstream summary edit rides
+    in the next data PR (folic acid, `vitamin B9; nutrient essential for DNA synthesis` ->
+    `compound, a vitamer of "vitamin B9"`, not displayed). `data/` restored from HEAD afterwards.
+  - **Worth knowing:** 29 shipped summaries read "chemical compound" plus a qualifier, and phenol's
+    (`chemical compound C6H5OH`) has exactly the shape that editor cleaned up. If it goes the same way,
+    the carry keeps it and the run stays green.
 
 ## Molecule of the week (2026-09-23) — DEPLOYED 2026-09-23 (`e09a853`, then heartbeat `5cc2a62`)
 A weekly pick for the home page, `/molecule-of-the-week` and its RSS feed (the web half is in the
