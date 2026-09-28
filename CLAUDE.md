@@ -589,6 +589,23 @@ CLAUDE.md). Four commits:
   - **Worth knowing:** 29 shipped summaries read "chemical compound" plus a qualifier, and phenol's
     (`chemical compound C6H5OH`) has exactly the shape that editor cleaned up. If it goes the same way,
     the carry keeps it and the run stays green.
+  - **The week redelivered the same evening** (fix `aeda8bf`, pushed; no workflow ran on the push).
+    Dispatch run 36492622117 (22:28 to 22:33 UTC), all green. `run` 2m43s: restored the failed run's
+    cache (`pubchem-raw-36422607328`, so Wikidata still fresh from 12:34 and not re-read), zero PubChem
+    POSTs so still no throttle lines, the carry line for dicalcium phosphate and no other, load 788
+    with every request 2xx and no retry warning (Supabase's summary for it is back to the shipped
+    text), week 40 compiled, refresh commit `ae951d8` (canon.parquet, featured.json, meta.json
+    `2026-09-28`, folic-acid, tocopherol), cache saved `pubchem-raw-36492622117`. `sync-web` opened web
+    PR #7 (4 files), waited for `ci` run 36492928295 (`verify` success on `70a988ba`), squash-merged as
+    web `55ca81b`. `all-clear` closed issue #3 with its comment; `alarm` skipped. Production deployment
+    6722084901 succeeded; IndexNow run 36493134081: base `4e3a187`, 1108 -> 1108, 4 changed, 4
+    submitted and 4 accepted (HTTP 200), audit exact, tag moved to `55ca81b`. **Live:** `/` shows
+    "Week 40, 2026 · from September 28, 2026" Quinine; `/molecule-of-the-week` lists weeks 40 and 39;
+    the feed (200, `application/rss+xml`) has two items, W40 Quinine and W39 Cinnamaldehyde. What moved
+    on pages besides the week: folic acid's synonym line (vitamin Bc leaves, PteGlu joins) and
+    tocopherol's (Wikidata's alias "methyltocols" leads); folic acid's new Wikidata summary is stored
+    but not displayed. The Oct 5 cron re-reads Wikidata (the 6-day TTL lapses Oct 4 about 12:34) and
+    should restore this cache warm.
 
 ## Molecule of the week (2026-09-23) — DEPLOYED 2026-09-23 (`e09a853`, then heartbeat `5cc2a62`)
 A weekly pick for the home page, `/molecule-of-the-week` and its RSS feed (the web half is in the
