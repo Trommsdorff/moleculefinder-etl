@@ -696,7 +696,7 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Tranche 2 (2026-10-18) — 788 -> 912, guard before load, grants. BUILT, NOT PUSHED
+## Tranche 2 (2026-10-18) — 788 -> 911, guard before load, grants. BUILT, NOT PUSHED
 Branch `traffic-2026-10-tranche2` from `origin/main` `b7b9217`. The "recurring tranche" of
 `../BUILD-PLAN-growth-2026-10-18.md`. Review page (every assignment, every ruling, every pair):
 https://claude.ai/artifact/TU7jpGmY3M9aq4TynVmCr1
@@ -725,8 +725,9 @@ Do not raise it again.** No recreational-drug row, ever (Garrett, 2026-10-18).
   Totals: 118 `prescription-medicine`, 6 `otc-medicine`, 1 `plant-compound`, 1 `everyday-chemistry`;
   12 `is_otc` (all in `otc_allowlist.yaml`; new unmapped group `urinary_otc`), 9 `dual_use`. One new
   family, `addiction-medicine`. 126 `why_it_matters` lines (90 to 170 chars).
-- **Two live pages removed under the rule (Garrett, 2026-10-18): fenbendazole and carfentanil**, both
-  veterinary only. Out of `scope_b_core.csv` (tranche `2026-09-A` is now 288), into `deferred_rows.csv`,
+- **Three live pages removed under the rule (Garrett, 2026-10-18): fenbendazole and carfentanil**, both
+  veterinary only, **and oxandrolone** (second ruling, same day; see below). Out of `scope_b_core.csv`
+  (tranche `2026-09-A` is now 287), into `deferred_rows.csv`,
   their `why_it_matters` lines deleted. What referenced them, and what happened: **worlds, trails
   (`relationships.csv`), comparisons, featured weeks, brands, food and product hubs: nothing** (checked
   by grep and by the web test `lib/gone.test.ts`); **boards** lightest, biggest and most-searched
@@ -764,25 +765,39 @@ Do not raise it again.** No recreational-drug row, ever (Garrett, 2026-10-18).
   "(Protonix)", flunitrazepam gaining "(Rohypnol)") were reverted to the shipped values, so the
   commit carries the tranche only. "roofies" and "floonies" (flunitrazepam's new PubChem head) are on
   `synonym_do_not_use.yaml`.
-- 479 tests. Ruff 0.17.0 reports 113 findings on `main` already; this branch adds none.
+- 480 tests. Ruff 0.17.0 reports 113 findings on `main` already; this branch adds none.
 
-### Found, not ruled (Garrett's call)
-- **Oxandrolone fails the rule as written:** the FDA withdrew approval of Oxandrin and every generic on
-  2023-06-28 (88 FR 41970) and no UK or EU licence is known. It is live (tranche 1). Left as is.
-- **Flunitrazepam:** a current licence anywhere in the EU could not be confirmed either way. Left as is.
+### Second rulings (Garrett, 2026-10-18)
+- **Oxandrolone: HELD and removed**, exactly like fenbendazole and carfentanil. The FDA withdrew approval
+  of Oxandrin and every generic on 2023-06-28 (88 FR 41970); no UK or EU licence. What referenced it:
+  six live hubs (alcohols, esters, prescription-medicine, irritant, health-hazard, ghs-danger), all still
+  far over the floor; the anabolic-steroid hub, which clostebol had just brought to 3 (not live: pruned
+  2026-09-06), back to 2 and not emitted; the biggest, lightest and most-searched boards (no oral LD50,
+  so never on Deadliest or Safest); the similarity edges of androstenone, dihydrotestosterone and
+  oxymetholone, recomputed; the search index and the /roam map. No comparison, world, trail, featured
+  week, brand or curated hub named it. `/m/oxandrolone` answers 410.
+- **Flunitrazepam: STAYS**, confirmed from the regulator's own register: AIFA (Italy) lists ROIPNOL
+  1 mg film-coated tablets, holder Cheplapharm Arzneimittel GmbH, AIC 023328 (pack 023328077),
+  administrative status A (authorised), marketed, not revoked or suspended, special prescription (RMR),
+  pack authorised 2000-12-11. Queried 2026-10-18 through AIFA's public medicines-database API; recorded
+  in `approvals.yaml` and on the record. Spain's AEMPS register (CIMA REST API) lists no flunitrazepam
+  product (checked against diazepam, 44 products, so the zero is real); one national licence is enough.
 - Checked and fine: daraxonrasib (FDA approved 2026-08-26, Rasonque), suzetrigine, methoxyflurane,
   metamizole, tianeptine, secobarbital.
 
 ### Deploy sequence (on Garrett's word, after Monday 2026-10-19's scheduled run is green)
-1. Merge ETL `origin/main` (Monday's refresh) into this branch; re-run `mfetl transform` + `mfetl export`
-   from the warm cache with Supabase blanked; re-apply the drift revert only if a fresh fetch was made;
-   479 tests. Fast-forward ETL `main` and push. Nothing deploys from this repo.
-2. **Apply migrations 0004 then 0005 to the live database** over the session pooler (psycopg, as for
-   0003; both idempotent). Check: the anon key gets 401 on `event` and `ingest_run` and 200 on
-   `molecule`; one POST to `https://moleculefinder.com/api/e` lands a row; `/dashboard` renders.
-3. Web: merge `origin/main`, `npm run sync-data`, build, the page sweep, then push web `main` (the deploy).
-4. Confirm the IndexNow run from `deployment_status`: it now submits removed URLs too, so expect both
-   `/m/fenbendazole` and `/m/carfentanil` in the batch, and confirm both answer 410 live.
+1. **Merge Monday's data refresh into the branch, rebuild, retest, publish pipeline main.** Merge ETL
+   `origin/main` into `traffic-2026-10-tranche2`; `mfetl transform` + `mfetl export` from the warm cache
+   with Supabase blanked (re-apply the drift revert only if a fresh fetch was made); all 480 tests;
+   fast-forward ETL `main` and push. Nothing deploys from this repo.
+2. **Apply 0004 then 0005 to the live database** over the session pooler (psycopg, as for 0003; both
+   idempotent), then the four checks: the public (anon) key gets 401 on `event`; 401 on `ingest_run`;
+   200 on `molecule`; one POST to `https://moleculefinder.com/api/e` lands a row that `/dashboard` shows.
+3. **Push web `main` and watch the Vercel build to Ready**: merge web `origin/main`, `npm run sync-data`,
+   build and page sweep first, then push. Re-measure Lighthouse on the five archetypes against production.
+4. **Confirm IndexNow ran** from `deployment_status`: the batch includes the three removed URLs
+   (`/m/fenbendazole`, `/m/carfentanil`, `/m/oxandrolone`), all three answer 410 live, and the audit count
+   matches the new sitemap (1,262 plus whatever Monday's refresh moves).
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
