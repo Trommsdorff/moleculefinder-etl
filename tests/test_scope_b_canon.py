@@ -15,7 +15,8 @@ from moleculefinder_etl.transform import canon
 # The everyday core as it shipped: 489 Scope B + 9 pungent/stinky board additions.
 ORIGINAL_CORE = 498
 # Catalog-growth tranches, newest last. Each is a `batch`-tagged block in the CSV.
-TRANCHES = {"2026-09-A": 290}   # 295 built, 5 held back (see deferred_rows.csv)
+TRANCHES = {"2026-09-A": 290,   # 295 built, 5 held back (see deferred_rows.csv)
+            "2026-10-A": 120}   # 120 built from 148 rows read; 28 skipped, 21 held
 
 
 def _csv_rows():

@@ -41,3 +41,9 @@
   why: another name for fused quartz, a glass made of silicon dioxide
 - name: fused silica
   why: another name for fused quartz, a glass made of silicon dioxide
+# Street slang (2026-10-18): a fresh PubChem fetch put these at the head of flunitrazepam's list,
+# where they would have become its synonym line. Slang for a drug is not a name for the molecule.
+- name: roofies
+  why: street slang for flunitrazepam tablets, not a name for the molecule
+- name: floonies
+  why: street slang for flunitrazepam tablets, not a name for the molecule

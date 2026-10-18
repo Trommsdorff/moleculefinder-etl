@@ -41,6 +41,10 @@ antihistamines:           # allergy, OTC
   - Meclizine               # motion sickness
   - Cyclizine
   - Ketotifen
+  - Budesonide              # tranche 2026-10-A
+  - Mometasone              # tranche 2026-10-A
+  - Fluticasone propionate  # tranche 2026-10-A
+  - Azelastine              # tranche 2026-10-A
 
 antacids_and_gi:          # heartburn / stomach, OTC
   - Calcium carbonate       # Tums (also a mineral; OTC use keeps it in core)
@@ -55,6 +59,8 @@ antacids_and_gi:          # heartburn / stomach, OTC
   - Simethicone
   - Docusate                # stool softener
   - Bisacodyl               # laxative
+  - Hyoscine butylbromide   # tranche 2026-10-A
+  - Lactulose               # tranche 2026-10-A
 
 cough_cold_decongestant:  # OTC
   - Acetylcysteine          # OTC mucolytic across much of the EU (tranche 2026-09-A)
@@ -64,6 +70,7 @@ cough_cold_decongestant:  # OTC
   - Phenylephrine
   - Oxymetazoline
   - Ephedrine               # borderline (behind-counter); keep, easy to drop
+  - Levomethamphetamine     # tranche 2026-10-A
 
 topical_and_skin:         # OTC
   # Added with tranche 2026-09-A. All four are sold without a prescription somewhere in
@@ -80,6 +87,8 @@ topical_and_skin:         # OTC
   - Miconazole
   - Zinc oxide              # diaper cream / sunscreen
   - Calamine
+  - Benzocaine              # tranche 2026-10-A
+  - Adapalene               # tranche 2026-10-A
 
 # Recorded as an OTC decision but deliberately NOT mapped to a hub in
 # relationships.USE_GROUPS: naloxone is the only member, and a one-molecule /in/ page is
@@ -87,6 +96,7 @@ topical_and_skin:         # OTC
 # covers this: a group with no USE_GROUPS mapping is a plain allowlist entry.
 emergency_otc:            # added with tranche 2026-09-A
   - Naloxone                # Narcan nasal spray, OTC in the US since 2023
+  - Levonorgestrel          # tranche 2026-10-A
 
 vitamins_supplements_otc: # sold as supplements; many also nutrients
   - Glucosamine
@@ -98,3 +108,6 @@ antiseptics:              # wound / surface disinfectants, OTC (also everyday-ch
   - Isopropyl alcohol       # = rubbing alcohol
   - Iodine                  # tincture of iodine (molecular I2)
   - Chlorhexidine           # antiseptic mouthwash / skin prep
+
+urinary_otc:               # urinary pain relief, OTC (tranche 2026-10-A); one member, so no hub
+  - Phenazopyridine         # tranche 2026-10-A

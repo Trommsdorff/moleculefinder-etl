@@ -787,3 +787,123 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 792,Butane,7843,9764,everyday-chemistry,alkane,,,,,2026-09-A
 793,Hypochlorous acid,24341,9624,everyday-chemistry,inorganic,,yes,,,2026-09-A
 794,Americium,23966,9495,element-material,element,,,,,2026-09-A
+795,Clobetasol propionate,32798,9945,prescription-medicine,corticosteroid,,,,,2026-10-A
+796,Prazosin,4893,9850,prescription-medicine,antihypertensive,,,,,2026-10-A
+797,Sirolimus,5284616,9597,prescription-medicine,immunosuppressant,,,,,2026-10-A
+798,Diltiazem,39186,9496,prescription-medicine,antihypertensive,,,,,2026-10-A
+799,Mifepristone,55245,9486,prescription-medicine,hormone-medicine,,,,,2026-10-A
+800,Acetazolamide,1986,9343,prescription-medicine,other,,,,,2026-10-A
+801,Meprobamate,4064,9308,prescription-medicine,anxiolytic,,,,,2026-10-A
+802,Suvorexant,24965990,9296,prescription-medicine,hypnotic,,,,,2026-10-A
+803,Levetiracetam,5284583,9248,prescription-medicine,anticonvulsant,,,,,2026-10-A
+804,Cariprazine,11154555,9243,prescription-medicine,antipsychotic,,,,,2026-10-A
+805,Phenazopyridine,4756,9170,otc-medicine,analgesic,yes,,,,2026-10-A
+806,Budesonide,5281004,9100,prescription-medicine,corticosteroid,yes,,,,2026-10-A
+807,Dihydrocodeine,5284543,9095,prescription-medicine,opioid,,,,,2026-10-A
+808,Agomelatine,82148,8837,prescription-medicine,antidepressant,,,,,2026-10-A
+809,Disulfiram,3117,8799,prescription-medicine,addiction-medicine,,yes,,,2026-10-A
+810,Levomethamphetamine,36604,8734,otc-medicine,respiratory,yes,,,,2026-10-A
+811,Bilastine,185460,8723,prescription-medicine,antihistamine,,,,,2026-10-A
+812,Zidovudine,35370,8607,prescription-medicine,antiviral,,,,,2026-10-A
+813,Nystatin,44424838,8512,prescription-medicine,antifungal,,,,,2026-10-A
+814,Pramipexole,119570,8494,prescription-medicine,parkinsons-medicine,,,,,2026-10-A
+815,Lenacapavir,133082658,8430,prescription-medicine,antiviral,,,,,2026-10-A
+816,Hyoscine butylbromide,6852391,8330,otc-medicine,antispasmodic,yes,,,,2026-10-A
+817,Betamethasone,9782,8067,prescription-medicine,corticosteroid,,,,,2026-10-A
+818,Clarithromycin,84029,8020,prescription-medicine,antibiotic,,,,,2026-10-A
+819,Varenicline,170361,8013,prescription-medicine,addiction-medicine,,,,,2026-10-A
+820,Oxybutynin,4634,8011,prescription-medicine,antispasmodic,,,,,2026-10-A
+821,Chloramphenicol,5959,8009,prescription-medicine,antibiotic,,,,,2026-10-A
+822,Clomifene,2800,7989,prescription-medicine,hormone-medicine,,,,,2026-10-A
+823,Paclitaxel,36314,7985,prescription-medicine,antineoplastic,,yes,,,2026-10-A
+824,Indometacin,3715,7869,prescription-medicine,nsaid,,,,,2026-10-A
+825,Hydralazine,3637,7840,prescription-medicine,antihypertensive,,,,,2026-10-A
+826,Fenofibrate,3339,7817,prescription-medicine,lipid-lowering,,,,,2026-10-A
+827,Mometasone,441336,7787,prescription-medicine,corticosteroid,yes,,,,2026-10-A
+828,Dapoxetine,71353,7760,prescription-medicine,ssri,,,,,2026-10-A
+829,Misoprostol,5282381,7739,prescription-medicine,other,,,,,2026-10-A
+830,Lurasidone,213046,7716,prescription-medicine,antipsychotic,,,,,2026-10-A
+831,Tamoxifen,2733526,7716,prescription-medicine,antineoplastic,,,,,2026-10-A
+832,Remdesivir,121304016,7714,prescription-medicine,antiviral,,,,,2026-10-A
+833,Nifedipine,4485,7689,prescription-medicine,antihypertensive,,,,,2026-10-A
+834,Cortisone,222786,7644,prescription-medicine,corticosteroid,,yes,,,2026-10-A
+835,Doxorubicin,31703,7619,prescription-medicine,antineoplastic,,,,,2026-10-A
+836,Armodafinil,9690109,7579,prescription-medicine,stimulant,,,,,2026-10-A
+837,Candesartan,2541,7506,prescription-medicine,antihypertensive,,,,,2026-10-A
+838,Midodrine,4195,7502,prescription-medicine,other,,,,,2026-10-A
+839,Rivaroxaban,9875401,7417,prescription-medicine,anticoagulant,,,,,2026-10-A
+840,Dutasteride,6918296,7411,prescription-medicine,hormone-medicine,,,,,2026-10-A
+841,Sucralfate,121494085,7385,prescription-medicine,other,,,,,2026-10-A
+842,Esketamine,182137,7370,prescription-medicine,antidepressant,,,,,2026-10-A
+843,Triazolam,5556,7369,prescription-medicine,benzodiazepine,,,,,2026-10-A
+844,Eszopiclone,969472,7367,prescription-medicine,hypnotic,,,,,2026-10-A
+845,Levonorgestrel,13109,7341,prescription-medicine,hormone-medicine,yes,,,,2026-10-A
+846,Ursodeoxycholic acid,31401,7340,prescription-medicine,other,,yes,,,2026-10-A
+847,Benzocaine,2337,7227,otc-medicine,anaesthetic,yes,,,,2026-10-A
+848,Fluticasone propionate,444036,7196,prescription-medicine,corticosteroid,yes,,,,2026-10-A
+849,Nefopam,4450,7189,prescription-medicine,analgesic,,,,,2026-10-A
+850,Ramipril,5362129,7156,prescription-medicine,antihypertensive,,,,,2026-10-A
+851,Trimetazidine,21109,7154,prescription-medicine,other,,,,,2026-10-A
+852,Azelastine,2267,7137,prescription-medicine,antihistamine,yes,,,,2026-10-A
+853,Brexpiprazole,11978813,7098,prescription-medicine,antipsychotic,,,,,2026-10-A
+854,Dexmedetomidine,5311068,7098,prescription-medicine,alpha-2-agonist,,,,,2026-10-A
+855,Cefuroxime,5479529,7085,prescription-medicine,antibiotic,,,,,2026-10-A
+856,Ticagrelor,9871419,7073,prescription-medicine,anticoagulant,,,,,2026-10-A
+857,Telmisartan,65999,7055,prescription-medicine,antihypertensive,,,,,2026-10-A
+858,Fluorouracil,3385,7012,prescription-medicine,antineoplastic,,,,,2026-10-A
+859,Azelaic acid,2266,6986,prescription-medicine,organic-acid,,yes,,,2026-10-A
+860,Testosterone enanthate,9416,6918,prescription-medicine,hormone-medicine,,,,,2026-10-A
+861,Ciclosporin,5284373,6914,prescription-medicine,immunosuppressant,,,,,2026-10-A
+862,Rifampicin,5381226,6902,prescription-medicine,antibiotic,,,,,2026-10-A
+863,Letrozole,3902,6890,prescription-medicine,antineoplastic,,,,,2026-10-A
+864,Oxcarbazepine,34312,6881,prescription-medicine,anticonvulsant,,,,,2026-10-A
+865,Piracetam,4843,6873,prescription-medicine,other,,,,,2026-10-A
+866,Oxazepam,4616,6835,prescription-medicine,benzodiazepine,,,,,2026-10-A
+867,Dexmethylphenidate,154101,6812,prescription-medicine,stimulant,,,,,2026-10-A
+868,Nebivolol,71301,6802,prescription-medicine,beta-blocker,,,,,2026-10-A
+869,Rifaximin,6436173,6756,prescription-medicine,antibiotic,,,,,2026-10-A
+870,Etoricoxib,123619,6697,prescription-medicine,nsaid,,,,,2026-10-A
+871,Atenolol,2249,6658,prescription-medicine,beta-blocker,,,,,2026-10-A
+872,Rilmenidine,68712,6638,prescription-medicine,antihypertensive,,,,,2026-10-A
+873,Phenytoin,1775,6625,prescription-medicine,anticonvulsant,,,,,2026-10-A
+874,Tesamorelin,16137828,6565,prescription-medicine,hormone-medicine,,,,,2026-10-A
+875,Lumateperone,9821941,6520,prescription-medicine,antipsychotic,,,,,2026-10-A
+876,Betahistine,2366,6440,prescription-medicine,other,,,,,2026-10-A
+877,Bromazepam,2441,6401,prescription-medicine,benzodiazepine,,,,,2026-10-A
+878,Viloxazine,5666,6298,prescription-medicine,other,,,,,2026-10-A
+879,Ropinirole,5095,6255,prescription-medicine,parkinsons-medicine,,,,,2026-10-A
+880,Cisplatin,5460033,6249,prescription-medicine,antineoplastic,,,,,2026-10-A
+881,Medroxyprogesterone acetate,6279,6192,prescription-medicine,hormone-medicine,,,,,2026-10-A
+882,Flibanserin,6918248,6134,prescription-medicine,other,,,,,2026-10-A
+883,Norethisterone,6230,6101,prescription-medicine,hormone-medicine,,,,,2026-10-A
+884,Sulfamethoxazole,5329,6047,prescription-medicine,antibiotic,,,,,2026-10-A
+885,Verapamil,2520,6009,prescription-medicine,antihypertensive,,,,,2026-10-A
+886,Vilazodone,6918314,6002,prescription-medicine,antidepressant,,,,,2026-10-A
+887,Testosterone cypionate,441404,5972,prescription-medicine,hormone-medicine,,,,,2026-10-A
+888,Ceftazidime,5481173,5967,prescription-medicine,antibiotic,,,,,2026-10-A
+889,Liraglutide,16134956,5952,prescription-medicine,antidiabetic,,,,,2026-10-A
+890,Mefenamic acid,4044,5912,prescription-medicine,nsaid,,,,,2026-10-A
+891,Flecainide,3356,5904,prescription-medicine,other,,,,,2026-10-A
+892,Linezolid,441401,5900,prescription-medicine,antibiotic,,,,,2026-10-A
+893,Oxymetholone,9902,5895,prescription-medicine,anabolic-steroid,,,,,2026-10-A
+894,Imipramine,3696,5884,prescription-medicine,tricyclic-antidepressant,,,,,2026-10-A
+895,Selegiline,26757,5873,prescription-medicine,parkinsons-medicine,,,,,2026-10-A
+896,Cyproterone acetate,9880,5870,prescription-medicine,hormone-medicine,,,,,2026-10-A
+897,Imatinib,5291,5864,prescription-medicine,antineoplastic,,,,,2026-10-A
+898,Olmesartan,158781,5863,prescription-medicine,antihypertensive,,,,,2026-10-A
+899,Cabergoline,54746,5818,prescription-medicine,hormone-medicine,,,,,2026-10-A
+900,Amobarbital,2164,5816,prescription-medicine,barbiturate,,,,,2026-10-A
+901,Simeticone,6433516,5808,otc-medicine,other,yes,yes,,,2026-10-A
+902,Nitrazepam,4506,5803,prescription-medicine,benzodiazepine,,,,,2026-10-A
+903,Cyclophosphamide,2907,5774,prescription-medicine,antineoplastic,,,,,2026-10-A
+904,Albendazole,2082,5763,prescription-medicine,antiparasitic,,,,,2026-10-A
+905,Mirabegron,9865528,5742,prescription-medicine,other,,,,,2026-10-A
+906,Lactulose,11333,5736,prescription-medicine,sugar,yes,yes,,,2026-10-A
+907,Simvastatin,54454,5730,prescription-medicine,lipid-lowering,,,,,2026-10-A
+908,Fosfomycin,446987,5720,prescription-medicine,antibiotic,,,,,2026-10-A
+909,Acamprosate,71158,5719,prescription-medicine,addiction-medicine,,,,,2026-10-A
+910,Solifenacin,154059,5718,prescription-medicine,antispasmodic,,,,,2026-10-A
+911,Lemborexant,56944144,5635,prescription-medicine,hypnotic,,,,,2026-10-A
+912,Pioglitazone,4829,5615,prescription-medicine,antidiabetic,,,,,2026-10-A
+913,Daridorexant,91801202,5555,prescription-medicine,hypnotic,,,,,2026-10-A
+914,Adapalene,60164,5530,otc-medicine,retinoid,yes,,,,2026-10-A
