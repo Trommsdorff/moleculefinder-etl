@@ -107,6 +107,8 @@ families:
   stimulant:            {article: a, phrase: stimulant, hub: Stimulants}
   triptan:              {article: a, phrase: triptan, hub: Triptans}
   tricyclic-antidepressant: {article: a, phrase: tricyclic antidepressant, hub: Tricyclic antidepressants}
+  # Added with catalog tranche 2026-10-A.
+  addiction-medicine:   {article: an, phrase: addiction medicine, hub: Addiction medicines}
   # Elements, materials and the household-chemistry families the tranche adds.
   alkane:               {article: an, phrase: alkane, hub: Alkanes}
   alkyne:               {article: an, phrase: alkyne, hub: Alkynes}

@@ -1277,3 +1277,210 @@ caffeine/theanine: >
   different from a coffee of similar caffeine content. They are unrelated molecules, C8H10N4O2
   against C7H14N2O3, and theanine is the lighter at 174.2. Theanine has no reported stimulant
   effect on its own.
+
+# ── Catalog tranche 2026-10-A: each new medicine beside the one people compare it with ──
+armodafinil/modafinil: >
+  Armodafinil and modafinil share one formula, C15H15NO2S, and one weight, 273.4, because they
+  are the same molecule. Modafinil is an even mix of two mirror-image forms, and armodafinil is
+  the R form on its own. The R form is the one that lingers: it clears from the body more slowly
+  than its partner, so armodafinil's effect runs later into the day. Both are prescription
+  wakefulness medicines, sold as Provigil and Nuvigil, used for narcolepsy and shift work sleep
+  disorder. The mirror image sits at the sulfur atom, which carries an oxygen and two different
+  groups.
+
+dexmethylphenidate/methylphenidate: >
+  Dexmethylphenidate is the active half of methylphenidate, so the two share the formula
+  C14H19NO2 and a weight of 233.3. The Ritalin molecule is a mix of two mirror-image forms, and
+  nearly all of its effect on dopamine and norepinephrine comes from the d-threo form that
+  Focalin isolates. Removing the inactive half changes how much is in a tablet, not how the
+  active molecule works. Both are prescription stimulants for ADHD and controlled substances in
+  the United States and the UK.
+
+eszopiclone/zopiclone: >
+  Eszopiclone is the S mirror image of zopiclone, so the two share the formula C17H17ClN6O3 and
+  a weight of 388.8. Zopiclone, sold as Zimovane and Imovane in the UK and Europe, is an even
+  mix of both forms, while eszopiclone, sold as Lunesta, is the active form isolated and the
+  version approved in the United States. Neither is a benzodiazepine, but both act at the same
+  GABA-A receptor, which is why they are grouped with zolpidem as the Z-drugs. They share a
+  famous side effect, a bitter metallic taste, because the molecule is secreted into saliva.
+
+testosterone-enanthate/testosterone-cypionate: >
+  Both are testosterone with a fatty tail attached at the same oxygen, and the tail is the only
+  difference: a straight seven-carbon enanthate chain against a cyclopentylpropionate group.
+  That makes cypionate one carbon heavier, C27H40O3 at 412.6 against C26H40O3 at 400.6. The tail
+  holds the molecule in an oily injection depot, and the body clips it off to release plain
+  testosterone, so the two behave almost identically once inside. Cypionate is the common
+  injectable in the United States, sold as Depo-Testosterone, while enanthate is more widely
+  used elsewhere and in the Xyosted autoinjector.
+
+fluticasone-propionate/budesonide: >
+  Fluticasone propionate and budesonide are corticosteroids made to work on the surface they are
+  sprayed or inhaled onto, and both are sold for hay fever without a prescription in the United
+  States, as Flonase and Rhinocort. Fluticasone carries three fluorine atoms and a sulfur,
+  C25H31F3O5S at 500.6, where budesonide has neither, C25H34O6 at 430.5. Fluticasone is the more
+  potent at the receptor. Most of either that is swallowed is broken down by the liver on its
+  first pass, which keeps the amount reaching the rest of the body small. Budesonide also comes
+  as a capsule for the gut in Crohn's disease, a form fluticasone does not have.
+
+ramipril/lisinopril: >
+  Ramipril and lisinopril are ACE inhibitors, two of the most widely prescribed blood pressure
+  medicines, and both descend from a peptide found in the venom of a Brazilian pit viper. The
+  main chemical difference is that ramipril is a prodrug: it is an ethyl ester that the liver
+  must cut to make ramiprilat, the active form, while lisinopril is active as swallowed.
+  Lisinopril is also unusual in its class for not being processed by the liver at all, and it
+  leaves the body unchanged in urine. Their formulas are C23H32N2O5 at 416.5 and C21H31N3O5 at
+  405.5. Both are prescription medicines, sold as Tritace and Altace, and as Zestril and
+  Prinivil.
+
+nifedipine/amlodipine: >
+  Both are dihydropyridine calcium channel blockers, built on the same six-membered ring, and
+  both widen arteries by keeping calcium out of the muscle in their walls. The difference that
+  matters is time: amlodipine has a half-life of well over a day, while nifedipine clears within
+  hours, which is why nifedipine is mostly made in slow-release forms. Amlodipine carries a
+  chlorine and a longer side chain, C20H25ClN2O5 at 408.9, while nifedipine carries a nitro
+  group, C17H18N2O6 at 346.3. Nifedipine came first, in the 1970s, and amlodipine followed in
+  the late 1980s to become one of the most prescribed medicines in the world. Both are
+  prescription medicines, sold as Adalat and Procardia, and as Norvasc.
+
+diltiazem/verapamil: >
+  Diltiazem and verapamil are the two calcium channel blockers that act on the heart itself as
+  well as on blood vessels, which sets them apart from amlodipine and the other
+  dihydropyridines. That is why both are used to slow some fast heart rhythms, not only for
+  blood pressure and angina. They come from different chemical families: diltiazem is a
+  benzothiazepine with a sulfur in its ring, C22H26N2O4S at 414.5, while verapamil is a
+  phenylalkylamine, C27H38N2O4 at 454.6. Verapamil has the stronger effect on the heart's
+  rhythm, and diltiazem sits between it and the dihydropyridines. Both are prescription
+  medicines, sold as Cardizem and as Calan.
+
+atenolol/propranolol: >
+  Propranolol was the first beta blocker and blocks both the beta-1 receptors of the heart and
+  the beta-2 receptors of the lungs and blood vessels, while atenolol was designed to prefer
+  beta-1. Atenolol is also far more water-soluble, so it barely crosses into the brain, while
+  propranolol enters readily, which is part of why propranolol is used for tremor, migraine
+  prevention and the physical side of stage fright. Their formulas are C14H22N2O3 at 266.3 and
+  C16H21NO2 at 259.3. Atenolol leaves the body mostly unchanged through the kidneys, while
+  propranolol is processed by the liver. Both are prescription medicines, sold as Tenormin and
+  Inderal.
+
+simvastatin/atorvastatin: >
+  Both are statins that block HMG-CoA reductase, the enzyme at the top of the body's cholesterol
+  assembly line, but they come from different starting points. Simvastatin is made from
+  lovastatin, a compound produced by a fungus, and it is swallowed as an inactive lactone that
+  the liver opens up. Atorvastatin is fully synthetic, carries a fluorine atom and is active as
+  taken: C33H35FN2O5 at 558.6 against simvastatin's C25H38O5 at 418.6. Atorvastatin, sold as
+  Lipitor, became the best-selling medicine of all time, and simvastatin, sold as Zocor, was the
+  statin of the landmark trials of the 1990s.
+
+liraglutide/semaglutide: >
+  Liraglutide and semaglutide are both copies of GLP-1, a gut hormone that signals fullness and
+  helps release insulin, each fitted with a fatty acid so it rides on albumin in the blood and
+  lasts far longer than the natural hormone. Liraglutide came first, approved for diabetes in
+  2009 as Victoza and later for weight loss as Saxenda. Semaglutide, from the same company,
+  carries a longer fatty chain and one changed amino acid that resists breakdown, which
+  stretches its effect from about a day to about a week. That is the difference in the formulas,
+  C172H265N43O51 at about 3,751 against C187H291N45O59 at about 4,114. Semaglutide is sold as
+  Ozempic and Wegovy, and as Rybelsus, a tablet.
+
+oxazepam/diazepam: >
+  Oxazepam is one of the molecules diazepam turns into in the body: the liver strips diazepam's
+  methyl group and adds a hydroxyl, and the result is a benzodiazepine in its own right. That is
+  the whole difference in the formulas, C15H11ClN2O2 at 286.7 against C16H13ClN2O at 284.7.
+  Diazepam and its first breakdown product, nordazepam, stay in the body for days, while
+  oxazepam is cleared within hours by being joined to a sugar acid. Because oxazepam skips the
+  liver's oxidising enzymes, its clearance changes less when the liver is impaired. Both are
+  prescription medicines, sold as Serax and Valium.
+
+betamethasone/dexamethasone: >
+  Betamethasone and dexamethasone have the same formula, C22H29FO5, the same weight of 392.5,
+  and the same atoms connected in the same order. They differ in one methyl group that points up
+  from the ring in one and down in the other, which makes them stereoisomers rather than one
+  molecule. Both are long-acting corticosteroids with a fluorine atom that makes them many times
+  stronger than the body's own cortisol. Dexamethasone became famous in 2020 as the first
+  treatment shown to reduce deaths from severe COVID-19, and betamethasone is widely used in
+  skin creams such as Betnovate. Both are prescription medicines, sold as Decadron and as
+  Celestone.
+
+tamoxifen/letrozole: >
+  Tamoxifen and letrozole both deprive hormone-sensitive breast cancer of estrogen, from
+  opposite ends. Tamoxifen blocks the estrogen receptor in breast tissue, so the hormone is
+  present but cannot act there, while letrozole blocks aromatase, the enzyme that makes
+  estrogen, so less of it exists at all. That is why letrozole is used after menopause, when
+  aromatase in fat tissue is the main source, while tamoxifen works before and after it. They
+  look nothing alike: tamoxifen, C26H29NO at 371.5, is built on a triphenylethylene skeleton,
+  and letrozole, C17H11N5 at 285.3, carries a triazole ring and two nitrile groups. Both are
+  prescription medicines, sold as Nolvadex and Femara.
+
+ropinirole/pramipexole: >
+  Ropinirole and pramipexole are the two dopamine agonists most used for Parkinson's disease and
+  restless legs syndrome, and both act on the D2 and D3 dopamine receptors directly rather than
+  being turned into dopamine like L-DOPA. They are not built alike: ropinirole, C16H24N2O at
+  260.4, is an indolone, while pramipexole, C10H17N3S at 211.3, carries a sulfur in an
+  aminothiazole ring. Ropinirole is processed by the liver, while pramipexole leaves the body
+  largely unchanged through the kidneys. Both labels list the same well-known side effect,
+  impulse control problems such as compulsive gambling. Both are prescription medicines, sold as
+  Requip and as Mirapex.
+
+oxcarbazepine/carbamazepine: >
+  Oxcarbazepine was designed as a gentler carbamazepine: the two share a tricyclic dibenzazepine
+  skeleton, and oxcarbazepine adds one oxygen as a ketone, C15H12N2O2 at 252.3 against C15H12N2O
+  at 236.3. That one atom changes the route through the body. The liver turns carbamazepine into
+  an epoxide, and carbamazepine speeds up the liver enzymes that clear it and many other
+  medicines, while oxcarbazepine is reduced to a different active form and does far less of
+  that. Both block sodium channels in nerve cells and are used for epilepsy and nerve pain, and
+  both are prescription medicines, sold as Tegretol and Trileptal.
+
+dutasteride/finasteride: >
+  Finasteride and dutasteride both block 5-alpha reductase, the enzyme that turns testosterone
+  into the more potent DHT, and both are used for an enlarged prostate. Finasteride blocks one
+  form of the enzyme, type 2, while dutasteride blocks both type 1 and type 2, which lowers DHT
+  further. The chemical difference is six fluorine atoms: dutasteride replaces finasteride's
+  tert-butyl group with a ring carrying two trifluoromethyl groups, C27H30F6N2O2 at 528.5
+  against C23H36N2O2 at 372.5. Dutasteride also stays in the body for weeks, against hours for
+  finasteride. Finasteride is also sold as Propecia for hair loss, while dutasteride is sold as
+  Avodart.
+
+brexpiprazole/aripiprazole: >
+  Brexpiprazole was developed by the maker of aripiprazole as its successor, and the two share
+  one design: both partly switch on dopamine D2 receptors rather than blocking them outright,
+  which sets them apart from older antipsychotics. Brexpiprazole switches them on less and acts
+  more strongly on serotonin receptors. Both are built around a piperazine ring; aripiprazole
+  carries two chlorine atoms, C23H27Cl2N3O2 at 448.4, where brexpiprazole carries a sulfur in a
+  benzothiophene ring, C25H27N3O2S at 433.6. Both are used for schizophrenia and alongside
+  antidepressants for depression, and both are prescription medicines, sold as Abilify and
+  Rexulti.
+
+hyoscine-butylbromide/scopolamine: >
+  Hyoscine and scopolamine are two names for the same nightshade alkaloid, and hyoscine
+  butylbromide is that molecule with a butyl group and a bromide added at its nitrogen. The
+  change gives the nitrogen a permanent positive charge, C21H30BrNO4 at 440.4 against C17H21NO4
+  at 303.4, and a charged molecule barely crosses into the brain or through the gut wall. So
+  scopolamine acts on the brain and is used against motion sickness, as the small patch worn
+  behind the ear, while hyoscine butylbromide stays in the gut and relaxes its muscle, which is
+  why it is sold as Buscopan for stomach cramps. Both block the same acetylcholine receptors.
+
+cortisone/cortisol: >
+  Cortisone and cortisol differ by two hydrogen atoms, C21H28O5 at 360.4 against C21H30O5 at
+  362.5, at a single carbon where cortisol carries a hydroxyl group and cortisone a ketone. That
+  one change switches the hormone off: cortisone does nothing at the receptor until an enzyme in
+  the liver and in fat turns it back into cortisol. The body runs the conversion both ways, and
+  the kidney turns cortisol into cortisone to keep it off the kidney's own salt-balance
+  receptors. Cortisone was the first steroid medicine, and its effect on rheumatoid arthritis
+  won the 1950 Nobel Prize in medicine; cortisol is now used directly, as hydrocortisone.
+
+fluorouracil/uracil: >
+  Fluorouracil is uracil, one of the four building blocks of RNA, with a single fluorine atom
+  where uracil has a hydrogen: C4H3FN2O2 at 130.1 against C4H4N2O2 at 112.1. Fluorine is close
+  enough in size to hydrogen that cells take the fake building block up and process it like the
+  real one. Once inside, it jams thymidylate synthase, the enzyme cells need to make DNA's
+  thymine, and it is built into RNA in uracil's place, which stops fast-dividing cancer cells.
+  Uracil is made by every living cell, while fluorouracil, known as 5-FU, was designed in 1957
+  as one of the first rationally planned cancer medicines.
+
+adapalene/tretinoin: >
+  Tretinoin is retinoic acid, the active form of vitamin A, and adapalene is a lab-designed
+  molecule built to act at the same retinoic acid receptors without being a vitamin A molecule
+  at all. Tretinoin, C20H28O2 at 300.4, has a long chain of alternating double bonds that light
+  and air break down, while adapalene, C28H28O3 at 412.5, replaces it with rigid aromatic rings
+  and is far more stable. Adapalene binds mainly two of the three receptor types. That stability
+  is part of why adapalene, as Differin, became the first retinoid sold without a prescription
+  in the United States in 2016, while tretinoin, as Retin-A, remains prescription only there.
