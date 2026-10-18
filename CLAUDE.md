@@ -696,6 +696,68 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
+## Tranche 2 (2026-10-18) — 788 -> 908, guard before load, grants. BUILT, NOT PUSHED
+Branch `traffic-2026-10-tranche2` from `origin/main` `b7b9217`. The "recurring tranche" of
+`../BUILD-PLAN-growth-2026-10-18.md`. Review page (every assignment, every skip, every pair):
+https://claude.ai/artifact/TU7jpGmY3M9aq4TynVmCr1
+- **Catalog tranche `2026-10-A`: 120 medicines.** `../drugs-wing-deferred.csv` read in view order from
+  where tranche 1 stopped (9,945 views a month) down to 5,530: 148 rows read, 120 kept, 21 HELD
+  (appended to `deferred_rows.csv`: never approved, veterinary only, withdrawn, research chemicals) and
+  7 ASK (left in the queue unheld for Garrett: meldonium, orforglipron, nandrolone, thiomersal,
+  clenbuterol, artemisinin, clostebol). No recreational-drug row was read (Garrett, 2026-10-18: never).
+  114 `prescription-medicine`, 6 `otc-medicine`; 12 `is_otc` (all in `otc_allowlist.yaml`; a new
+  unmapped group `urinary_otc` for phenazopyridine), 7 `dual_use`. One new family,
+  `addiction-medicine` (disulfiram, varenicline, acamprosate). Seven family hubs cross the 3-member
+  floor: alpha-2-agonist (back, with dexmedetomidine), anxiolytic, antispasmodic, anticoagulant,
+  immunosuppressant, retinoid, element-bromine. 120 `why_it_matters` lines (90 to 170 chars, so the
+  line alone is the page description). `tests/test_scope_b_canon.py` TRANCHES gains `2026-10-A: 120`.
+- **22 comparisons** (`comparisons.yaml`, 122 -> 144), each a new medicine beside the one people compare
+  it with; every formula and weight in the prose checked against both records.
+- **The export's refusals now run BEFORE the Supabase load** (`pipeline._preflight`, the Sep 28 lesson:
+  that run's load wrote the placeholder before the export refused it). `stage_load` runs the leaderboards,
+  the comparison and featured compiles and `snapshot_guard.check` before it creates a client, so a refused
+  run sends the database nothing, not even a failed `ingest_run` row. `stage_export` reuses it with
+  `guard=False` only because `snapshot_export.export` runs the guard itself.
+  `tests/test_guard_before_load.py` (5) drives the real PostgREST client against a recorder: the Sep 28
+  run sends 0 requests and leaves the snapshot byte-identical, `mfetl load` alone refuses too, a bad
+  featured seed stops before the database, a clean run does write (the control), and with the preflight
+  removed the refused run writes first again. Against the old `pipeline.py` the refusal tests fail with
+  10 requests sent (`source`, `molecule`, `category`, ...) before the export refused.
+- **The throttle log is exercised, and summarised.** The fresh run made 12 POSTs (6 properties, 6
+  synonyms), all HTTP 200, none repeated. Our own Request Count and Request Time stayed Green (at most
+  2%); PubChem's **Service status read Black (220 to 240%) on three POSTs**, which is PubChem's whole
+  server load, not this client, and every one was answered first time. New
+  `pubchem.throttle_summary()` writes one line at the end of the fetch on every run, warm ones included
+  ("0 POSTs this run ... no reading"), with the worst level per dimension, and `stage_fetch` raises it
+  as a `::notice` on GitHub Actions so it shows on the run page. 4 new tests in `test_pubchem_log.py`.
+- **Standing order 17, Supabase Data API grants.** Audit of `supabase/migrations`: 17 tables (16 in
+  `0001_init.sql`, `event` in `0002_events.sql`), and **none had a grant by name**; all relied on
+  `0003_grants.sql`'s `on all tables in schema public` plus default privileges, which name no table.
+  `0004_explicit_grants.sql` (idempotent, grant-only) grants each by name: SELECT to anon on the 15
+  catalog tables, SELECT/INSERT/UPDATE/DELETE to service_role on all 17, USAGE/SELECT on the 12
+  bigserial sequences. `event` and `ingest_run` get no anon grant (paths, session ids, the audit
+  trail), **but 0003 still gives anon SELECT on both** and neither has RLS: revoking that is Garrett's
+  call (`revoke select on event, ingest_run from anon, authenticated;`). **0004 is not applied to the
+  live database** (no production writes in this run); apply it over the session pooler like 0003.
+  `tests/test_migration_grants.py` (7, stdlib + pytest only) fails when a table created after 0004 lacks
+  service_role CRUD, anon SELECT (or a PRIVATE entry with a reason) or its sequence grant in the same
+  file; a blanket schema grant or a commented grant does not count. New `.github/workflows/migrations.yml`
+  runs it on any push or PR touching a migration (public repo: no minutes billed).
+- **Data, and the drift kept out.** `mfetl all` from an empty `data/raw_cache` (Wikidata 890 live,
+  PubChem live), Supabase blanked so the load skipped. The fresh fetch also moved upstream fields on
+  existing molecules (synonym lists on about 90, two CAS numbers, two GHS sets, and two titles:
+  pantoprazole loses "(Protonix)", flunitrazepam gains "(Rohypnol)"). Those were reverted to the shipped
+  values before export, so this commit carries only the tranche: 120 new files, new similarity edges on
+  127 existing molecules, and 14 hub memberships. Monday's runs publish the drift through the loop.
+  **Found in that drift:** flunitrazepam's PubChem list now leads with the street names "roofies" and
+  "floonies"; both are on `synonym_do_not_use.yaml` now, before a Monday run could publish them.
+- 469 tests (was 453). Ruff 0.17.0 (now installed) reports 113 findings on `main` already, under rules
+  it enables by default that the "ruff clean" notes predate; this branch adds none.
+- **Rebase before deploy.** The Monday 2026-10-19 cron will self-merge a data PR on web `main` (week 43,
+  meta.json, whatever moved), so the web branch's snapshot will conflict. At deploy time: merge this
+  branch into ETL `main`, re-run `mfetl all` (or `transform`+`export` from a warm cache), `sync-data`,
+  rebuild, then deploy. Order unchanged: ETL main first (no deploy), then web main, then confirm IndexNow.
+
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
   and roughly 190 of them carried nothing a reader could see. Two causes, both fixed:
