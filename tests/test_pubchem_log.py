@@ -53,6 +53,7 @@ def posts(monkeypatch):
 
     monkeypatch.setattr(pubchem._session, "post", fake_post)
     monkeypatch.setattr(pubchem, "_throttle", lambda: None)
+    monkeypatch.setattr(pubchem, "posts", [])
     for fn in (pubchem.synonyms, pubchem.properties):
         monkeypatch.setattr(fn.retry, "sleep", lambda seconds: None)
     return sent, queue
@@ -115,3 +116,49 @@ def test_a_404_batch_is_logged_before_it_is_skipped(posts, caplog):
     with caplog.at_level(logging.INFO, logger="mfetl.pubchem"):
         assert pubchem.synonyms([999999999]) == {}
     assert "HTTP 404" in _post_lines(caplog)[0]
+
+
+# ── The end-of-fetch summary (2026-10-18) ────────────────────────────────────
+# A warm run sends no POSTs, so it printed no throttle line at all, and a log without one
+# could not say whether everything was cached or the logging was broken. The summary is
+# written on every run.
+def test_a_warm_run_says_it_sent_nothing(monkeypatch):
+    monkeypatch.setattr(pubchem, "posts", [])
+    assert pubchem.throttle_summary().startswith("pubchem throttle: 0 POSTs this run")
+
+
+def test_the_summary_counts_posts_repeats_and_the_worst_reading(posts):
+    _, queue = posts
+    queue.append(lambda c: _response(503, throttle="Request Count status: Yellow (60%)"))
+    queue.append(lambda c: _response(200, _synonyms_payload(c)))
+    queue.append(lambda c: _response(200, _properties_payload(c)))
+    pubchem.synonyms([2519])
+    pubchem.properties([2244, 5429])
+    line = pubchem.throttle_summary()
+    assert line.startswith("pubchem throttle: 3 POSTs this run (1 properties, 2 synonyms), HTTP 200/503, "
+                           "1 batch(es) sent more than once, worst Request Count Yellow, "
+                           "Request Time Green, Service Green; ")
+    assert line.endswith(f"last X-Throttling-Control: {GREEN}")
+
+
+def test_the_fetch_stage_reports_the_summary_and_a_notice_on_actions(monkeypatch, capsys, caplog):
+    from moleculefinder_etl import pipeline
+    monkeypatch.setattr(pubchem, "posts", [("synonyms", 2244, 200, GREEN)])
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    with caplog.at_level(logging.INFO, logger="mfetl"):
+        pipeline._report_throttle()
+    assert any(r.getMessage().strip().startswith("pubchem throttle: 1 POSTs") for r in caplog.records)
+    assert capsys.readouterr().out.startswith("::notice title=PubChem throttle::pubchem throttle: 1 POSTs")
+    monkeypatch.delenv("GITHUB_ACTIONS")
+    pipeline._report_throttle()
+    assert capsys.readouterr().out == ""
+
+
+def test_a_busy_pubchem_is_told_apart_from_a_busy_client(monkeypatch):
+    """2026-10-18, the first cold run to log it: PubChem's Service status read Black while this
+    client's own count and time stayed Green. The summary keeps the dimensions apart."""
+    monkeypatch.setattr(pubchem, "posts", [
+        ("properties", 1, 200, ("Request Count status: Green (1%), Request Time status: Green (1%), "
+                                "Service status: Black (240%)")),
+        ("synonyms", 1, 200, GREEN)])
+    assert "worst Request Count Green, Request Time Green, Service Black;" in pubchem.throttle_summary()

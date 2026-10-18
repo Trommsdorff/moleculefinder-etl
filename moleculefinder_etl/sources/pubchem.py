@@ -65,6 +65,48 @@ _pubchem_retry = retry(wait=wait_exponential(multiplier=2, min=2, max=120),
                         reraise=True)
 
 
+# Every batched POST this process sent: (kind, first CID, HTTP status, X-Throttling-Control).
+# Read by ``throttle_summary`` at the end of the fetch stage; ``stage_fetch`` clears it first.
+posts: list[tuple[str, int, int, str | None]] = []
+
+_LEVELS = ("Green", "Yellow", "Red", "Black")          # PubChem's own scale, best to worst
+
+
+def throttle_summary() -> str:
+    """One line for the run log saying what the throttle log saw this run (2026-10-18).
+
+    The per-POST lines below only exist on a run that POSTs, and a warm run sends none, so
+    until now a log with no throttle lines could mean "everything was cached" or "the logging
+    is broken". This line is written either way: the POST count by kind, how many batches went
+    out more than once, the worst status PubChem reported, and its last full reading.
+    """
+    if not posts:
+        return ("pubchem throttle: 0 POSTs this run (every property and synonym list came from "
+                "the cache), so PubChem reported no X-Throttling-Control reading")
+    kinds: dict[str, int] = {}
+    for kind, *_ in posts:
+        kinds[kind] = kinds.get(kind, 0) + 1
+    firsts = [(kind, first) for kind, first, *_ in posts]
+    repeated = len(firsts) - len(set(firsts))
+    readings = [h for *_, h in posts if h]
+    # Worst level per dimension. "Request Count" and "Request Time" measure THIS client;
+    # "Service" is PubChem's whole server load, which can read Black while we are Green
+    # (it did on 2026-10-18, three POSTs at 220-240%, all answered 200 first time).
+    worst: dict[str, int] = {}
+    for h in readings:
+        for dim, level in re.findall(r"([A-Za-z ]+?) status: (\w+)", h):
+            if level in _LEVELS:
+                dim = dim.strip(" ,")
+                worst[dim] = max(worst.get(dim, 0), _LEVELS.index(level))
+    statuses = sorted({status for _, _, status, _ in posts})
+    return ("pubchem throttle: {n} POSTs this run ({by_kind}), HTTP {statuses}, {repeated} batch(es) "
+            "sent more than once, worst {worst}; last X-Throttling-Control: {last}").format(
+        n=len(posts), by_kind=", ".join(f"{v} {k}" for k, v in sorted(kinds.items())),
+        statuses="/".join(map(str, statuses)), repeated=repeated,
+        worst=", ".join(f"{d} {_LEVELS[i]}" for d, i in worst.items()) or "(no header)",
+        last=readings[-1] if readings else "(absent)")
+
+
 def _log_post(kind: str, chunk: list[int], r: requests.Response, started: float) -> None:
     """One line per batched POST, answered or not, with PubChem's own throttle reading.
 
@@ -74,9 +116,11 @@ def _log_post(kind: str, chunk: list[int], r: requests.Response, started: float)
     log answers the two questions the Sep 21 one could not: what the throttle read, and whether
     any POST was sent twice (a retried batch prints a second line with the same first CID).
     """
+    header = r.headers.get("X-Throttling-Control")
+    posts.append((kind, chunk[0], r.status_code, header))
     log.info("pubchem POST %s: %d CIDs from %d, HTTP %d in %.1f s, X-Throttling-Control: %s",
              kind, len(chunk), chunk[0], r.status_code, time.monotonic() - started,
-             r.headers.get("X-Throttling-Control") or "(absent)")
+             header or "(absent)")
 
 
 @_pubchem_retry
