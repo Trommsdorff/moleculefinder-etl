@@ -696,67 +696,93 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Tranche 2 (2026-10-18) — 788 -> 908, guard before load, grants. BUILT, NOT PUSHED
+## Tranche 2 (2026-10-18) — 788 -> 912, guard before load, grants. BUILT, NOT PUSHED
 Branch `traffic-2026-10-tranche2` from `origin/main` `b7b9217`. The "recurring tranche" of
-`../BUILD-PLAN-growth-2026-10-18.md`. Review page (every assignment, every skip, every pair):
+`../BUILD-PLAN-growth-2026-10-18.md`. Review page (every assignment, every ruling, every pair):
 https://claude.ai/artifact/TU7jpGmY3M9aq4TynVmCr1
-- **Catalog tranche `2026-10-A`: 120 medicines.** `../drugs-wing-deferred.csv` read in view order from
-  where tranche 1 stopped (9,945 views a month) down to 5,530: 148 rows read, 120 kept, 21 HELD
-  (appended to `deferred_rows.csv`: never approved, veterinary only, withdrawn, research chemicals) and
-  7 ASK (left in the queue unheld for Garrett: meldonium, orforglipron, nandrolone, thiomersal,
-  clenbuterol, artemisinin, clostebol). No recreational-drug row was read (Garrett, 2026-10-18: never).
-  114 `prescription-medicine`, 6 `otc-medicine`; 12 `is_otc` (all in `otc_allowlist.yaml`; a new
-  unmapped group `urinary_otc` for phenazopyridine), 7 `dual_use`. One new family,
-  `addiction-medicine` (disulfiram, varenicline, acamprosate). Seven family hubs cross the 3-member
-  floor: alpha-2-agonist (back, with dexmedetomidine), anxiolytic, antispasmodic, anticoagulant,
-  immunosuppressant, retinoid, element-bromine. 120 `why_it_matters` lines (90 to 170 chars, so the
-  line alone is the page description). `tests/test_scope_b_canon.py` TRANCHES gains `2026-10-A: 120`.
-- **22 comparisons** (`comparisons.yaml`, 122 -> 144), each a new medicine beside the one people compare
-  it with; every formula and weight in the prose checked against both records.
-- **The export's refusals now run BEFORE the Supabase load** (`pipeline._preflight`, the Sep 28 lesson:
-  that run's load wrote the placeholder before the export refused it). `stage_load` runs the leaderboards,
-  the comparison and featured compiles and `snapshot_guard.check` before it creates a client, so a refused
-  run sends the database nothing, not even a failed `ingest_run` row. `stage_export` reuses it with
-  `guard=False` only because `snapshot_export.export` runs the guard itself.
-  `tests/test_guard_before_load.py` (5) drives the real PostgREST client against a recorder: the Sep 28
-  run sends 0 requests and leaves the snapshot byte-identical, `mfetl load` alone refuses too, a bad
-  featured seed stops before the database, a clean run does write (the control), and with the preflight
-  removed the refused run writes first again. Against the old `pipeline.py` the refusal tests fail with
-  10 requests sent (`source`, `molecule`, `category`, ...) before the export refused.
-- **The throttle log is exercised, and summarised.** The fresh run made 12 POSTs (6 properties, 6
-  synonyms), all HTTP 200, none repeated. Our own Request Count and Request Time stayed Green (at most
-  2%); PubChem's **Service status read Black (220 to 240%) on three POSTs**, which is PubChem's whole
-  server load, not this client, and every one was answered first time. New
-  `pubchem.throttle_summary()` writes one line at the end of the fetch on every run, warm ones included
-  ("0 POSTs this run ... no reading"), with the worst level per dimension, and `stage_fetch` raises it
-  as a `::notice` on GitHub Actions so it shows on the run page. 4 new tests in `test_pubchem_log.py`.
-- **Standing order 17, Supabase Data API grants.** Audit of `supabase/migrations`: 17 tables (16 in
-  `0001_init.sql`, `event` in `0002_events.sql`), and **none had a grant by name**; all relied on
-  `0003_grants.sql`'s `on all tables in schema public` plus default privileges, which name no table.
-  `0004_explicit_grants.sql` (idempotent, grant-only) grants each by name: SELECT to anon on the 15
-  catalog tables, SELECT/INSERT/UPDATE/DELETE to service_role on all 17, USAGE/SELECT on the 12
-  bigserial sequences. `event` and `ingest_run` get no anon grant (paths, session ids, the audit
-  trail), **but 0003 still gives anon SELECT on both** and neither has RLS: revoking that is Garrett's
-  call (`revoke select on event, ingest_run from anon, authenticated;`). **0004 is not applied to the
-  live database** (no production writes in this run); apply it over the session pooler like 0003.
-  `tests/test_migration_grants.py` (7, stdlib + pytest only) fails when a table created after 0004 lacks
-  service_role CRUD, anon SELECT (or a PRIVATE entry with a reason) or its sequence grant in the same
-  file; a blanket schema grant or a commented grant does not count. New `.github/workflows/migrations.yml`
+
+### THE APPROVED-MEDICINE RULE, clarified (Garrett, 2026-10-18). Read before any tranche.
+A molecule qualifies as an approved medicine when it holds a **CURRENT marketing authorisation for
+human use** from the **FDA, the MHRA, the EMA, or the national regulator of any single EU member
+state. One national licence is enough.** It applies the same way to new rows and to pages already
+live. Rows that fail go to `sources/seeds/deferred_rows.csv` (held for good, test-enforced); rows let
+in under a ruling carry their licence basis in `sources/seeds/approvals.yaml`, which
+`relationships.attach_approvals` puts on the record as `approval` (orforglipron's cites Drugs@FDA NDA
+220934 and its DailyMed label). **Phenibut stays: Latvia licenses it, exactly as meldonium qualifies.
+Do not raise it again.** No recreational-drug row, ever (Garrett, 2026-10-18).
+
+### What the branch carries
+- **Catalog tranche `2026-10-A`: 126 rows.** `../drugs-wing-deferred.csv` read in view order from where
+  tranche 1 stopped (9,945 views a month) down to 5,530: 148 rows read. 120 kept on the first pass,
+  21 held, 7 queued; Garrett's rulings on the 7: **IN** meldonium (Latvian licence), clenbuterol (EU
+  national licences), clostebol (Italian licence), orforglipron (FDA NDA 220934, Foundayo, approved
+  2026-04-01, confirmed from Drugs@FDA and DailyMed), artemisinin (as a **plant compound**, bucket
+  `plant-compound`, family terpenoid, beside quinine), thiomersal (as a **preservative**, bucket
+  `everyday-chemistry` beside triclosan and formaldehyde, no medical claims); **HELD** nandrolone (no
+  current licence confirmable; Ireland and the UK withdrew Deca-Durabolin). Its esters nandrolone
+  decanoate and nandrolone phenylpropionate are lower in the queue and not yet read: the next tranche
+  must rule on them under the same reasoning.
+  Totals: 118 `prescription-medicine`, 6 `otc-medicine`, 1 `plant-compound`, 1 `everyday-chemistry`;
+  12 `is_otc` (all in `otc_allowlist.yaml`; new unmapped group `urinary_otc`), 9 `dual_use`. One new
+  family, `addiction-medicine`. 126 `why_it_matters` lines (90 to 170 chars).
+- **Two live pages removed under the rule (Garrett, 2026-10-18): fenbendazole and carfentanil**, both
+  veterinary only. Out of `scope_b_core.csv` (tranche `2026-09-A` is now 288), into `deferred_rows.csv`,
+  their `why_it_matters` lines deleted. What referenced them, and what happened: **worlds, trails
+  (`relationships.csv`), comparisons, featured weeks, brands, food and product hubs: nothing** (checked
+  by grep and by the web test `lib/gone.test.ts`); **boards** lightest, biggest and most-searched
+  re-rank without them (carfentanil had no oral LD50, so it was never on Deadliest or Safest);
+  **hubs** they belonged to (opioid, antiparasitic, health-hazard, irritant, the element and
+  functional-group hubs) all stay at 3 or more, antiparasitic exactly 3 because albendazole joins;
+  **similarity edges** of fentanyl, pethidine and 9 other molecules recompute. `carfentanil` stays in
+  `toxicity.POTENT_TOXIN_SLUGS`, a list of names allowed a sub-floor LD50, where it does nothing
+  without a row. The web answers **410** for both URLs (web CLAUDE.md).
+- **22 comparisons** (`comparisons.yaml`, 122 -> 144); every formula and weight checked against both records.
+- **The export's refusals run BEFORE the Supabase load** (`pipeline._preflight`, the Sep 28 lesson).
+  `tests/test_guard_before_load.py` (5): the Sep 28 run sends 0 requests and leaves the snapshot
+  byte-identical; on the old `pipeline.py` it sent 10 before the export refused.
+- **Throttle log exercised and summarised** (`pubchem.throttle_summary`, a `::notice` on Actions). First
+  cold run: 12 POSTs, all 200, none repeated, our Request Count and Time Green, PubChem's own Service
+  status Black (220 to 240%) on 3 POSTs: PubChem's load, not ours.
+- **Supabase (standing order 17).** 17 tables, none granted by name before. `0004_explicit_grants.sql`
+  grants each by name. **`0005_private_tables.sql` revokes everything on `event` and `ingest_run` (and
+  their sequences) from anon and authenticated**: 0003's blanket grant had let anyone with the public
+  key read both. `tests/test_migration_grants.py` (12) replays every migration in order (named grants,
+  revokes, blanket "all tables" grants, default privileges) and fails if either table becomes readable
+  by anon or authenticated again, or a new table lacks its grants. `.github/workflows/migrations.yml`
   runs it on any push or PR touching a migration (public repo: no minutes billed).
-- **Data, and the drift kept out.** `mfetl all` from an empty `data/raw_cache` (Wikidata 890 live,
-  PubChem live), Supabase blanked so the load skipped. The fresh fetch also moved upstream fields on
-  existing molecules (synonym lists on about 90, two CAS numbers, two GHS sets, and two titles:
-  pantoprazole loses "(Protonix)", flunitrazepam gains "(Rohypnol)"). Those were reverted to the shipped
-  values before export, so this commit carries only the tranche: 120 new files, new similarity edges on
-  127 existing molecules, and 14 hub memberships. Monday's runs publish the drift through the loop.
-  **Found in that drift:** flunitrazepam's PubChem list now leads with the street names "roofies" and
-  "floonies"; both are on `synonym_do_not_use.yaml` now, before a Monday run could publish them.
-- 469 tests (was 453). Ruff 0.17.0 (now installed) reports 113 findings on `main` already, under rules
-  it enables by default that the "ruff clean" notes predate; this branch adds none.
-- **Rebase before deploy.** The Monday 2026-10-19 cron will self-merge a data PR on web `main` (week 43,
-  meta.json, whatever moved), so the web branch's snapshot will conflict. At deploy time: merge this
-  branch into ETL `main`, re-run `mfetl all` (or `transform`+`export` from a warm cache), `sync-data`,
-  rebuild, then deploy. Order unchanged: ETL main first (no deploy), then web main, then confirm IndexNow.
+  **Verified end to end against a throwaway local database, not production:** Postgres 16 plus
+  PostgREST 16.3 with Supabase's roles (anon, authenticated, service_role, authenticator), migrations
+  0001-0005 from this repo (the local copy of 0001 dropped `pg_trgm`, `vector` and the trigram index,
+  which that build lacks and which touch no grant). With 0001-0004 the anon key read `event` and
+  `ingest_run` (HTTP 200); after 0005 it gets 401 "permission denied for table event" on read and
+  insert, while `molecule` stays readable. The web build pointed at it: 4 POSTs to `/api/e` all 204
+  and 4 rows written; `/dashboard` 200 showing them (2 organic pageviews, 1 share, 1 hook
+  interaction); `supabase_loader.record_run` wrote `ingest_run` with the service key. Stack deleted.
+  **0004 and 0005 are approved for the live database and are applied AS A STEP OF THE DEPLOY, not before.**
+- **Data, drift kept out.** Fresh fetch (`data/raw_cache` emptied first), Supabase blanked. Upstream
+  moves on existing molecules (about 90 synonym lists, two CAS, two GHS sets, pantoprazole losing
+  "(Protonix)", flunitrazepam gaining "(Rohypnol)") were reverted to the shipped values, so the
+  commit carries the tranche only. "roofies" and "floonies" (flunitrazepam's new PubChem head) are on
+  `synonym_do_not_use.yaml`.
+- 479 tests. Ruff 0.17.0 reports 113 findings on `main` already; this branch adds none.
+
+### Found, not ruled (Garrett's call)
+- **Oxandrolone fails the rule as written:** the FDA withdrew approval of Oxandrin and every generic on
+  2023-06-28 (88 FR 41970) and no UK or EU licence is known. It is live (tranche 1). Left as is.
+- **Flunitrazepam:** a current licence anywhere in the EU could not be confirmed either way. Left as is.
+- Checked and fine: daraxonrasib (FDA approved 2026-08-26, Rasonque), suzetrigine, methoxyflurane,
+  metamizole, tianeptine, secobarbital.
+
+### Deploy sequence (on Garrett's word, after Monday 2026-10-19's scheduled run is green)
+1. Merge ETL `origin/main` (Monday's refresh) into this branch; re-run `mfetl transform` + `mfetl export`
+   from the warm cache with Supabase blanked; re-apply the drift revert only if a fresh fetch was made;
+   479 tests. Fast-forward ETL `main` and push. Nothing deploys from this repo.
+2. **Apply migrations 0004 then 0005 to the live database** over the session pooler (psycopg, as for
+   0003; both idempotent). Check: the anon key gets 401 on `event` and `ingest_run` and 200 on
+   `molecule`; one POST to `https://moleculefinder.com/api/e` lands a row; `/dashboard` renders.
+3. Web: merge `origin/main`, `npm run sync-data`, build, the page sweep, then push web `main` (the deploy).
+4. Confirm the IndexNow run from `deployment_status`: it now submits removed URLs too, so expect both
+   `/m/fenbendazole` and `/m/carfentanil` in the batch, and confirm both answer 410 live.
 
 ## Run 3 (2026-09-07) — determinism + phases 5 and 6, DEPLOYED 2026-09-08
 - **The snapshot is deterministic now.** The 2026-09-06 weekly PR changed 217 molecule files
