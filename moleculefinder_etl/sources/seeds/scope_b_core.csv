@@ -679,7 +679,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 681,Vanadium,23990,15268,element-material,element,,,,,2026-09-A
 682,Propane,6334,15211,everyday-chemistry,alkane,,,,,2026-09-A
 683,Hydroxychloroquine,3652,15093,prescription-medicine,antiparasitic,,,,,2026-09-A
-684,Fenbendazole,3334,15027,prescription-medicine,antiparasitic,,yes,,,2026-09-A
 685,Tantalum,23956,15018,element-material,element,,,,,2026-09-A
 686,Acetylcysteine,12035,14982,otc-medicine,respiratory,yes,yes,,,2026-09-A
 687,Calcium oxide,14778,14922,everyday-chemistry,inorganic,,,,,2026-09-A
@@ -731,7 +730,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 734,Apixaban,10182969,12430,prescription-medicine,anticoagulant,,,,,2026-09-A
 735,Ceftriaxone,5479530,12391,prescription-medicine,antibiotic,,,,,2026-09-A
 736,Chlordiazepoxide,2712,12352,prescription-medicine,benzodiazepine,,,,,2026-09-A
-737,Carfentanil,62156,12322,prescription-medicine,opioid,,yes,,,2026-09-A
 738,Carvedilol,2585,12259,prescription-medicine,beta-blocker,,,,,2026-09-A
 739,Technetium,23957,12252,element-material,element,,,,,2026-09-A
 740,Fluvoxamine,5324346,12250,prescription-medicine,ssri,,,,,2026-09-A
@@ -907,3 +905,9 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 912,Pioglitazone,4829,5615,prescription-medicine,antidiabetic,,,,,2026-10-A
 913,Daridorexant,91801202,5555,prescription-medicine,hypnotic,,,,,2026-10-A
 914,Adapalene,60164,5530,otc-medicine,retinoid,yes,,,,2026-10-A
+915,Meldonium,123868,7898,prescription-medicine,other,,,,,2026-10-A
+916,Orforglipron,137319706,7862,prescription-medicine,antidiabetic,,,,,2026-10-A
+917,Thiomersal,5908,7740,everyday-chemistry,other,,yes,,,2026-10-A
+918,Clenbuterol,2783,6650,prescription-medicine,respiratory,,,,,2026-10-A
+919,Artemisinin,68827,6471,plant-compound,terpenoid,,yes,,,2026-10-A
+920,Clostebol,68947,5625,prescription-medicine,anabolic-steroid,,,,,2026-10-A

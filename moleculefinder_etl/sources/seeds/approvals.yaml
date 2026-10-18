@@ -1,0 +1,38 @@
+# Licence basis for medicines admitted under a ruling (Garrett, 2026-10-18).
+#
+# THE RULE: a molecule qualifies as an approved medicine when it holds a CURRENT marketing
+# authorisation for human use from the FDA, the MHRA, the EMA, or the national regulator of any
+# single EU member state. One national licence is enough. It applies the same way to new rows and to
+# pages already live; rows that fail it go to deferred_rows.csv.
+#
+# Each entry is carried onto the molecule's record as `approval` (relationships.attach_approvals),
+# so the basis travels with the data. `source` is filled only where the authorisation was confirmed
+# from the regulator's own record; a ruling without one says so in `basis`.
+
+orforglipron:
+  regulator: US Food and Drug Administration
+  product: Foundayo
+  application: NDA 220934
+  authorised: "2026-04-01"
+  basis: Original approval for chronic weight management, confirmed 2026-10-18 from Drugs@FDA and the DailyMed label.
+  source: https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=220934
+  label: https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8ac446c5-feba-474f-a103-23facb9b5c62
+
+meldonium:
+  regulator: State Agency of Medicines of Latvia
+  product: Mildronate
+  basis: Latvian national licence (Garrett ruling, 2026-10-18).
+
+phenibut:
+  regulator: State Agency of Medicines of Latvia
+  basis: Latvian national licence; stays live exactly as meldonium qualifies (Garrett ruling, 2026-10-18). Not to be raised again.
+
+clenbuterol:
+  regulator: National regulators of EU member states
+  product: Spiropent
+  basis: National licences in EU member states (Garrett ruling, 2026-10-18).
+
+clostebol:
+  regulator: Italian Medicines Agency (AIFA)
+  product: Trofodermin
+  basis: Italian national licence (Garrett ruling, 2026-10-18).

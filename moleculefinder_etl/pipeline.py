@@ -244,6 +244,8 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_why_it_matters(kept)
     # Curated commercial/brand names (Advil, Benadryl...) for the "Also sold as" line + search.
     relationships.attach_brands(kept)
+    # Licence basis for medicines admitted under a ruling (approvals.yaml, 2026-10-18).
+    relationships.attach_approvals(kept)
     # Odor detection thresholds for the "Most pungent" (stinkiest) leaderboard.
     relationships.attach_odor_thresholds(kept)
     # kind:"use" hubs from the hand-maintained OTC allowlist (what a medicine is taken

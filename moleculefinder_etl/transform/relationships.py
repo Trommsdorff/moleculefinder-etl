@@ -40,6 +40,7 @@ WORLDS_YAML = SEEDS_DIR / "worlds.yaml"
 RELATIONSHIPS_CSV = SEEDS_DIR / "relationships.csv"
 WHY_IT_MATTERS_YAML = SEEDS_DIR / "why_it_matters.yaml"
 BRANDS_YAML = SEEDS_DIR / "brands.yaml"
+APPROVALS_YAML = SEEDS_DIR / "approvals.yaml"
 ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
 OTC_ALLOWLIST_YAML = SEEDS_DIR / "otc_allowlist.yaml"
 FOOD_HUBS_YAML = SEEDS_DIR / "food_hubs.yaml"
@@ -299,6 +300,34 @@ def load_brands() -> dict[str, list[str]]:
         return {}
     data = yaml.safe_load(BRANDS_YAML.read_text()) or {}
     return {str(k): [str(b).strip() for b in (v or []) if str(b).strip()] for k, v in data.items()}
+
+
+_APPROVAL_FIELDS = ("regulator", "product", "application", "authorised", "basis", "source", "label")
+
+
+def attach_approvals(molecules: list[dict]) -> None:
+    """Attach ``rec['approval']`` for medicines admitted under a ruling (approvals.yaml): which
+    regulator licenses it, and, where the authorisation was confirmed from the regulator's own
+    record, the source. Fails the build on an unknown slug, an unknown field or an entry with no
+    regulator or basis, like every other curated seed."""
+    if not APPROVALS_YAML.exists():
+        return
+    data = yaml.safe_load(APPROVALS_YAML.read_text()) or {}
+    by_slug = {m["slug"]: m for m in molecules}
+    errors = []
+    for slug, entry in data.items():
+        entry = entry or {}
+        if slug not in by_slug:
+            errors.append(f"{slug}: unknown slug")
+            continue
+        extra = sorted(set(entry) - set(_APPROVAL_FIELDS))
+        if extra:
+            errors.append(f"{slug}: unknown field(s) {extra}")
+        if not entry.get("regulator") or not entry.get("basis"):
+            errors.append(f"{slug}: needs a regulator and a basis")
+        by_slug[slug]["approval"] = {k: str(entry[k]) for k in _APPROVAL_FIELDS if entry.get(k)}
+    if errors:
+        raise SystemExit("approvals compile failed:\n  " + "\n  ".join(errors))
 
 
 def attach_brands(molecules: list[dict]) -> None:
