@@ -11,8 +11,7 @@
 -- anon reads the public catalog tables (RLS on the seven that have it still limits rows).
 -- `event` (the /api/e beacon: paths, referrers, session ids) and `ingest_run` (the ETL's
 -- audit trail) are NOT granted to anon here: only the service role reads or writes them.
--- 0003's blanket grant still gives anon SELECT on both until it is revoked; that revoke is
--- a separate decision and is not made by this file.
+-- 0003's blanket grant still gave anon SELECT on both; 0005_private_tables.sql revokes it.
 
 -- ── Public catalog: anon reads, service role writes ─────────────────────────
 grant select on table

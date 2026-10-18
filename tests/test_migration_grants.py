@@ -20,6 +20,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import pytest
+
 MIGRATIONS = Path(__file__).resolve().parent.parent / "supabase" / "migrations"
 
 # The migration that granted the pre-existing tables by name. Tables created in it or before
@@ -164,3 +166,79 @@ def test_without_the_baseline_the_existing_tables_fail(tmp_path):
             (tmp_path / f.name).write_text(f.read_text())
     problems, tables = audit(tmp_path)
     assert {p.split(" ", 1)[0] for p in problems} == set(tables) and len(tables) == 17
+
+
+# ── The private tables stay private (Garrett, 2026-10-18) ───────────────────
+# 0003's blanket grant let anyone with the public (anon) key read `event` and `ingest_run`;
+# 0005 revokes it. These replay every migration in order, blanket grants, default privileges and
+# revokes included, and fail if either table ends up readable by anon or authenticated again.
+_STMT = re.compile(r"[^;]+;")
+PUBLIC_ROLES = ("anon", "authenticated")
+
+
+def effective_privileges(migrations: Path) -> dict[str, dict[str, set[str]]]:
+    """{table: {role: privileges}} after applying every migration in file order."""
+    privs: dict[str, dict[str, set[str]]] = {}
+    defaults: dict[str, set[str]] = {}
+
+    def expand(text: str) -> set[str]:
+        text = text.strip().lower()
+        return {"select", "insert", "update", "delete"} if text.startswith("all") \
+            else {p.strip() for p in text.split(",")}
+
+    for f in sorted(migrations.glob("*.sql")):
+        for stmt in _STMT.findall(_sql(f)):
+            s = " ".join(stmt.split()).lower().rstrip(";")
+            m = re.match(r"create table (?:if not exists )?(?:public\.)?(\w+)", s)
+            if m:
+                privs.setdefault(m.group(1), {r: set(p) for r, p in defaults.items()})
+                continue
+            m = re.match(r"alter default privileges in schema public grant (.+?) on tables to (.+)", s)
+            if m:
+                for role in _names(m.group(2)):
+                    defaults.setdefault(role, set()).update(expand(m.group(1)))
+                continue
+            m = re.match(r"(grant|revoke) (.+?) on (?:table )?(all tables in schema public|(?!sequence|schema|all )[\w., ]+?) (?:to|from) (.+)", s)
+            if not m:
+                continue
+            verb, what, objects, roles = m.groups()
+            targets = list(privs) if objects.startswith("all tables") else [o for o in _names(objects) if o in privs]
+            for t in targets:
+                for role in _names(roles):
+                    held = privs[t].setdefault(role, set())
+                    held |= expand(what) if verb == "grant" else set()
+                    if verb == "revoke":
+                        held -= expand(what)
+    return privs
+
+
+def test_event_and_ingest_run_are_not_readable_with_the_public_key():
+    privs = effective_privileges(MIGRATIONS)
+    for table in PRIVATE:
+        for role in PUBLIC_ROLES:
+            assert privs[table].get(role, set()) == set(), (table, role)
+        assert {"select", "insert"} <= privs[table]["service_role"]      # /dashboard reads, /api/e inserts
+    assert "select" in privs["molecule"]["anon"]                          # the catalog stays public
+
+
+def test_without_0005_both_were_readable(tmp_path):
+    """Load-bearing check: drop 0005 and 0003's blanket grant is back in force."""
+    for f in MIGRATIONS.glob("*.sql"):
+        if not f.name.startswith("0005"):
+            (tmp_path / f.name).write_text(f.read_text())
+    privs = effective_privileges(tmp_path)
+    assert "select" in privs["event"]["anon"] and "select" in privs["ingest_run"]["authenticated"]
+
+
+@pytest.mark.parametrize("sql", [
+    "grant select on event to anon;",
+    "grant select on table public.ingest_run to authenticated;",
+    "grant select on all tables in schema public to anon;",
+])
+def test_a_later_grant_reopening_them_fails(tmp_path, sql):
+    d = _repo_plus(tmp_path, "0099_oops.sql", sql)
+    with pytest.raises(AssertionError):
+        privs = effective_privileges(d)
+        for table in PRIVATE:
+            for role in PUBLIC_ROLES:
+                assert privs[table].get(role, set()) == set(), (table, role)
