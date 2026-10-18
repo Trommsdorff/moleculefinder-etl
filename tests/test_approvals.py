@@ -53,6 +53,12 @@ def test_an_unknown_slug_or_a_missing_basis_fails_the_build(tmp_path, monkeypatc
 def test_the_two_vet_only_rows_are_held_and_phenibut_stays():
     held = (SEEDS_DIR / "deferred_rows.csv").read_text()
     core = (SEEDS_DIR / "scope_b_core.csv").read_text()
-    for name in ("Fenbendazole", "Carfentanil", "Nandrolone"):
+    for name in ("Fenbendazole", "Carfentanil", "Nandrolone", "Oxandrolone"):
         assert f"\n{name}," in held and f",{name}," not in core
-    assert ",Phenibut," in core
+    assert ",Phenibut," in core and ",Flunitrazepam," in core
+
+
+def test_flunitrazepam_cites_the_italian_register():
+    f = _seed()["flunitrazepam"]
+    assert "AIFA" in f["regulator"] and "023328" in f["application"]
+    assert f["source"].startswith("https://api.aifa.gov.it/")

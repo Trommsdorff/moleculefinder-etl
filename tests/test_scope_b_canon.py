@@ -15,7 +15,7 @@ from moleculefinder_etl.transform import canon
 # The everyday core as it shipped: 489 Scope B + 9 pungent/stinky board additions.
 ORIGINAL_CORE = 498
 # Catalog-growth tranches, newest last. Each is a `batch`-tagged block in the CSV.
-TRANCHES = {"2026-09-A": 288,   # 295 built, 5 held back, then fenbendazole and carfentanil (vet only) 2026-10-18
+TRANCHES = {"2026-09-A": 287,   # 295 built, 5 held back; fenbendazole, carfentanil, oxandrolone removed 2026-10-18
             "2026-10-A": 126}   # 120, then 6 of the 7 queued rows on Garrett's 2026-10-18 rulings
 
 

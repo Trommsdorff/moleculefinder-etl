@@ -36,3 +36,12 @@ clostebol:
   regulator: Italian Medicines Agency (AIFA)
   product: Trofodermin
   basis: Italian national licence (Garrett ruling, 2026-10-18).
+
+flunitrazepam:
+  regulator: Italian Medicines Agency (AIFA)
+  product: Roipnol (Cheplapharm Arzneimittel GmbH)
+  application: AIC 023328 (pack 023328077, 1 mg film-coated tablets)
+  authorised: "2000-12-11"
+  basis: Italian national licence, administrative status A (authorised), marketed, not revoked or suspended, special prescription (RMR); confirmed 2026-10-18 from AIFA's medicines database. Spain's AEMPS register (CIMA) lists no flunitrazepam product.
+  source: https://api.aifa.gov.it/aifa-bdf-eif-be/1.0.0/formadosaggio/ricerca?query=flunitrazepam
+  label: https://medicinali.aifa.gov.it/
