@@ -715,7 +715,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 719,Phenibut,14113,13063,prescription-medicine,anxiolytic,,yes,,,2026-09-A
 720,Doxepin,3158,13006,prescription-medicine,tricyclic-antidepressant,,,,,2026-09-A
 721,Formic acid,284,12990,everyday-chemistry,organic-acid,,yes,,,2026-09-A
-722,Oxandrolone,5878,12977,prescription-medicine,anabolic-steroid,,yes,,,2026-09-A
 723,Krypton,5416,12959,element-material,element,,,,,2026-09-A
 724,Potassium permanganate,516875,12943,everyday-chemistry,inorganic,,yes,,,2026-09-A
 725,Flucloxacillin,21319,12929,prescription-medicine,antibiotic,,,,,2026-09-A
