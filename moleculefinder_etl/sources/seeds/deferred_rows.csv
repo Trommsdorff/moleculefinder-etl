@@ -7,6 +7,12 @@
 # veterinary-only. It is a scope decision about what MoleculeFinder is for, not a claim
 # about the chemistry, and it is deliberately narrower than "controlled substance":
 # fentanyl, amphetamine and the benzodiazepines are approved medicines and stay in.
+#
+# THE RULE, CLARIFIED (Garrett, 2026-10-18; applies to new rows and to live pages alike): a
+# molecule qualifies as an approved medicine when it holds a CURRENT marketing authorisation for
+# human use from the FDA, the MHRA, the EMA, or the national regulator of any single EU member
+# state. One national licence is enough (so meldonium and phenibut, licensed in Latvia, qualify).
+# Rows let in under a ruling, and their licence basis, are in approvals.yaml.
 molecule,pubchem_cid,wikipedia_views_monthly,held_from_batch,held_on,reason
 Trenbolone,25015,22332,2026-09-A,2026-09-06,Veterinary only: a cattle growth implant. Never approved for people anywhere.
 Xylazine,5707,19218,2026-09-A,2026-09-06,"Veterinary sedative only, never approved for people, and now an illicit adulterant."
@@ -34,3 +40,6 @@ Phenylpiracetam,132441,5671,2026-10-A,2026-10-18,"Approved only in Russia; not i
 Medetomidine,68602,5650,2026-10-A,2026-10-18,"Veterinary only (its active half, dexmedetomidine, is the human medicine and is in this tranche)."
 Enobosarm,11326715,5597,2026-10-A,2026-10-18,"Investigational SARM, never approved."
 SR-17018,130431397,5569,2026-10-A,2026-10-18,"Research opioid, never tested in people."
+Nandrolone,9904,7750,2026-10-A,2026-10-18,"No current licence for people could be confirmed; Ireland and the UK withdrew Deca-Durabolin (Garrett, 2026-10-18)."
+Fenbendazole,3334,15027,2026-09-A,2026-10-18,"Veterinary only: a dog, cattle and horse dewormer (Panacur), with no current licence for people from the FDA, MHRA, EMA or any EU member state. Was live; removed (Garrett, 2026-10-18)."
+Carfentanil,62156,12322,2026-09-A,2026-10-18,"Veterinary only: a large-animal tranquilliser dart (Wildnil), never licensed for people by the FDA, MHRA, EMA or any EU member state. Was live; removed (Garrett, 2026-10-18)."
