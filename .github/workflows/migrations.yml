@@ -1,0 +1,25 @@
+name: migrations
+# Standing order 17 (2026-10-18): every table a migration creates ships its Data API grants
+# in the same file. Supabase stops auto-granting new public tables on 2026-10-30, so a table
+# without grants would be invisible to the REST API this ETL loads through, and the first sign
+# would be a failed Monday run. This fails the push or pull request instead.
+#
+# Runs only when a migration or the test changes. The test reads the SQL as text and needs
+# nothing but pytest: no package install, no rdkit, about 15 seconds. This repo is public, so
+# it bills no Actions minutes.
+on:
+  push:
+    paths: ["supabase/migrations/**", "tests/test_migration_grants.py", ".github/workflows/migrations.yml"]
+  pull_request:
+    paths: ["supabase/migrations/**", "tests/test_migration_grants.py", ".github/workflows/migrations.yml"]
+permissions:
+  contents: read
+jobs:
+  grants:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - run: pip install pytest
+      - run: python -m pytest -p no:cacheprovider tests/test_migration_grants.py -q
