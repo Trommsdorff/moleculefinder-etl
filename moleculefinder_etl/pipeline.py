@@ -8,13 +8,16 @@ a failed run resumes cheaply:
                                                    PUG-View Tox/GHS warmed into raw_cache)
     transform → data/seed/molecules.json         (assembled records, filter-4 applied)
                 data/seed/deferred.json          (orphans demoted by filter-4)
-    load      → Supabase (idempotent upserts; skipped if creds absent)
+    load      → Supabase (idempotent upserts; skipped if creds absent). Runs the
+                export's refusal checks first (``_preflight``), so a run the export
+                would refuse never writes to the database
     export    → data/snapshots/                  (per-molecule JSON + index + boards +
                                                   featured.json, the molecule of the week)
 """
 from __future__ import annotations
 import json
 import logging
+import os
 from functools import partial
 from pathlib import Path
 
@@ -23,7 +26,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured
 from .sources import cache, pubchem
-from .load import supabase_loader, snapshot_export
+from .load import supabase_loader, snapshot_export, snapshot_guard
 from . import freshness
 
 import yaml
@@ -112,6 +115,15 @@ def _fetch_cached(cids: list[int], prefix: str, fetch_missing,
     return out
 
 
+def _report_throttle() -> None:
+    """The throttle summary, in the log and, on GitHub Actions, as a notice on the run page,
+    where it is visible without opening the step's log."""
+    line = pubchem.throttle_summary()
+    log.info("  %s", line)
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        print(f"::notice title=PubChem throttle::{line}", flush=True)
+
+
 def stage_fetch(settings: Settings) -> None:
     """Pull PubChem properties/synonyms/annotations for the canon (all cached)."""
     _require(SEED_DIR / "canon.parquet", "seed")
@@ -122,12 +134,14 @@ def stage_fetch(settings: Settings) -> None:
     log.info("stage 1: fetch — %d CIDs (PubChem properties + synonyms + PUG-View Tox/GHS); "
              "%d hand-modeled molecules skip PubChem", len(cids), n_hand)
 
+    pubchem.posts.clear()
     props = _fetch_cached(cids, "props", lambda miss: {int(p["CID"]): p for p in pubchem.properties(miss)})
     # Cache prefix is "syn60", not "syn": the old entries hold a 20-name window and reusing
     # them would keep the starvation the deeper window exists to remove. Renaming the prefix
     # re-fetches once and leaves the stale files to be evicted. The lists expire after
     # SYNONYMS_CACHE_TTL_DAYS, so the weekly run's cache cannot keep an old list forever.
     syns = _fetch_cached(cids, "syn60", lambda miss: pubchem.synonyms(miss), SYNONYMS_CACHE_TTL_DAYS)
+    _report_throttle()
 
     # Warm the PUG-View caches (Toxicity + GHS) so transform parses offline.
     tox_hits = ghs_hits = 0
@@ -273,6 +287,34 @@ def stage_transform(settings: Settings) -> list[dict]:
     return kept
 
 
+# ── Export preflight: every refusal, before anything is written anywhere ─────
+def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict, object]:
+    """Run every check that can refuse this snapshot, and write nothing.
+
+    The load used to run before the export, and the export is where the snapshot guard
+    lived, so a refused run had already written to production: on 2026-09-28 the guard
+    refused dicalcium phosphate's placeholder summary in stage 4 after stage 3 had put
+    it in Supabase. Called by ``stage_load`` before it opens a connection, so a run the
+    export would refuse never reaches the database, and by ``stage_export`` for the
+    compiled outputs it writes. Read-only: the guard compares with the snapshot on disk.
+
+    The checks, in the order a failure is cheapest to read: the leaderboards, the
+    written comparisons and the molecule-of-the-week seed (each compiled against the
+    catalog, each raises on a bad reference), then ``snapshot_guard.check`` (a
+    placeholder summary, a nulled LD50 or a swapped Wikidata QID). ``stage_export`` passes
+    ``guard=False`` only because ``snapshot_export.export`` runs the same guard itself.
+    """
+    boards = {slug: leaderboards.rank(slug, molecules) for slug in leaderboards.BOARDS}
+    # Compiled here, against the whole catalog, so a curated pair naming a molecule that is
+    # not in it fails the run instead of quietly exporting one fewer page.
+    comparisons = relationships.build_comparisons(molecules)
+    # Molecule of the week, validated against the same catalog; a bad seed stops the run here.
+    queue = featured.compile_queue(molecules)
+    if guard:
+        snapshot_guard.check(molecules, SNAPSHOTS)
+    return boards, comparisons, queue
+
+
 # ── Stage 3: load ────────────────────────────────────────────────────────────
 def stage_load(settings: Settings) -> None:
     _require(MOLECULES, "transform")
@@ -281,6 +323,9 @@ def stage_load(settings: Settings) -> None:
         log.info("stage 3: load — SUPABASE_URL/SERVICE_KEY not set; skipping DB upserts "
                  "(the static snapshot in stage 4 does not need a DB). %d molecules staged.", len(molecules))
         return
+    # Before the client exists: a refusal here leaves the database exactly as it was,
+    # not even a failed ingest_run row.
+    _preflight(molecules)
     log.info("stage 3: load (idempotent upserts + ingest_run) — %d molecules", len(molecules))
     client = supabase_loader.get_client(settings)
     try:
@@ -299,13 +344,8 @@ def stage_load(settings: Settings) -> None:
 def stage_export(settings: Settings) -> Path:
     _require(MOLECULES, "transform")
     molecules = json.loads(MOLECULES.read_text())
-    boards = {slug: leaderboards.rank(slug, molecules) for slug in leaderboards.BOARDS}
-    # Compiled here, against the whole catalog, so a curated pair naming a molecule that is
-    # not in it fails the run instead of quietly exporting one fewer page.
-    comparisons = relationships.build_comparisons(molecules)
-    # Molecule of the week, validated against the same catalog; a bad seed stops the run here,
-    # before anything is written. The builder runs inside export, for the date meta.json gets.
-    queue = featured.compile_queue(molecules)
+    boards, comparisons, queue = _preflight(molecules, guard=False)
+    # The featured builder runs inside export, for the date meta.json gets.
     builder = partial(featured.build_featured, queue, molecules) if queue is not None else None
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder)
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
