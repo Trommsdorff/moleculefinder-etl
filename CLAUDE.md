@@ -750,10 +750,11 @@ PolitiFinder's pattern (`politifinder/repo/scripts/news-politicians.mjs`), with 
 deliberate:
 - **Standard library only (Python 3.11+),** run as `python3 -m moleculefinder_etl.news` after
   `setup-python` with NO pip install, so the six-hourly cron never pays for rdkit. Cron `50 */6 * * *`.
-- **Names only, in the table too.** PF's `trending_politician` keeps the latest headline, outlet and link
-  "for auditing"; `molecule_news` (migration 0006) keeps slug, name, first/last seen, hits, updated_at and
-  nothing else, and the job never prints a headline either (this repo's logs are public). The audit view
-  is `--show-headlines` on a LOCAL dry run only; it refuses to run on GitHub.
+- **Names only in public; the audit trail private (amended the same day, see "Amendments" below).**
+  PF's `trending_politician` keeps the latest headline, outlet and link "for auditing". Here the public
+  face (`molecule_news`'s five name columns, the feed, the site) carries none of it; every match's
+  headline, outlet, link and query go to the private `molecule_news_match`. The job never PRINTS a
+  headline (this repo's logs are public); `--show-headlines` is for a LOCAL dry run only and refuses on GitHub.
 - **Same source as PF: Google News RSS (en-US).** Different queries: PF's eleven title queries find
   "Sen. X"; a molecule has no title, so the catalogue's own names are the queries (titles + brands +
   curated aliases + qualified phrases, ~40 per OR batch, ordered by page views) plus six topic queries.
@@ -785,7 +786,7 @@ deliberate:
   daraxonrasib's CHMP opinion. Audit of every match: about 2 wrong of ~600 matched headlines (an
   "Ozone Communications Group", a tokenized-stock page). The first two dry runs found and fixed: Allegra
   (people), Endorphin (a shoe), Dopamine Chamber (an album), ethylene oxide, mining tickers.
-- **PFAS cannot match yet:** the catalogue has no PFAS molecule (no PFOA, no PFOS). Raised to Garrett.
+- **PFAS:** the catalogue had no PFAS molecule; PFOA and PFOS were added the same day (Amendments, 2).
 - **Tests:** `tests/test_news.py` (68 with the fixture): `tests/fixtures/news-headlines.txt` is 54
   SYNTHETIC headlines (never copied coverage) each stating its match; the job run end to end on it with
   the network off (no headline or outlet in its output, the feed's keys exactly the five); plan_write,
@@ -796,16 +797,78 @@ deliberate:
   applied, a second run "up to date", raw SQL applied twice more; anon SELECT yes / INSERT no, RLS on.
   The Storage bucket insert is guarded (`to_regclass('storage.buckets')`), so it is a no-op off Supabase.
 
+### Amendments (Garrett, 2026-10-20, the same day; commits `0c1f927`, `89ccbd2`)
+1. **The home block is ordered by spike, not count.** `news.spikes`: a molecule's distinct headlines this
+   week over its own average week across the four before, floored at `SPIKE_FLOOR` = 2 headlines a week
+   (one stray headline is not a baseline of zero, and a molecule with no history divides by 2). Ties go to
+   the count, then recency. The history is `molecule_news_match`; until it holds four weeks (its oldest
+   match found 28 or more days ago, `has_history`) the order is the raw count, and the feed says which in
+   a new top-level `"ranked_by": "spike" | "count"`. The web keeps the feed's order. **hits is now counted
+   over every run's matches** (distinct stories in the last seven days), so the day's four rotated runs add
+   up instead of each overwriting the last. The badge shows hits as before. Tests on a fixed five-week
+   history: acetaminophen 5 a week then 40 (spike 8.0) outranks fentanyl 150 then 152 (1.01), a brand-new
+   molecule with 3 sits between them (1.5), and without four weeks the order is the count.
+   **The two top eights.** Today's dry run (2026-10-20 ~11:30 UTC, 60 requests, 0 failed, 3,033 headlines,
+   91 molecules) has no history, so it ranks by count, as the live feed will for its first four weeks:
+   ammonia 48, propane 37, ozone 36, ethanol 31, uranium 27, fentanyl 26, retinol 19, creatine 15. To show the
+   spike order now, a LOCAL simulation fetched five weeks the same way each week (Google News `after:`/`before:`,
+   120 requests a week, 0 failed, about 6,500 headlines a week; names and counts only, nothing written):
+   **by count** fentanyl 88, ammonia 85, ethanol 81, insulin 73, aluminium 68, THC 68, uranium 64, lead 64;
+   **by spike** sucrose 34 (usual 4.5 a week, x7.6), phenol 15 (1.2, x7.5), fructose 37 (5.2, x7.0), acetone 11
+   (0.8, x5.5), citalopram 8 (2.0, x4.0), daraxonrasib 8 (2.0, x4.0), testosterone 54 (14.8, x3.7), sertraline 18
+   (5.0, x3.6). The spike list is this week's actual stories: India's FSSAI infant-food sugar proposal, a new
+   phenol and acetone plant, the UK antidepressant leaflet warnings, daraxonrasib's CHMP opinion. Fentanyl drops
+   out of the eight (x1.0). Numbers are after the wire-copy fix below (before it, today's dry run had fentanyl 91).
+   PFOA and PFOS show 0 in both runs because their batch was past the request budget in those passes; asked
+   directly, `PFOA OR PFOS` matched 4 headlines to each, and the day's four rotated runs reach that batch.
+2. **PFOA and PFOS joined the catalogue** (`2026-10-runA`, a two-row addition, not a tranche: bucket
+   everyday-chemistry, family organohalogen, which reaches 3 and gets `/in/organohalogen`). 911 -> 913,
+   sitemap 1,262 -> 1,265. Built pinned from this Mac's cache with a TEMPORARY local `inputs.json` (no
+   artifact exists before the first Monday), fetching only the two CIDs (2 PubChem POSTs, Green); the
+   cache's 97-file drift against main was kept out by a three-way merge against a no-change build of the
+   same cache, so the commit carries only the two rows' effects. Aliases `PFOA`, `PFOS`,
+   `perfluorooctanoate`, `perfluorooctane sulfonate`. **"PFAS" alone matches nothing:** it names a class
+   of thousands of chemicals. Measured 2026-10-20: a `PFAS` query returned 86 PFAS headlines, of which 1
+   named PFOA or PFOS; a `PFOA OR PFOS` query matched 4 headlines to each (EPA production data, a PFOS
+   exposure study, an HPLC method note).
+3. **The audit trail, private.** `molecule_news_match` (0006): one row per (molecule, story) with the
+   headline (outlet suffix cut, its normalised text is the story key), outlet, Google News link of the first copy found, the query that found it, its date and when a run
+   first found it; inserted with `resolution=ignore-duplicates`, so a story keeps its first query. Pruned 42
+   days after the headline's date. Service role only: `revoke all ... from anon, authenticated`, RLS on,
+   NO policy. `molecule_news` is revoked too and anon then gets `select (slug, name, first_seen,
+   last_seen, hits)` only: **0003's default privileges grant SELECT on every new table to anon and
+   authenticated, so without the revoke the column grant would mean nothing** (a test proves it).
+   PostgREST echoes a failing row in its error, so every request to the private table is `quiet` and
+   reports the status only. Tests: write() against a fake PostgREST (coverage reaches only the private
+   table, never the names-only rows, the Storage JSON or the log), the quiet error, and the grants replay
+   now models column grants and revoke-all. Web `lib/news-build.test.ts` reads the built site.
+   **0006 checked on a throwaway local Postgres at the live state (0001-0005 logged):** `mfetl migrate
+   --apply` applied it, a second run "up to date", raw re-applies twice more clean; anon: table-level
+   SELECT on molecule_news false, columns slug/hits true and updated_at false, `select *` "permission
+   denied", INSERT false, nothing at all on molecule_news_match ("permission denied"); authenticated:
+   nothing on either; RLS on both; 0 policies on the match table; service_role reads the match row.
+   Database and the scratch Postgres deleted.
+4. **Found auditing the spike leaders (commit after `89ccbd2`):** a story's identity is its normalised
+   headline text, not its Google News link (one local mercury story ran under six links and counted six
+   times); and the market filter skips "mine", "stock options", "options expiring" ("...vanadium mine
+   plans" had got through). Phenol and acetone's spike was real: an Indian phenol and acetone plant opened.
+- **Tests:** 588 here (575 before the amendments); ruff adds nothing to main's baseline. Web 94 (92).
+
 ### Deploy sequence (on Garrett's word)
-1. `mfetl migrate --apply` (0006: the table and the `public-data` bucket); check anon reads
-   `molecule_news` and cannot insert.
+1. `mfetl migrate --apply` (0006: both tables and the `public-data` bucket); then, with the anon key over
+   REST, `molecule_news?select=slug,name,hits` answers 200, `select=*` and any read of
+   `molecule_news_match` answer 401/permission denied, and an insert is refused.
 2. Push ETL `news-2026-10` to main. This arms the news cron and adds the inputs upload to the Monday run.
    Dispatch `news.yml` once with `dry_run: true` (names and counts in the log), then once for real: the
-   table has rows, `.../storage/v1/object/public/public-data/news/in-the-news.json` answers 200 with five
-   keys per molecule, IndexNow accepted.
+   table has rows, `molecule_news_match` has rows (read with the service key, locally, never printed),
+   `.../storage/v1/object/public/public-data/news/in-the-news.json` answers 200 with five keys per
+   molecule and `"ranked_by": "count"` (it reads "spike" from about 2026-11-17, four weeks after the first
+   run), IndexNow accepted.
 3. Push web `news-2026-10` to main (with `b5f9c40`), Vercel to Ready; the home block shows cards and a
-   matched page shows its badge; Lighthouse `/` and `/m/caffeine` live. The deploy's own IndexNow delta
-   should be ~0 URLs: no data changed, and the news job already pinged the matched pages.
+   matched page shows its badge; Lighthouse `/` and `/m/caffeine` live. The deploy's own IndexNow delta,
+   dry-run against production `4f15bbb`: URL set 1,262 -> 1,265, **24 URLs** (3 new: the two pages and
+   `/in/organohalogen`; 21 changed: dichloromethane and 1,1-difluoroethane, the 12 hubs PFOA/PFOS join,
+   `/best` and the boards they enter). The news code itself moves no fingerprint.
 4. The Monday after: `mfetl sync-inputs && mfetl all` on this Mac must leave `git status` clean.
 
 ## Tranche 2 (2026-10-18) — 788 -> 911, guard before load, grants. DEPLOYED 2026-10-19/20
