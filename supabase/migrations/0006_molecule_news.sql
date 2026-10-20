@@ -39,7 +39,7 @@ create index if not exists molecule_news_last_seen_idx on molecule_news (last_se
 
 create table if not exists molecule_news_match (
   slug          text        not null,             -- /m/<slug>
-  story         text        not null,             -- the headline's identity: its link, query string cut
+  story         text        not null,             -- the headline's identity: its text, normalised (copies count once)
   headline      text        not null,             -- the headline as matched (outlet suffix removed)
   outlet        text,                             -- the outlet Google News names
   url           text,                             -- the Google News link to the story

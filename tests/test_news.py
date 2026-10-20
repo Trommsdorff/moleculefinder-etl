@@ -202,6 +202,14 @@ def test_the_audit_trail_goes_to_the_private_table_and_nowhere_else(monkeypatch,
     assert {m["slug"] for m in entrants} == {"acetaminophen", "fentanyl", "melatonin"}     # none listed before
 
 
+def test_one_wire_story_under_six_outlets_is_one_headline():
+    """Measured 2026-10-20: a local mercury story ran under six Google News links."""
+    items = [{"title": f"Town looks to limit mercury levels - Outlet {i}", "source": f"Outlet {i}",
+              "link": f"https://news.example/{i}?oc=5", "pubDate": "", "query": "q"} for i in range(6)]
+    found = news.match_items(items, INDEX, NOW, 7)
+    assert [(m["slug"], m["hits"]) for m in found] == [("mercury", 1)]
+
+
 def test_an_error_from_the_private_table_never_echoes_a_row(monkeypatch):
     def boom(req, timeout=0):
         raise urllib.error.HTTPError(req.full_url, 400, "bad", {}, __import__("io").BytesIO(

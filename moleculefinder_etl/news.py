@@ -247,7 +247,7 @@ _COMPOUND_WORD = re.compile(
 _MARKET = re.compile(
     r"\b(?:shares?|stocks|stock price|ticker|nasdaq|nyse|tsx|tsxv|asx|otcqb|lse|ipo|futures|"
     r"market (?:size|share|report|forecast|outlook|analysis|growth|trends?)|mines|mining|miners?|"
-    r"drill(?:ing|ed|s)?|exploration|porphyry|npv|flow-through|financing|tonnes?|smelter|offtake|"
+    r"mine|drill(?:ing|ed|s)?|exploration|stock options|options expiring|porphyry|npv|flow-through|financing|tonnes?|smelter|offtake|"
     r"rare earths?|(?:critical|strategic) minerals?|mineral (?:system|resource|property)|"
     r"project in|claims? package|forecast|market (?:to|by|in) 20\d\d|market to reach|"
     r"private placement|placement|corp|ltd|plc|mineraliz(?:ed|ation)|stibnite|concentrate)\b"
@@ -411,8 +411,10 @@ def _when(pub: str, fallback: datetime) -> datetime:
 
 
 def story_key(it: dict) -> str:
-    """A headline's identity: its link without the query string, else title and outlet."""
-    return (it.get("link") or "").split("?")[0] or f"{it['title']}|{it.get('source', '')}"
+    """A headline's identity: its text, outlet cut, normalised. NOT its link: one wire story runs
+    under many outlets' links (measured 2026-10-20: one local mercury story six times), and each
+    copy would count as another headline. The link of the first copy found is kept as ``url``."""
+    return normalize(strip_source(it["title"], it.get("source", "")))
 
 
 def matches(items: list[dict], index: dict, now: datetime, days: int) -> list[dict]:
