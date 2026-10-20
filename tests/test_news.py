@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import UTC, datetime, timedelta
@@ -99,11 +100,117 @@ def test_the_feed_carries_names_dates_and_counts_and_nothing_else():
         {"slug": "carfentanil", "name": "Carfentanil", "first_seen": "2026-10-19T00:00:00Z", "last_seen": "2026-10-19T00:00:00Z", "hits": 5},
     ]
     feed = news.build_feed(rows, SLUGS, NOW)
-    assert set(feed) == {"generated_at", "window_days", "molecules"} and feed["window_days"] == 7
+    assert set(feed) == {"generated_at", "window_days", "ranked_by", "molecules"} and feed["window_days"] == 7
+    assert feed["ranked_by"] == "count"
     assert [m["slug"] for m in feed["molecules"]] == ["caffeine", "melatonin"]    # aged out; not in the catalogue
     assert feed["molecules"][0] == {"slug": "caffeine", "name": "Caffeine", "first_seen": "2026-10-14",
                                     "last_seen": "2026-10-20", "hits": 9}
     assert all(set(m) == FEED_KEYS for m in feed["molecules"])
+
+
+# ── the order: a spike outranks a steady high count ──────────────────────────
+AUDIT_FIELDS = ("headline", "outlet", "url", "query", "story")
+
+
+def _matches(slug, per_week, weeks_ago, tag=""):
+    """``per_week`` distinct headlines naming ``slug`` in the week ``weeks_ago`` weeks back (0 =
+    this week), spread over that week."""
+    start = NOW - timedelta(days=7 * (weeks_ago + 1))
+    return [{"slug": slug, "story": f"https://news.example/{slug}/{weeks_ago}/{i}{tag}",
+             "headline": f"Synthetic {slug} headline {weeks_ago}/{i}", "outlet": "Example News",
+             "url": f"https://news.example/{slug}/{weeks_ago}/{i}{tag}?oc=5", "query": slug,
+             "published_at": start + timedelta(hours=1 + i * (166 / max(per_week, 1)))}
+            for i in range(per_week)]
+
+
+# A fixed five weeks: fentanyl steady at ~150 a week; acetaminophen at 5 a week, then a recall week
+# of 40; melatonin new this week with 3 and no history at all.
+HISTORY = [*(m for w in range(1, 5) for m in _matches("fentanyl", 150, w)), *_matches("fentanyl", 152, 0),
+           *(m for w in range(1, 5) for m in _matches("acetaminophen", 5, w)), *_matches("acetaminophen", 40, 0),
+           *_matches("melatonin", 3, 0)]
+
+
+def _feed_from(history, spike):
+    found = news.tally(history, INDEX["names"], NOW)
+    rows, _ = news.plan_write(found, [], NOW)
+    return news.build_feed(rows, SLUGS, NOW, spike)
+
+
+def test_a_recall_sized_spike_outranks_a_steady_high_count():
+    spike = news.spikes(HISTORY, NOW)
+    assert spike["acetaminophen"] == 40 / 5 and round(spike["fentanyl"], 2) == round(152 / 150, 2)
+    assert spike["melatonin"] == 3 / news.SPIKE_FLOOR                     # no history: the floor, not a zero
+    feed = _feed_from(HISTORY, spike)
+    assert feed["ranked_by"] == "spike"
+    assert [m["slug"] for m in feed["molecules"]] == ["acetaminophen", "melatonin", "fentanyl"]
+    # The counts the badge shows are this week's, whatever the order.
+    assert {m["slug"]: m["hits"] for m in feed["molecules"]} == {"acetaminophen": 40, "melatonin": 3, "fentanyl": 152}
+
+
+def test_without_four_weeks_of_history_the_order_is_the_raw_count():
+    assert news.has_history(None, NOW) is False
+    assert news.has_history(NOW - timedelta(days=27), NOW) is False
+    assert news.has_history(NOW - timedelta(days=28), NOW) is True
+    feed = _feed_from(HISTORY, None)
+    assert feed["ranked_by"] == "count"
+    assert [m["slug"] for m in feed["molecules"]] == ["fentanyl", "acetaminophen", "melatonin"]
+
+
+def test_a_headline_found_by_two_runs_counts_once():
+    twice = HISTORY + _matches("acetaminophen", 40, 0)                    # the same 40 stories again
+    assert news.spikes(twice, NOW)["acetaminophen"] == 40 / 5
+    assert {m["slug"]: m["hits"] for m in news.tally(twice, INDEX["names"], NOW)}["acetaminophen"] == 40
+
+
+# ── the audit trail is private ───────────────────────────────────────────────
+def test_the_audit_trail_goes_to_the_private_table_and_nowhere_else(monkeypatch, capsys):
+    """write() against a fake PostgREST and Storage: the headline, outlet, link and query reach
+    molecule_news_match and nothing else: not molecule_news, not the public JSON, not the log."""
+    sent = []
+    oldest = (NOW - timedelta(days=29)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    def fake(method, url, key, body=None, headers=None, quiet=False):
+        sent.append((method, url, body, quiet))
+        if method == "GET" and "select=found_at" in url:
+            return json.dumps([{"found_at": oldest}]).encode()
+        if method == "GET" and news.MATCH_TABLE in url:
+            if "offset=0" not in url:
+                return b"[]"
+            return json.dumps([{"slug": r["slug"], "story": r["story"], "published_at": news.iso(r["published_at"])}
+                               for r in HISTORY]).encode()
+        return b"[]"
+    monkeypatch.setattr(news, "_request", fake)
+    this_run = [r for r in HISTORY if r["published_at"] >= NOW - timedelta(days=7)][:50]
+    entrants, feed = news.write(this_run, INDEX["names"], SLUGS, "https://example.invalid", "k", NOW)
+    log = capsys.readouterr().out
+
+    to_matches = [s for s in sent if s[0] == "POST" and f"/{news.MATCH_TABLE}?" in s[1]]
+    assert len(to_matches) == 1 and to_matches[0][3] is True                # quiet: errors withhold the body
+    assert all(set(AUDIT_FIELDS[:4]) <= set(r) for r in to_matches[0][2])
+    assert all(quiet for m, url, _, quiet in sent if news.MATCH_TABLE in url)
+    public_rows = next(s[2] for s in sent if s[0] == "POST" and f"/{news.TABLE}?" in s[1])
+    assert all(set(r) == {"slug", "name", "first_seen", "last_seen", "hits", "updated_at"} for r in public_rows)
+    upload = next(s[2] for s in sent if "/storage/v1/object/" in s[1])
+    public = json.loads(upload)
+    assert public == feed and public["ranked_by"] == "spike"
+    assert all(set(m) == FEED_KEYS for m in public["molecules"])
+    text = upload.decode() + json.dumps(public_rows) + log      # everything public, and the log
+    for field in AUDIT_FIELDS:
+        assert f'"{field}"' not in upload.decode() and f'"{field}"' not in json.dumps(public_rows)
+    for r in this_run:
+        assert r["headline"] not in text and r["url"] not in text and "Example News" not in text
+    assert {m["slug"] for m in entrants} == {"acetaminophen", "fentanyl", "melatonin"}     # none listed before
+
+
+def test_an_error_from_the_private_table_never_echoes_a_row(monkeypatch):
+    def boom(req, timeout=0):
+        raise urllib.error.HTTPError(req.full_url, 400, "bad", {}, __import__("io").BytesIO(
+            b'{"message":"Failing row contains (caffeine, Synthetic caffeine headline, Example News)"}'))
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    with pytest.raises(SystemExit) as exc:
+        news._request("POST", "https://example.invalid/rest/v1/molecule_news_match?on_conflict=slug,story",
+                      "k", [{}], quiet=True)
+    assert "Synthetic" not in str(exc.value) and "HTTP 400" in str(exc.value)
 
 
 # ── the fetch ────────────────────────────────────────────────────────────────

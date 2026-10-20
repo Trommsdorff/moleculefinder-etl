@@ -9,10 +9,13 @@ WHAT IS DIFFERENT FROM PF, AND WHY
 1. Standard library only (Python 3.11 or later). PF keeps its job dependency-free so a six-hourly cron never pays an
    install; this repo's package needs rdkit, so the job imports nothing outside the standard
    library and runs as ``python -m moleculefinder_etl.news`` on the runner's own Python.
-2. NAMES ONLY, IN THE TABLE TOO. PF's table keeps the latest headline, outlet and link "for
-   auditing". MoleculeFinder's keeps slug, name, first and last seen, and a headline count, and
-   nothing else (Garrett's spec, 2026-10-20). The audit view is ``--show-headlines`` on a local dry
-   run; the cron never prints or stores headline text (this repo and its logs are public).
+2. NAMES ONLY IN PUBLIC, THE AUDIT TRAIL PRIVATE. PF's one table keeps the latest headline,
+   outlet and link "for auditing". MoleculeFinder splits it (Garrett, 2026-10-20): the public face
+   (the feed, the site, and the five columns of ``molecule_news`` the anon key may read) is slug,
+   name, first and last seen and a headline count; every match's headline, outlet, link and the
+   query that found it go to ``molecule_news_match``, which only the service key can read, so a
+   wrong match can be traced. The cron never PRINTS a headline (this repo and its logs are
+   public), not even in an error; ``--show-headlines`` is for a local dry run only.
 3. WHAT MATCHES. PF keys on a title ("Sen.", "Gov.") before a name. A molecule has no title, so
    the match is exact on the molecule's own names: the page title, the name in its <title>
    parenthetical, its curated brands, a few curated news names (``ALIASES``: "Red 40", "Ozempic"),
@@ -25,9 +28,20 @@ WHAT IS DIFFERENT FROM PF, AND WHY
    without one, so the catalogue's own names are the queries, in OR batches, plus a few topic
    queries (recalls, bans, food dyes) whose headlines are matched the same way.
 
-THE LIST. hits = distinct headlines in this run's window naming the molecule. The feed carries
-every molecule whose latest headline is inside seven days, most headlines first; the home page
-shows eight. Rows are pruned 21 days after their last headline.
+THE LIST. hits = distinct headlines in the last seven days naming the molecule, counted over every
+run's matches (the day's four runs ask different batches, so the union is the fuller count). The
+feed carries every molecule whose latest headline is inside seven days; the home page shows eight.
+
+THE ORDER IS THE SPIKE, NOT THE COUNT (Garrett, 2026-10-20). Fentanyl is in ~150 crime headlines
+every week; a recall puts acetaminophen in forty after a usual five. So the feed is ordered by each
+molecule's count this week over its own average weekly count across the four weeks before (with a
+floor of SPIKE_FLOOR headlines a week, so a molecule with no history divides by something sane).
+The history is the private match table, so until it holds four weeks (its oldest match found 28
+days ago or more) the order falls back to the raw count. Every molecule stays eligible; the steady
+ones just stop winning by default. The badge on a molecule page shows the count, as before.
+
+Rows of molecule_news are pruned 21 days after their last headline; match rows 42 days after the
+headline's date (the five weeks the ranking reads, plus a week).
 
 Usage:
   python -m moleculefinder_etl.news                  # match, write table + feed, ping IndexNow
@@ -57,12 +71,17 @@ SITE = "https://moleculefinder.com"
 # Public by design: moleculefinder.com serves it at /86a211e892b41d0ab5c34f55d66184e5.txt.
 INDEXNOW_KEY = "86a211e892b41d0ab5c34f55d66184e5"
 TABLE = "molecule_news"
+MATCH_TABLE = "molecule_news_match"      # private: the service key only (migration 0006)
 BUCKET = "public-data"
 OBJECT = "news/in-the-news.json"
 CACHE_SECONDS = 300
 WINDOW_DAYS = 7          # a headline counts as this week's news, and the feed's window
 RETAIN_DAYS = 21         # rows are deleted this long after their last headline
-LIST_CAP = 8             # what the home page shows; printed so a dry run reads the same way
+HISTORY_WEEKS = 4        # the spike's baseline: the average week across the four before this one
+SPIKE_FLOOR = 2.0        # headlines a week; one stray headline is not a baseline of zero
+MATCH_RETAIN_DAYS = 42   # match rows: the five weeks the ranking reads, plus a week
+PAGE = 1000              # PostgREST's row cap per request on Supabase
+LIST_CAP = 8            # what the home page shows; printed so a dry run reads the same way
 FEED_CAP = 200           # the feed carries every molecule in the window, up to this
 USER_AGENT = "MoleculeFinderNewsBot/1.0 (+https://moleculefinder.com)"
 
@@ -107,6 +126,10 @@ ALIASES = {
     "semaglutide": ["Ozempic", "Wegovy", "Rybelsus"],
     "tirzepatide": ["Mounjaro", "Zepbound"],
     "orforglipron": ["Foundayo"],
+    # Run A's two-row addition (2026-10-20). "PFAS" alone names neither: it is a class of
+    # thousands of chemicals, so it matches nothing (a miss before a wrong match).
+    "perfluorooctanoic-acid": ["PFOA", "perfluorooctanoate"],
+    "perfluorooctanesulfonic-acid": ["PFOS", "perfluorooctane sulfonate", "perfluorooctane sulfonic acid"],
 }
 # A dye number only counts beside a word that says it is a dye ("Red 3" is also a team colour).
 CONTEXT = {
@@ -348,7 +371,7 @@ def fetch(qs: list[str], days: int, pause: float = 1.0, budget: int = MAX_REQUES
             made += 1
             try:
                 got = get(rss_url(q, days))
-                items.extend(got)
+                items.extend({**it, "query": q} for it in got)      # the audit trail records it
                 parts = q.split(" OR ")
                 if len(got) >= FULL and len(parts) > 1:
                     half = len(parts) // 2
@@ -387,23 +410,82 @@ def _when(pub: str, fallback: datetime) -> datetime:
         return fallback
 
 
-def match_items(items: list[dict], index: dict, now: datetime, days: int) -> list[dict]:
-    """One record per molecule: hits, first and last seen. Most hits first, then most recent."""
+def story_key(it: dict) -> str:
+    """A headline's identity: its link without the query string, else title and outlet."""
+    return (it.get("link") or "").split("?")[0] or f"{it['title']}|{it.get('source', '')}"
+
+
+def matches(items: list[dict], index: dict, now: datetime, days: int) -> list[dict]:
+    """One row per (molecule, headline): the private audit trail's rows (molecule_news_match)."""
     since = now - timedelta(days=days)
-    by: dict[str, dict] = {}
+    out = []
     for it in items:
         seen = _when(it.get("pubDate", ""), now)
         if it.get("pubDate") and seen < since:
             continue
         headline = strip_source(it["title"], it.get("source", ""))
         for slug in match_headline(headline, index):
-            rec = by.setdefault(slug, {"slug": slug, "name": index["names"][slug], "hits": 0,
-                                       "first_seen": seen, "last_seen": seen, "headlines": []})
-            rec["hits"] += 1
-            rec["first_seen"] = min(rec["first_seen"], seen)
-            rec["last_seen"] = max(rec["last_seen"], seen)
-            rec["headlines"].append(headline)      # for --show-headlines only; never written
+            out.append({"slug": slug, "story": story_key(it), "headline": headline,
+                        "outlet": it.get("source") or None, "url": it.get("link") or None,
+                        "query": it.get("query") or "", "published_at": seen})
+    return out
+
+
+def tally(rows: list[dict], names: dict[str, str], now: datetime, days: int = WINDOW_DAYS) -> list[dict]:
+    """One record per molecule from match rows: distinct headlines inside ``days``, first and last
+    seen. Most hits first, then most recent."""
+    since = now - timedelta(days=days)
+    by: dict[str, dict] = {}
+    stories: set[tuple[str, str]] = set()
+    for r in rows:
+        seen = r["published_at"]
+        if seen < since or r["slug"] not in names or (r["slug"], r["story"]) in stories:
+            continue
+        stories.add((r["slug"], r["story"]))
+        rec = by.setdefault(r["slug"], {"slug": r["slug"], "name": names[r["slug"]], "hits": 0,
+                                        "first_seen": seen, "last_seen": seen, "headlines": []})
+        rec["hits"] += 1
+        rec["first_seen"] = min(rec["first_seen"], seen)
+        rec["last_seen"] = max(rec["last_seen"], seen)
+        if r.get("headline"):
+            rec["headlines"].append(r["headline"])      # for --show-headlines only; never printed in CI
     return sorted(by.values(), key=lambda r: (-r["hits"], -r["last_seen"].timestamp(), r["name"]))
+
+
+def match_items(items: list[dict], index: dict, now: datetime, days: int) -> list[dict]:
+    return tally(matches(items, index, now, days), index["names"], now, days)
+
+
+# ── the order: the spike ─────────────────────────────────────────────────────
+def has_history(oldest_found: datetime | None, now: datetime) -> bool:
+    """Four full weeks before this one are on record once the oldest match was found 28 days ago:
+    a run sees seven days back, so that run covered the start of the earliest week."""
+    return oldest_found is not None and oldest_found <= now - timedelta(weeks=HISTORY_WEEKS)
+
+
+def spikes(rows: list[dict], now: datetime) -> dict[str, float]:
+    """Each molecule's distinct headlines this week over its average week in the four before,
+    floored at SPIKE_FLOOR. Weeks are counted back from ``now``."""
+    week = now - timedelta(days=WINDOW_DAYS)
+    start = week - timedelta(weeks=HISTORY_WEEKS)
+    this: dict[str, set[str]] = {}
+    before: dict[str, set[str]] = {}
+    for r in rows:
+        if r["published_at"] >= week:
+            this.setdefault(r["slug"], set()).add(r["story"])
+        elif r["published_at"] >= start:
+            before.setdefault(r["slug"], set()).add(r["story"])
+    return {slug: len(s) / max(len(before.get(slug, ())) / HISTORY_WEEKS, SPIKE_FLOOR)
+            for slug, s in this.items()}
+
+
+def ranked(found: list[dict], spike: dict[str, float] | None) -> list[dict]:
+    """Spike first when there is a history (``spike`` not None), else the raw count; then the
+    count, the most recent, the name."""
+    def key(m: dict) -> tuple:
+        last = m["last_seen"] if isinstance(m["last_seen"], datetime) else _parse(m["last_seen"])
+        return (-(spike or {}).get(m["slug"], 0.0), -int(m["hits"]), -last.timestamp(), m["name"])
+    return sorted(found, key=key)
 
 
 # ── the table, the feed ──────────────────────────────────────────────────────
@@ -436,19 +518,25 @@ def _parse(stamp: str) -> datetime:
     return datetime.fromisoformat(stamp).astimezone(UTC)
 
 
-def build_feed(rows: list[dict], known: set[str], now: datetime) -> dict:
-    """The public JSON: slug, name, first and last seen (dates), headline count. Nothing else."""
+def build_feed(rows: list[dict], known: set[str], now: datetime,
+               spike: dict[str, float] | None = None) -> dict:
+    """The public JSON: slug, name, first and last seen (dates), headline count. Nothing else per
+    molecule. In ranking order (``ranked``): by spike once there is a history, else by count."""
     since = now - timedelta(days=WINDOW_DAYS)
-    live = [r for r in rows if r["slug"] in known and _parse(r["last_seen"]) >= since]
-    live.sort(key=lambda r: (-int(r["hits"]), -_parse(r["last_seen"]).timestamp(), r["name"]))
+    live = ranked([r for r in rows if r["slug"] in known and _parse(r["last_seen"]) >= since], spike)
     return {"generated_at": iso(now), "window_days": WINDOW_DAYS,
+            "ranked_by": "count" if spike is None else "spike",
             "molecules": [{"slug": r["slug"], "name": r["name"],
                            "first_seen": _parse(r["first_seen"]).date().isoformat(),
                            "last_seen": _parse(r["last_seen"]).date().isoformat(),
                            "hits": int(r["hits"])} for r in live[:FEED_CAP]]}
 
 
-def _request(method: str, url: str, key: str, body: object = None, headers: dict | None = None) -> bytes:
+def _request(method: str, url: str, key: str, body: object = None, headers: dict | None = None,
+             quiet: bool = False) -> bytes:
+    """``quiet``: on an error, report the status only. PostgREST echoes a failing row back in its
+    error ("Failing row contains ..."), and a match row carries a headline, which must never reach
+    this public repo's logs."""
     data = None if body is None else (body if isinstance(body, bytes) else json.dumps(body).encode())
     req = urllib.request.Request(url, data=data, method=method, headers={
         "apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json",
@@ -457,31 +545,68 @@ def _request(method: str, url: str, key: str, body: object = None, headers: dict
         with urllib.request.urlopen(req, timeout=30) as r:
             return r.read()
     except urllib.error.HTTPError as exc:
-        raise SystemExit(f"{method} {url.split('?')[0]}: HTTP {exc.code} {exc.read()[:300]!r}") from exc
+        detail = "(body withheld: it can echo a headline)" if quiet else repr(exc.read()[:300])
+        raise SystemExit(f"{method} {url.split('?')[0]}: HTTP {exc.code} {detail}") from exc
 
 
-def write(found: list[dict], known: set[str], url: str, key: str, now: datetime) -> list[dict]:
-    rest = f"{url}/rest/v1/{TABLE}"
+def _history(rest: str, key: str, now: datetime) -> tuple[list[dict], datetime | None]:
+    """Every match row the ranking reads (the last five weeks; slug, story, date only: no coverage
+    is read back), page by page, and when the oldest match on record was found."""
+    since = urllib.parse.quote(iso(now - timedelta(days=WINDOW_DAYS) - timedelta(weeks=HISTORY_WEEKS)))
+    rows: list[dict] = []
+    while True:
+        page = json.loads(_request("GET", f"{rest}/{MATCH_TABLE}?select=slug,story,published_at"
+                                          f"&published_at=gte.{since}&order=slug,story"
+                                          f"&limit={PAGE}&offset={len(rows)}", key, quiet=True))
+        rows += [{**r, "published_at": _parse(r["published_at"])} for r in page]
+        if len(page) < PAGE:
+            break
+    oldest = json.loads(_request("GET", f"{rest}/{MATCH_TABLE}?select=found_at&order=found_at.asc&limit=1",
+                                 key, quiet=True))
+    return rows, (_parse(oldest[0]["found_at"]) if oldest else None)
+
+
+def write(found_rows: list[dict], names: dict[str, str], known: set[str], url: str, key: str,
+          now: datetime) -> tuple[list[dict], dict]:
+    """Record this run's matches in the private table, recount and rank from its history, write
+    the names-only rows, upload the public feed. Returns the entrants and the feed."""
+    rest = f"{url}/rest/v1"
+    if found_rows:
+        body = [{**r, "published_at": iso(r["published_at"]), "found_at": iso(now)} for r in found_rows]
+        _request("POST", f"{rest}/{MATCH_TABLE}?on_conflict=slug,story", key, body,
+                 {"Prefer": "resolution=ignore-duplicates,return=minimal"}, quiet=True)
+    print(f"[news] {MATCH_TABLE}: {len(found_rows)} match(es) recorded (new ones kept, known ones left as found)",
+          flush=True)
+    cutoff = urllib.parse.quote(iso(now - timedelta(days=MATCH_RETAIN_DAYS)))
+    gone = json.loads(_request("DELETE", f"{rest}/{MATCH_TABLE}?published_at=lt.{cutoff}&select=slug", key,
+                               headers={"Prefer": "return=representation"}, quiet=True) or b"[]")
+    print(f"[news] {MATCH_TABLE}: pruned {len(gone)} match(es) older than {MATCH_RETAIN_DAYS} days", flush=True)
+
+    history, oldest = _history(rest, key, now)
+    found = tally(history, names, now)
+    spike = spikes(history, now) if has_history(oldest, now) else None
+    print(f"[news] history: {len(history)} match(es) over five weeks, oldest found "
+          f"{oldest.date() if oldest else 'never'}; ranked by {'spike' if spike is not None else 'count'}"
+          f"{'' if spike is not None else ' until four weeks are on record'}", flush=True)
+
     entrants: list[dict] = []
+    rows: list[dict] = []
     if found:
         inlist = ",".join(urllib.parse.quote(m["slug"]) for m in found)
-        existing = json.loads(_request("GET", f"{rest}?select=slug,first_seen,last_seen&slug=in.({inlist})", key))
+        existing = json.loads(_request("GET", f"{rest}/{TABLE}?select=slug,first_seen,last_seen&slug=in.({inlist})", key))
         rows, entrants = plan_write(found, existing, now)
-        _request("POST", f"{rest}?on_conflict=slug", key, rows,
+        _request("POST", f"{rest}/{TABLE}?on_conflict=slug", key, rows,
                  {"Prefer": "resolution=merge-duplicates,return=minimal"})
         print(f"[news] {TABLE}: upserted {len(rows)} row(s), {len(entrants)} new to the list", flush=True)
     cutoff = urllib.parse.quote(iso(now - timedelta(days=RETAIN_DAYS)))
-    gone = json.loads(_request("DELETE", f"{rest}?last_seen=lt.{cutoff}&select=slug", key,
+    gone = json.loads(_request("DELETE", f"{rest}/{TABLE}?last_seen=lt.{cutoff}&select=slug", key,
                                headers={"Prefer": "return=representation"}) or b"[]")
     print(f"[news] {TABLE}: pruned {len(gone)} row(s) older than {RETAIN_DAYS} days", flush=True)
-    since = urllib.parse.quote(iso(now - timedelta(days=WINDOW_DAYS)))
-    rows = json.loads(_request("GET", f"{rest}?select=slug,name,first_seen,last_seen,hits"
-                                      f"&last_seen=gte.{since}&order=hits.desc,last_seen.desc&limit={FEED_CAP}", key))
-    feed = build_feed(rows, known, now)
+    feed = build_feed(rows, known, now, spike)
     _request("POST", f"{url}/storage/v1/object/{BUCKET}/{OBJECT}", key, json.dumps(feed).encode(),
              {"x-upsert": "true", "cache-control": f"max-age={CACHE_SECONDS}"})
     print(f"[news] feed: {len(feed['molecules'])} molecule(s) written to {BUCKET}/{OBJECT}", flush=True)
-    return entrants
+    return entrants, feed
 
 
 def indexnow(urls: list[str]) -> tuple[int, bool]:
@@ -554,11 +679,12 @@ def main(argv: list[str] | None = None) -> int:
         if failed > n_queries // 2:
             raise SystemExit(f"[news] {failed} of {n_queries} queries failed; not writing a list built "
                              f"from half the news")
-    found = match_items(items, index, now, args.since)
+    found_rows = matches(items, index, now, args.since)
+    found = tally(found_rows, index["names"], now, args.since)
     print(f"[news] {len(found)} molecule(s) matched in {len(items)} headline(s); "
           f"{len(index['terms'])} names matchable", flush=True)
     for i, m in enumerate(found):
-        mark = "*" if i < LIST_CAP else " "
+        mark = "*" if i < LIST_CAP else " "            # this run's top eight by count
         print(f"  {mark} {m['name']} ({m['slug']}) x{m['hits']}, {m['first_seen'].date()} to "
               f"{m['last_seen'].date()}", flush=True)
         if args.show_headlines:
@@ -569,7 +695,8 @@ def main(argv: list[str] | None = None) -> int:
     known = {m["slug"] for m in molecules}
     if args.dry_run:
         rows, _ = plan_write(found, [], now)
-        print(f"[news] --dry-run: the feed ({BUCKET}/{OBJECT}) would be:")
+        print(f"[news] --dry-run: the feed ({BUCKET}/{OBJECT}) would be (a dry run reads no history, "
+              f"so it is ranked by count, as the live feed is until four weeks are on record):")
         print(json.dumps(build_feed(rows, known, now), indent=1))
         print(f"[news] --dry-run: nothing written, nothing submitted "
               f"(would ping IndexNow for {len(found)} page(s) new to the list, plus the home page).")
@@ -578,7 +705,9 @@ def main(argv: list[str] | None = None) -> int:
     if not url or not key:
         print("[news] SUPABASE_URL / SUPABASE_SERVICE_KEY unset: nothing written, nothing pinged (no-op).")
         return 0
-    entrants = write(found, known, url, key, now)
+    entrants, feed = write(found_rows, index["names"], known, url, key, now)
+    top = ", ".join(m["name"] for m in feed["molecules"][:LIST_CAP])
+    print(f"[news] the home page's eight, ranked by {feed['ranked_by']}: {top or 'none'}", flush=True)
     if not entrants:
         print("[news] nobody new to the list: nothing to submit to IndexNow")
         return 0

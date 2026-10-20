@@ -69,3 +69,8 @@ MSG concert lineup announced - Example News => -
 # The outlet never matches
 Weekly science roundup: new telescopes and rovers - Caffeine Weekly => -
 Researchers test ethanol in jet fuel blend - Example News => ethanol
+# Run A's two-row addition (2026-10-20): PFOA and PFOS by name; "PFAS" alone is a class and names neither.
+Regulators set drinking water limits for PFOA and PFOS - Example News => perfluorooctanesulfonic-acid, perfluorooctanoic-acid
+Town finds PFOS in well water near the old air base - Example News => perfluorooctanesulfonic-acid
+Study tracks perfluorooctanoic acid in blood samples - Example News => perfluorooctanoic-acid
+PFAS forever chemicals found in rainwater across the region - Example News => -
