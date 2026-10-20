@@ -17,6 +17,9 @@ ORIGINAL_CORE = 498
 # Catalog-growth tranches, newest last. Each is a `batch`-tagged block in the CSV.
 TRANCHES = {"2026-09-A": 287,   # 295 built, 5 held back; fenbendazole, carfentanil, oxandrolone removed 2026-10-18
             "2026-10-A": 126}   # 120, then 6 of the 7 queued rows on Garrett's 2026-10-18 rulings
+# Small tagged additions that are not tranches (Garrett, 2026-10-20: "a two-row addition of this
+# run, not a tranche"). Same provenance rule: tagged, so they can be found and lifted back out.
+ADDITIONS = {"2026-10-runA": 2}  # PFOA and PFOS, so PFAS headlines can match (Run A)
 
 
 def _csv_rows():
@@ -28,7 +31,7 @@ def _csv_rows():
 def test_scope_b_csv_is_present_and_shaped():
     assert canon.SCOPE_B_CSV.exists(), "scope_b_core.csv must live in sources/seeds/"
     rows = canon._scope_b_rows()
-    assert len(rows) == ORIGINAL_CORE + sum(TRANCHES.values())
+    assert len(rows) == ORIGINAL_CORE + sum(TRANCHES.values()) + sum(ADDITIONS.values())
     # Every row carries a bucket (the primary color/roam dimension).
     assert all(r["scope_bucket"] for r in rows)
     # Only buckets the label table knows: an unlabeled bucket ships an /in/ page titled
@@ -43,7 +46,7 @@ def test_every_tranche_row_is_batch_tagged_and_the_core_is_not():
     raw = _csv_rows()
     untagged = [r for r in raw if not (r.get("batch") or "").strip()]
     assert len(untagged) == ORIGINAL_CORE
-    for name, count in TRANCHES.items():
+    for name, count in {**TRANCHES, **ADDITIONS}.items():
         assert len([r for r in raw if (r.get("batch") or "").strip() == name]) == count
     # No CID appears twice, in either direction: a tranche must be de-duplicated against
     # the core before it is appended.
@@ -56,6 +59,8 @@ def test_batch_rides_the_canon_row():
     rows = {r["enwiki_title"]: r for r in canon._scope_b_rows()}
     assert rows["Limonene"]["batch"] is None          # original core
     assert rows["Gabapentin"]["batch"] == "2026-09-A"  # tranche 1
+    assert rows["Perfluorooctanoic acid"]["batch"] == "2026-10-runA"
+    assert rows["Perfluorooctanesulfonic acid"]["scope_bucket"] == "everyday-chemistry"
 
 
 def test_scope_b_hand_model_rows_get_synthetic_cids():
@@ -75,7 +80,7 @@ def test_scope_b_hand_model_rows_get_synthetic_cids():
 def test_build_scope_b_canon_ranks_and_orders(monkeypatch):
     monkeypatch.setattr(canon, "_descriptions_cached", lambda cids: {})  # no network
     rows = canon.build_scope_b_canon()
-    assert len(rows) == ORIGINAL_CORE + sum(TRANCHES.values())
+    assert len(rows) == ORIGINAL_CORE + sum(TRANCHES.values()) + sum(ADDITIONS.values())
     # Ranked by descending Wikipedia pageviews, build_order following the rank.
     assert all(rows[i]["pageviews"] >= rows[i + 1]["pageviews"] for i in range(len(rows) - 1))
     assert [r["build_order"] for r in rows] == list(range(len(rows)))
