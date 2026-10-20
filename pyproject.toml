@@ -15,6 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
+db = ["psycopg[binary]>=3.2"]   # `mfetl migrate` only; the weekly run does not need it
 
 [project.scripts]
 mfetl = "moleculefinder_etl.cli:main"
