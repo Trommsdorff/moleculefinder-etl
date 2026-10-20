@@ -18,6 +18,10 @@ Full design: `../MoleculeFinder_Technical_Build_Plan.md` (sections 4–7).
    row per stage.
 
 ## Commands
+**A build on this Mac is PINNED (2026-10-20): run `mfetl sync-inputs` first.** It downloads the exact
+inputs main was built from (the weekly run's artifact); `mfetl all` then reproduces main, fetching only
+what is genuinely new (a tranche's molecules). Without the sync, a pinned export refuses. See "Run A,
+part 1" below. `MFETL_INPUTS=refresh` is a one-off local data refresh, never a code build.
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
@@ -703,6 +707,106 @@ web CLAUDE.md). A reason to come back and a thing to share.
   `5cc2a62` touching only `data/LAST_CHECK`; `sync-web` "web repo snapshot already identical — no PR
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
+
+## Run A (2026-10-20) — inputs travel with the snapshot; molecules in the news. BUILT, NOT PUSHED
+Branch `news-2026-10` in both repos, from `origin/main` here and from local `main` on the web (which
+carries tranche 2's notes-only commit `b5f9c40`, going out with this deploy).
+
+### Part 1: the snapshot comes out the same whichever machine builds it (`moleculefinder_etl/inputs.py`)
+**The cause.** The snapshot is a pure function of the code and `data/raw_cache` (PubChem properties,
+synonyms, PUG-View; Wikidata descriptions). That cache is in no commit: GitHub keeps one copy in its
+Actions cache, this Mac another, each refreshed on its own clock. Twice in tranche 2 a Mac rebuild
+carried upstream drift the weekly run had not shipped (96 files the second time) and it was reverted by
+hand. **An expiry cannot fix that** (it decides when a machine refreshes, not what it gets), and "refuse a
+cache older than the last data PR" alone would not have either: the Mac's copy was NEWER both times.
+**The design: the inputs travel with the snapshot.**
+- The weekly run (GitHub, mode `refresh`, chosen by the CLI because `GITHUB_ACTIONS=true`) fetches as it
+  always has, then records a fingerprint of every cache entry it built from: `data/seed/inputs.json`
+  (committed by the existing `git add data/seed`), `data/raw_cache/INPUTS.json` (per-entry hashes), and
+  one new step in `etl.yml` uploads `data/raw_cache` as the artifact `inputs-<fingerprint16>` (90 days,
+  success only; public repo, free). Nothing else in the loop changed.
+- Every other run is `pinned` (the CLI's default off GitHub). `mfetl sync-inputs` downloads that artifact
+  with `gh`, verifies it hashes to the committed fingerprint before touching anything, and swaps it in
+  (one cache, never a second copy). A pinned run never expires a cache entry (`cache.is_fresh`), so
+  nothing main was built from is fetched again; a pinned export **refuses** unless every input main was
+  built from is present and unchanged (`inputs.verify`; new molecules' files and new map entries are
+  allowed), and keeps main's `refreshed` date so the molecule of the week does not move.
+- Library code and the tests leave `MFETL_INPUTS` unset: neither mode, every expiry rule as before.
+- **Proof on this Mac (2026-10-20, real 911-molecule data):** a pinned export from the Mac's own cache
+  refused and wrote nothing; a simulated Monday (refresh mode, 0 PubChem POSTs) recorded fingerprint
+  `d5338f69…` over 3,585 files; the cache was then drifted the tranche-2 way (flunitrazepam's synonyms,
+  a deleted GHS file, a Wikidata description) and `mfetl all` refused before fetching anything, naming
+  all three; after `sync` from the 15 MB artifact zip, a pinned `mfetl all` produced **0 changes** against
+  the simulated Monday snapshot, with 0 PubChem and 0 Wikidata requests. The simulation commit was dropped.
+  **The real acceptance is the first Monday after deploy:** that run uploads the first artifact; then
+  `mfetl sync-inputs && mfetl all` here must show `git status` clean against main.
+- `tests/test_inputs.py` (16): the record, the refusal (a foreign cache, a changed/missing file, a changed
+  map entry, nothing to pin to), the stage refusing before `snapshot_export.export` is called, the sync
+  (exact install, a corrupted download leaves the cache alone), pinned reads ignore expiry, the kept date,
+  the CLI's mode choice, and the workflow step's place (after the commit, success only).
+
+### Part 2: molecules in the news (`moleculefinder_etl/news.py`, `.github/workflows/news.yml`)
+PolitiFinder's pattern (`politifinder/repo/scripts/news-politicians.mjs`), with these differences, each
+deliberate:
+- **Standard library only (Python 3.11+),** run as `python3 -m moleculefinder_etl.news` after
+  `setup-python` with NO pip install, so the six-hourly cron never pays for rdkit. Cron `50 */6 * * *`.
+- **Names only, in the table too.** PF's `trending_politician` keeps the latest headline, outlet and link
+  "for auditing"; `molecule_news` (migration 0006) keeps slug, name, first/last seen, hits, updated_at and
+  nothing else, and the job never prints a headline either (this repo's logs are public). The audit view
+  is `--show-headlines` on a LOCAL dry run only; it refuses to run on GitHub.
+- **Same source as PF: Google News RSS (en-US).** Different queries: PF's eleven title queries find
+  "Sen. X"; a molecule has no title, so the catalogue's own names are the queries (titles + brands +
+  curated aliases + qualified phrases, ~40 per OR batch, ordered by page views) plus six topic queries.
+  **A query returns at most 100 items** (measured), so a full batch is split in two and re-asked until a
+  name stands alone, under a 60-request budget (caffeine matched 0 headlines inside a batch fentanyl
+  filled, and 48 when asked alone). The day's four runs start from four rotation points, and a row stays
+  listed from whichever run found it.
+- **Matching is exact on names, a miss before a wrong match.** Terms: title, preferred name, the title's
+  parenthetical, Wikipedia title, curated brands, `ALIASES` (Red 40, Red Dye No. 3, Ozempic, Mounjaro,
+  Foundayo, BPA, CBD, THC), and display synonyms only when chemical-shaped and (one word) 7+ letters.
+  Never the raw PubChem synonyms (lead's has "Glover", MSG's "Accent"). A term two molecules share
+  matches neither (DHA names three). `STOP`: iron, lead, salt, water, gold, the commodity metals,
+  mercury, chrome, carbon, silicon, plus names that are people or products (Allegra, Bayer, Endorphin,
+  Tungsten). `QUALIFIED`: the only forms a stop word matches in (lead poisoning, iron deficiency, salt
+  intake...). Dye numbers need a dye word nearby. A name followed by a compound word is a different
+  compound (ethylene oxide, sodium alginate). Market/mining headlines are skipped (tickers, % moves,
+  drilling, private placements, "market to reach USD..."). Quoted titles and `EXCLUDE` phrases
+  ("Dopamine Chamber", "Arsenic and Old Lace") do not count.
+- **Output:** upsert per match (keeps first_seen, never moves last_seen back), prune 21 days after the
+  last headline, then `public-data/news/in-the-news.json` rebuilt from the table: every molecule whose
+  last headline is inside 7 days (slug, name, first_seen, last_seen as dates, hits), max-age 300.
+  **IndexNow:** only entrants (new to the list) plus `/`, as PF does: the page itself does not change
+  while its molecule stays in the news. Key is the public one the site serves.
+- **The dry run (2026-10-20 03:10 UTC, last 7 days):** 29 queries, 60 requests, 0 failed, 3,451
+  distinct headlines, **82 molecules matched**. Top eight: fentanyl 152, ammonia 102, lead 65 (all
+  "lead poisoning/exposure/levels"), ethanol 59, uranium 39, caffeine 26, creatine 24, sulfur 22. Also
+  the Aleve/Claritin recall (naproxen, loratadine), the acetaminophen bottle recall, sertraline/
+  fluoxetine/citalopram leaflet warnings, semaglutide/tirzepatide, the FSSAI sucrose/fructose proposal,
+  daraxonrasib's CHMP opinion. Audit of every match: about 2 wrong of ~600 matched headlines (an
+  "Ozone Communications Group", a tokenized-stock page). The first two dry runs found and fixed: Allegra
+  (people), Endorphin (a shoe), Dopamine Chamber (an album), ethylene oxide, mining tickers.
+- **PFAS cannot match yet:** the catalogue has no PFAS molecule (no PFOA, no PFOS). Raised to Garrett.
+- **Tests:** `tests/test_news.py` (68 with the fixture): `tests/fixtures/news-headlines.txt` is 54
+  SYNTHETIC headlines (never copied coverage) each stating its match; the job run end to end on it with
+  the network off (no headline or outlet in its output, the feed's keys exactly the five); plan_write,
+  build_feed, the split, the rotation, stdlib-only import, the workflow's shape (no pip, no push, no
+  `--show-headlines`), and that `etl.yml` does not mention the news job. `test_migration_grants.py`:
+  18 tables; molecule_news read-only to anon. **575 tests here (480 at tranche 2), ruff 113 = main's baseline.**
+- **0006 verified on a local Postgres via `mfetl migrate --apply`** at the live state (0001-0005 logged):
+  applied, a second run "up to date", raw SQL applied twice more; anon SELECT yes / INSERT no, RLS on.
+  The Storage bucket insert is guarded (`to_regclass('storage.buckets')`), so it is a no-op off Supabase.
+
+### Deploy sequence (on Garrett's word)
+1. `mfetl migrate --apply` (0006: the table and the `public-data` bucket); check anon reads
+   `molecule_news` and cannot insert.
+2. Push ETL `news-2026-10` to main. This arms the news cron and adds the inputs upload to the Monday run.
+   Dispatch `news.yml` once with `dry_run: true` (names and counts in the log), then once for real: the
+   table has rows, `.../storage/v1/object/public/public-data/news/in-the-news.json` answers 200 with five
+   keys per molecule, IndexNow accepted.
+3. Push web `news-2026-10` to main (with `b5f9c40`), Vercel to Ready; the home block shows cards and a
+   matched page shows its badge; Lighthouse `/` and `/m/caffeine` live. The deploy's own IndexNow delta
+   should be ~0 URLs: no data changed, and the news job already pinged the matched pages.
+4. The Monday after: `mfetl sync-inputs && mfetl all` on this Mac must leave `git status` clean.
 
 ## Tranche 2 (2026-10-18) — 788 -> 911, guard before load, grants. DEPLOYED 2026-10-19/20
 **DEPLOYED 2026-10-19/20 on Garrett's word** (ETL `main` `9f10994`; web `main` `4f15bbb`, GitHub deployment `7188401307` Production, Ready about 00:33 UTC). Monday's green refresh (`cb86769`, web PR #10) was merged in first; the warm-cache rebuild re-surfaced the upstream synonym/CAS/GHS drift on 96 files and they were restored to the approved branch versions (the refresh's own changes kept: week 43 Adrenaline, meta 2026-10-19, fluconazole's brand order). This morning's PR had put "roofies"/"floonies" on flunitrazepam live for about 13 hours; the deploy removed them. Migrations 0004 and 0005 were applied to the live database with the new `mfetl migrate --apply` (SUPABASE_DB_URL in the ETL `.env`; 0001-0003 recorded as pre-log). Four checks: anon 401 on `event` and `ingest_run` (200 before), 200 on `molecule`; one `/api/e` POST (page_type `deploy-check`) shows on `/dashboard` as `deploy-check 1`. Live: 1,262 sitemap URLs, all 200; the three removed pages 410 with noindex; /in/anabolic-steroid 404. IndexNow run `39348330572`: 1108 -> 1262, 157 new, 260 changed, 3 removed, 420 submitted and 420 accepted, audit exact, `indexnow-last` moved to `4f15bbb`. Live Lighthouse (mobile, median of 3, Brave): perf 98-99, SEO 100, LCP 2.13-2.28 s, CLS 0, TBT 0 on /roam, /m/caffeine, /in/vitamin, /vs/caffeine-vs-theobromine, /best/deadliest.
