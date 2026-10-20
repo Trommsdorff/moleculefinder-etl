@@ -35,6 +35,7 @@ incident were exactly the ones whose age nobody could state.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -98,6 +99,10 @@ def is_fresh(fetched_at: str | None, max_age_days: float, at: str | None = None)
     honest reading of "expire immediately" and makes the expiry easy to switch off in a run
     that must not trust the disk at all.
     """
+    if os.getenv("MFETL_INPUTS") == "pinned":
+        # A pinned build (moleculefinder_etl/inputs.py) uses exactly the inputs main was built
+        # from, however old: re-fetching one is how a rebuild drifts from what shipped.
+        return True
     if max_age_days <= 0:
         return False
     when = parse(fetched_at)
