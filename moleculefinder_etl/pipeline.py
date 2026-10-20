@@ -27,7 +27,7 @@ from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
-from . import freshness
+from . import freshness, inputs
 
 import yaml
 
@@ -347,9 +347,13 @@ def stage_export(settings: Settings) -> Path:
     _require(MOLECULES, "transform")
     molecules = json.loads(MOLECULES.read_text())
     boards, comparisons, queue = _preflight(molecules, guard=False)
+    # A pinned build exports only from the inputs main was built from, and keeps its date.
+    inputs.before_export()
     # The featured builder runs inside export, for the date meta.json gets.
     builder = partial(featured.build_featured, queue, molecules) if queue is not None else None
-    path = snapshot_export.export(molecules, boards, comparisons, featured=builder)
+    path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
+                                  today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META))
+    inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)
     log.info("  boards: %s", non_empty)
@@ -393,6 +397,7 @@ def stage_featured(settings: Settings) -> Path:
 
 
 def run_all(settings: Settings) -> None:
+    inputs.before_run()
     stage_seed(settings)
     stage_fetch(settings)
     stage_transform(settings)

@@ -77,6 +77,21 @@ jobs:
             echo "molecules_added=${added}"           >> "$GITHUB_OUTPUT"
             echo "snapshot_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
+      # THE INPUTS THIS SNAPSHOT WAS BUILT FROM (added 2026-10-20; moleculefinder_etl/inputs.py).
+      # `mfetl all` recorded their fingerprint in data/seed/inputs.json, committed just above;
+      # this uploads the cache itself under that name, so `mfetl sync-inputs` on any other
+      # machine rebuilds exactly this snapshot instead of one drifted by its own cache (tranche
+      # 2 reverted 96 such files by hand). Public repo: the minutes and storage are free.
+      # Success only: a failed run's inputs built nothing that shipped.
+      - name: Name the inputs artifact
+        id: inputs
+        run: echo "artifact=$(jq -r .artifact data/seed/inputs.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.inputs.outputs.artifact }}
+          path: data/raw_cache
+          retention-days: 90
+          if-no-files-found: error
       # HEARTBEAT FOR A FAILED RUN (added 2026-09-23). A run that fails commits nothing, and
       # the featured.yaml compiler fails the run on purpose when the seed is wrong (an unknown
       # slug, a missing week). A seed error nobody fixes fails every week, and sixty days of
