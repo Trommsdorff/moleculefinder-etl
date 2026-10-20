@@ -704,7 +704,9 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Tranche 2 (2026-10-18) — 788 -> 911, guard before load, grants. BUILT, NOT PUSHED
+## Tranche 2 (2026-10-18) — 788 -> 911, guard before load, grants. DEPLOYED 2026-10-19/20
+**DEPLOYED 2026-10-19/20 on Garrett's word** (ETL `main` `9f10994`; web `main` `4f15bbb`, GitHub deployment `7188401307` Production, Ready about 00:33 UTC). Monday's green refresh (`cb86769`, web PR #10) was merged in first; the warm-cache rebuild re-surfaced the upstream synonym/CAS/GHS drift on 96 files and they were restored to the approved branch versions (the refresh's own changes kept: week 43 Adrenaline, meta 2026-10-19, fluconazole's brand order). This morning's PR had put "roofies"/"floonies" on flunitrazepam live for about 13 hours; the deploy removed them. Migrations 0004 and 0005 were applied to the live database with the new `mfetl migrate --apply` (SUPABASE_DB_URL in the ETL `.env`; 0001-0003 recorded as pre-log). Four checks: anon 401 on `event` and `ingest_run` (200 before), 200 on `molecule`; one `/api/e` POST (page_type `deploy-check`) shows on `/dashboard` as `deploy-check 1`. Live: 1,262 sitemap URLs, all 200; the three removed pages 410 with noindex; /in/anabolic-steroid 404. IndexNow run `39348330572`: 1108 -> 1262, 157 new, 260 changed, 3 removed, 420 submitted and 420 accepted, audit exact, `indexnow-last` moved to `4f15bbb`. Live Lighthouse (mobile, median of 3, Brave): perf 98-99, SEO 100, LCP 2.13-2.28 s, CLS 0, TBT 0 on /roam, /m/caffeine, /in/vitamin, /vs/caffeine-vs-theobromine, /best/deadliest.
+
 Branch `traffic-2026-10-tranche2` from `origin/main` `b7b9217`. The "recurring tranche" of
 `../BUILD-PLAN-growth-2026-10-18.md`. Review page (every assignment, every ruling, every pair):
 https://claude.ai/artifact/TU7jpGmY3M9aq4TynVmCr1
