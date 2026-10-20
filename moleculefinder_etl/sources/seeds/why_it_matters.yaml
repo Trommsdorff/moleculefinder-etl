@@ -986,3 +986,8 @@ thiomersal: "A mercury-containing preservative used since the 1930s in multi-dos
 clenbuterol: "A bronchodilator licensed for asthma in some European countries, sold as Spiropent. It is also a veterinary airway medicine for horses."
 artemisinin: "The compound in sweet wormwood that Tu Youyou isolated in the 1970s, work that won a 2015 Nobel Prize. Its derivatives artemether and artesunate treat malaria."
 clostebol: "A chlorinated form of testosterone, licensed in Italy in a wound-healing cream and spray sold as Trofodermin. Traces from such products have caused doping cases."
+
+# ── Run A addition 2026-10-runA (two rows, not a tranche; written from the structured record:
+# PubChem's Use and Manufacturing section (HSDB) and Wikidata's PFAS classification) ──
+perfluorooctanoic-acid: "PFOA, a fully fluorinated PFAS surfactant used in fire-fighting foams, paints, polishes, carpets and food-contact packaging."
+perfluorooctanesulfonic-acid: "PFOS, a PFAS surfactant once used in fire-fighting foams, floor polishes, metal plating and circuit-board etching. 3M phased it out by 2001."
