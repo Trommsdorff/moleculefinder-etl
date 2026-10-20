@@ -22,13 +22,18 @@ STAGES = {
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mfetl", description="MoleculeFinder ETL")
-    p.add_argument("stage", choices=STAGES, help="pipeline stage to run")
+    p.add_argument("stage", choices=[*STAGES, "migrate"], help="pipeline stage to run")
     p.add_argument("--target", type=int, default=None, help="canon size (default from env)")
+    p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
+    if args.stage == "migrate":
+        # Database migrations over SUPABASE_DB_URL; needs no REST keys.
+        from . import migrate
+        return migrate.run(apply=args.apply)
     settings = Settings.from_env()
     if args.target:
         settings = Settings(settings.supabase_url, settings.supabase_service_key, args.target)

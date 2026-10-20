@@ -106,12 +106,20 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
 - Creds in `.env` (gitignored): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (= the `sb_secret_…`
   key). `mfetl load` uses supabase-py (REST). Refresh the web repo's snapshot copy with
   `npm run sync-data` there.
-- **DDL/migrations (no `psql` locally):** connect with `psycopg` over the Supabase **session
-  pooler** (port 5432, IPv4) and apply `supabase/migrations/*.sql` in order — including
-  `0003_grants.sql`, which grants the API roles (the SQL Editor does this automatically; a
-  raw connection does not, or the API 42501s "permission denied"). Pooler passwords can
-  contain unescaped `@ # $ \` — split on the LAST `@`, pass host/user/password/dbname as
-  psycopg kwargs (not a URL).
+- **DDL/migrations: `mfetl migrate` (2026-10-19). NEVER ask Garrett to paste SQL into the
+  Supabase dashboard** (his words: he wants a long-term fix where he does not log in each time).
+  The REST keys cannot GRANT/REVOKE/CREATE, so migrations use `SUPABASE_DB_URL` in `.env` (the
+  dashboard's Connect -> Session pooler string, password filled in; gitignored). `mfetl migrate`
+  lists pending files; `mfetl migrate --apply` runs each in its own transaction with its row in
+  `mfetl.migration_log` (a schema the Data API does not expose), then prints what the anon key may
+  read. The first run records 0001-0003 as applied by hand (`migrate.PRE_LOG`) instead of re-running
+  them. Needs `uv pip install --python .venv/bin/python3 "psycopg[binary]>=3.2"` (the `db` extra;
+  the weekly run does not). The env has no pip: use uv. Proven end to end on a local Postgres in
+  the live pre-deploy state: dry run changes nothing, apply leaves anon reading `molecule` and not
+  `event`/`ingest_run`, a second apply is a no-op. A new migration still grants explicitly
+  (`0003_grants.sql` and the raw-connection 42501 trap; `tests/test_migration_grants.py`).
+  Pooler passwords can contain unescaped `@ # $ \` — `migrate.connect_kwargs` splits on the
+  LAST `@` and passes kwargs, not a URL.
 
 ## PubChem gotchas (fixed in code — watch at 10k / on API drift)
 - Property fields renamed: read `SMILES` (isomeric) + `ConnectivitySMILES` (canonical).
@@ -790,8 +798,8 @@ Do not raise it again.** No recreational-drug row, ever (Garrett, 2026-10-18).
    `origin/main` into `traffic-2026-10-tranche2`; `mfetl transform` + `mfetl export` from the warm cache
    with Supabase blanked (re-apply the drift revert only if a fresh fetch was made); all 480 tests;
    fast-forward ETL `main` and push. Nothing deploys from this repo.
-2. **Apply 0004 then 0005 to the live database** over the session pooler (psycopg, as for 0003; both
-   idempotent), then the four checks: the public (anon) key gets 401 on `event`; 401 on `ingest_run`;
+2. **Apply 0004 then 0005 to the live database** with `mfetl migrate --apply` (both idempotent),
+   then the four checks: the public (anon) key gets 401 on `event`; 401 on `ingest_run`;
    200 on `molecule`; one POST to `https://moleculefinder.com/api/e` lands a row that `/dashboard` shows.
 3. **Push web `main` and watch the Vercel build to Ready**: merge web `origin/main`, `npm run sync-data`,
    build and page sweep first, then push. Re-measure Lighthouse on the five archetypes against production.
