@@ -1,0 +1,71 @@
+# The news matcher's fixture (tests/test_news.py). Every line is a SYNTHETIC headline written for
+# this test, never copied coverage, in the shape "Headline - Outlet => slug, slug" or "=> -" for
+# a line that must match nothing. Shapes come from the first real dry run (2026-10-20).
+
+# Plain names, any case, hyphens and possessives
+Study links afternoon caffeine to shorter sleep in teens - Example News => caffeine
+Caffeine-free sodas gain shelf space - Example News => caffeine
+Melatonin's effect on jet lag tested in new trial - Example News => melatonin
+CREATINE MAY HELP OLDER ADULTS KEEP MUSCLE, REVIEW SAYS - Example News => creatine
+Two charged after fentanyl seizure at border crossing - Example News => fentanyl
+Regulators review aspartame safety data again - Example News => aspartame
+State weighs limits on nicotine pouches - Example News => nicotine
+
+# Brands, aliases and curated news names
+Recall hits Aleve and Claritin tablets over labeling error - Example News => loratadine, naproxen
+Tylenol maker loses appeal in lawsuit - Example News => acetaminophen
+Can you take Advil after a flu shot? Doctors explain - Example News => ibuprofen
+Ozempic and Mounjaro prescriptions climb among older adults - Example News => semaglutide, tirzepatide
+Schools move to drop Red 40 dye from cafeteria snacks - Example News => allura-red-ac
+FDA finalizes ban on Red Dye No. 3 in candy - Example News => erythrosine
+Yellow 5 food dye under review in two states - Example News => tartrazine
+Baby bottles without BPA now the norm, survey finds - Example News => bisphenol-a
+CBD gummies recalled over labeling - Example News => cannabidiol
+# DHA names three catalogue molecules (DHEA, dihydroxyacetone, docosahexaenoic acid): none.
+Fish oil study finds DHA levels matter for brain health - Example News => -
+
+# Greek letters and longest match
+β-Carotene supplements and lung health revisited - Example News => beta-carotene
+Sodium chloride shortage hits hospital IV supplies - Example News => sodium-chloride
+Nitrous oxide sales face new city limits - Example News => nitrous-oxide
+Carbon monoxide alarm saves family of five - Example News => carbon-monoxide
+
+# Stop-listed names match only in their qualified phrases
+Childhood lead poisoning cases fall in county - Example News => lead
+Lead-tainted applesauce prompts new testing rules - Example News => lead
+Democrats lead in early polling - Example News => -
+Iron deficiency is common in teen athletes, study finds - Example News => iron
+Iron Man sequel tops box office - Example News => -
+Gold prices hit a record high - Example News => -
+Salt intake guidance updated by health agency - Example News => sodium-chloride
+Water main break floods downtown streets - Example News => -
+Mercury retrograde explained - Example News => -
+Freddie Mercury biopic tops streaming chart - Example News => -
+Adrenaline-fueled finish decides the race - Example News => -
+
+# A different compound is not the molecule
+State bans ethylene oxide use in spice plants - Example News => -
+Sodium alginate gel speeds wound healing - Example News => -
+Cellulose acetate film market expands - Example News => -
+
+# Markets, mining, titles of works, people and products
+United Example Antimony jumps 12% after quarterly report - Example News => -
+Explorer extends drilling at lithium project in Nevada - Example News => -
+Ethanol Market To 2035: growth driven by fuel blending - Example News => -
+'Dopamine Chamber' tops the album chart - Example News => -
+Band releases Dopamine Chamber deluxe edition - Example News => -
+Dopamine drives habit formation, researchers find - Example News => dopamine
+Allegra Smith named head coach - Example News => -
+Example Antimony Corp. announces drilling results - Example News => -
+Green Ammonia Market to Reach USD 4 Billion by 2036 - Example News => -
+Community theatre stages Arsenic and Old Lace - Example News => -
+State sues baby food maker over arsenic levels - Example News => arsenic
+Ammonia leak prompts evacuation near rail yard - Example News => ammonia
+Saucony Endorphin Speed shoe review - Example News => -
+Red 3 wins the relay at the county meet - Example News => -
+EPA proposes new limits on power plant emissions - Example News => -
+MSG concert lineup announced - Example News => -
+
+# The outlet never matches
+Weekly science roundup: new telescopes and rovers - Caffeine Weekly => -
+Researchers test ethanol in jet fuel blend - Example News => ethanol

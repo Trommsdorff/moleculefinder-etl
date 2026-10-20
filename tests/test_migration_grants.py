@@ -102,7 +102,7 @@ def audit(migrations: Path, baseline: str = BASELINE) -> tuple[list[str], dict[s
 # ── The repository ──────────────────────────────────────────────────────────
 def test_every_table_in_the_repo_has_explicit_grants():
     problems, tables = audit(MIGRATIONS)
-    assert len(tables) == 17, sorted(tables)
+    assert len(tables) == 18, sorted(tables)
     assert problems == []
 
 
@@ -120,20 +120,20 @@ def _repo_plus(tmp_path: Path, name: str, sql: str) -> Path:
 
 
 def test_a_new_table_without_grants_fails(tmp_path):
-    d = _repo_plus(tmp_path, "0005_news.sql",
-                   "create table molecule_news (id bigserial primary key, slug text not null);")
+    d = _repo_plus(tmp_path, "0099_trivia.sql",
+                   "create table molecule_trivia (id bigserial primary key, slug text not null);")
     problems, _ = audit(d)
-    assert any(p.startswith("molecule_news (0005_news.sql): service_role lacks") for p in problems)
-    assert any("molecule_news (0005_news.sql): anon lacks select" in p for p in problems)
-    assert any("molecule_news_id_seq" in p for p in problems)
+    assert any(p.startswith("molecule_trivia (0099_trivia.sql): service_role lacks") for p in problems)
+    assert any("molecule_trivia (0099_trivia.sql): anon lacks select" in p for p in problems)
+    assert any("molecule_trivia_id_seq" in p for p in problems)
 
 
 def test_a_new_table_with_grants_in_its_own_file_passes(tmp_path):
-    d = _repo_plus(tmp_path, "0005_news.sql", """
-        create table if not exists public.molecule_news (id bigserial primary key, slug text);
-        grant select on table public.molecule_news to anon;
-        grant select, insert, update, delete on table public.molecule_news to service_role;
-        grant usage, select on sequence molecule_news_id_seq to service_role;
+    d = _repo_plus(tmp_path, "0099_trivia.sql", """
+        create table if not exists public.molecule_trivia (id bigserial primary key, slug text);
+        grant select on table public.molecule_trivia to anon;
+        grant select, insert, update, delete on table public.molecule_trivia to service_role;
+        grant usage, select on sequence molecule_trivia_id_seq to service_role;
     """)
     assert audit(d)[0] == []
 
@@ -141,31 +141,33 @@ def test_a_new_table_with_grants_in_its_own_file_passes(tmp_path):
 def test_a_grant_in_a_later_file_does_not_count_for_a_new_table(tmp_path):
     """The order says "in the same migration": a table created bare and granted later is
     exposed to the window in between, so it fails."""
-    d = _repo_plus(tmp_path, "0005_news.sql", "create table molecule_news (slug text primary key);")
-    (d / "0006_fix.sql").write_text("grant select on molecule_news to anon;\n"
-                                    "grant all on molecule_news to service_role;")
+    d = _repo_plus(tmp_path, "0099_trivia.sql", "create table molecule_trivia (slug text primary key);")
+    (d / "0100_fix.sql").write_text("grant select on molecule_trivia to anon;\n"
+                                    "grant all on molecule_trivia to service_role;")
     problems, _ = audit(d)
-    assert any(p.startswith("molecule_news (0005_news.sql)") for p in problems)
+    assert any(p.startswith("molecule_trivia (0099_trivia.sql)") for p in problems)
 
 
 def test_a_blanket_schema_grant_and_a_commented_grant_do_not_count(tmp_path):
-    d = _repo_plus(tmp_path, "0005_news.sql", """
-        create table molecule_news (slug text primary key);
+    d = _repo_plus(tmp_path, "0099_trivia.sql", """
+        create table molecule_trivia (slug text primary key);
         grant select on all tables in schema public to anon;
-        -- grant select, insert, update, delete on table molecule_news to service_role;
+        -- grant select, insert, update, delete on table molecule_trivia to service_role;
     """)
     problems, _ = audit(d)
-    assert any(p.startswith("molecule_news (0005_news.sql): service_role lacks") for p in problems)
-    assert any(p.startswith("molecule_news (0005_news.sql): anon lacks") for p in problems)
+    assert any(p.startswith("molecule_trivia (0099_trivia.sql): service_role lacks") for p in problems)
+    assert any(p.startswith("molecule_trivia (0099_trivia.sql): anon lacks") for p in problems)
 
 
 def test_without_the_baseline_the_existing_tables_fail(tmp_path):
-    """Load-bearing check on 0004: drop it and all 17 tables are reported."""
+    """Load-bearing check on 0004: drop it and the 17 tables before it are reported. 0006's
+    molecule_news grants itself in its own file, as every table after the baseline must."""
     for f in MIGRATIONS.glob("*.sql"):
         if f.name != BASELINE:
             (tmp_path / f.name).write_text(f.read_text())
     problems, tables = audit(tmp_path)
-    assert {p.split(" ", 1)[0] for p in problems} == set(tables) and len(tables) == 17
+    reported = {p.split(" ", 1)[0] for p in problems}
+    assert reported == set(tables) - {"molecule_news"} and len(reported) == 17
 
 
 # ── The private tables stay private (Garrett, 2026-10-18) ───────────────────
@@ -242,3 +244,11 @@ def test_a_later_grant_reopening_them_fails(tmp_path, sql):
         for table in PRIVATE:
             for role in PUBLIC_ROLES:
                 assert privs[table].get(role, set()) == set(), (table, role)
+
+
+def test_molecule_news_is_read_only_to_the_public_key():
+    """Run A (0006): the feed's facts are public anyway, so anon may read the table; only the
+    service role (the news job) may write it."""
+    privs = effective_privileges(MIGRATIONS)["molecule_news"]
+    assert privs["anon"] == {"select"}
+    assert {"select", "insert", "update", "delete"} <= privs["service_role"]

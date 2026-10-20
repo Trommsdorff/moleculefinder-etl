@@ -1,0 +1,107 @@
+name: Molecules in the news
+
+# Record the catalogue's molecules named in recent headlines, and ping IndexNow for their pages,
+# within six hours. Run A of BUILD-PLAN-growth-2026-10-18, on PolitiFinder's news-politicians.yml.
+#
+# WHAT THIS IS FOR
+# A molecule's page is already correct when the molecule turns up in the news. What is missing is
+# a recrawl signal on that URL at that moment, and a place on the home page that says which
+# molecules are in this week's news. Both come from here, with no build.
+#
+# WHAT THIS IS NOT
+# It does not build the site, it does not deploy, and it commits nothing. It writes the names-only
+# table molecule_news (supabase/migrations/0006_molecule_news.sql) through PostgREST, then uploads
+# one public JSON (public-data/news/in-the-news.json) that the static site fetches in the browser.
+# It never stores or prints a headline, an outlet or a link: this repo and its logs are public.
+# The weekly ETL (etl.yml) does not know this job exists, and this job reads only the committed
+# snapshot's molecule files.
+#
+# COST
+# About sixty Google News RSS requests, a regex pass, a few PostgREST calls, one Storage upload and
+# one IndexNow POST: about two minutes. Public repo, so the minutes are free. It runs on the
+# runner's own Python with NO install: moleculefinder_etl/news.py imports only the standard
+# library, precisely so this cron does not pay for rdkit four times a day.
+#
+# ⚠️ MERGING THIS FILE TO main ARMS THE CRON. A newly added workflow is enabled by default. Run it
+# once with workflow_dispatch + dry_run first. To hold it:
+#     gh workflow disable news.yml --repo Trommsdorff/moleculefinder-etl
+#
+# SECRETS: SUPABASE_URL and SUPABASE_SERVICE_KEY, already set for etl.yml. Unset, the job prints
+# the match list and exits 0. The IndexNow key is public by design (moleculefinder.com serves it).
+
+on:
+  schedule:
+    # Every six hours at :50 (JudicialFinder's news runs at :20, PolitiFinder's at :40).
+    - cron: '50 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Match and log only: write nothing, submit nothing'
+        type: boolean
+        default: false
+
+# One at a time: two overlapping runs would race on the same rows.
+concurrency:
+  group: molecule-news
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      # Python 3.12 pinned (the code needs 3.11+), and still NO pip install: the module imports
+      # only the standard library.
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - name: Match molecules in the news, record them, ping IndexNow
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          # Inputs pass through the environment, never spliced into the script.
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          set -euo pipefail
+          python3 --version
+          python3 -m moleculefinder_etl.news ${DRY_RUN}
+
+  # A failed run only sends an email, which reads as noise; an open issue stays visible. A separate
+  # job so it still runs when the job above dies before its first step.
+  alarm:
+    needs: news
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open (or reuse) a failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GH_REPO IS LOAD-BEARING: this job has no checkout (see etl.yml's alarm).
+          GH_REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # One open issue at a time: a six-hourly cron that stays broken should nag once.
+          existing=$(gh issue list --label news-failure --state open \
+                       --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Failed again: $RUN"
+            exit 0
+          fi
+          gh label create news-failure --color B60205 \
+            --description "Molecules-in-the-news run failed" 2>/dev/null || true
+          gh issue create --label news-failure \
+            --title "Molecules-in-the-news run FAILED" \
+            --body "The six-hourly molecules-in-the-news workflow failed.
+
+          Run: $RUN
+
+          Nothing was deployed either way: this workflow only writes the molecule_news table and
+          its public feed, and submits IndexNow URLs. The site is unaffected; the home page keeps
+          the last feed and empties the block once its newest headline is a week old.
+
+          Close this issue once a run goes green again."
