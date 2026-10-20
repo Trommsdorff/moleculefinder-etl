@@ -32,6 +32,7 @@ BASELINE = "0004_explicit_grants.sql"
 PRIVATE = {
     "event": "the /api/e beacon's rows: paths, referrers and session ids",
     "ingest_run": "the ETL's audit trail",
+    "molecule_news_match": "the news job's audit trail: headline text, outlet, link and query per match",
 }
 
 WRITE = {"select", "insert", "update", "delete"}
@@ -64,6 +65,7 @@ def audit(migrations: Path, baseline: str = BASELINE) -> tuple[list[str], dict[s
 
     for f in files:
         for privs, kind, objects, roles in _GRANT.findall(_sql(f)):
+            privs = re.sub(r"\([^)]*\)", "", privs)          # a column grant still grants the privilege
             privs = {"select", "insert", "update", "delete", "usage"} if privs.strip().lower() == "all" \
                 else {p.strip().lower() for p in privs.split(",")}
             for obj in _names(objects):
@@ -102,7 +104,7 @@ def audit(migrations: Path, baseline: str = BASELINE) -> tuple[list[str], dict[s
 # ── The repository ──────────────────────────────────────────────────────────
 def test_every_table_in_the_repo_has_explicit_grants():
     problems, tables = audit(MIGRATIONS)
-    assert len(tables) == 18, sorted(tables)
+    assert len(tables) == 19, sorted(tables)
     assert problems == []
 
 
@@ -161,13 +163,13 @@ def test_a_blanket_schema_grant_and_a_commented_grant_do_not_count(tmp_path):
 
 def test_without_the_baseline_the_existing_tables_fail(tmp_path):
     """Load-bearing check on 0004: drop it and the 17 tables before it are reported. 0006's
-    molecule_news grants itself in its own file, as every table after the baseline must."""
+    two news tables grant themselves in their own file, as every table after the baseline must."""
     for f in MIGRATIONS.glob("*.sql"):
         if f.name != BASELINE:
             (tmp_path / f.name).write_text(f.read_text())
     problems, tables = audit(tmp_path)
     reported = {p.split(" ", 1)[0] for p in problems}
-    assert reported == set(tables) - {"molecule_news"} and len(reported) == 17
+    assert reported == set(tables) - {"molecule_news", "molecule_news_match"} and len(reported) == 17
 
 
 # ── The private tables stay private (Garrett, 2026-10-18) ───────────────────
@@ -184,9 +186,13 @@ def effective_privileges(migrations: Path) -> dict[str, dict[str, set[str]]]:
     defaults: dict[str, set[str]] = {}
 
     def expand(text: str) -> set[str]:
+        """A column grant is held as "select(col,col)": it is not the whole table."""
         text = text.strip().lower()
-        return {"select", "insert", "update", "delete"} if text.startswith("all") \
-            else {p.strip() for p in text.split(",")}
+        if text.startswith("all"):
+            return {"select", "insert", "update", "delete"}
+        cols = {m.group(1): f"{m.group(1)}({','.join(sorted(_names(m.group(2))))})"
+                for m in re.finditer(r"(\w+)\s*\(([^)]*)\)", text)}
+        return {cols.get(p, p) for p in (q.strip() for q in re.sub(r"\([^)]*\)", "", text).split(","))}
 
     for f in sorted(migrations.glob("*.sql")):
         for stmt in _STMT.findall(_sql(f)):
@@ -209,8 +215,9 @@ def effective_privileges(migrations: Path) -> dict[str, dict[str, set[str]]]:
                 for role in _names(roles):
                     held = privs[t].setdefault(role, set())
                     held |= expand(what) if verb == "grant" else set()
-                    if verb == "revoke":
-                        held -= expand(what)
+                    if verb == "revoke":           # revoking a table privilege revokes its column grants too
+                        gone = expand(what)
+                        held -= gone | {h for h in held if h.split("(")[0] in gone}
     return privs
 
 
@@ -246,9 +253,39 @@ def test_a_later_grant_reopening_them_fails(tmp_path, sql):
                 assert privs[table].get(role, set()) == set(), (table, role)
 
 
-def test_molecule_news_is_read_only_to_the_public_key():
-    """Run A (0006): the feed's facts are public anyway, so anon may read the table; only the
-    service role (the news job) may write it."""
-    privs = effective_privileges(MIGRATIONS)["molecule_news"]
-    assert privs["anon"] == {"select"}
+def test_molecule_news_is_read_only_to_the_public_key_and_names_only():
+    """Run A (0006): the feed's facts are public anyway, so anon may read the names-only table, and
+    only its five public columns; only the service role (the news job) may write it. 0003's default
+    privileges would have granted the whole table to anon and authenticated: 0006 revokes that
+    first, or the column grant would mean nothing."""
+    privs = effective_privileges(MIGRATIONS)
+    assert privs["molecule_news"]["anon"] == {"select(first_seen,hits,last_seen,name,slug)"}
+    assert privs["molecule_news"].get("authenticated", set()) == set()
+    assert {"select", "insert", "update", "delete"} <= privs["molecule_news"]["service_role"]
+
+
+def test_the_news_audit_trail_is_private():
+    """Headline text, outlet, link and query live in molecule_news_match, which no public key may
+    read, by grant AND by row level security with no policy."""
+    privs = effective_privileges(MIGRATIONS)["molecule_news_match"]
+    for role in PUBLIC_ROLES:
+        assert privs.get(role, set()) == set(), role
     assert {"select", "insert", "update", "delete"} <= privs["service_role"]
+    sql = _sql(MIGRATIONS / "0006_molecule_news.sql")
+    assert "alter table molecule_news_match enable row level security" in " ".join(sql.split()).lower()
+    assert "on molecule_news_match for" not in sql                         # no policy at all
+    # Every coverage column is on the private table, none on the public one.
+    tables = dict(_CREATE.findall(sql))
+    public_cols = {c.lower() for c in re.findall(r"^\s*(\w+)\s", tables["molecule_news"], re.MULTILINE)}
+    assert public_cols.isdisjoint({"headline", "outlet", "url", "query", "story"})
+    assert {"headline", "outlet", "url", "query"} <= {c.lower() for c in re.findall(r"^\s*(\w+)\s", tables["molecule_news_match"], re.MULTILINE)}
+
+
+def test_without_the_revoke_the_column_grant_would_mean_nothing(tmp_path):
+    """Load-bearing check on 0006's revoke: 0003's default privileges grant every new table."""
+    for f in MIGRATIONS.glob("*.sql"):
+        (tmp_path / f.name).write_text(f.read_text().replace(
+            "revoke all on table molecule_news from anon, authenticated;", "").replace(
+            "revoke all on table molecule_news_match from anon, authenticated;", ""))
+    privs = effective_privileges(tmp_path)
+    assert "select" in privs["molecule_news"]["anon"] and "select" in privs["molecule_news_match"]["anon"]
