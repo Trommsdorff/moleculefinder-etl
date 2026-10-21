@@ -124,6 +124,14 @@ Scope C (the 839-molecule drugs wing, `../drugs-wing-deferred.csv`) stays deferr
   (`0003_grants.sql` and the raw-connection 42501 trap; `tests/test_migration_grants.py`).
   Pooler passwords can contain unescaped `@ # $ \` — `migrate.connect_kwargs` splits on the
   LAST `@` and passes kwargs, not a URL.
+- **Rotating the database password (done 2026-10-21, after it was echoed into a session transcript by
+  a shell `source .env` error).** The `postgres` login cannot change its own password (`ALTER ROLE`
+  answers InsufficientPrivilege), so a rotation is Garrett's one dashboard step: Project Settings ->
+  Database -> Reset database password -> Generate -> Copy; then
+  `./.venv/bin/python3 scripts/set_db_password_from_clipboard.py` reads the clipboard, checks the new
+  password connects before touching `.env`, swaps it in and clears the clipboard, printing no secret.
+  Only `mfetl migrate` uses this password. **Never `source` or `.` the `.env` in a shell:** its unquoted
+  password breaks shell parsing and the error prints the line. Read it with python-dotenv instead.
 
 ## PubChem gotchas (fixed in code — watch at 10k / on API drift)
 - Property fields renamed: read `SMILES` (isomeric) + `ConnectivitySMILES` (canonical).
