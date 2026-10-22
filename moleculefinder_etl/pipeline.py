@@ -41,6 +41,7 @@ DEFERRED = SEED_DIR / "deferred.json"
 # that failed, and why).
 PRODUCTS_STAGED = SEED_DIR / "products.json"
 PRODUCTS_GATE = SEED_DIR / "products_gate.json"
+NEXT_TRANCHE_QUEUE = SEED_DIR / "next_tranche_queue.csv"
 
 
 def _require(path: Path, prior: str) -> None:
@@ -163,8 +164,10 @@ def stage_fetch(settings: Settings) -> None:
     # the throttle line above covers the PubChem ones; the UNII POSTs log their own lines.
     seed = products.load_seed()
     if seed:
-        products.warm(seed, cids, lambda c: _fetch_cached(c, products.UNII_PREFIX, pubchem.uniis,
-                                                          UNII_CACHE_TTL_DAYS))
+        products.warm(seed, cids,
+                      lambda c: _fetch_cached(c, products.UNII_PREFIX, pubchem.uniis, UNII_CACHE_TTL_DAYS),
+                      lambda c: _fetch_cached(c, "props",
+                                              lambda miss: {int(p["CID"]): p for p in pubchem.properties(miss)}))
 
     FETCHED.parent.mkdir(parents=True, exist_ok=True)
     FETCHED.write_text(json.dumps([{"cid": c, "props": props.get(c) or {}, "synonyms": syns.get(c) or []}
@@ -301,6 +304,8 @@ def stage_transform(settings: Settings) -> list[dict]:
         passed, report = products.compile_products(kept, seed)
         products.attach_products(kept, passed)
         PRODUCTS_STAGED.write_text(json.dumps(passed, ensure_ascii=False))
+        # The next tranche's queue, every label ingredient MF lacks, is its own committed CSV.
+        products.write_queue(report.pop("next_tranche_queue"), NEXT_TRANCHE_QUEUE)
         PRODUCTS_GATE.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n")
         log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s)",
                  report["passed"], report["seeded"], products.MIN_MOLECULES,

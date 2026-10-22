@@ -1,0 +1,16 @@
+# What's in it: UNII aliases (run C1 amendment, 2026-10-22). HAND-MAINTAINED, and meant to stay short.
+#
+# A label ingredient reaches its molecule by code: its own UNII, its active moiety's UNII, then BY RULE
+# through PubChem's parent compound (the parent CID of a salt or hydrate, or one catalog molecule sharing
+# the parent's InChIKey skeleton; transform/products.py). This list is ONLY for forms that rule does not
+# reach: one line per FDA UNII, mapped to the catalog slug, with the reason. Every slug is checked.
+aliases:
+  # Lactose: lactose and maltose share an InChIKey skeleton (same atoms and bonds, different sugar
+  # stereo), so the skeleton rule refuses to choose. Every label form of lactose:
+  EWQ57Q8I5X: lactose            # LACTOSE MONOHYDRATE (61 labels)
+  J2B2A4N98G: lactose            # LACTOSE, UNSPECIFIED FORM (PubChem resolves no parent)
+  3SY5LH9PMK: lactose            # ANHYDROUS LACTOSE
+  # Active moieties PubChem files under a different compound than the label means:
+  207ZZ9QZ49: methylphenidate    # METHYLPHENIDATE (Ritalin, Concerta): PubChem's CID is one enantiomer, whose
+                                 # skeleton dexmethylphenidate shares
+  K6106LV5Q8: oseltamivir        # OSELTAMIVIR (Tamiflu): PubChem resolves the UNII to oseltamivir carboxylate

@@ -8,6 +8,10 @@
 #                        label, not a repackager's; scripts/draft_products.py drafts candidates.
 #   wikidata: <QID>      a food or drink's "has part(s)" (P527) and "made from material" (P186) (CC0)
 #   world: <slug>        one of the ten everyday worlds (worlds.yaml)
+#   curated: <hub slug>  a MoleculeFinder curated food hub (food_hubs.yaml plus the curated overlays:
+#                        the membership /in/<hub> lists). Amendment, 2026-10-22.
+# A food or drink row may name more than one of curated, world and wikidata (never with dailymed): the
+# page is their union, curated first, then the world, then Wikidata, one entry per molecule.
 #
 # THE GATE (Garrett, 2026-10-22): a product page exists only when MoleculeFinder already holds at
 # least THREE of its molecules, matched by code (a label ingredient's UNII against PubChem's UNII
@@ -22,26 +26,57 @@ products:
   # The ten everyday worlds: the first ten products (Garrett, 2026-10-22).
   - {slug: morning-coffee, name: "Morning coffee", kind: drink, world: morning-coffee}
   - {slug: spicy-dinner, name: "A spicy dinner", kind: food, world: spicy-dinner}
-  - {slug: chocolate, name: "Chocolate", kind: food, world: chocolate}
+  - {slug: chocolate, name: "Chocolate", kind: food, curated: chocolate, world: chocolate, wikidata: Q195}
   - {slug: after-the-rain, name: "The smell after rain", kind: moment, world: after-the-rain}
   - {slug: falling-asleep, name: "Falling asleep", kind: moment, world: falling-asleep}
   - {slug: glass-of-wine, name: "A glass of wine", kind: drink, world: glass-of-wine}
   - {slug: fresh-bread, name: "Fresh-baked bread", kind: food, world: fresh-bread}
   - {slug: sunscreen-summer-skin, name: "Sunscreen and summer skin", kind: moment, world: sunscreen-summer-skin}
-  - {slug: citrus, name: "Citrus", kind: food, world: citrus}
+  - {slug: citrus, name: "Citrus", kind: food, curated: citrus, world: citrus}
   - {slug: your-workout, name: "Your workout", kind: moment, world: your-workout}
   # Foods and drinks from Wikidata. Several marquee foods are seeded although Wikidata gives them
   # fewer than three molecule parts today; the gate report says so, and they appear on their own
   # once Wikidata's statements do.
   - {slug: diet-pepsi, name: "Diet Pepsi", kind: drink, wikidata: Q5275050}
   - {slug: pepsi-max, name: "Pepsi Max", kind: drink, wikidata: Q3493770}
-  - {slug: milk, name: "Milk", kind: drink, wikidata: Q8495}
+  - {slug: milk, name: "Milk", kind: drink, curated: milk, wikidata: Q8495}
   - {slug: red-bull, name: "Red Bull", kind: drink, wikidata: Q51482}
   - {slug: coca-cola, name: "Coca-Cola", kind: drink, wikidata: Q2813}
-  - {slug: coffee, name: "Coffee", kind: drink, wikidata: Q8486}
-  - {slug: tea, name: "Tea", kind: drink, wikidata: Q6097}
-  - {slug: wine, name: "Wine", kind: drink, wikidata: Q282}
-  - {slug: beer, name: "Beer", kind: drink, wikidata: Q44}
+  - {slug: coffee, name: "Coffee", kind: drink, curated: coffee, wikidata: Q8486}
+  - {slug: tea, name: "Tea", kind: drink, curated: tea, wikidata: Q6097}
+  - {slug: wine, name: "Wine", kind: drink, curated: wine, wikidata: Q282}
+  - {slug: beer, name: "Beer", kind: drink, curated: beer, wikidata: Q44}
+  # MoleculeFinder's curated food hubs (amendment, 2026-10-22): the same membership /in/<hub> lists.
+  # Coffee, tea, wine, beer, milk, chocolate and citrus are above, combined with their Wikidata item or
+  # world. Left out on purpose: tabletop-sweetener (the sweeteners in it are alternatives to one another,
+  # not the ingredients of one thing). No hub exists for energy drinks.
+  - {slug: cocoa, name: "Cocoa", kind: food, curated: cocoa}
+  - {slug: spirits, name: "Spirits", kind: drink, curated: spirits}
+  - {slug: soft-drinks, name: "Soft drinks", kind: drink, curated: soft-drinks}
+  - {slug: diet-soda, name: "Diet soda", kind: drink, curated: diet-soda}
+  - {slug: tonic-water, name: "Tonic water", kind: drink, curated: tonic-water}
+  - {slug: bread, name: "Bread", kind: food, curated: bread}
+  - {slug: breakfast-cereal, name: "Breakfast cereal", kind: food, curated: breakfast-cereal}
+  - {slug: cheese, name: "Cheese", kind: food, curated: cheese}
+  - {slug: eggs, name: "Eggs", kind: food, curated: eggs}
+  - {slug: fish, name: "Fish", kind: food, curated: fish}
+  - {slug: shellfish, name: "Shellfish", kind: food, curated: shellfish}
+  - {slug: red-meat, name: "Red meat", kind: food, curated: red-meat}
+  - {slug: cured-meat, name: "Cured meat", kind: food, curated: cured-meat}
+  - {slug: fruit, name: "Fruit", kind: food, curated: fruit}
+  - {slug: leafy-greens, name: "Leafy greens", kind: food, curated: leafy-greens}
+  - {slug: mushrooms, name: "Mushrooms", kind: food, curated: mushrooms}
+  - {slug: nuts, name: "Nuts", kind: food, curated: nuts}
+  - {slug: honey, name: "Honey", kind: food, curated: honey}
+  - {slug: chili-peppers, name: "Chili peppers", kind: food, curated: chili-peppers}
+  - {slug: hot-sauce, name: "Hot sauce", kind: food, curated: hot-sauce}
+  - {slug: black-pepper, name: "Black pepper", kind: food, curated: black-pepper}
+  - {slug: soy-sauce, name: "Soy sauce", kind: food, curated: soy-sauce}
+  - {slug: processed-snacks, name: "Processed snacks", kind: food, curated: processed-snacks}
+  - {slug: whipped-cream, name: "Whipped cream", kind: food, curated: whipped-cream}
+  - {slug: sugar-free-gum, name: "Sugar-free gum", kind: food, curated: sugar-free-gum}
+  - {slug: table-sugar, name: "Table sugar", kind: food, curated: table-sugar}
+  - {slug: stevia, name: "Stevia", kind: food, curated: stevia}
   - {slug: m-and-ms, name: "M&M's", kind: food, wikidata: Q739550}
   - {slug: smarties, name: "Smarties", kind: food, wikidata: Q1400476}
   - {slug: chitato, name: "Chitato", kind: food, wikidata: Q123626364}
@@ -51,7 +86,6 @@ products:
   - {slug: mcdonalds-chicken-strips, name: "McDonald's Chicken Strips", kind: food, wikidata: Q135466721}
   - {slug: bullens-pilsnerkorv, name: "Bullens Pilsnerkorv", kind: food, wikidata: Q10437650}
   - {slug: glico-wings-frost-bite, name: "Glico Wings Frost Bite", kind: food, wikidata: Q124459851}
-  - {slug: chocolate-bar, name: "Chocolate (the food)", kind: food, wikidata: Q195}
   # Medicines by brand: the label of the brand owner (prescription and over the counter).
   - {slug: abilify, name: "Abilify", kind: medicine, dailymed: c040bd1d-45b7-49f2-93ea-aed7220b30ac}
   - {slug: abraxane, name: "Abraxane", kind: medicine, dailymed: 24d10449-2936-4cd3-b7db-a7683db721e4}

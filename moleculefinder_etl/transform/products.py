@@ -14,12 +14,29 @@ INPUTS
 * Wikidata (CC0) "has part(s)" (P527) and "made from material" (P186), read by
   ``sources/wikidata.parts_for_qids``.
 * ``worlds.yaml`` for the ten worlds.
+* MoleculeFinder's own curated food hubs (amendment, 2026-10-22): the ``kind: food`` categories
+  ``food_hubs.yaml`` and the curated overlays put on the records, the same membership /in/coffee
+  shows. A seed row names a hub with ``curated: <hub slug>``. A curated row may also name a world
+  and a Wikidata item (chocolate is the curated hub, the chocolate world and Q195): the page is
+  their union, curated first, one entry per molecule.
 
 MATCHING IS DETERMINISTIC. A label ingredient is a molecule when its UNII code (or, failing
 that, its active moiety's UNII) is one of the UNIIs PubChem lists for that molecule's CID. A
 Wikidata part is a molecule when its QID is the molecule's ``wikidata_qid``. No name matching,
 no Wikipedia prose, no Open Food Facts (share-alike; blocked in ``sources/registry.py``). A UNII
 two molecules share names neither.
+
+SALTS, HYDRATES AND STEREO FORMS, BY RULE (amendment, 2026-10-22). A label ingredient whose UNII
+matches no molecule is resolved through PubChem's parent compound (``pubchem.unii_parents``) of its
+active moiety (an active) or of its own UNII (an excipient, which has no moiety): the
+parent CID of a salt or hydrate (lactose monohydrate, saccharin sodium) when it is a catalog CID,
+else a catalog molecule sharing the parent's InChIKey skeleton (its first block: same atoms and
+bonds, any stereo), which is how racemic menthol reaches menthol and lactose monohydrate reaches
+lactose. Accepted only when exactly ONE molecule qualifies (glucose and galactose share a skeleton,
+so a skeleton they share matches neither) and that molecule has at least two carbon atoms: the
+parent of an inorganic salt is its acid (sodium fluoride's is hydrogen fluoride), and a toothpaste
+does not contain hydrofluoric acid. Forms the rule does not reach are on the hand list
+``sources/seeds/unii_aliases.yaml``.
 
 Fetching happens in the fetch stage (``warm``), into ``data/raw_cache``, so the inputs travel
 with the snapshot (``moleculefinder_etl/inputs.py``) and the Mac and GitHub build identically;
@@ -39,10 +56,10 @@ from pathlib import Path
 import yaml
 
 from ..config import PRODUCTS_CACHE_TTL_DAYS, RAW_CACHE, SEEDS_DIR, UNII_CACHE_TTL_DAYS
-from ..sources import cache, dailymed, wikidata
+from ..sources import cache, dailymed, pubchem, wikidata
 from ..sources.registry import assert_not_blocked
 from .confidence import FROM_SOURCE
-from .relationships import load_worlds
+from .relationships import load_food_hubs, load_worlds
 
 log = logging.getLogger("mfetl")
 
@@ -51,12 +68,16 @@ MIN_MOLECULES = 3
 # The page's kinds, in the order the /whats-in index lists them. "moment" holds the worlds
 # that are an experience, not a thing you buy (the smell after rain, falling asleep, a workout).
 KINDS = ("food", "drink", "medicine", "cosmetic", "household", "moment")
-SOURCE_KEYS = ("dailymed", "wikidata", "world")
+# The order a combined row's molecules are listed in: curated first, then the world, then Wikidata.
+SOURCE_KEYS = ("dailymed", "curated", "world", "wikidata")
+UNII_ALIASES_YAML = SEEDS_DIR / "unii_aliases.yaml"
 
 DAILYMED_DIR = RAW_CACHE / "dailymed"
 SPL_PREFIX = "spl1"                   # bump when ``dailymed.parse`` changes what it keeps
 PARTS_CACHE = RAW_CACHE / "wikidata" / "product_parts.json"
 UNII_PREFIX = "unii"
+PARENT_PREFIX = "uniiparent"          # pubchem/uniiparent-<UNII>.json: the UNII's parent CIDs
+MIN_PARENT_CARBONS = 2
 
 _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _QID = re.compile(r"^Q[1-9][0-9]*$")
@@ -103,22 +124,31 @@ def load_seed(path: Path | None = None, worlds: list[dict] | None = None) -> lis
         unknown = sorted(set(row) - {"slug", "name", "kind", *SOURCE_KEYS})
         if unknown:
             errors.append(f"{where}: unknown field(s) {', '.join(unknown)}")
-        if len(sources) != 1:
-            errors.append(f"{where}: needs exactly one of {', '.join(SOURCE_KEYS)}")
+        if not sources:
+            errors.append(f"{where}: needs one of {', '.join(SOURCE_KEYS)}")
             continue
-        key = sources[0]
-        value = str(row[key]).strip()
-        if key == "dailymed" and not dailymed.SETID_RE.match(value):
-            errors.append(f"{where}: not a DailyMed set id: {value}")
-        if key == "wikidata" and not _QID.match(value):
-            errors.append(f"{where}: not a Wikidata QID: {value}")
-        if key == "world" and value not in world_slugs:
-            errors.append(f"{where}: no world {value!r} in worlds.yaml")
-        if (key, value) in seen_source:
-            errors.append(f"{where}: same {key} item as {seen_source[(key, value)]}")
-        seen_source[(key, value)] = str(slug)
-        out.append({"slug": slug, "name": " ".join(str(name).split()), "kind": kind,
-                    "source": key, "item": value})
+        if "dailymed" in sources and len(sources) > 1:
+            errors.append(f"{where}: a DailyMed label stands alone (no second source)")
+            continue
+        items = []
+        for key in sources:
+            value = str(row[key]).strip()
+            if key == "dailymed" and not dailymed.SETID_RE.match(value):
+                errors.append(f"{where}: not a DailyMed set id: {value}")
+            if key == "wikidata" and not _QID.match(value):
+                errors.append(f"{where}: not a Wikidata QID: {value}")
+            if key == "world" and value not in world_slugs:
+                errors.append(f"{where}: no world {value!r} in worlds.yaml")
+            if key == "curated" and not _SLUG.match(value):
+                errors.append(f"{where}: not a food hub slug: {value}")
+            if (key, value) in seen_source:
+                errors.append(f"{where}: same {key} item as {seen_source[(key, value)]}")
+            seen_source[(key, value)] = str(slug)
+            items.append({"source": key, "item": value})
+        entry = {"slug": slug, "name": " ".join(str(name).split()), "kind": kind, **items[0]}
+        if len(items) > 1:
+            entry["also"] = items[1:]
+        out.append(entry)
     if errors:
         raise ProductSeedError("products.yaml:\n  " + "\n  ".join(errors))
     return out
@@ -147,10 +177,56 @@ def _read_parts() -> dict[str, dict]:
     return entries if isinstance(entries, dict) else {}
 
 
-def warm(seed: list[dict], cids: list[int], fetch_uniis) -> dict[str, int]:
+def _parent_path(unii: str) -> Path:
+    return RAW_CACHE / "pubchem" / f"{PARENT_PREFIX}-{unii}.json"
+
+
+def label_uniis(seed: list[dict], spl=None) -> list[str]:
+    """Every ingredient and active-moiety UNII on the seeded labels the cache holds, sorted."""
+    out: set[str] = set()
+    for p in seed:
+        if p["source"] != "dailymed":
+            continue
+        label = (spl or spl_cached)(p["item"])
+        for ing in (label or {}).get("ingredients") or []:
+            if ing.get("unii"):
+                out.add(ing["unii"])
+            out.update(m for m in ing.get("moiety") or [] if m)
+    return sorted(out)
+
+
+def read_parents(uniis) -> dict[str, list[int]]:
+    """The cached parent CIDs per UNII (written by the fetch stage). Missing means not looked up."""
+    out: dict[str, list[int]] = {}
+    for u in uniis:
+        hit = cache.read_json(_parent_path(u), UNII_CACHE_TTL_DAYS)
+        if hit is not None and isinstance(hit.value, list):
+            out[u] = [int(c) for c in hit.value]
+    return out
+
+
+def read_props(cids) -> dict[int, dict]:
+    """PubChem properties from the pipeline's permanent per-CID cache (``props-<cid>.json``)."""
+    out: dict[int, dict] = {}
+    for c in cids:
+        path = RAW_CACHE / "pubchem" / f"props-{c}.json"
+        if path.exists():
+            try:
+                value = json.loads(path.read_text())
+            except (json.JSONDecodeError, OSError):
+                continue
+            if isinstance(value, dict):
+                out[int(c)] = value
+    return out
+
+
+def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
+         fetch_parents=None) -> dict[str, int]:
     """Fetch whatever the product pages need that the cache does not hold fresh: each seeded
-    DailyMed label, the seeded Wikidata items' parts, and every molecule's UNII codes (through
-    ``fetch_uniis``, the pipeline's batched per-CID cache). Returns request counts for the log."""
+    DailyMed label, the seeded Wikidata items' parts, every molecule's UNII codes (through
+    ``fetch_uniis``, the pipeline's batched per-CID cache), the PubChem parent of every label
+    UNII no molecule claims, and those parents' properties (``fetch_props``, the pipeline's
+    permanent property cache) for the InChIKey skeleton. Returns request counts for the log."""
     assert_not_blocked("dailymed")
     labels = fetched_labels = 0
     for p in seed:
@@ -162,7 +238,7 @@ def warm(seed: list[dict], cids: list[int], fetch_uniis) -> dict[str, int]:
             cache.write_json(_spl_path(p["item"]), parsed if parsed is not None else {"missing": True})
             fetched_labels += 1
 
-    qids = sorted({p["item"] for p in seed if p["source"] == "wikidata"})
+    qids = sorted({s["item"] for p in seed for s in [p, *p.get("also", [])] if s["source"] == "wikidata"})
     stored = _read_parts()
     at = cache.now()
     # An item never fetched is a miss in every mode: a pinned build treats any CACHED entry as
@@ -179,11 +255,26 @@ def warm(seed: list[dict], cids: list[int], fetch_uniis) -> dict[str, int]:
         PARTS_CACHE.parent.mkdir(parents=True, exist_ok=True)
         PARTS_CACHE.write_text(json.dumps({cache.ENVELOPE_KEY: cache.ENVELOPE_VERSION,
                                            "fetched_at": at, "entries": stored}, sort_keys=True))
-    fetch_uniis(cids)
+    known = {u for codes in (fetch_uniis(cids) or {}).values() for u in (codes or [])}
+
+    # Salts, hydrates and stereo forms: the parent of every label UNII no molecule claims.
+    fetch_parents = fetch_parents or pubchem.unii_parents
+    unclaimed = [u for u in label_uniis(seed) if u not in known]
+    parents = read_parents(unclaimed)
+    asked = [u for u in unclaimed if u not in parents]
+    for i, u in enumerate(asked, 1):
+        parents[u] = fetch_parents(u)
+        cache.write_json(_parent_path(u), parents[u])
+        if i % 100 == 0:
+            log.info("  products: parent compounds %d/%d", i, len(asked))
+    parent_cids = sorted({c for cs in parents.values() for c in cs} - set(cids))
+    if fetch_props is not None and parent_cids:
+        fetch_props(parent_cids)
     log.info("  products: %d DailyMed label(s), %d fetched; %d Wikidata item(s), %d fetched; "
-             "UNII codes for %d CID(s)", labels, fetched_labels, len(qids), len(missing), len(cids))
+             "UNII codes for %d CID(s); parents of %d unclaimed label UNII(s), %d fetched",
+             labels, fetched_labels, len(qids), len(missing), len(cids), len(unclaimed), len(asked))
     return {"labels": labels, "labels_fetched": fetched_labels, "items": len(qids),
-            "items_fetched": len(missing)}
+            "items_fetched": len(missing), "parents": len(unclaimed), "parents_fetched": len(asked)}
 
 
 def read_uniis(cids: list[int]) -> dict[int, list[str]]:
@@ -207,7 +298,74 @@ def unii_index(records: list[dict], uniis: dict[int, list[str]]) -> dict[str, st
     return {u: next(iter(s)) for u, s in owners.items() if len(s) == 1}
 
 
-def _dailymed_molecules(spl: dict, by_unii: dict[str, str]) -> tuple[list[dict], list[str]]:
+_CARBON = re.compile(r"C(?![a-z])(\d*)")
+
+
+def carbon_count(formula: str | None) -> int:
+    """Carbon atoms in a molecular formula ("C12H22O11" -> 12; "Cl", "Ca" and "Cu" are not carbon)."""
+    return sum(int(n or 1) for n in _CARBON.findall(formula or ""))
+
+
+def load_unii_aliases(path: Path | None = None) -> dict[str, str]:
+    """The hand list: UNII -> molecule slug, for forms the parent rule does not reach."""
+    path = path or UNII_ALIASES_YAML
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text()) or {}
+    return {str(u).strip(): str(s).strip() for u, s in (data.get("aliases") or {}).items()}
+
+
+def parent_index(records: list[dict], parents: dict[str, list[int]], props: dict[int, dict],
+                 aliases: dict[str, str] | None = None) -> dict[str, tuple[str, str]]:
+    """UNII -> (slug, how) for label UNIIs no molecule claims: ``parent`` (the parent CID is a
+    catalog CID), ``skeleton`` (one catalog molecule shares the parent's InChIKey first block) or
+    ``alias`` (the hand list). Exactly one molecule must qualify, with two or more carbons."""
+    by_slug = {r["slug"]: r for r in records}
+    cid_owners: dict[int, set[str]] = {}
+    skel_owners: dict[str, set[str]] = {}
+    for r in records:
+        if int(r["cid"]) > 0:
+            cid_owners.setdefault(int(r["cid"]), set()).add(r["slug"])
+        if r.get("inchikey"):
+            skel_owners.setdefault(str(r["inchikey"])[:14], set()).add(r["slug"])
+    out: dict[str, tuple[str, str]] = {}
+    for u, cids in parents.items():
+        how = "parent"
+        found = set().union(*(cid_owners.get(c, set()) for c in cids)) if cids else set()
+        if not found:
+            how = "skeleton"
+            keys = {str((props.get(c) or {}).get("InChIKey") or "")[:14] for c in cids} - {""}
+            found = set().union(*(skel_owners.get(k, set()) for k in keys)) if keys else set()
+        if len(found) == 1:
+            slug = next(iter(found))
+            if carbon_count(by_slug[slug].get("molecular_formula")) >= MIN_PARENT_CARBONS:
+                out[u] = (slug, how)
+    for u, slug in (aliases or {}).items():
+        if slug not in by_slug:
+            raise ProductSeedError(f"unii_aliases.yaml: {u} names no molecule {slug!r}")
+        out.setdefault(u, (slug, "alias"))
+    return out
+
+
+def _resolve(ing: dict, by_unii: dict[str, str], by_parent: dict[str, tuple[str, str]]):
+    """(slug, how) for one label ingredient, or (None, None)."""
+    if ing.get("unii") and ing["unii"] in by_unii:
+        return by_unii[ing["unii"]], "unii"
+    for m in ing.get("moiety") or []:
+        if m in by_unii:
+            return by_unii[m], "moiety"
+    # By rule. An active's parent is looked up from its ACTIVE MOIETY, the label's own statement of
+    # what the active is: zinc acetate's moiety is zinc, so a lozenge never lists acetic acid as its
+    # active, and methylphenidate hydrochloride (whose UNII PubChem files under the dex form) reaches
+    # methylphenidate. An ingredient with no moiety (an excipient) is looked up by its own UNII.
+    for u in ing.get("moiety") or [ing.get("unii")]:
+        if u and u in by_parent:
+            return by_parent[u]
+    return None, None
+
+
+def _dailymed_molecules(spl: dict, by_unii: dict[str, str],
+                        by_parent: dict[str, tuple[str, str]] | None = None) -> tuple[list[dict], list[str]]:
     """The label's molecules in label order, actives first, and the names of ingredients that
     are not MoleculeFinder molecules. One entry per molecule; active wins over inactive."""
     purpose = dailymed.purposes(spl)
@@ -217,14 +375,7 @@ def _dailymed_molecules(spl: dict, by_unii: dict[str, str]) -> tuple[list[dict],
         for ing in spl.get("ingredients", []):
             if ing["role"] != role:
                 continue
-            slug, via = None, None
-            if ing.get("unii") and ing["unii"] in by_unii:
-                slug, via = by_unii[ing["unii"]], "unii"
-            else:
-                for m in ing.get("moiety") or []:
-                    if m in by_unii:
-                        slug, via = by_unii[m], "moiety"
-                        break
+            slug, via = _resolve(ing, by_unii, by_parent or {})
             if slug is None:
                 if ing["name"] not in unmatched:
                     unmatched.append(ing["name"])
@@ -263,14 +414,77 @@ def _wikidata_molecules(parts: dict, by_qid: dict[str, str]) -> tuple[list[dict]
     return list(found.values()), listed
 
 
+def curated_hubs(records: list[dict]) -> dict[str, dict]:
+    """hub slug -> {"name", "molecules": [{"slug", "note"?}]}: the curated ``kind: food``
+    memberships on the records (food_hubs.yaml plus the curated overlays), in food_hubs.yaml's
+    order and then by slug. The same membership the /in/<hub> page lists."""
+    order = {h: [*v["molecules"]] for h, v in load_food_hubs().items()}
+    names = {h: v["name"] for h, v in load_food_hubs().items()}
+    members: dict[str, dict[str, dict]] = {}
+    for r in records:
+        for c in r.get("categories") or []:
+            if c.get("kind") != "food" or c.get("source") != "curated":
+                continue
+            entry = {"slug": r["slug"]}
+            if c.get("note"):
+                entry["note"] = c["note"]
+            members.setdefault(c["slug"], {})[r["slug"]] = entry
+            names.setdefault(c["slug"], c.get("name") or c["slug"])
+    out = {}
+    for hub, mols in members.items():
+        listed = order.get(hub, [])
+        ranked = sorted(mols, key=lambda s: (listed.index(s) if s in listed else len(listed), s))
+        out[hub] = {"name": names[hub], "molecules": [mols[s] for s in ranked]}
+    return out
+
+
+_SOURCE_WORDS = {"curated": "MoleculeFinder's curated list", "world": "the world",
+                 "wikidata": "Wikidata"}
+
+
+def _queue_rows(queue: dict[str, dict]) -> list[dict]:
+    """The next tranche's queue: label actives MoleculeFinder lacks, then inactives, each by how
+    many seeded labels list it."""
+    rows = []
+    for q in queue.values():
+        name = q["names"].most_common(1)[0][0]
+        rows.append({"section": "active" if q["active"] else "inactive", "name": name,
+                     "unii": q["unii"] or "", "labels": len(q["labels"]),
+                     "labels_as_active": len(q["active"]), "pubchem_parent_cid": " ".join(map(str, q["parents"])),
+                     "example_products": " ".join(sorted(q["products"])[:3])})
+    rows.sort(key=lambda r: (r["section"] != "active", -r["labels"], r["name"].lower()))
+    for i, r in enumerate(rows, 1):
+        r["rank"] = i
+    return rows
+
+
+QUEUE_FIELDS = ("rank", "section", "name", "unii", "labels", "labels_as_active",
+                "pubchem_parent_cid", "example_products")
+
+
+def write_queue(rows: list[dict], path: Path) -> None:
+    import csv
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=QUEUE_FIELDS, lineterminator="\n")
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r[k] for k in QUEUE_FIELDS})
+
+
 def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                      spl=None, parts: dict[str, dict] | None = None,
                      uniis: dict[int, list[str]] | None = None,
-                     worlds: list[dict] | None = None) -> tuple[list[dict], dict]:
+                     worlds: list[dict] | None = None,
+                     parents: dict[str, list[int]] | None = None,
+                     props: dict[int, dict] | None = None,
+                     aliases: dict[str, str] | None = None,
+                     hubs: dict[str, dict] | None = None) -> tuple[list[dict], dict]:
     """(products that pass the gate, the gate report). Reads only caches and records.
 
-    ``spl`` (setid -> parsed label or ``{"missing": True}`` or None), ``parts`` and ``uniis``
-    default to the cache; tests pass their own."""
+    ``spl`` (setid -> parsed label or ``{"missing": True}`` or None), ``parts``, ``uniis``,
+    ``parents``, ``props``, ``aliases`` and ``hubs`` default to the cache and seeds; tests pass
+    their own. The report's ``next_tranche_queue`` is the rows ``write_queue`` writes."""
     seed = load_seed() if seed is None else seed
     worlds = load_worlds() if worlds is None else worlds
     spl = spl or spl_cached
@@ -278,13 +492,21 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
     uniis = read_uniis([int(r["cid"]) for r in records if int(r["cid"]) > 0]) if uniis is None else uniis
     by_slug = {r["slug"]: r for r in records}
     by_unii = unii_index(records, uniis)
+    if parents is None:
+        parents = read_parents(label_uniis(seed, spl))
+    if props is None:
+        props = read_props(sorted({c for cs in parents.values() for c in cs}))
+    by_parent = parent_index(records, {u: c for u, c in parents.items() if u not in by_unii}, props,
+                             load_unii_aliases() if aliases is None else aliases)
+    hubs = curated_hubs(records) if hubs is None else hubs
     by_qid = {r["wikidata_qid"]: r["slug"] for r in records if r.get("wikidata_qid")}
     titles = {r["slug"]: r["title"] for r in records}
     world_by_slug = {w["slug"]: w for w in worlds}
 
     products: list[dict] = []
     failed: list[dict] = []
-    missing_counter: Counter[str] = Counter()
+    queue: dict[str, dict] = {}
+    rule_matches: Counter[str] = Counter()
     for p in seed:
         base = {"slug": p["slug"], "name": p["name"], "kind": p["kind"]}
         listed = 0
@@ -301,7 +523,7 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                                "reason": f"not a label for people (DailyMed lists it as {label.get('doc_type') or 'unknown'})",
                                "matched": []})
                 continue
-            mols, unmatched = _dailymed_molecules(label, by_unii)
+            mols, unmatched = _dailymed_molecules(label, by_unii, by_parent)
             matched_actives = {m["listed_as"] for m in mols if m["role"] == "active"}
             # The label's active ingredients that are not MoleculeFinder molecules, by the label's own
             # name: a page whose active is not in the catalog still says what the active is.
@@ -313,27 +535,64 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                       "doc_type": label.get("doc_type") or None, "version": label.get("version"),
                       "effective": label.get("effective") or None,
                       "url": dailymed.LABEL_PAGE.format(setid=p["item"])}
-            missing_counter.update(dict.fromkeys(unmatched, 1))
-        elif p["source"] == "wikidata":
-            item = parts.get(p["item"]) or {}
-            if not item or item.get("missing"):
-                failed.append({**base, "source": "wikidata", "item": p["item"],
+            rule_matches.update(m["match"] for m in mols if m["match"] in ("parent", "skeleton", "alias"))
+            for ing in label.get("ingredients", []):
+                if ing["name"] not in unmatched:
+                    continue
+                key = ing.get("unii") or "name:" + ing["name"].upper()
+                q = queue.setdefault(key, {"unii": ing.get("unii"), "names": Counter(), "labels": set(),
+                                           "active": set(), "products": set(),
+                                           "parents": parents.get(ing.get("unii") or "", [])})
+                q["names"][ing["name"]] += 1
+                q["labels"].add(p["item"])
+                q["products"].add(p["slug"])
+                if ing["role"] == "active":
+                    q["active"].add(p["item"])
+            sources = [source]
+        else:
+            mols, sources, words, gone = [], [], [], []
+            for key, item in [(p["source"], p["item"])] + [(a["source"], a["item"]) for a in p.get("also", [])]:
+                if key == "curated":
+                    hub = hubs.get(item)
+                    if hub is None:
+                        raise ProductSeedError(f"products.yaml {p['slug']}: no curated food hub {item!r}")
+                    got = [{"slug": m["slug"], "role": "curated", "hub": item,
+                            **({"note": m["note"]} if m.get("note") else {})} for m in hub["molecules"]]
+                    listed += len(got)
+                    sources.append({"type": "curated", "hub": item, "title": hub["name"]})
+                elif key == "wikidata":
+                    item_parts = parts.get(item) or {}
+                    if not item_parts or item_parts.get("missing"):
+                        gone.append(item)
+                        continue
+                    got, n = _wikidata_molecules(item_parts, by_qid)
+                    listed += n
+                    sources.append({"type": "wikidata", "qid": item,
+                                    "url": f"https://www.wikidata.org/wiki/{item}"})
+                else:
+                    world = world_by_slug[item]
+                    got = [m for m in _world_molecules(world) if m["slug"] in by_slug]
+                    listed += len(world.get("molecules") or [])
+                    sources.append({"type": "world", "world": world["slug"], "title": world.get("title"),
+                                    "blurb": world.get("blurb")})
+                words.append(_SOURCE_WORDS[key])
+                have = {m["slug"] for m in mols}
+                new = [m for m in got if m["slug"] not in have]
+                if not new and len(sources) > 1:
+                    sources.pop()              # a second source that adds no molecule is not cited
+                mols += new
+            if not sources:
+                failed.append({**base, "source": p["source"], "item": p["item"],
                                "reason": "item not found on Wikidata (or not yet fetched)", "matched": []})
                 continue
-            mols, listed = _wikidata_molecules(item, by_qid)
-            source = {"type": "wikidata", "qid": p["item"],
-                      "url": f"https://www.wikidata.org/wiki/{p['item']}"}
-        else:
-            world = world_by_slug[p["item"]]
-            mols = [m for m in _world_molecules(world) if m["slug"] in by_slug]
-            listed = len(world.get("molecules") or [])
-            source = {"type": "world", "world": world["slug"], "title": world.get("title"),
-                      "blurb": world.get("blurb")}
+            source = sources[0]
         for m in mols:
             m["title"] = titles[m["slug"]]
         if len(mols) < MIN_MOLECULES:
-            what = {"dailymed": "the label lists", "wikidata": "Wikidata lists",
-                    "world": "the world lists"}[p["source"]]
+            if p["source"] == "dailymed":
+                what = "the label lists"
+            else:
+                what = (" and ".join(words) + (" lists" if len(words) == 1 else " list"))
             failed.append({**base, "source": p["source"], "item": p["item"],
                            "reason": (f"{what} {listed} ingredient(s); {len(mols)} "
                                       f"{'is a' if len(mols) == 1 else 'are'} MoleculeFinder "
@@ -342,6 +601,8 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
             continue
         entry = {**base, "source": source, "listed": listed, "molecules": mols,
                  "confidence": FROM_SOURCE}
+        if len(sources) > 1:
+            entry["also"] = sources[1:]
         if p["source"] == "dailymed":
             entry["not_in_catalog"] = len(unmatched)
             entry["actives_not_in_catalog"] = list(dict.fromkeys(unmatched_actives))
@@ -349,16 +610,20 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
 
     products.sort(key=lambda x: x["slug"])
     by_kind = Counter(p["kind"] for p in products)
+    queue_rows = _queue_rows(queue)
     report = {
         "seeded": len(seed), "passed": len(products), "failed": len(failed),
         "by_kind": {k: by_kind.get(k, 0) for k in KINDS},
         "min_molecules": MIN_MOLECULES,
+        # Label ingredients reached through PubChem's parent compound or the hand list, by rule.
+        "matched_by_rule": {k: rule_matches.get(k, 0) for k in ("parent", "skeleton", "alias")},
         "failures": sorted(failed, key=lambda f: (KINDS.index(f["kind"]), f["slug"])),
         # The label ingredients MoleculeFinder does not hold, by how many seeded labels list them:
-        # the molecules that would open the most product pages (the next tranche's queue order).
-        "label_ingredients_not_in_catalog": [{"name": n, "labels": c}
-                                             for n, c in sorted(missing_counter.items(),
-                                                                key=lambda kv: (-kv[1], kv[0]))[:60]],
+        # the molecules that would open the most product pages. The whole list is
+        # data/seed/next_tranche_queue.csv; the top 60 by labels here.
+        "label_ingredients_not_in_catalog": [{"name": r["name"], "labels": r["labels"]}
+                                             for r in sorted(queue_rows, key=lambda r: (-r["labels"], r["name"].lower()))[:60]],
+        "next_tranche_queue": queue_rows,
     }
     return products, report
 
