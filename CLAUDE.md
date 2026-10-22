@@ -723,6 +723,37 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
+## Run D (2026-10-22): the CC0 dataset for Zenodo and Kaggle. BUILT, waiting for "deploy"
+Branch `teacher-kit-2026-10` (code `e680f79`, data `71b01e8`, plus notes), never pushed. Full record: the plan's DONE block.
+- **`mfetl dataset [--version X]`** (`moleculefinder_etl/dataset.py`, texts in `dataset_docs.py`, CC0 legal code in
+  `dataset_cc0.txt`): rebuilds `data/dataset/` from the committed snapshot, offline. Refuses unless `data/raw_cache` is
+  main's pinned inputs (`inputs.verify`; run `mfetl sync-inputs` first), checks every table's rows against the snapshot
+  before writing (`check_counts`), writes atomically, MANIFEST.json with checksums. Version defaults to the snapshot's
+  YYYY.MM. **Not in the weekly run** (etl.yml untouched): a tranche republishes by running it and committing the folder.
+- **Field rule:** public domain or CC0 only. PubChem's computed identity and descriptors; Wikidata (CC0); page views;
+  MF's curated lines, groups, hubs, products, worlds, relationships (CC0 by Garrett's instruction); DailyMed; Drugs@FDA.
+  **An LD50 is kept only when a US government source in the pinned PUG-View record reports that exact value, species
+  and route** (`ld50_sources`, per Information item with `toxicity.parse_ld50`; allowlist `PUBLIC_DOMAIN_TOX_SOURCES`).
+  272 kept (all HSDB; ChemIDplus's PUG-View rows carry no parseable value), **41 withheld: their only source is T3DB's
+  "LD50: x mg/kg (Oral, Rat)" text, the DrugBank-style form `parse_ld50` accepts** (acetaminophen, ethanol, capsaicin...).
+  That is also what the live pages show; see "needs Garrett" in the plan. Left out: GHS and the `poison` hubs, MHRA/EMA/
+  national licence rows, CAS, PubChem synonyms, `serving_mg`, prose. `iupac_name` is null on every record, so no column.
+- `tests/test_dataset.py` (13): the committed package (files, checksums, headers, types, joins, LD50 sources, licences,
+  the README's exclusions, counts against the snapshot when it is the one built from; skipped with a reason otherwise) and
+  the builder offline (the trace on a PUG-View-shaped record, withholding, licences, counts refused, the inputs refusal).
+- **Upload steps (Garrett; nothing here uploads).** Zenodo first, so Kaggle can carry the DOI.
+  *Zenodo* (zenodo.org, signed in as for PolitiFinder's record): New upload; drag in every file in
+  `moleculefinder-etl/data/dataset/` (18); "Do you already have a DOI?" No; Resource type Dataset; Title
+  `MoleculeFinder: the molecules in everyday foods, drinks and products`; Publication date today; Creators: Add
+  organization, `MoleculeFinder (137 Finder LLC)`; Description: paste `description` from `zenodo.json`; Licenses: Creative
+  Commons Zero v1.0 Universal; Keywords: the 12 in `zenodo.json`; Version `2026.10`; Related works (optional): Is documented
+  by, `https://moleculefinder.com`, URL; Publish; copy the DOI.
+  *Kaggle* (kaggle.com as Trommsdorff): Datasets, New Dataset; drag in the ten CSVs, `moleculefinder.json` and
+  `README.md`; Title `MoleculeFinder: Molecules in Everyday Products`; URL `moleculefinder`; Create. Then on the dataset
+  page: Settings, License CC0: Public Domain; Subtitle `915 molecules, 405 foods, drinks and products, CC0`; About:
+  paste `description` from `dataset-metadata.json` and add the Zenodo DOI line; Tags chemistry, food, education, biology;
+  Settings, Sharing: Public.
+
 ## Run C2 (2026-10-22): the front door's ETL half. DEPLOYED 2026-10-22 (web `2b67549`)
 **DEPLOYED 2026-10-22 about 19:17 UTC on Garrett's word.** ETL `main` 7cabb07 -> `7703167` (deploys nothing); web `main` c9fc016 -> `2b67549`, GitHub deployment `7261339955` Production success. No other branch was waiting; pushed at 19:16, clear of the news cron. Live: `/`, `/whats-in`, `/whats-in/pfas`, `/whats-in/energy-drinks`, `/in/energy-drinks`, both new /m pages, `/about` and the PFAS card 200; an unknown product 404; the home title, description, stamp "915 molecules · 405 products" and all eight cards; no index in the page; `/search-index.json` 1,320 entries (405 products); sitemap 1,676. Live search (headless Brave): coffee -> Coffee; zoloft -> Zoloft; caffeine -> Caffeine; sertraline -> Sertraline, Zoloft; pfas -> PFAS. IndexNow run 39838830285: 1,671 -> 1,676, 5 new, 60 changed, 0 removed, 65 submitted and 65 accepted, audit exact, `indexnow-last` -> `2b67549`. Live Lighthouse (mobile, median of 3, Brave): `/` perf 99, SEO 100, LCP 2.15 s, CLS 0, 312 KB; `/whats-in/pfas` 99, 100, 2.20 s, 0, 283 KB; `/whats-in/energy-drinks` 99, 100, 2.17 s, 0, 284 KB; `/m/caffeine` 98, 100, 2.29 s, 0, 392 KB. Next, Garrett's step: the Product Hunt launch.
 Branch `front-door-2026-10` (code `8bc6916`, data `e5d39f6`, plus notes), never pushed. Full record: the plan's DONE block.
