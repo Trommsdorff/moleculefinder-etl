@@ -20,6 +20,8 @@ from . import snapshot_guard
 # still leaves everything byte-identical, which is what the workflow's heartbeat path is for.
 META = "meta.json"
 FEATURED = "featured.json"
+# What's in it (growth plan run C1): the products that passed the gate, for /whats-in.
+PRODUCTS = "products.json"
 
 
 def _prune(directory: Path, keep: set[str]) -> None:
@@ -48,7 +50,8 @@ def _prior_refreshed(path: Path) -> str | None:
 
 def export(molecules: list[dict], leaderboards: dict[str, dict],
            comparisons: dict[str, dict] | None = None, *,
-           featured: Callable[[str], dict] | None = None, today: str | None = None) -> Path:
+           featured: Callable[[str], dict] | None = None, today: str | None = None,
+           products: list[dict] | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files + meta.json.
 
     Each leaderboard file is a self-describing board (metadata + enriched
@@ -74,6 +77,10 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     new ISO week always differs, so the date moves to ``today``; an unchanged file means the
     stored date is already in today's week. None means there is no seed, and a featured.json
     left from an earlier run is removed.
+
+    ``products`` (``transform/products.compile_products``) becomes products.json, the /whats-in
+    pages; None means there is no product seed, and a products.json left from an earlier run is
+    removed, like featured.json.
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
     mol_dir = SNAPSHOTS / "molecules"
@@ -118,9 +125,15 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     if featured is not None:
         outputs[featured_path] = json.dumps(featured(candidate), ensure_ascii=False)
 
+    products_path = SNAPSHOTS / PRODUCTS
+    if products is not None:
+        outputs[products_path] = json.dumps({"products": products}, ensure_ascii=False)
+
     stale = [f for d in (mol_dir, lb_dir) if d.is_dir() for f in d.glob("*.json") if f not in outputs]
     if featured is None and featured_path.exists():
         stale.append(featured_path)
+    if products is None and products_path.exists():
+        stale.append(products_path)
     changed = bool(stale) or any(_read_text(path) != text for path, text in outputs.items())
     meta_path = SNAPSHOTS / META
     refreshed = _prior_refreshed(meta_path)
@@ -136,4 +149,6 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     _prune(lb_dir, {f"{slug}.json" for slug in leaderboards} | {"index.json"})
     if featured is None and featured_path.exists():
         featured_path.unlink()
+    if products is None and products_path.exists():
+        products_path.unlink()
     return SNAPSHOTS

@@ -484,6 +484,9 @@ def test_the_fetch_stage_gives_synonyms_the_expiry_and_properties_none(tmp_path,
     (tmp_path / "canon.parquet").write_bytes(b"")          # _require only checks that it exists
     monkeypatch.setattr(pipeline.canon_stage, "read_parquet", lambda: [{"cid": 2519}])
     monkeypatch.setattr(pipeline.pubchem, "pug_view", lambda cid, heading: None)
+    # The product inputs (run C1) have their own wiring test in test_products.py; with no seed
+    # the stage fetches exactly what it did before.
+    monkeypatch.setattr(pipeline.products, "load_seed", list)
     pipeline.stage_fetch(Settings(None, None))
     assert seen == {"props": None, "syn60": pipeline.SYNONYMS_CACHE_TTL_DAYS}
     if not {"MFETL_SYNONYMS_TTL_DAYS", "MFETL_PUGVIEW_TTL_DAYS"} & set(os.environ):
