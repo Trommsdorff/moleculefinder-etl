@@ -1,13 +1,14 @@
 {
- "seeded": 473,
- "passed": 403,
+ "seeded": 475,
+ "passed": 405,
  "failed": 70,
  "by_kind": {
   "food": 35,
-  "drink": 13,
+  "drink": 14,
   "medicine": 280,
   "cosmetic": 59,
   "household": 12,
+  "chemistry": 1,
   "moment": 4
  },
  "min_molecules": 3,
