@@ -723,7 +723,8 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Run C1 (2026-10-22): What's in it, the product pages. BUILT and AMENDED, waiting for "deploy"
+## Run C1 (2026-10-22): What's in it, the product pages. DEPLOYED 2026-10-22 (ETL `7ad50aa`, web `6448ab6`)
+**DEPLOYED 2026-10-22 about 13:23 UTC on Garrett's word.** ETL `main` 105ce67 -> `7ad50aa` (deploys nothing; no workflow ran); web `main` 86c8671 -> `6448ab6` (with the waiting notes commit `94449a2`), GitHub deployment `7253388927` Production success. No other branch was waiting. Live: `/whats-in`, coffee, wine, chocolate, Zoloft, Mounjaro (its tirzepatide line), Ritalin (methylphenidate hydrochloride), Listerine Cool Mint and `/m/caffeine` ("Found in these products") 200; the coffee card 200 image/png; an unknown product 404; sitemap 1,671 (404 `/whats-in`). IndexNow run 39786319341: 1,267 -> 1,671, 404 new, 540 changed, 0 removed, 944 submitted and 944 accepted, audit exact, `indexnow-last` -> `6448ab6`. Live Lighthouse (mobile, median of 3, Brave): `/whats-in` perf 99, SEO 100, LCP 2.14 s, CLS 0, 291 KB; `/whats-in/coffee` 99, 100, 2.16 s, 0, 279 KB; `/whats-in/zoloft` 99, 100, 2.17 s, 0, 278 KB; `/m/caffeine` 98, 100, 2.29 s, 0, 390 KB. The first Monday run after this re-reads 418 labels and asks PubChem for about 840 parent compounds (about 3 more minutes).
 **Amendments (Garrett, same day), commits `a11246a` (code) and `d3d4b7c` (data): 403 pages (was 346).**
 - **Curated foods and drinks.** A seed row `curated: <hub>` reads the records' curated `kind: food` memberships
   (`products.curated_hubs`: food_hubs.yaml plus the curated overlays, the list `/in/<hub>` shows; order of
