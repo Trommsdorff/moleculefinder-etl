@@ -41,6 +41,7 @@ RELATIONSHIPS_CSV = SEEDS_DIR / "relationships.csv"
 WHY_IT_MATTERS_YAML = SEEDS_DIR / "why_it_matters.yaml"
 BRANDS_YAML = SEEDS_DIR / "brands.yaml"
 APPROVALS_YAML = SEEDS_DIR / "approvals.yaml"
+LICENCES_YAML = SEEDS_DIR / "licences.yaml"
 ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
 OTC_ALLOWLIST_YAML = SEEDS_DIR / "otc_allowlist.yaml"
 FOOD_HUBS_YAML = SEEDS_DIR / "food_hubs.yaml"
@@ -303,6 +304,27 @@ def load_brands() -> dict[str, list[str]]:
 
 
 _APPROVAL_FIELDS = ("regulator", "product", "application", "authorised", "basis", "source", "label")
+# A licence record read from a register (licences.yaml, written by `mfetl licences`) also names the
+# register, the holder, whether the molecule is part of a combination product, and the date read.
+_LICENCE_FIELDS = ("regulator", "register", "product", "application", "authorised", "holder",
+                   "combination", "basis", "source", "read")
+_LICENCE_REQUIRED = ("regulator", "register", "basis", "source", "read")
+# A licence record's source is the regulator's own site, never news or Wikipedia (run B2).
+REGULATOR_HOSTS = ("fda.gov", "ema.europa.eu", "mhra.gov.uk", "aifa.gov.it")
+
+
+def is_regulator_url(url: str) -> bool:
+    from urllib.parse import urlparse
+    u = urlparse(str(url or ""))
+    host = (u.hostname or "").lower()
+    return u.scheme == "https" and any(host == h or host.endswith("." + h) for h in REGULATOR_HOSTS)
+
+
+def load_approvals() -> dict:
+    """approvals.yaml as written: {slug: entry}."""
+    if not APPROVALS_YAML.exists():
+        return {}
+    return yaml.safe_load(APPROVALS_YAML.read_text()) or {}
 
 
 def attach_approvals(molecules: list[dict]) -> None:
@@ -328,6 +350,41 @@ def attach_approvals(molecules: list[dict]) -> None:
         by_slug[slug]["approval"] = {k: str(entry[k]) for k in _APPROVAL_FIELDS if entry.get(k)}
     if errors:
         raise SystemExit("approvals compile failed:\n  " + "\n  ".join(errors))
+
+
+def attach_licences(molecules: list[dict]) -> None:
+    """Attach ``rec['approval']`` from licences.yaml (run B2): a medicine's licence record read
+    from Drugs@FDA, the EMA's medicines data or the MHRA products database. Runs after
+    attach_approvals and never replaces a hand-ruled record. Reads only the committed file, so a
+    build makes no request. Fails the build on an unknown slug, a record that is not a medicine, an
+    unknown or missing field, or a source that is not the regulator's own site."""
+    if not LICENCES_YAML.exists():
+        return
+    data = yaml.safe_load(LICENCES_YAML.read_text()) or {}
+    by_slug = {m["slug"]: m for m in molecules}
+    errors = []
+    for slug, entry in data.items():
+        entry = entry or {}
+        rec = by_slug.get(slug)
+        if rec is None:
+            errors.append(f"{slug}: unknown slug")
+            continue
+        if rec.get("scope_bucket") not in ("prescription-medicine", "otc-medicine"):
+            errors.append(f"{slug}: not a medicine ({rec.get('scope_bucket')})")
+        extra = sorted(set(entry) - set(_LICENCE_FIELDS))
+        missing = [k for k in _LICENCE_REQUIRED if not entry.get(k)]
+        if extra:
+            errors.append(f"{slug}: unknown field(s) {extra}")
+        if missing:
+            errors.append(f"{slug}: missing {missing}")
+        if not is_regulator_url(entry.get("source")):
+            errors.append(f"{slug}: source is not a regulator's site: {entry.get('source')}")
+        if rec.get("approval"):
+            continue                                    # the hand ruling stands
+        rec["approval"] = {k: (True if k == "combination" else str(entry[k]))
+                           for k in _LICENCE_FIELDS if entry.get(k)}
+    if errors:
+        raise SystemExit("licences compile failed:\n  " + "\n  ".join(errors))
 
 
 def attach_brands(molecules: list[dict]) -> None:

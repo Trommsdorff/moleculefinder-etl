@@ -1,0 +1,37 @@
+# UK licences read from the MHRA products database (products.mhra.gov.uk), for the medicines that
+# Drugs@FDA and the EMA's medicines data do not cover (growth plan run B2, 2026-10-21).
+#
+# Checked BY HAND from the site's public substance pages, the way any visitor reads them: each entry
+# names the substance exactly as MHRA's substance index spells it (the source page is built from it),
+# one product listed on that page, and the date it was read. The database lists the product
+# information (SmPC and leaflet) of medicines with a UK marketing authorisation.
+#   - Licence numbers (PL ...) sit behind the site's disclaimer, which was not accepted on anyone's
+#     behalf, so no entry carries one.
+#   - The site's own search API needs a key and was not used.
+# `combination: true` = no single-ingredient product is listed; the product contains the molecule.
+# `mfetl licences` merges these, only for a medicine with no FDA or EMA record, into licences.yaml.
+# Content: Crown copyright, Open Government Licence v3.0.
+
+aluminium-hydroxide: {substance: ALUMINIUM HYDROXIDE, product: Maalox, combination: true, read: "2026-10-21"}
+benzocaine: {substance: BENZOCAINE, product: Ultra Chloraseptic, read: "2026-10-21"}
+betahistine: {substance: BETAHISTINE DIHYDROCHLORIDE, product: Serc, read: "2026-10-21"}
+bilastine: {substance: BILASTINE, product: Ilaxten, read: "2026-10-21"}
+bisacodyl: {substance: BISACODYL, product: Dulcolax, read: "2026-10-21"}
+chloral-hydrate: {substance: CHLORAL HYDRATE, read: "2026-10-21"}
+chloramphenicol: {substance: CHLORAMPHENICOL, product: Brolene Antibiotic, read: "2026-10-21"}
+cyclizine: {substance: CYCLIZINE LACTATE, product: Valoid, read: "2026-10-21"}
+cyproterone-acetate: {substance: CYPROTERONE ACETATE, product: Cyprostat, read: "2026-10-21"}
+dapoxetine: {substance: DAPOXETINE HYDROCHLORIDE, product: Priligy, read: "2026-10-21"}
+dihydrocodeine: {substance: DIHYDROCODEINE TARTRATE, product: DF 118 Forte, read: "2026-10-21"}
+docusate: {substance: DOCUSATE SODIUM, product: Dioctyl, read: "2026-10-21"}
+domperidone: {substance: DOMPERIDONE, product: Motilium, read: "2026-10-21"}
+etoricoxib: {substance: ETORICOXIB, product: Arcoxia, read: "2026-10-21"}
+flucloxacillin: {substance: FLUCLOXACILLIN SODIUM, product: Floxapen, read: "2026-10-21"}
+hyoscine-butylbromide: {substance: HYOSCINE BUTYLBROMIDE, product: Buscopan, read: "2026-10-21"}
+methoxyflurane: {substance: METHOXYFLURANE, product: Penthrox, read: "2026-10-21"}
+nefopam: {substance: NEFOPAM HYDROCHLORIDE, product: Acupan, read: "2026-10-21"}
+nitrazepam: {substance: NITRAZEPAM, product: Mogadon, read: "2026-10-21"}
+piracetam: {substance: PIRACETAM, product: Nootropil, read: "2026-10-21"}
+salicylic-acid: {substance: SALICYLIC ACID, product: Occlusal, read: "2026-10-21"}
+sodium-thiopental: {substance: THIOPENTAL SODIUM, read: "2026-10-21"}
+zopiclone: {substance: ZOPICLONE, product: Zimovane, read: "2026-10-21"}

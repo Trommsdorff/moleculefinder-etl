@@ -185,6 +185,7 @@ def test_a_do_not_use_name_is_passed_over_by_both_rules():
 
 def test_the_seed_list_carries_its_names_with_reasons():
     import yaml
+
     from moleculefinder_etl.transform import assemble
     names = assemble.synonym_do_not_use()
     assert {"chamomile", "ephedra", "estrogen", "cochineal"} <= names
@@ -282,7 +283,7 @@ def test_no_page_in_the_snapshot_shows_a_name_the_filters_drop():
 # ── The record ──────────────────────────────────────────────────────────────
 def test_the_record_carries_display_synonyms_and_keeps_its_search_list():
     from moleculefinder_etl.transform import assemble
-    from tests.fixtures import canon_row, fetched, CAFFEINE_PROPS
+    from tests.fixtures import CAFFEINE_PROPS, canon_row, fetched
     row = canon_row(2519, "Caffeine", qid="Q60235")
     row["wikidata_label"] = "caffeine"
     row["wikidata_aliases"] = ["guaranine", "1,3,7-trimethylxanthine", "theine"]
@@ -291,10 +292,49 @@ def test_the_record_carries_display_synonyms_and_keeps_its_search_list():
     assert rec["synonyms"] == ["Caffeine", "Guaranine", "Koffein"]
 
 
+def test_wikidata_names_carry_wikidata_only_through_the_same_filters():
+    """Run B2: "What else is X called?" reads wikidata_names, never PubChem (Garrett, 2026-10-21)."""
+    from moleculefinder_etl.transform import assemble
+    from tests.fixtures import CAFFEINE_PROPS, canon_row, fetched
+    row = canon_row(2519, "Caffeine", qid="Q60235")
+    row["wikidata_label"] = "caffeine"
+    row["wikidata_aliases"] = ["guaranine", "1,3,7-trimethylxanthine", "theine", "CAFFEINE ANHYDROUS"]
+    rec = assemble.assemble_record(row, fetched(CAFFEINE_PROPS, synonyms=["caffeine", "Koffein"]), set())
+    assert rec["wikidata_names"] == ["guaranine", "theine"]       # title, formula-ish and all-caps dropped
+    assert "Koffein" in rec["display_synonyms"] and "Koffein" not in rec["wikidata_names"]
+
+
+def test_wikidata_names_leave_out_a_do_not_use_name_and_stop_at_four():
+    from moleculefinder_etl.transform import assemble
+    row = {"wikidata_label": "chamomile", "wikidata_aliases": ["a one", "a two", "a three", "a four", "a five"]}
+    assert assemble.wikidata_display_names("Apigenin", row) == []        # "a one": garbled
+    row = {"wikidata_label": "chamomile", "wikidata_aliases": ["alpha", "beta", "gamma", "delta", "epsilon"]}
+    assert assemble.wikidata_display_names("Apigenin", row) == ["alpha", "beta", "gamma", "delta"]
+    assert assemble.wikidata_display_names("Apigenin", {}) == []
+
+
+def test_every_record_carries_wikidata_names_from_wikidata_only():
+    """The committed snapshot: wikidata_names on all records, each name a Wikidata label or alias
+    of that record (never a PubChem synonym)."""
+    import pyarrow.parquet as pq
+
+    from moleculefinder_etl.config import SEED_DIR, SNAPSHOTS
+    canon = {int(r["cid"]): r for r in pq.read_table(SEED_DIR / "canon.parquet").to_pylist()}
+    files = sorted((SNAPSHOTS / "molecules").glob("*.json"))
+    assert files
+    for f in files:
+        rec = json.loads(f.read_text())
+        assert isinstance(rec.get("wikidata_names"), list), f.stem
+        row = canon.get(int(rec["cid"])) or {}
+        wikidata = {n.casefold() for n in [row.get("wikidata_label") or "", *(row.get("wikidata_aliases") or [])]}
+        for n in rec["wikidata_names"]:
+            assert n.casefold() in wikidata, (f.stem, n)
+
+
 def test_a_hand_modeled_record_has_an_empty_line():
     from moleculefinder_etl.transform import assemble
     rec = assemble.assemble_handmodel({"cid": -5, "tier": "marquee"}, {"name": "Collagen"}, set())
-    assert rec["display_synonyms"] == []
+    assert rec["display_synonyms"] == [] and rec["wikidata_names"] == []
 
 
 # ── Where the names come from ───────────────────────────────────────────────
@@ -393,6 +433,7 @@ def test_names_attach_only_to_the_item_they_belong_to():
 def test_the_names_ride_the_canon_parquet_with_fixed_types(tmp_path):
     import pyarrow as pa
     import pyarrow.parquet as pq
+
     from moleculefinder_etl.transform import canon
     rows = [{"cid": 2519, "wikidata_qid": "Q60235", "wikidata_label": "caffeine",
              "wikidata_aliases": ["guaranine", "theine"]},
