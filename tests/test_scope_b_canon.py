@@ -19,7 +19,8 @@ TRANCHES = {"2026-09-A": 287,   # 295 built, 5 held back; fenbendazole, carfenta
             "2026-10-A": 126}   # 120, then 6 of the 7 queued rows on Garrett's 2026-10-18 rulings
 # Small tagged additions that are not tranches (Garrett, 2026-10-20: "a two-row addition of this
 # run, not a tranche"). Same provenance rule: tagged, so they can be found and lifted back out.
-ADDITIONS = {"2026-10-runA": 2}  # PFOA and PFOS, so PFAS headlines can match (Run A)
+ADDITIONS = {"2026-10-runA": 2,   # PFOA and PFOS, so PFAS headlines can match (Run A)
+             "2026-10-runC2": 2}  # PFNA and PFHxS, for the PFAS class page (Run C2)
 
 
 def _csv_rows():
@@ -61,6 +62,8 @@ def test_batch_rides_the_canon_row():
     assert rows["Gabapentin"]["batch"] == "2026-09-A"  # tranche 1
     assert rows["Perfluorooctanoic acid"]["batch"] == "2026-10-runA"
     assert rows["Perfluorooctanesulfonic acid"]["scope_bucket"] == "everyday-chemistry"
+    assert rows["Perfluorononanoic acid"]["batch"] == "2026-10-runC2"
+    assert rows["Perfluorohexanesulfonic acid"]["scope_bucket"] == "everyday-chemistry"
 
 
 def test_scope_b_hand_model_rows_get_synthetic_cids():

@@ -406,6 +406,36 @@ tonic-water:
     - sucrose
     - sodium-benzoate
 
+# Run C2 (2026-10-22). The standard ingredients printed on mainstream energy drink cans (Red Bull,
+# Monster, Rockstar and the like), the molecules MoleculeFinder holds. A category list like soft
+# drinks: the sugar-free sweeteners and the sugars are not in the same can. Glucuronolactone is on
+# most cans and is not in the catalog yet.
+energy-drinks:
+  name: Energy drinks
+  molecules:
+    - caffeine              # the point of the drink
+    - taurine
+    - sucrose
+    - glucose
+    - citric-acid
+    - carbon-dioxide        # the carbonation
+    - trisodium-citrate     # an acidity regulator
+    - sodium-bicarbonate
+    - magnesium-carbonate
+    - sodium-benzoate       # preservative
+    - sorbic-acid           # preservative
+    - nicotinamide          # vitamin B3, as niacinamide on the label
+    - pantothenic-acid      # vitamin B5, as calcium pantothenate
+    - pyridoxine            # vitamin B6
+    - cyanocobalamin        # vitamin B12
+    - riboflavin            # vitamin B2, also a colour
+    - carnitine
+    - inositol
+    - sucralose             # sugar-free versions
+    - acesulfame-potassium  # sugar-free versions
+    - aspartame             # sugar-free versions
+    - water
+
 citrus:
   name: Citrus
   molecules:

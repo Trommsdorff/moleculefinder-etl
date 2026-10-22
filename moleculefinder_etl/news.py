@@ -67,6 +67,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 MOLECULES_DIR = REPO / "data" / "snapshots" / "molecules"
+PRODUCTS_JSON = REPO / "data" / "snapshots" / "products.json"
 SITE = "https://moleculefinder.com"
 # Public by design: moleculefinder.com serves it at /86a211e892b41d0ab5c34f55d66184e5.txt.
 INDEXNOW_KEY = "86a211e892b41d0ab5c34f55d66184e5"
@@ -130,7 +131,17 @@ ALIASES = {
     # thousands of chemicals, so it matches nothing (a miss before a wrong match).
     "perfluorooctanoic-acid": ["PFOA", "perfluorooctanoate"],
     "perfluorooctanesulfonic-acid": ["PFOS", "perfluorooctane sulfonate", "perfluorooctane sulfonic acid"],
+    # Run C2's two-row addition (2026-10-22), for the PFAS class page.
+    "perfluorononanoic-acid": ["PFNA", "perfluorononanoate"],
+    "perfluorohexanesulfonic-acid": ["PFHxS", "perfluorohexane sulfonate", "perfluorohexane sulfonic acid"],
 }
+# Class terms (Run C2, 2026-10-22): a name for a CLASS of chemicals, matched to the class's own
+# page (/whats-in/<slug>), never to a molecule. "PFAS" names thousands of chemicals, so it cannot
+# match PFOA or PFOS (Run A's rule stands); it matches the PFAS page, which lists the four PFAS
+# MoleculeFinder holds. A class term is used only when the snapshot has that class page
+# (products.json, source type "class"). One term only, by design (Garrett, 2026-10-22: "no other
+# class terms yet").
+CLASS_TERMS = {"pfas": ["PFAS"]}
 # A dye number only counts beside a word that says it is a dye ("Red 3" is also a team colour).
 CONTEXT = {
     "allura-red-ac": r"\b(?:dye|dyes|food|foods|color|colors|colour|colours|fda|candy|ban|banned|bans)\b",
@@ -182,9 +193,25 @@ def load_molecules(directory: Path = MOLECULES_DIR) -> list[dict]:
     return mols
 
 
-def build_index(molecules: list[dict]) -> dict:
+def load_classes(path: Path = PRODUCTS_JSON) -> dict[str, str]:
+    """{slug: name} for the class pages in the snapshot that have a class term (CLASS_TERMS)."""
+    try:
+        products = json.loads(path.read_text()).get("products") or []
+    except (OSError, ValueError, AttributeError):
+        return {}
+    return {p["slug"]: p["name"] for p in products
+            if (p.get("source") or {}).get("type") == "class" and p.get("slug") in CLASS_TERMS}
+
+
+def page_path(slug: str, index: dict) -> str:
+    """The site path a match links to: a class page, else the molecule page."""
+    return index.get("paths", {}).get(slug) or f"/m/{slug}"
+
+
+def build_index(molecules: list[dict], classes: dict[str, str] | None = None) -> dict:
     """{normalized term: slug} plus the compiled matcher. A term two molecules share matches
-    neither (a wrong match is worse than a missed one), unless it is one of them's title."""
+    neither (a wrong match is worse than a missed one), unless it is one of them's title.
+    ``classes`` ({slug: name}, from ``load_classes``) adds each class page's CLASS_TERMS."""
     claims: dict[str, set[str]] = {}
     titles: dict[str, str] = {}
     names: dict[str, str] = {}
@@ -203,6 +230,14 @@ def build_index(molecules: list[dict]) -> dict:
         if slug in slugs:
             for a in aliases:
                 claims.setdefault(normalize(a), set()).add(slug)
+    paths: dict[str, str] = {}
+    for slug, name in (classes or {}).items():
+        if slug in slugs:
+            continue                      # a molecule slug wins; a class never shadows a molecule
+        names[slug] = name
+        paths[slug] = f"/whats-in/{slug}"
+        for t in CLASS_TERMS.get(slug, ()):
+            claims.setdefault(normalize(t), set()).add(slug)
     for key, phrases in QUALIFIED.items():
         slug = key if key in slugs else next((s for s, n in names.items() if normalize(n) == key), None)
         if slug:
@@ -221,8 +256,9 @@ def build_index(molecules: list[dict]) -> dict:
     queried |= {normalize(a) for v in ALIASES.values() for a in v}
     queried |= {normalize(p) for v in QUALIFIED.values() for p in v}
     rank = {m["slug"]: int(m.get("pageviews_monthly") or 0) for m in molecules}
+    class_terms = {t for t, slug in terms.items() if slug in paths}
     return {"terms": terms, "pattern": pattern, "names": names, "context": context,
-            "queried": queried & set(terms), "rank": rank}
+            "queried": queried & set(terms), "rank": rank, "paths": paths, "class_terms": class_terms}
 
 
 def strip_source(title: str, source: str = "") -> str:
@@ -309,7 +345,8 @@ def queries(index: dict, max_len: int = 700) -> list[str]:
     only hundred slots."""
     rank = index.get("rank", {})
     wanted = {t for t, slug in index["terms"].items()
-              if t == normalize(index["names"][slug]) or t in index.get("queried", set())}
+              if (t == normalize(index["names"][slug]) or t in index.get("queried", set()))
+              and t not in index.get("class_terms", set())}
     ordered = sorted(wanted, key=lambda t: (-rank.get(index["terms"][t], 0), t))
     out, batch = [], []
     for t in ordered:
@@ -321,6 +358,12 @@ def queries(index: dict, max_len: int = 700) -> list[str]:
     if batch:
         out.append(" OR ".join(batch))
     return out + TOPICS
+
+
+def class_queries(index: dict) -> list[str]:
+    """One query per class term, asked every run like the topic queries: a class has no page views
+    to rank a batch by, and its term alone fills a batch (PFAS is in hundreds of headlines a week)."""
+    return sorted(index.get("class_terms", set()))
 
 
 def rss_url(q: str, days: int) -> str:
@@ -646,8 +689,8 @@ def summary(found: list[dict], n_items: int, days: int) -> None:
               f"(the home page shows the top {LIST_CAP}). Names and counts only."), ""]
     if found:
         lines += ["| # | Molecule | Headlines | Last seen |", "| --- | --- | --- | --- |"]
-        lines += [f"| {i} | [{m['name']}]({SITE}/m/{m['slug']}) | {m['hits']} | {m['last_seen'].date()} |"
-                  for i, m in enumerate(found, 1)]
+        lines += [f"| {i} | [{m['name']}]({SITE}{m.get('path') or '/m/' + m['slug']}) | {m['hits']} | "
+                  f"{m['last_seen'].date()} |" for i, m in enumerate(found, 1)]
     with open(out, "a") as f:
         f.write("\n".join(lines) + "\n")
 
@@ -666,14 +709,14 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("--show-headlines is for a local audit only: this repo's logs are public")
     now = datetime.now(UTC).replace(microsecond=0)
     molecules = load_molecules()
-    index = build_index(molecules)
+    index = build_index(molecules, load_classes())
     if args.fixture:
         args.dry_run = True                   # fixture headlines never reach the table or IndexNow
         items = [{"title": h, "link": "", "source": "", "pubDate": ""}
                  for h, _ in parse_fixture(Path(args.fixture).read_text())]
         failed, n_queries = 0, 0
     else:
-        qs = TOPICS + rotate(queries(index)[:-len(TOPICS)], now.hour // 6)
+        qs = TOPICS + class_queries(index) + rotate(queries(index)[:-len(TOPICS)], now.hour // 6)
         raw, failed, n_queries = fetch(qs, args.since)
         items = dedupe(raw)
         print(f"[news] {len(qs)} queries, {n_queries} requests after splitting full ones ({failed} failed), "
@@ -692,9 +735,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.show_headlines:
             for h in m["headlines"][:5]:
                 print(f"        {h}", flush=True)
-    summary(found, len(items), args.since)
+    summary([{**m, "path": page_path(m["slug"], index)} for m in found], len(items), args.since)
 
-    known = {m["slug"] for m in molecules}
+    known = {m["slug"] for m in molecules} | set(index["paths"])
     if args.dry_run:
         rows, _ = plan_write(found, [], now)
         print(f"[news] --dry-run: the feed ({BUCKET}/{OBJECT}) would be (a dry run reads no history, "
@@ -713,7 +756,7 @@ def main(argv: list[str] | None = None) -> int:
     if not entrants:
         print("[news] nobody new to the list: nothing to submit to IndexNow")
         return 0
-    urls = [f"{SITE}/m/{m['slug']}" for m in entrants] + [f"{SITE}/"]
+    urls = [f"{SITE}{page_path(m['slug'], index)}" for m in entrants] + [f"{SITE}/"]
     status, ok = indexnow(urls)
     print(f"[news] IndexNow: {len(urls)} URL(s), HTTP {status}", flush=True)
     return 0 if ok else 1
