@@ -1,0 +1,37 @@
+{
+  "upload_type": "dataset",
+  "title": "MoleculeFinder: the molecules in everyday foods, drinks and products",
+  "creators": [
+    {
+      "name": "MoleculeFinder",
+      "affiliation": "137 Finder LLC"
+    }
+  ],
+  "description": "915 molecules from everyday life (coffee, chili, chocolate, sweeteners, medicines, cleaning products, PFAS) and the 405 foods, drinks and products they are in, from MoleculeFinder (https://moleculefinder.com). Each molecule carries its PubChem identity and computed properties (formula, weight, SMILES, InChI, descriptors), its Wikidata item and names, MoleculeFinder's one-line description and everyday group, and, where a US government source reports it, one LD50 with species, route and source. Product ingredient lists are read from DailyMed labels, Wikidata and MoleculeFinder's curated food lists, matched to molecules by code, never by name. Also included: curated relationships, structural neighbours, the ten everyday worlds and FDA approval records. Every column states its source; every field is public domain or CC0, and the whole dataset is released under CC0 1.0. Snapshot of 2026-10-21.",
+  "version": "2026.10",
+  "publication_date": "2026-10-21",
+  "access_right": "open",
+  "license": "cc-zero",
+  "keywords": [
+    "chemistry",
+    "molecules",
+    "everyday chemistry",
+    "food chemistry",
+    "consumer products",
+    "chemistry education",
+    "cheminformatics",
+    "SMILES",
+    "InChI",
+    "LD50",
+    "Wikidata",
+    "PubChem"
+  ],
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "https://moleculefinder.com",
+      "relation": "isDocumentedBy",
+      "resource_type": "other"
+    }
+  ]
+}

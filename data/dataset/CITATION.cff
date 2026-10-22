@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this data, please cite it as below."
+title: "MoleculeFinder: the molecules in everyday foods, drinks and products"
+abstract: >-
+  The molecules in everyday foods, drinks and products: molecules with their PubChem identity and properties, Wikidata items and names,
+  MoleculeFinder's descriptions and groups, LD50 values from US government sources, and the
+  foods, drinks and products that list them. CC0 1.0.
+type: dataset
+authors:
+  - name: "MoleculeFinder"
+    alias: "137 Finder LLC"
+version: "2026.10"
+date-released: "2026-10-21"
+license: CC0-1.0
+url: "https://moleculefinder.com"
+keywords:
+  - chemistry
+  - molecules
+  - everyday chemistry
+  - food chemistry
+  - consumer products
+  - chemistry education
+  - cheminformatics
+  - SMILES
+  - InChI
+  - LD50
+  - Wikidata
+  - PubChem

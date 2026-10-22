@@ -1,0 +1,2368 @@
+product_slug,molecule_slug,role,listed_as,purpose,matched_by
+abilify,aripiprazole,active,ARIPIPRAZOLE,,unii
+abilify,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+abilify,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+abreva,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+abreva,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+abreva,water,inactive,WATER,,unii
+absorica,isotretinoin,active,ISOTRETINOIN,,unii
+absorica,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+absorica,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+absorica,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+absorica,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+absorica,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+absorica,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+absorica,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+acetadote,acetylcysteine,active,Acetylcysteine,,unii
+acetadote,water,inactive,water,,unii
+acetadote,sodium-hydroxide,inactive,sodium hydroxide,,unii
+aciphex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+aciphex,mannitol,inactive,MANNITOL,,unii
+aciphex,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+act-anticavity-fluoride-rinse,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+act-anticavity-fluoride-rinse,water,inactive,WATER,,unii
+act-anticavity-fluoride-rinse,sorbitol,inactive,SORBITOL,,unii
+act-anticavity-fluoride-rinse,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+act-anticavity-fluoride-rinse,menthol,inactive,MENTHOL,,skeleton
+act-anticavity-fluoride-rinse,methyl-salicylate,inactive,METHYL SALICYLATE,,unii
+act-anticavity-fluoride-rinse,disodium-phosphate,inactive,"SODIUM PHOSPHATE, DIBASIC, ANHYDROUS",,unii
+act-anticavity-fluoride-rinse,potassium-sorbate,inactive,POTASSIUM SORBATE,,unii
+act-anticavity-fluoride-rinse,saccharin,inactive,SACCHARIN SODIUM,,parent
+act-anticavity-fluoride-rinse,ethylenediaminetetraacetic-acid,inactive,EDETATE CALCIUM DISODIUM ANHYDROUS,,parent
+act-anticavity-fluoride-rinse,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+act-anticavity-fluoride-rinse,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+actos,pioglitazone,active,PIOGLITAZONE HYDROCHLORIDE,,moiety
+actos,lactose,inactive,lactose monohydrate,,alias
+actos,magnesium-stearate,inactive,magnesium stearate,,unii
+adderall,dextroamphetamine,active,DEXTROAMPHETAMINE SACCHARATE,,moiety
+adderall,amphetamine,active,AMPHETAMINE ASPARTATE MONOHYDRATE,,moiety
+adderall,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+adderall,sucrose,inactive,SUCROSE,,unii
+adderall,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+adderall,saccharin,inactive,SACCHARIN SODIUM,,parent
+adderall,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+addyi,flibanserin,active,Flibanserin,,unii
+addyi,lactose,inactive,Lactose Monohydrate,,alias
+addyi,magnesium-stearate,inactive,Magnesium Stearate,,unii
+advil,ibuprofen,active,IBUPROFEN,Pain reliever/Fever reducer,unii
+advil,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+advil,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+advil,glycerol,inactive,GLYCERIN,,unii
+advil,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+advil,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+advil,stearic-acid,inactive,STEARIC ACID,,unii
+advil,water,inactive,WATER,,unii
+advil,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+advil,sucrose,inactive,SUCROSE,,unii
+advil-cold-and-sinus,ibuprofen,active,IBUPROFEN,,unii
+advil-cold-and-sinus,pseudoephedrine,active,PSEUDOEPHEDRINE HYDROCHLORIDE,,moiety
+advil-cold-and-sinus,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+advil-cold-and-sinus,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+advil-cold-and-sinus,water,inactive,WATER,,unii
+advil-cold-and-sinus,sorbitol,inactive,SORBITOL,,unii
+advil-dual-action,ibuprofen,active,IBUPROFEN,Pain reliever,unii
+advil-dual-action,acetaminophen,active,ACETAMINOPHEN,Pain reliever,unii
+advil-dual-action,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+advil-liqui-gels,ibuprofen,active,Ibuprofen,,unii
+advil-liqui-gels,potassium-hydroxide,inactive,potassium hydroxide,,unii
+advil-liqui-gels,water,inactive,water,,unii
+advil-liqui-gels,sorbitol,inactive,sorbitol,,unii
+advil-pm,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,,moiety
+advil-pm,ibuprofen,active,IBUPROFEN,,unii
+advil-pm,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+advil-pm,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+advil-pm,water,inactive,WATER,,unii
+advil-pm,sorbitol,inactive,SORBITOL,,unii
+adzenys-xr-odt,amphetamine,active,AMPHETAMINE,,unii
+adzenys-xr-odt,mannitol,inactive,MANNITOL,,unii
+adzenys-xr-odt,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+adzenys-xr-odt,fructose,inactive,FRUCTOSE,,unii
+adzenys-xr-odt,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+adzenys-xr-odt,sucralose,inactive,SUCRALOSE,,unii
+adzenys-xr-odt,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+after-the-rain,geosmin,world,,,world
+after-the-rain,dimethyl-sulfide,world,,,world
+after-the-rain,methanethiol,world,,,world
+after-the-rain,2-nonenal,world,,,world
+akovaz,ephedrine,active,EPHEDRINE SULFATE,,moiety
+akovaz,water,inactive,WATER,,unii
+akovaz,acetic-acid,inactive,ACETIC ACID,,unii
+akovaz,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+akovaz,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+alaway,ketotifen,active,KETOTIFEN FUMARATE,Antihistamine,moiety
+alaway,glycerol,inactive,GLYCERIN,,unii
+alaway,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+alaway,water,inactive,WATER,,unii
+albenza,albendazole,active,ALBENDAZOLE,,unii
+albenza,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+albenza,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+albenza,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+albenza,saccharin,inactive,SACCHARIN SODIUM MONOHYDRATE,,parent
+aleve-pm,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Nighttime sleep-aid,moiety
+aleve-pm,naproxen,active,NAPROXEN SODIUM,Pain reliever,moiety
+aleve-pm,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+aleve-pm,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+aleve-pm,water,inactive,WATER,,unii
+alka-seltzer-original,citric-acid,active,ANHYDROUS CITRIC ACID,Antacid,unii
+alka-seltzer-original,aspirin,active,ASPIRIN,Analgesic,unii
+alka-seltzer-original,sodium-bicarbonate,active,SODIUM BICARBONATE,Antacid,unii
+alka-seltzer-plus-cold-day-and-night,phenylephrine,active,PHENYLEPHRINE BITARTRATE,Nasal decongestant,moiety
+alka-seltzer-plus-cold-day-and-night,aspirin,active,ASPIRIN,Pain reliever/fever reducer,unii
+alka-seltzer-plus-cold-day-and-night,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+alka-seltzer-plus-cold-day-and-night,doxylamine,active,DOXYLAMINE SUCCINATE,Antihistamine,moiety
+alka-seltzer-plus-cold-day-and-night,sodium-bicarbonate,inactive,SODIUM BICARBONATE,,unii
+alka-seltzer-plus-cold-day-and-night,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+alka-seltzer-plus-cold-day-and-night,docusate,inactive,DOCUSATE SODIUM,,unii
+alka-seltzer-plus-cold-day-and-night,mannitol,inactive,MANNITOL,,unii
+alka-seltzer-plus-cold-day-and-night,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+alka-seltzer-plus-cold-day-and-night,aspartame,inactive,ASPARTAME,,unii
+allegra-allergy,fexofenadine,active,FEXOFENADINE HYDROCHLORIDE,Antihistamine,moiety
+allegra-allergy,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+allegra-allergy,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+allegra-hives-24hr,fexofenadine,active,FEXOFENADINE HYDROCHLORIDE,Antihistamine,moiety
+allegra-hives-24hr,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+allegra-hives-24hr,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+ambien,zolpidem,active,ZOLPIDEM TARTRATE,,moiety
+ambien,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+ambien,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+ambien,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+amidate,etomidate,active,ETOMIDATE,,unii
+amidate,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+amidate,water,inactive,WATER,,unii
+amrix,cyclobenzaprine,active,CYCLOBENZAPRINE HYDROCHLORIDE,,moiety
+amrix,sucrose,inactive,SUCROSE,,unii
+amrix,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+amrix,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+amrix,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+anafranil,clomipramine,active,CLOMIPRAMINE HYDROCHLORIDE,,moiety
+anafranil,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+anafranil,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+anafranil,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+anbesol-maximum-strength,benzocaine,active,BENZOCAINE,Oral pain reliever,unii
+anbesol-maximum-strength,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+anbesol-maximum-strength,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+anbesol-maximum-strength,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+anbesol-maximum-strength,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+anbesol-maximum-strength,saccharin,inactive,SACCHARIN,,unii
+apokyn,apomorphine,active,APOMORPHINE HYDROCHLORIDE,,moiety
+apokyn,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+apokyn,water,inactive,WATER,,unii
+apokyn,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+aquafresh-extreme-clean,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+aquafresh-extreme-clean,water,inactive,WATER,,unii
+aquafresh-extreme-clean,sorbitol,inactive,SORBITOL,,unii
+aquafresh-extreme-clean,glycerol,inactive,GLYCERIN,,unii
+aquafresh-extreme-clean,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+aquafresh-extreme-clean,saccharin,inactive,SACCHARIN SODIUM,,parent
+aricept,donepezil,active,DONEPEZIL HYDROCHLORIDE,,moiety
+aricept,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+aricept,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+aricept,mannitol,inactive,MANNITOL,,unii
+aricept,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+aspercreme,lidocaine,active,LIDOCAINE,Topical anesthetic,unii
+aspercreme,glycerol,inactive,GLYCERIN,,unii
+aspercreme,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+aspercreme,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+aspercreme,tartaric-acid,inactive,TARTARIC ACID,,skeleton
+aspercreme,urea,inactive,UREA,,unii
+aspercreme,water,inactive,WATER,,unii
+astepro-allergy,azelastine,active,AZELASTINE HYDROCHLORIDE,Antihistamine,moiety
+astepro-allergy,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+astepro-allergy,sorbitol,inactive,SORBITOL,,unii
+astepro-allergy,sucralose,inactive,SUCRALOSE,,unii
+astepro-allergy,water,inactive,WATER,,unii
+atacand,candesartan,active,CANDESARTAN CILEXETIL,,moiety
+atacand,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+atacand,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+ativan,lorazepam,active,LORAZEPAM,,unii
+ativan,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+ativan,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+atoncy,atomoxetine,active,ATOMOXETINE HYDROCHLORIDE,,moiety
+atoncy,maltitol,inactive,MALTITOL,,unii
+atoncy,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+atoncy,water,inactive,WATER,,unii
+atoncy,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+atoncy,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+atoncy,sucralose,inactive,SUCRALOSE,,unii
+atoncy,xylitol,inactive,XYLITOL,,unii
+augmentin,amoxicillin,active,AMOXICILLIN,,moiety
+augmentin,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+augmentin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+augmentin,aspartame,inactive,ASPARTAME,,unii
+augmentin,mannitol,inactive,MANNITOL,,unii
+augmentin,saccharin,inactive,SACCHARIN SODIUM,,parent
+aveeno-eczema-therapy,water,inactive,WATER,,unii
+aveeno-eczema-therapy,glycerol,inactive,GLYCERIN,,unii
+aveeno-eczema-therapy,panthenol,inactive,PANTHENOL,,unii
+aveeno-eczema-therapy,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+aveeno-protect-plus-hydrate-spf-60,ethanol,inactive,ALCOHOL,,unii
+aveeno-protect-plus-hydrate-spf-60,water,inactive,WATER,,unii
+aveeno-protect-plus-hydrate-spf-60,glycerol,inactive,GLYCERIN,,unii
+aveeno-protect-plus-hydrate-spf-60,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+aveeno-protect-plus-hydrate-spf-60,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM ANHYDROUS,,parent
+aveeno-protect-plus-hydrate-spf-60,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+avodart,dutasteride,active,DUTASTERIDE,,unii
+avodart,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+avodart,glycerol,inactive,GLYCERIN,,unii
+bactine-max,lidocaine,active,LIDOCAINE HYDROCHLORIDE,Pain relieving spray,moiety
+bactine-max,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+bactine-max,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+bactine-max,water,inactive,WATER,,unii
+bactrim-ds,sulfamethoxazole,active,SULFAMETHOXAZOLE,,unii
+bactrim-ds,docusate,inactive,DOCUSATE SODIUM,,unii
+bactrim-ds,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+bactrim-ds,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+balmex-diaper-rash-cream,zinc-oxide,active,ZINC OXIDE,Skin Protectant,unii
+balmex-diaper-rash-cream,benzoic-acid,inactive,BENZOIC ACID,,unii
+balmex-diaper-rash-cream,aspartic-acid,inactive,MAGNESIUM ASPARTATE,,parent
+balmex-diaper-rash-cream,panthenol,inactive,PANTHENOL,,unii
+balmex-diaper-rash-cream,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+balmex-diaper-rash-cream,tocopherol,inactive,TOCOPHEROL,,unii
+balmex-diaper-rash-cream,water,inactive,WATER,,unii
+banana-boat-kids-clear-sunscreen-spf-65,panthenol,inactive,PANTHENOL,,unii
+banana-boat-kids-clear-sunscreen-spf-65,water,inactive,WATER,,unii
+banana-boat-kids-clear-sunscreen-spf-65,ethanol,inactive,ALCOHOL,,unii
+bayer-low-dose-aspirin,aspirin,active,ASPIRIN,Pain reliever,unii
+bayer-low-dose-aspirin,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+bayer-low-dose-aspirin,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+bayer-low-dose-aspirin,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+bayer-low-dose-aspirin,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+beer,ethanol,curated,,,curated
+beer,maltose,curated,,,curated
+beer,myrcene,curated,,,curated
+beer,caryophyllene,curated,,,curated
+beer,isoamyl-acetate,curated,,,curated
+beer,isoamyl-alcohol,curated,,,curated
+beer,diacetyl,curated,,,curated
+beer,acetaldehyde,curated,,,curated
+beer,2-nonenal,curated,,,curated
+beer,glycerol,curated,,,curated
+beer,carbon-dioxide,curated,,,curated
+beer,water,curated,,,curated
+beer,niacin,curated,,,curated
+beer,riboflavin,curated,,,curated
+belsomra,suvorexant,active,suvorexant,,unii
+belsomra,lactose,inactive,lactose monohydrate,,alias
+belsomra,magnesium-stearate,inactive,magnesium stearate,,unii
+belsomra,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+benadryl-allergy,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Antihistamine,moiety
+benadryl-allergy,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+benadryl-allergy,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+benadryl-allergy,glycerol,inactive,GLYCERIN,,unii
+benadryl-allergy,glycyrrhizin,inactive,AMMONIUM GLYCYRRHIZATE,,parent
+benadryl-allergy,water,inactive,WATER,,unii
+benadryl-allergy,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+benadryl-allergy,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+benadryl-allergy,sucrose,inactive,SUCROSE,,unii
+benadryl-itch-stopping-cream,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Topical Analgesic,moiety
+benadryl-itch-stopping-cream,ethanol,inactive,ALCOHOL,,unii
+benadryl-itch-stopping-cream,camphor,inactive,CAMPHOR (SYNTHETIC),,skeleton
+benadryl-itch-stopping-cream,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+benadryl-itch-stopping-cream,glycerol,inactive,GLYCERIN,,unii
+benadryl-itch-stopping-cream,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+benadryl-itch-stopping-cream,water,inactive,WATER,,unii
+bengay-vanishing-scent,menthol,active,"MENTHOL, UNSPECIFIED FORM",Topical analgesic,skeleton
+bengay-vanishing-scent,camphor,inactive,CAMPHOR (SYNTHETIC),,skeleton
+bengay-vanishing-scent,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+bengay-vanishing-scent,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+bengay-vanishing-scent,water,inactive,WATER,,unii
+benicar,olmesartan,active,OLMESARTAN MEDOXOMIL,,moiety
+benicar,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+benicar,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+biofreeze,menthol,active,MENTHOL,Cooling Pain Relief,skeleton
+biofreeze,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+biofreeze,methylsulfonylmethane,inactive,DIMETHYL SULFONE,,unii
+biofreeze,ethanol,inactive,ALCOHOL,,unii
+biofreeze,water,inactive,WATER,,unii
+biofreeze,glycerol,inactive,GLYCERIN,,unii
+black-pepper,piperine,curated,,,curated
+black-pepper,caryophyllene,curated,,,curated
+black-pepper,limonene,curated,,,curated
+black-pepper,alpha-pinene,curated,,,curated
+black-pepper,myrcene,curated,,,curated
+black-pepper,linalool,curated,,,curated
+blistex,menthol,inactive,MENTHOL,,skeleton
+blistex,water,inactive,WATER,,unii
+blistex,saccharin,inactive,SACCHARIN,,unii
+blue-lizard-sport-spf-50,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+blue-lizard-sport-spf-50,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+blue-lizard-sport-spf-50,stearic-acid,inactive,ALUMINUM STEARATE,,parent
+blue-lizard-sport-spf-50,arginine,inactive,ARGININE,,skeleton
+blue-lizard-sport-spf-50,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+blue-lizard-sport-spf-50,water,inactive,WATER,,unii
+bonine,meclizine,active,MECLIZINE HYDROCHLORIDE,Antiemetic,moiety
+bonine,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+bonine,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+bonine,saccharin,inactive,SACCHARIN SODIUM,,parent
+bonine,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+bonine,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+bread,starch,curated,,,curated
+bread,gluten,curated,,,curated
+bread,ethanol,curated,,,curated
+bread,sodium-chloride,curated,,,curated
+bread,acrylamide,curated,,,curated
+bread,thiamine,curated,,,curated
+bread,niacin,curated,,,curated
+bread,folic-acid,curated,,,curated
+bread,iron,curated,,,curated
+breakfast-cereal,starch,curated,,,curated
+breakfast-cereal,iron,curated,,,curated
+breakfast-cereal,folic-acid,curated,,,curated
+breakfast-cereal,thiamine,curated,,,curated
+breakfast-cereal,riboflavin,curated,,,curated
+breakfast-cereal,niacin,curated,,,curated
+breakfast-cereal,nicotinamide,curated,,,curated
+breakfast-cereal,pyridoxine,curated,,,curated
+breakfast-cereal,zinc,curated,,,curated
+breakfast-cereal,sucrose,curated,,,curated
+brilinta,ticagrelor,active,TICAGRELOR,,unii
+brilinta,mannitol,inactive,MANNITOL,,unii
+brilinta,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+brilinta,water,inactive,WATER,,unii
+bufferin-regular-strength,aspirin,active,aspirin,Pain reliever/fever reducer,unii
+bufferin-regular-strength,calcium-carbonate,inactive,calcium carbonate,,unii
+bufferin-regular-strength,magnesium-oxide,inactive,magnesium oxide,,unii
+bufferin-regular-strength,citric-acid,inactive,anhydrous citric acid,,unii
+bufferin-regular-strength,propylene-glycol,inactive,Propylene glycol,,unii
+bullens-pilsnerkorv,water,part,,,qid
+bullens-pilsnerkorv,ascorbic-acid,part,,,qid
+bullens-pilsnerkorv,sodium-nitrite,part,,,qid
+burts-bees-extra-white-toothpaste,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity toothpaste,unii
+burts-bees-extra-white-toothpaste,water,inactive,WATER,,unii
+burts-bees-extra-white-toothpaste,glycerol,inactive,GLYCERIN,,unii
+bystolic,nebivolol,active,nebivolol hydrochloride,,skeleton
+bystolic,silicon-dioxide,inactive,silicon dioxide,,unii
+bystolic,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+bystolic,lactose,inactive,lactose monohydrate,,alias
+bystolic,magnesium-stearate,inactive,magnesium stearate,,unii
+bystolic,sodium-lauryl-sulfate,inactive,sodium lauryl sulfate,,unii
+caladryl,zinc-oxide,active,ZINC OXIDE,,unii
+caladryl,camphor,inactive,CAMPHOR (SYNTHETIC),,skeleton
+caladryl,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+caladryl,water,inactive,WATER,,unii
+calamine-lotion,ethanol,inactive,ALCOHOL,,unii
+calamine-lotion,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+calamine-lotion,camphor,inactive,CAMPHOR (SYNTHETIC),,skeleton
+calamine-lotion,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+calamine-lotion,water,inactive,WATER,,unii
+carafate,sucralfate,active,SUCRALFATE,,unii
+carafate,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+carafate,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+cardizem,diltiazem,active,DILTIAZEM HYDROCHLORIDE,,moiety
+cardizem,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+cardizem,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+cardizem,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+cardizem,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+cardizem,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+celebrex,celecoxib,active,CELECOXIB,,unii
+celebrex,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+celebrex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+celebrex,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+celexa,citalopram,active,CITALOPRAM HYDROBROMIDE,,moiety
+celexa,glycerol,inactive,glycerin,,unii
+celexa,lactose,inactive,lactose monohydrate,,alias
+celexa,magnesium-stearate,inactive,magnesium stearate,,unii
+cepacol-sore-throat-and-cough,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+cepacol-sore-throat-and-cough,benzocaine,active,BENZOCAINE,Oral pain reliever,unii
+cepacol-sore-throat-and-cough,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+cepacol-sore-throat-and-cough,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+cepacol-sore-throat-and-cough,isomalt,inactive,ISOMALT,,skeleton
+cepacol-sore-throat-and-cough,maltitol,inactive,MALTITOL,,unii
+cepacol-sore-throat-and-cough,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+cepacol-sore-throat-and-cough,water,inactive,WATER,,unii
+cepacol-sore-throat-and-cough,sodium-bicarbonate,inactive,SODIUM BICARBONATE,,unii
+cepacol-sore-throat-and-cough,sucralose,inactive,SUCRALOSE,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+cerave-hydrating-mineral-sunscreen-spf-30,water,inactive,WATER,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,stearic-acid,inactive,STEARIC ACID,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,nicotinamide,inactive,NIACINAMIDE,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,hyaluronic-acid,inactive,SODIUM HYALURONATE,,skeleton
+cerave-hydrating-mineral-sunscreen-spf-30,cholesterol,inactive,CHOLESTEROL,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,aluminium-oxide,inactive,ALUMINA,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,tocopherol,inactive,TOCOPHEROL,,unii
+cerave-hydrating-mineral-sunscreen-spf-30,citric-acid,inactive,CITRIC ACID,,parent
+cerave-hydrating-mineral-sunscreen-spf-30,benzoic-acid,inactive,BENZOIC ACID,,unii
+certain-dri,butane,inactive,BUTANE,,unii
+certain-dri,coumarin,inactive,COUMARIN,,unii
+certain-dri,geraniol,inactive,GERANIOL,,unii
+certain-dri,1-1-difluoroethane,inactive,"1,1-DIFLUOROETHANE",,unii
+certain-dri,limonene,inactive,"LIMONENE, (+)-",,skeleton
+certain-dri,linalool,inactive,"LINALOOL, (+/-)-",,unii
+cetaphil-sheer-mineral-stick-spf-50,zinc-oxide,active,Zinc Oxide,Sunscreen,unii
+cetaphil-sheer-mineral-stick-spf-50,butylated-hydroxytoluene,inactive,Butylated Hydroxytoluene,,unii
+cetaphil-sheer-mineral-stick-spf-50,stearic-acid,inactive,Isostearic Acid,,unii
+chapstick,saccharin,inactive,SACCHARIN,,unii
+chapstick,camphor,inactive,CAMPHOR (NATURAL),,skeleton
+chapstick,maltol,inactive,MALTOL,,unii
+chapstick,menthol,inactive,LEVOMENTHOL,,unii
+chapstick,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+cheese,casein,curated,,,curated
+cheese,calcium,curated,,,curated
+cheese,sodium-chloride,curated,,,curated
+cheese,monosodium-glutamate,curated,,,curated
+cheese,tyramine,curated,,,curated
+cheese,histamine,curated,,,curated
+cheese,butyric-acid,curated,,,curated
+childrens-advil,ibuprofen,active,IBUPROFEN,Fever reducer/Pain reliever,unii
+childrens-advil,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+childrens-advil,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+childrens-advil,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+childrens-advil,glycerol,inactive,GLYCERIN,,unii
+childrens-advil,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+childrens-advil,water,inactive,WATER,,unii
+childrens-advil,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+childrens-advil,sorbitol,inactive,SORBITOL,,unii
+childrens-advil,sucrose,inactive,SUCROSE,,unii
+childrens-advil,acetic-acid,inactive,ACETIC ACID,,unii
+childrens-advil,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+childrens-advil,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+childrens-advil,sucralose,inactive,SUCRALOSE,,unii
+childrens-benadryl,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Antihistamine,moiety
+childrens-benadryl,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+childrens-benadryl,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+childrens-benadryl,glycerol,inactive,GLYCERIN,,unii
+childrens-benadryl,glycyrrhizin,inactive,AMMONIUM GLYCYRRHIZATE,,parent
+childrens-benadryl,water,inactive,WATER,,unii
+childrens-benadryl,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+childrens-benadryl,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+childrens-benadryl,sucrose,inactive,SUCROSE,,unii
+childrens-motrin,ibuprofen,active,IBUPROFEN,Pain reliever/fever reducer,unii
+childrens-motrin,glycyrrhizin,inactive,AMMONIUM GLYCYRRHIZATE,,parent
+childrens-motrin,aspartame,inactive,ASPARTAME,,unii
+childrens-motrin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+childrens-motrin,mannitol,inactive,MANNITOL,,unii
+childrens-motrin,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+childrens-motrin,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+childrens-motrin,succinic-acid,inactive,SUCCINIC ACID,,unii
+childrens-mucinex-multi-symptom-cold,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+childrens-mucinex-multi-symptom-cold,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+childrens-mucinex-multi-symptom-cold,phenylephrine,active,PHENYLEPHRINE HYDROCHLORIDE,Nasal decongestant,moiety
+childrens-mucinex-multi-symptom-cold,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+childrens-mucinex-multi-symptom-cold,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+childrens-mucinex-multi-symptom-cold,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+childrens-mucinex-multi-symptom-cold,glycerol,inactive,GLYCERIN,,unii
+childrens-mucinex-multi-symptom-cold,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+childrens-mucinex-multi-symptom-cold,water,inactive,WATER,,unii
+childrens-mucinex-multi-symptom-cold,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+childrens-mucinex-multi-symptom-cold,sorbitol,inactive,SORBITOL,,unii
+childrens-mucinex-multi-symptom-cold,sucralose,inactive,SUCRALOSE,,unii
+childrens-tylenol,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+childrens-tylenol,sucrose,inactive,SUCROSE,,unii
+childrens-tylenol,potassium-sorbate,inactive,POTASSIUM SORBATE,,unii
+childrens-tylenol,sucralose,inactive,SUCRALOSE,,unii
+childrens-tylenol,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+childrens-tylenol,glycerol,inactive,GLYCERIN,,unii
+childrens-tylenol,water,inactive,WATER,,unii
+childrens-zyrtec,cetirizine,active,CETIRIZINE HYDROCHLORIDE,Antihistamine,moiety
+childrens-zyrtec,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+childrens-zyrtec,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+childrens-zyrtec,mannitol,inactive,MANNITOL,,unii
+childrens-zyrtec,sucralose,inactive,SUCRALOSE,,unii
+chili-peppers,capsaicin,curated,,,curated
+chili-peppers,dihydrocapsaicin,curated,,,curated
+chili-peppers,nordihydrocapsaicin,curated,,,curated
+chili-peppers,homocapsaicin,curated,,,curated
+chili-peppers,homodihydrocapsaicin,curated,,,curated
+chili-peppers,nonivamide,curated,,,curated
+chili-peppers,ascorbic-acid,curated,,,curated
+chili-peppers,beta-carotene,curated,,,curated
+chili-peppers,lutein,curated,,,curated
+chili-peppers,zeaxanthin,curated,,,curated
+chitato,oleic-acid,part,,,qid
+chitato,monosodium-glutamate,part,,,qid
+chitato,disodium-inosinate,part,,,qid
+chloraseptic,menthol,active,MENTHOL,Oral pain reliever,skeleton
+chloraseptic,benzocaine,active,BENZOCAINE,Oral pain reliever,unii
+chloraseptic,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+chloraseptic,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+chloraseptic,glycerol,inactive,GLYCERIN,,unii
+chloraseptic,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+chloraseptic,sucrose,inactive,SUCROSE,,unii
+chloraseptic,water,inactive,WATER,,unii
+chocolate,theobromine,curated,,,curated
+chocolate,caffeine,curated,,,curated
+chocolate,phenethylamine,curated,,,curated
+chocolate,anandamide,curated,,,curated
+chocolate,tyramine,curated,,,curated
+chocolate,catechin,curated,,,curated
+chocolate,stearic-acid,curated,,,curated
+chocolate,oleic-acid,curated,,,curated
+chocolate,palmitic-acid,curated,,,curated
+chocolate,lecithin,curated,,,curated
+chocolate,vanillin,curated,,,curated
+chocolate,sucrose,curated,,,curated
+chocolate,magnesium,curated,,,curated
+chocolate,iron,curated,,,curated
+chocolate,copper,curated,,,curated
+chocolate,lactose,curated,,,curated
+chocolate,casein,curated,,,curated
+chocolate,tryptophan,world,,,curated
+cialis,tadalafil,active,Tadalafil,,unii
+cialis,lactose,inactive,Lactose monohydrate,,alias
+cialis,magnesium-stearate,inactive,Magnesium stearate,,unii
+cialis,sodium-lauryl-sulfate,inactive,Sodium lauryl sulfate,,unii
+cipro,ciprofloxacin,active,CIPROFLOXACIN HYDROCHLORIDE,,moiety
+cipro,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+cipro,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+cipro,sucrose,inactive,SUCROSE,,unii
+cipro,water,inactive,WATER,,unii
+citrus,citric-acid,curated,,,curated
+citrus,ascorbic-acid,curated,,,curated
+citrus,limonene,curated,,,curated
+citrus,linalool,curated,,,curated
+citrus,hesperidin,curated,,,curated
+citrus,pectin,curated,,,curated
+citrus,sucrose,curated,,,curated
+citrus,citral,world,,,curated
+citrus,naringin,world,,,curated
+claritin,loratadine,active,LORATADINE,Antihistamine,unii
+claritin,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+claritin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+claritin-d-24-hour,loratadine,active,LORATADINE,Antihistamine,unii
+claritin-d-24-hour,pseudoephedrine,active,PSEUDOEPHEDRINE SULFATE,Nasal decongestant,moiety
+claritin-d-24-hour,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+claritin-d-24-hour,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+claritin-d-24-hour,sucrose,inactive,SUCROSE,,unii
+clean-and-clear-essentials-acne-toner,salicylic-acid,active,SALICYLIC ACID,Acne treatment,unii
+clean-and-clear-essentials-acne-toner,water,inactive,WATER,,unii
+clean-and-clear-essentials-acne-toner,panthenol,inactive,PANTHENOL,,unii
+clean-and-clear-essentials-acne-toner,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM ANHYDROUS,,parent
+clean-and-clear-essentials-acne-toner,ethanol,inactive,ALCOHOL,,unii
+clean-and-clear-essentials-acne-toner,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+clear-eyes-cooling-redness-relief,glycerol,active,GLYCERIN,Lubricant,unii
+clear-eyes-cooling-redness-relief,boric-acid,inactive,BORIC ACID,,unii
+clear-eyes-cooling-redness-relief,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+clear-eyes-cooling-redness-relief,menthol,inactive,MENTHOL,,skeleton
+clear-eyes-cooling-redness-relief,water,inactive,WATER,,unii
+clearasil-rapid-rescue-wash,salicylic-acid,active,SALICYLIC ACID,Acne medication,unii
+clearasil-rapid-rescue-wash,water,inactive,WATER,,unii
+clearasil-rapid-rescue-wash,glycerol,inactive,GLYCERIN,,unii
+clearasil-rapid-rescue-wash,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+clearasil-rapid-rescue-wash,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM ANHYDROUS,,parent
+cleocin-hydrochloride,clindamycin,active,CLINDAMYCIN HYDROCHLORIDE,,skeleton
+cleocin-hydrochloride,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+cleocin-hydrochloride,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+cleocin-hydrochloride,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+cleocin-hydrochloride,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+clomid,clomifene,active,CLOMIPHENE CITRATE,,moiety
+clomid,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+clomid,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+clomid,sucrose,inactive,SUCROSE,,unii
+closeup-toothpaste,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+closeup-toothpaste,saccharin,inactive,SACCHARIN SODIUM,,parent
+closeup-toothpaste,water,inactive,WATER,,unii
+closeup-toothpaste,sorbitol,inactive,SORBITOL,,unii
+closeup-toothpaste,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+closeup-toothpaste,eugenol,inactive,EUGENOL,,unii
+closeup-toothpaste,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+closeup-toothpaste,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+clozaril,clozapine,active,CLOZAPINE,,unii
+clozaril,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+clozaril,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+clozaril,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+cocoa,theobromine,curated,,,curated
+cocoa,caffeine,curated,,,curated
+cocoa,phenethylamine,curated,,,curated
+cocoa,anandamide,curated,,,curated
+cocoa,tyramine,curated,,,curated
+cocoa,catechin,curated,,,curated
+cocoa,stearic-acid,curated,,,curated
+cocoa,palmitic-acid,curated,,,curated
+cocoa,oleic-acid,curated,,,curated
+cocoa,magnesium,curated,,,curated
+cocoa,iron,curated,,,curated
+cocoa,copper,curated,,,curated
+cocoa,theophylline,curated,,,curated
+coffee,caffeine,curated,,,curated
+coffee,chlorogenic-acid,curated,,,curated
+coffee,caffeic-acid,curated,,,curated
+coffee,theobromine,curated,,,curated
+coffee,theophylline,curated,,,curated
+coffee,niacin,curated,,,curated
+coffee,guaiacol,curated,,,curated
+coffee,furfural,curated,,,curated
+coffee,hydroxymethylfurfural,curated,,,curated
+coffee,acrylamide,curated,,,curated
+coffee,water,curated,,,curated
+coffee,potassium,curated,,,curated
+coffee,magnesium,curated,,,curated
+coffee,acetaldehyde,curated,,,curated
+colace,docusate,active,DOCUSATE SODIUM,Stool softener,unii
+colace,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+colace,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+colace,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+colace,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+colace,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+colace,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+colace,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+colace,stearic-acid,inactive,STEARIC ACID,,unii
+colgate-cavity-protection,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+colgate-cavity-protection,sorbitol,inactive,SORBITOL,,unii
+colgate-cavity-protection,water,inactive,WATER,,unii
+colgate-cavity-protection,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+colgate-cavity-protection,saccharin,inactive,SACCHARIN SODIUM,,parent
+colgate-cavity-protection,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+colgate-cavity-protection,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+colgate-max-fresh-watermelon-blast,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+colgate-max-fresh-watermelon-blast,sorbitol,inactive,SORBITOL,,unii
+colgate-max-fresh-watermelon-blast,water,inactive,WATER,,unii
+colgate-max-fresh-watermelon-blast,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+colgate-max-fresh-watermelon-blast,glycerol,inactive,GLYCERIN,,unii
+colgate-max-fresh-watermelon-blast,saccharin,inactive,SACCHARIN SODIUM,,parent
+colgate-max-fresh-watermelon-blast,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+colgate-optic-white-renewal,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+colgate-optic-white-renewal,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+colgate-optic-white-renewal,water,inactive,WATER,,unii
+colgate-optic-white-renewal,hydrogen-peroxide,inactive,HYDROGEN PEROXIDE,,unii
+colgate-optic-white-renewal,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+colgate-optic-white-renewal,saccharin,inactive,SACCHARIN SODIUM,,parent
+colgate-optic-white-renewal,sucralose,inactive,SUCRALOSE,,unii
+colgate-optic-white-renewal,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+colgate-total-active-prevention,glycerol,inactive,GLYCERIN,,unii
+colgate-total-active-prevention,water,inactive,WATER,,unii
+colgate-total-active-prevention,sorbitol,inactive,SORBITOL,,unii
+colgate-total-active-prevention,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+colgate-total-active-prevention,potassium-nitrate,inactive,POTASSIUM NITRATE,,unii
+colgate-total-active-prevention,saccharin,inactive,SACCHARIN SODIUM,,parent
+concerta,methylphenidate,active,METHYLPHENIDATE HYDROCHLORIDE,,alias
+concerta,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+concerta,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+concerta,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+concerta,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+concerta,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+concerta,stearic-acid,inactive,STEARIC ACID,,unii
+concerta,succinic-acid,inactive,SUCCINIC ACID,,unii
+conzip,tramadol,active,TRAMADOL HYDROCHLORIDE,,moiety
+conzip,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+conzip,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+coppertone-waterbabies-mineral-spf-50,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+coppertone-waterbabies-mineral-spf-50,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+coppertone-waterbabies-mineral-spf-50,water,inactive,WATER,,unii
+coppertone-waterbabies-mineral-spf-50,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+coppertone-waterbabies-mineral-spf-50,tocopherol,inactive,TOCOPHEROL,,unii
+coreg,carvedilol,active,Carvedilol,,unii
+coreg,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+coreg,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+coreg,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+coreg,sucrose,inactive,SUCROSE,,unii
+coricidin-hbp-chest-congestion-and-cough,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+coricidin-hbp-chest-congestion-and-cough,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+coricidin-hbp-chest-congestion-and-cough,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+coricidin-hbp-chest-congestion-and-cough,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+coricidin-hbp-chest-congestion-and-cough,glycerol,inactive,GLYCERIN,,unii
+coricidin-hbp-chest-congestion-and-cough,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+coricidin-hbp-chest-congestion-and-cough,sorbitol,inactive,SORBITOL,,unii
+coricidin-hbp-chest-congestion-and-cough,water,inactive,WATER,,unii
+cortizone-10-soothing-aloe,cortisol,active,HYDROCORTISONE,Anti-itch,unii
+cortizone-10-soothing-aloe,calcium-acetate,inactive,CALCIUM ACETATE,,unii
+cortizone-10-soothing-aloe,glycerol,inactive,GLYCERIN,,unii
+cortizone-10-soothing-aloe,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+cortizone-10-soothing-aloe,water,inactive,WATER,,unii
+cozaar,losartan,active,losartan potassium,,moiety
+cozaar,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+cozaar,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+crest-3d-white-ultra-whitening,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity toothpaste,unii
+crest-3d-white-ultra-whitening,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+crest-3d-white-ultra-whitening,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+crest-3d-white-ultra-whitening,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+crest-3d-white-ultra-whitening,sorbitol,inactive,SORBITOL,,unii
+crest-3d-white-ultra-whitening,water,inactive,WATER,,unii
+crest-3d-white-ultra-whitening,saccharin,inactive,SACCHARIN SODIUM,,parent
+crest-cavity-protection,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity toothpaste,unii
+crest-cavity-protection,sorbitol,inactive,SORBITOL,,unii
+crest-cavity-protection,water,inactive,WATER,,unii
+crest-cavity-protection,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+crest-cavity-protection,saccharin,inactive,SACCHARIN SODIUM,,parent
+crest-cavity-protection,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+crest-kids-color-changing,saccharin,inactive,SACCHARIN SODIUM,,parent
+crest-kids-color-changing,water,inactive,WATER,,unii
+crest-kids-color-changing,mannitol,inactive,MANNITOL,,unii
+crest-kids-color-changing,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+crest-kids-color-changing,sorbitol,inactive,SORBITOL,,unii
+crest-kids-color-changing,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+crest-pro-health-multi-protection-rinse,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+crest-pro-health-multi-protection-rinse,disodium-phosphate,inactive,DISODIUM PHOSPHATE,,unii
+crest-pro-health-multi-protection-rinse,water,inactive,WATER,,unii
+crest-pro-health-multi-protection-rinse,glycerol,inactive,GLYCERIN,,unii
+crest-pro-health-multi-protection-rinse,hydrogen-peroxide,inactive,HYDROGEN PEROXIDE,,unii
+crest-pro-health-multi-protection-rinse,saccharin,inactive,SACCHARIN SODIUM,,parent
+crest-pro-health-multi-protection-rinse,sucralose,inactive,SUCRALOSE,,unii
+crest-pro-health-multi-protection-rinse,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+crest-pro-health-multi-protection-rinse,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+crest-pro-health-sensitivity-relief,potassium-nitrate,active,POTASSIUM NITRATE,Toothpaste for sensitive teeth,unii
+crest-pro-health-sensitivity-relief,sodium-fluoride,active,SODIUM FLUORIDE,Toothpaste for cavity prevention,unii
+crest-pro-health-sensitivity-relief,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+crest-pro-health-sensitivity-relief,water,inactive,WATER,,unii
+crest-pro-health-sensitivity-relief,glycerol,inactive,GLYCERIN,,unii
+crest-pro-health-sensitivity-relief,sorbitol,inactive,SORBITOL,,unii
+crest-pro-health-sensitivity-relief,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+crest-pro-health-sensitivity-relief,ethanol,inactive,ALCOHOL,,unii
+crest-pro-health-sensitivity-relief,saccharin,inactive,SACCHARIN SODIUM,,parent
+crestor,rosuvastatin,active,ROSUVASTATIN CALCIUM,,moiety
+crestor,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+crestor,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+cured-meat,sodium-nitrite,curated,,,curated
+cured-meat,potassium-nitrate,curated,,,curated
+cured-meat,sodium-chloride,curated,,,curated
+cured-meat,tyramine,curated,,,curated
+cured-meat,histamine,curated,,,curated
+cured-meat,creatine,curated,,,curated
+cured-meat,palmitic-acid,curated,,,curated
+dayvigo,lemborexant,active,LEMBOREXANT,,unii
+dayvigo,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+dayvigo,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+dayvigo,water,inactive,WATER,,unii
+debrox,hydrogen-peroxide,active,CARBAMIDE PEROXIDE,Earwax removal aid,moiety
+debrox,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+debrox,glycerol,inactive,GLYCERIN,,unii
+debrox,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+debrox,water,inactive,WATER,,unii
+degree,butane,inactive,BUTANE,,unii
+degree,1-1-difluoroethane,inactive,HYDROFLUOROCARBON 152A,,unii
+degree,glycine,inactive,GLYCINE,,unii
+degree,propane,inactive,PROPANE,,unii
+degree,butylated-hydroxytoluene,inactive,BHT,,unii
+degree,silicon-dioxide,inactive,SILICA,,unii
+degree,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+degree,coumarin,inactive,COUMARIN,,unii
+degree,geraniol,inactive,GERANIOL,,unii
+degree,limonene,inactive,"LIMONENE, (+/-)-",,unii
+delsym,dextromethorphan,active,DEXTROMETHORPHAN,Cough suppressant,unii
+delsym,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+delsym,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+delsym,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+delsym,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+delsym,water,inactive,WATER,,unii
+delsym,sucrose,inactive,SUCROSE,,unii
+demerol,pethidine,active,MEPERIDINE HYDROCHLORIDE,,moiety
+demerol,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+demerol,water,inactive,WATER,,unii
+demerol,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+depakote,valproate,active,DIVALPROEX SODIUM,,moiety
+depakote,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+depakote,vanillin,inactive,VANILLIN,,unii
+depakote,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+depakote,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+depakote,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+depo-provera,medroxyprogesterone-acetate,active,MEDROXYPROGESTERONE ACETATE,,unii
+depo-provera,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+depo-provera,water,inactive,WATER,,unii
+depo-provera,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+depo-testosterone,testosterone-cypionate,active,TESTOSTERONE CYPIONATE,,unii
+depo-testosterone,benzyl-benzoate,inactive,BENZYL BENZOATE,,unii
+depo-testosterone,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+dexedrine-spansule,dextroamphetamine,active,DEXTROAMPHETAMINE SULFATE,,moiety
+dexedrine-spansule,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+dexedrine-spansule,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+dexedrine-spansule,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+dexedrine-spansule,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+dexilant,sucrose,inactive,sucrose,,unii
+dexilant,silicon-dioxide,inactive,silicon dioxide,,unii
+dexilant,potassium-chloride,inactive,potassium chloride,,unii
+dexilant,aluminium-oxide,inactive,aluminum oxide,,unii
+dial-antibacterial,water,inactive,WATER,,unii
+dial-antibacterial,glycerol,inactive,GLYCERIN,,unii
+dial-antibacterial,sorbitol,inactive,SORBITOL,,unii
+dial-antibacterial,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+dial-antibacterial,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+dickinsons-witch-hazel-exfoliating-toner,salicylic-acid,active,SALICYLIC ACID,Acne Treatment,unii
+dickinsons-witch-hazel-exfoliating-toner,benzoic-acid,inactive,BENZOIC ACID,,unii
+dickinsons-witch-hazel-exfoliating-toner,eucalyptol,inactive,EUCALYPTOL,,unii
+dickinsons-witch-hazel-exfoliating-toner,glucono-delta-lactone,inactive,GLUCONOLACTONE,,unii
+dickinsons-witch-hazel-exfoliating-toner,glycerol,inactive,GLYCERIN,,unii
+dickinsons-witch-hazel-exfoliating-toner,glycolic-acid,inactive,GLYCOLIC ACID,,unii
+dickinsons-witch-hazel-exfoliating-toner,nicotinamide,inactive,NIACINAMIDE,,unii
+diet-pepsi,phosphoric-acid,part,,,qid
+diet-pepsi,sucralose,part,,,qid
+diet-pepsi,acesulfame-potassium,part,,,qid
+diet-pepsi,caffeine,part,,,qid
+diet-pepsi,citric-acid,part,,,qid
+diet-soda,acesulfame-potassium,curated,,,curated
+diet-soda,aspartame,curated,,,curated
+diet-soda,rebaudioside-a,curated,,,curated
+diet-soda,saccharin,curated,,,curated
+diet-soda,stevioside,curated,,,curated
+diet-soda,sucralose,curated,,,curated
+differin,adapalene,active,Adapalene,,unii
+differin,ethylenediaminetetraacetic-acid,inactive,Edetate Disodium,,parent
+differin,propylene-glycol,inactive,Propylene Glycol,,unii
+differin,water,inactive,Water,,unii
+differin,sodium-hydroxide,inactive,Sodium Hydroxide,,unii
+diflucan,fluconazole,active,FLUCONAZOLE,,unii
+diflucan,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+diflucan,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+diflucan,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+diflucan,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+diflucan,sucrose,inactive,SUCROSE,,unii
+diflucan,citric-acid,inactive,TRISODIUM CITRATE DIHYDRATE,,parent
+diflucan,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+diflucan,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+dilantin-125,phenytoin,active,PHENYTOIN,,unii
+dilantin-125,ethanol,inactive,ALCOHOL,,unii
+dilantin-125,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+dilantin-125,glycerol,inactive,GLYCERIN,,unii
+dilantin-125,water,inactive,WATER,,unii
+dilantin-125,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+dilantin-125,sucrose,inactive,SUCROSE,,unii
+dilantin-125,vanillin,inactive,VANILLIN,,unii
+dilantin-125,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+diovan,valsartan,active,VALSARTAN,,unii
+diovan,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+diovan,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+diprivan,propofol,active,PROPOFOL,,unii
+diprivan,glycerol,inactive,GLYCERIN,,unii
+diprivan,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM ANHYDROUS,,parent
+diprivan,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+dove-advanced-care,butane,inactive,BUTANE,,unii
+dove-advanced-care,1-1-difluoroethane,inactive,HYDROFLUOROCARBON 152A,,unii
+dove-advanced-care,glycine,inactive,GLYCINE,,unii
+dove-advanced-care,propane,inactive,PROPANE,,unii
+dove-advanced-care,butylated-hydroxytoluene,inactive,BHT,,unii
+dove-advanced-care,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+dove-advanced-care,citral,inactive,CITRAL,,skeleton
+dove-advanced-care,geraniol,inactive,GERANIOL,,unii
+dove-advanced-care,limonene,inactive,"LIMONENE, (+)-",,skeleton
+dove-advanced-care,linalool,inactive,LINALOOL,,unii
+dove-dermacare-scalp-anti-dandruff,water,inactive,WATER,,unii
+dove-dermacare-scalp-anti-dandruff,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+dove-dermacare-scalp-anti-dandruff,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+dove-dermacare-scalp-anti-dandruff,panthenol,inactive,PANTHENOL,,unii
+dove-dermacare-scalp-anti-dandruff,propylene-glycol,inactive,PPG-9,,unii
+dramamine,meclizine,active,MECLIZINE HYDROCHLORIDE,Antiemetic,moiety
+dramamine,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+dramamine,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+dramamine,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+dramamine,saccharin,inactive,SACCHARIN SODIUM,,parent
+dramamine,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+dramamine,stearic-acid,inactive,STEARIC ACID,,unii
+dramamine,sucrose,inactive,SUCROSE,,unii
+dramamine,tricalcium-phosphate,inactive,TRICALCIUM PHOSPHATE,,unii
+ecotrin,aspirin,active,ASPIRIN,Pain reliever,unii
+ecotrin,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+ecotrin,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+ecotrin,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+ecotrin,sodium-bicarbonate,inactive,SODIUM BICARBONATE,,unii
+ecotrin,stearic-acid,inactive,STEARIC ACID,,unii
+eggs,cholesterol,curated,,,curated
+eggs,choline,curated,,,curated
+eggs,lutein,curated,,,curated
+eggs,zeaxanthin,curated,,,curated
+eggs,biotin,curated,,,curated
+eggs,riboflavin,curated,,,curated
+eggs,vitamin-b12,curated,,,curated
+eggs,tryptophan,curated,,,curated
+egrifta-wr,tesamorelin,active,TESAMORELIN ACETATE,,moiety
+egrifta-wr,water,active,WATER,,unii
+egrifta-wr,mannitol,inactive,MANNITOL,,unii
+egrifta-wr,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+egrifta-wr,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+eliquis,apixaban,active,apixaban,,unii
+eliquis,lactose,inactive,anhydrous lactose,,alias
+eliquis,sodium-lauryl-sulfate,inactive,sodium lauryl sulfate,,unii
+eliquis,magnesium-stearate,inactive,magnesium stearate,,unii
+eltamd-uv-clear,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+eltamd-uv-clear,water,inactive,WATER,,unii
+eltamd-uv-clear,nicotinamide,inactive,NIACINAMIDE,,unii
+eltamd-uv-clear,carnosine,inactive,CARNOSINE,,unii
+eltamd-uv-clear,tocopherol,inactive,TOCOPHEROL,,unii
+eltamd-uv-clear,butylated-hydroxytoluene,inactive,BHT,,unii
+eltamd-uv-clear,hyaluronic-acid,inactive,SODIUM HYALURONATE,,skeleton
+eltamd-uv-clear,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+emetrol-chewables,citric-acid,active,TRISODIUM CITRATE DIHYDRATE,Upset stomach reliever/antacid,moiety
+emetrol-chewables,fructose,inactive,FRUCTOSE,,unii
+emetrol-chewables,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+emetrol-chewables,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+emetrol-chewables,sucralose,inactive,SUCRALOSE,,unii
+energy-drinks,caffeine,curated,,,curated
+energy-drinks,taurine,curated,,,curated
+energy-drinks,sucrose,curated,,,curated
+energy-drinks,glucose,curated,,,curated
+energy-drinks,citric-acid,curated,,,curated
+energy-drinks,carbon-dioxide,curated,,,curated
+energy-drinks,trisodium-citrate,curated,,,curated
+energy-drinks,sodium-bicarbonate,curated,,,curated
+energy-drinks,magnesium-carbonate,curated,,,curated
+energy-drinks,sodium-benzoate,curated,,,curated
+energy-drinks,sorbic-acid,curated,,,curated
+energy-drinks,nicotinamide,curated,,,curated
+energy-drinks,pantothenic-acid,curated,,,curated
+energy-drinks,pyridoxine,curated,,,curated
+energy-drinks,cyanocobalamin,curated,,,curated
+energy-drinks,riboflavin,curated,,,curated
+energy-drinks,carnitine,curated,,,curated
+energy-drinks,inositol,curated,,,curated
+energy-drinks,sucralose,curated,,,curated
+energy-drinks,acesulfame-potassium,curated,,,curated
+energy-drinks,aspartame,curated,,,curated
+energy-drinks,water,curated,,,curated
+entresto,valsartan,active,VALSARTAN,,unii
+entresto,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+entresto,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+entresto,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+entresto,stearic-acid,inactive,STEARIC ACID,,unii
+entresto,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+entresto,ammonia,inactive,AMMONIA,,unii
+entresto,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+epsolay,benzoyl-peroxide,active,Benzoyl Peroxide,,unii
+epsolay,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+epsolay,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+epsolay,glycerol,inactive,GLYCERIN,,unii
+epsolay,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+epsolay,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+epsolay,water,inactive,WATER,,unii
+ethyl-rubbing-alcohol,ethanol,active,ALCOHOL,First aid antiseptic,unii
+ethyl-rubbing-alcohol,acetone,inactive,ACETONE,,unii
+ethyl-rubbing-alcohol,water,inactive,WATER,,unii
+eucerin-eczema-relief,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+eucerin-eczema-relief,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+eucerin-eczema-relief,water,inactive,WATER,,unii
+eucerin-eczema-relief,glycerol,inactive,GLYCERIN,,unii
+ex-lax-chocolated,sucrose,inactive,SUCROSE,,unii
+ex-lax-chocolated,vanillin,inactive,VANILLIN,,unii
+ex-lax-chocolated,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+excedrin-extra-strength,acetaminophen,active,Acetaminophen,Pain reliever,unii
+excedrin-extra-strength,aspirin,active,Aspirin,Pain reliever,unii
+excedrin-extra-strength,caffeine,active,Caffeine,Pain reliever aid,unii
+excedrin-extra-strength,benzoic-acid,inactive,benzoic acid,,unii
+excedrin-extra-strength,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+excedrin-extra-strength,propylene-glycol,inactive,propylene glycol,,unii
+excedrin-extra-strength,stearic-acid,inactive,stearic acid,,unii
+excedrin-migraine,acetaminophen,active,ACETAMINOPHEN,Pain reliever,unii
+excedrin-migraine,aspirin,active,ASPIRIN,Pain reliever,unii
+excedrin-migraine,caffeine,active,CAFFEINE,Pain reliever aid,unii
+excedrin-migraine,benzoic-acid,inactive,BENZOIC ACID,,unii
+excedrin-migraine,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+excedrin-migraine,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+excedrin-migraine,stearic-acid,inactive,STEARIC ACID,,unii
+falling-asleep,melatonin,world,,,world
+falling-asleep,adenosine,world,,,world
+falling-asleep,gamma-aminobutyric-acid,world,,,world
+falling-asleep,glycine,world,,,world
+falling-asleep,serotonin,world,,,world
+falling-asleep,tryptophan,world,,,world
+falling-asleep,5-hydroxytryptophan,world,,,world
+farxiga,dapagliflozin,active,DAPAGLIFLOZIN PROPANEDIOL,,moiety
+farxiga,lactose,inactive,anhydrous lactose,,alias
+farxiga,silicon-dioxide,inactive,silicon dioxide,,unii
+farxiga,magnesium-stearate,inactive,magnesium stearate,,unii
+femara,letrozole,active,LETROZOLE,,unii
+femara,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+femara,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+femara,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+finacea,azelaic-acid,active,AZELAIC ACID,,unii
+finacea,benzoic-acid,inactive,BENZOIC ACID,,unii
+finacea,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+finacea,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+finacea,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+finacea,water,inactive,WATER,,unii
+finacea,glycerol,inactive,GLYCERIN,,unii
+finacea,cholesterol,inactive,CHOLESTEROL,,unii
+finacea,dipotassium-phosphate,inactive,"POTASSIUM PHOSPHATE, DIBASIC",,unii
+fish,docosahexaenoic-acid,curated,,,curated
+fish,taurine,curated,,,curated
+fish,creatine,curated,,,curated
+fish,vitamin-b12,curated,,,curated
+fish,selenium,curated,,,curated
+fish,iodine,curated,,,curated
+fish,cholesterol,curated,,,curated
+fish,histamine,curated,,,curated
+focalin,dexmethylphenidate,active,DEXMETHYLPHENIDATE HYDROCHLORIDE,,moiety
+focalin,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+focalin,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+focalin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+fresh-bread,maltol,world,,,world
+fresh-bread,ethyl-maltol,world,,,world
+fresh-bread,furaneol,world,,,world
+fresh-bread,hydroxymethylfurfural,world,,,world
+fresh-bread,acetic-acid,world,,,world
+fresh-bread,acrylamide,world,,,world
+fruit,fructose,curated,,,curated
+fruit,glucose,curated,,,curated
+fruit,sucrose,curated,,,curated
+fruit,citric-acid,curated,,,curated
+fruit,malic-acid,curated,,,curated
+fruit,tartaric-acid,curated,,,curated
+fruit,ascorbic-acid,curated,,,curated
+fruit,pectin,curated,,,curated
+fruit,quercetin,curated,,,curated
+fruit,beta-carotene,curated,,,curated
+fruit,limonene,curated,,,curated
+fruit,ethylene,curated,,,curated
+gas-x-total-relief,calcium-carbonate,active,CALCIUM CARBONATE,Antacid,unii
+gas-x-total-relief,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+gas-x-total-relief,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+gas-x-total-relief,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+gas-x-total-relief,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+gas-x-total-relief,water,inactive,WATER,,unii
+gas-x-total-relief,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+gas-x-total-relief,sorbic-acid,inactive,SORBIC ACID,,unii
+gas-x-total-relief,sorbitol,inactive,SORBITOL,,unii
+gas-x-total-relief,sucrose,inactive,SUCROSE,,unii
+gaviscon,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+gaviscon,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+gaviscon,glycerol,inactive,GLYCERIN,,unii
+gaviscon,water,inactive,WATER,,unii
+gaviscon,saccharin,inactive,SACCHARIN SODIUM,,parent
+gaviscon,sorbitol,inactive,SORBITOL,,unii
+gillette-clear-shield-sport,ethanol,inactive,ALCOHOL,,unii
+gillette-clear-shield-sport,water,inactive,WATER,,unii
+gillette-clear-shield-sport,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+glass-of-wine,ethanol,world,,,world
+glass-of-wine,resveratrol,world,,,world
+glass-of-wine,tannic-acid,world,,,world
+glass-of-wine,tartaric-acid,world,,,world
+glass-of-wine,malic-acid,world,,,world
+glass-of-wine,cyanidin,world,,,world
+gleevec,imatinib,active,IMATINIB MESYLATE,,moiety
+gleevec,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+gleevec,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+gleevec,water,inactive,WATER,,unii
+glico-wings-frost-bite,water,part,,,qid
+glico-wings-frost-bite,maltodextrin,part,,,qid
+glico-wings-frost-bite,sunset-yellow-fcf,part,,,qid
+glico-wings-frost-bite,brilliant-blue-fcf,part,,,qid
+gold-bond-eczema-relief,water,inactive,WATER,,unii
+gold-bond-eczema-relief,glycerol,inactive,GLYCERIN,,unii
+gold-bond-eczema-relief,panthenol,inactive,PANTHENOL,,unii
+gold-bond-eczema-relief,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM ANHYDROUS,,parent
+goodys-extra-strength,acetaminophen,active,ACETAMINOPHEN,Pain reliever,unii
+goodys-extra-strength,aspirin,active,ASPIRIN,Pain reliever,unii
+goodys-extra-strength,caffeine,active,CAFFEINE,Pain reliever aid,unii
+goodys-extra-strength,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+goodys-extra-strength,potassium-chloride,inactive,POTASSIUM CHLORIDE,,unii
+halls-cough-drops-variety-pack,menthol,active,MENTHOL,"Cough Suppressant, Oral Anesthetic",skeleton
+halls-cough-drops-variety-pack,sucrose,inactive,SUCROSE,,unii
+halls-cough-drops-variety-pack,water,inactive,WATER,,unii
+halls-cough-drops-variety-pack,citric-acid,inactive,POTASSIUM CITRATE,,parent
+halls-cough-drops-variety-pack,sucralose,inactive,SUCRALOSE,,unii
+halls-cough-drops-variety-pack,beta-carotene,inactive,BETA-CAROTENE,,unii
+halls-cough-drops-variety-pack,carmine,inactive,CARMINIC ACID,,skeleton
+hawaiian-tropic,glycerol,inactive,GLYCERIN,,unii
+hawaiian-tropic,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+hawaiian-tropic,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+hawaiian-tropic,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+hawaiian-tropic,panthenol,inactive,PANTHENOL,,unii
+hawaiian-tropic,water,inactive,WATER,,unii
+head-and-shoulders-classic-clean,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+head-and-shoulders-classic-clean,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+head-and-shoulders-classic-clean,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+head-and-shoulders-classic-clean,brilliant-blue-fcf,inactive,BLUE 1,,unii
+head-and-shoulders-classic-clean,water,inactive,WATER,,unii
+head-and-shoulders-classic-clean,glycerol,inactive,GLYCERIN,,unii
+head-and-shoulders-classic-clean,nicotinamide,inactive,NIACINAMIDE,,unii
+honey,fructose,curated,,,curated
+honey,glucose,curated,,,curated
+honey,sucrose,curated,,,curated
+honey,maltose,curated,,,curated
+honey,gluconic-acid,curated,,,curated
+honey,methylglyoxal,curated,,,curated
+honey,hydroxymethylfurfural,curated,,,curated
+honey,phenylacetic-acid,curated,,,curated
+hot-sauce,capsaicin,curated,,,curated
+hot-sauce,dihydrocapsaicin,curated,,,curated
+hot-sauce,nordihydrocapsaicin,curated,,,curated
+hot-sauce,nonivamide,curated,,,curated
+hot-sauce,acetic-acid,curated,,,curated
+hot-sauce,sodium-chloride,curated,,,curated
+hot-sauce,sodium-benzoate,curated,,,curated
+hot-sauce,xanthan-gum,curated,,,curated
+hysingla-er,hydrocodone,active,HYDROCODONE BITARTRATE,,moiety
+hysingla-er,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+hysingla-er,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+hysingla-er,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+icy-hot,lidocaine,active,LIDOCAINE,Topical anesthetic,unii
+icy-hot,menthol,active,"MENTHOL, UNSPECIFIED FORM",Topical analgesic,skeleton
+icy-hot,glycerol,inactive,GLYCERIN,,unii
+icy-hot,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+icy-hot,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+icy-hot,tartaric-acid,inactive,TARTARIC ACID,,skeleton
+icy-hot,urea,inactive,UREA,,unii
+icy-hot,water,inactive,WATER,,unii
+imitrex,sumatriptan,active,SUMATRIPTAN SUCCINATE,,moiety
+imitrex,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+imitrex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+imitrex,sodium-bicarbonate,inactive,SODIUM BICARBONATE,,unii
+imodium-a-d,loperamide,active,LOPERAMIDE HYDROCHLORIDE,Anti-diarrheal,moiety
+imodium-a-d,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+imodium-a-d,glycerol,inactive,GLYCERIN,,unii
+imodium-a-d,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+imodium-a-d,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+imodium-a-d,sucralose,inactive,SUCRALOSE,,unii
+imodium-a-d,water,inactive,WATER,,unii
+imodium-a-d,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+imodium-multi-symptom-relief,loperamide,active,LOPERAMIDE HYDROCHLORIDE,Anti-diarrheal,moiety
+imodium-multi-symptom-relief,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+imodium-multi-symptom-relief,stearic-acid,inactive,STEARIC ACID,,unii
+inderal-la,propranolol,active,PROPRANOLOL HYDROCHLORIDE,,moiety
+inderal-la,sucrose,inactive,SUCROSE,,unii
+inderal-la,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+indocin,indometacin,active,INDOMETHACIN,,unii
+indocin,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+indocin,ethylenediaminetetraacetic-acid,inactive,EDETIC ACID,,unii
+indocin,glycerol,inactive,GLYCERIN,,unii
+indocin,water,inactive,WATER,,unii
+indocin,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+infumorph,morphine,active,MORPHINE SULFATE,,moiety
+infumorph,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+infumorph,water,inactive,WATER,,unii
+infumorph,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+infumorph,sulfuric-acid,inactive,SULFURIC ACID,,unii
+intuniv,guanfacine,active,GUANFACINE HYDROCHLORIDE,,moiety
+intuniv,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+intuniv,fumaric-acid,inactive,FUMARIC ACID,,unii
+iodine-tincture,iodine,active,IODINE,First aid antiseptic,unii
+iodine-tincture,water,inactive,WATER,,unii
+iodine-tincture,ethanol,inactive,ALCOHOL,,unii
+iodine-tincture,sodium-iodide,inactive,SODIUM IODIDE,,unii
+jantoven,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+jantoven,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+jantoven,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+jantoven,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+jantoven,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+kaopectate,bismuth-subsalicylate,active,Bismuth Subsalicylate,"Anti-diarrheal, Upset stomach reliever",unii
+kaopectate,magnesium-stearate,inactive,Magnesium Stearate,,unii
+kaopectate,sodium-lauryl-sulfate,inactive,Sodium Lauryl Sulfate,,unii
+kaopectate,stearic-acid,inactive,Stearic Acid,,unii
+kenalog-10,triamcinolone-acetonide,active,triamcinolone acetonide,,unii
+kenalog-10,sodium-chloride,inactive,sodium chloride,,unii
+kenalog-10,benzyl-alcohol,inactive,benzyl alcohol,,unii
+kenalog-10,sodium-hydroxide,inactive,sodium hydroxide,,unii
+keppra,levetiracetam,active,LEVETIRACETAM,,unii
+keppra,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+keppra,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+keppra,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+keppra,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+keppra,glycyrrhizin,inactive,AMMONIUM GLYCYRRHIZATE,,parent
+keppra,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+keppra,glycerol,inactive,GLYCERIN,,unii
+keppra,maltitol,inactive,MALTITOL,,unii
+keppra,water,inactive,WATER,,unii
+keytruda,histidine,inactive,HISTIDINE,,unii
+keytruda,sucrose,inactive,SUCROSE,,unii
+keytruda,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+keytruda,water,inactive,WATER,,unii
+klonopin,clonazepam,active,CLONAZEPAM,,unii
+klonopin,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+klonopin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+klonopin,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+klonopin,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+la-roche-posay-effaclar,adapalene,active,ADAPALENE,Acne treatment,unii
+la-roche-posay-effaclar,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+la-roche-posay-effaclar,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+la-roche-posay-effaclar,water,inactive,WATER,,unii
+la-roche-posay-effaclar,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+lamictal,lamotrigine,active,LAMOTRIGINE,,unii
+lamictal,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+lamictal,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+lamictal,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+lamictal,calcium-carbonate,inactive,CALCIUM CARBONATE,,unii
+lamictal,saccharin,inactive,SACCHARIN SODIUM,,parent
+lamictal,mannitol,inactive,MANNITOL,,unii
+lamictal,sucralose,inactive,SUCRALOSE,,unii
+lamisil-at,terbinafine,active,TERBINAFINE HYDROCHLORIDE,Antifungal,moiety
+lamisil-at,water,inactive,WATER,,unii
+lamisil-at,ethanol,inactive,ALCOHOL,,unii
+lamisil-at,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+lanoxin,digoxin,active,DIGOXIN,,unii
+lanoxin,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+lanoxin,ethanol,inactive,ALCOHOL,,unii
+lanoxin,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+lasix,furosemide,active,FUROSEMIDE,,unii
+lasix,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+lasix,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+lasix,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+latuda,lurasidone,active,lurasidone hydrochloride,,moiety
+latuda,mannitol,inactive,mannitol,,unii
+latuda,magnesium-stearate,inactive,magnesium stearate,,unii
+leafy-greens,folic-acid,curated,,,curated
+leafy-greens,lutein,curated,,,curated
+leafy-greens,oxalic-acid,curated,,,curated
+leafy-greens,magnesium,curated,,,curated
+leafy-greens,iron,curated,,,curated
+leafy-greens,beta-carotene,curated,,,curated
+leafy-greens,quercetin,curated,,,curated
+leafy-greens,calcium,curated,,,curated
+lexapro,escitalopram,active,ESCITALOPRAM OXALATE,,moiety
+lexapro,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+lexapro,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+lexapro,sorbitol,inactive,SORBITOL,,unii
+lexapro,water,inactive,WATER,,unii
+lexapro,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+lexapro,malic-acid,inactive,MALIC ACID,,unii
+lexapro,glycerol,inactive,GLYCERIN,,unii
+lexapro,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+lioresal,baclofen,active,BACLOFEN,,unii
+lioresal,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+lioresal,water,inactive,WATER,,unii
+lipitor,atorvastatin,active,ATORVASTATIN CALCIUM TRIHYDRATE,,moiety
+lipitor,calcium-carbonate,inactive,CALCIUM CARBONATE,,unii
+lipitor,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+lipitor,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+listerine-cool-mint,methyl-salicylate,active,METHYL SALICYLATE,Antiplaque/antigingivitis,unii
+listerine-cool-mint,thymol,active,THYMOL,Antiplaque/antigingivitis,unii
+listerine-cool-mint,eucalyptol,active,EUCALYPTOL,Antiplaque/antigingivitis,unii
+listerine-cool-mint,menthol,active,MENTHOL,Antiplaque/antigingivitis,skeleton
+listerine-cool-mint,water,inactive,WATER,,unii
+listerine-cool-mint,ethanol,inactive,ALCOHOL,,unii
+listerine-cool-mint,benzoic-acid,inactive,BENZOIC ACID,,unii
+listerine-cool-mint,sorbitol,inactive,SORBITOL,,unii
+listerine-cool-mint,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+listerine-cool-mint,saccharin,inactive,SODIUM SACCHARIN,,parent
+listerine-original,methyl-salicylate,active,METHYL SALICYLATE,Antiplaque/antigingivitis,unii
+listerine-original,thymol,active,THYMOL,Antiplaque/antigingivitis,unii
+listerine-original,eucalyptol,active,EUCALYPTOL,Antiplaque/antigingivitis,unii
+listerine-original,menthol,active,MENTHOL,Antiplaque/antigingivitis,skeleton
+listerine-original,water,inactive,WATER,,unii
+listerine-original,ethanol,inactive,ALCOHOL,,unii
+listerine-original,benzoic-acid,inactive,BENZOIC ACID,,unii
+listerine-original,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+listerine-total-care,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+listerine-total-care,water,inactive,WATER,,unii
+listerine-total-care,ethanol,inactive,ALCOHOL,,unii
+listerine-total-care,sorbitol,inactive,SORBITOL,,unii
+listerine-total-care,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+listerine-total-care,eucalyptol,inactive,EUCALYPTOL,,unii
+listerine-total-care,thymol,inactive,THYMOL,,unii
+listerine-total-care,methyl-salicylate,inactive,METHYL SALICYLATE,,unii
+listerine-total-care,saccharin,inactive,SACCHARIN SODIUM,,parent
+listerine-total-care,menthol,inactive,"MENTHOL, UNSPECIFIED FORM",,skeleton
+listerine-total-care,disodium-phosphate,inactive,"SODIUM PHOSPHATE, DIBASIC, ANHYDROUS",,unii
+listerine-total-care,sucralose,inactive,SUCRALOSE,,unii
+listerine-total-care,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+listerine-total-care,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+lithobid,stearic-acid,inactive,CALCIUM STEARATE,,parent
+lithobid,allura-red-ac,inactive,FD&C Red No. 40,,unii
+lithobid,sunset-yellow-fcf,inactive,FD&C Yellow No. 6,,unii
+lithobid,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+lithobid,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+lithobid,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+lithobid,sorbitol,inactive,SORBITOL,,unii
+little-remedies-infant-fever-and-pain-reliever,acetaminophen,active,ACETAMINOPHEN,Pain Reliever/Fever Reducer,unii
+little-remedies-infant-fever-and-pain-reliever,benzoic-acid,inactive,BENZOIC ACID,,unii
+little-remedies-infant-fever-and-pain-reliever,carboxymethyl-cellulose,inactive,CARBOXYMETHYLCELLULOSE,,unii
+little-remedies-infant-fever-and-pain-reliever,glycerol,inactive,GLYCERIN,,unii
+little-remedies-infant-fever-and-pain-reliever,sucrose,inactive,SUCROSE,,unii
+little-remedies-infant-fever-and-pain-reliever,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+little-remedies-infant-fever-and-pain-reliever,water,inactive,WATER,,unii
+lopressor,metoprolol,active,METOPROLOL TARTRATE,,moiety
+lopressor,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+lopressor,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+lopressor,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+ludens-throat-drops,ascorbic-acid,inactive,ASCORBIC ACID,,unii
+ludens-throat-drops,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+ludens-throat-drops,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+ludens-throat-drops,malic-acid,inactive,MALIC ACID,,unii
+ludens-throat-drops,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+ludens-throat-drops,sucrose,inactive,SUCROSE,,unii
+ludens-throat-drops,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+ludens-throat-drops,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+ludens-throat-drops,water,inactive,WATER,,unii
+ludens-throat-drops,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+lumigan,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+lumigan,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+lumigan,water,inactive,WATER,,unii
+lunesta,eszopiclone,active,ESZOPICLONE,,unii
+lunesta,dicalcium-phosphate,inactive,"CALCIUM PHOSPHATE, DIBASIC, ANHYDROUS",,unii
+lunesta,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+lunesta,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+lunesta,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+lyrica,pregabalin,active,PREGABALIN,,unii
+lyrica,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+lyrica,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+lyrica,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+lyrica,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+lyrica,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+lyrica,disodium-phosphate,inactive,"SODIUM PHOSPHATE, DIBASIC, ANHYDROUS",,unii
+lyrica,sucralose,inactive,SUCRALOSE,,unii
+lyrica,water,inactive,WATER,,unii
+lysol-no-touch-hand-soap,water,inactive,Water,,unii
+lysol-no-touch-hand-soap,glycerol,inactive,Glycerin,,unii
+lysol-no-touch-hand-soap,citric-acid,inactive,Citric Acid Monohydrate,,parent
+lysol-no-touch-hand-soap,ethylenediaminetetraacetic-acid,inactive,Edetate Sodium,,parent
+lysol-no-touch-hand-soap,sodium-chloride,inactive,Sodium Chloride,,unii
+lysol-no-touch-hand-soap,brilliant-blue-fcf,inactive,FD&C Blue No. 1,,unii
+m-and-ms,lactose,part,,,qid
+m-and-ms,sodium-chloride,part,,,qid
+m-and-ms,curcumin,part,,,qid
+m-and-ms,carmine,part,,,qid
+m-and-ms,brilliant-blue-fcf,part,,,qid
+maxalt,lactose,inactive,lactose monohydrate,,alias
+maxalt,magnesium-stearate,inactive,magnesium stearate,,unii
+maxalt,mannitol,inactive,mannitol,,unii
+maxalt,glycine,inactive,glycine,,unii
+maxalt,aspartame,inactive,aspartame,,unii
+maxidex,dexamethasone,active,DEXAMETHASONE,,unii
+maxidex,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+maxidex,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+maxidex,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+maxidex,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+maxidex,water,inactive,WATER,,unii
+mcdonalds-chicken-strips,water,part,,,qid
+mcdonalds-chicken-strips,monosodium-glutamate,part,,,qid
+mcdonalds-chicken-strips,maltodextrin,part,,,qid
+medrol,methylprednisolone,active,METHYLPREDNISOLONE,,unii
+medrol,stearic-acid,inactive,CALCIUM STEARATE,,parent
+medrol,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+medrol,sorbic-acid,inactive,SORBIC ACID,,unii
+medrol,sucrose,inactive,SUCROSE,,unii
+mens-rogaine-anti-dandruff-shampoo,salicylic-acid,active,SALICYLIC ACID,Anti-Dandruff and Anti-Seborrheic Dermatitis,unii
+mens-rogaine-anti-dandruff-shampoo,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+mens-rogaine-anti-dandruff-shampoo,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+mens-rogaine-anti-dandruff-shampoo,citric-acid,inactive,CITRIC ACID,,parent
+mens-rogaine-anti-dandruff-shampoo,water,inactive,WATER,,unii
+mercurochrome,water,inactive,WATER,,unii
+mercurochrome,ethanol,inactive,ALCOHOL,,unii
+mercurochrome,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+midol-complete,acetaminophen,active,ACETAMINOPHEN,Pain reliever,unii
+midol-complete,caffeine,active,CAFFEINE,Diuretic,unii
+midol-complete,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+midol-complete,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+mifeprex,mifepristone,active,MIFEPRISTONE,,unii
+mifeprex,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+mifeprex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+milk,lactose,curated,,,curated
+milk,casein,curated,,,curated
+milk,calcium,curated,,,curated
+milk,riboflavin,curated,,,curated
+milk,vitamin-b12,curated,,,curated
+milk,tryptophan,curated,,,curated
+milk,water,curated,,,curated
+milk,sodium-chloride,part,,,curated
+milk,phosphorus,part,,,curated
+milk,potassium,part,,,curated
+milk,magnesium,part,,,curated
+mitchum-clear-gel,water,inactive,WATER,,unii
+mitchum-clear-gel,glycerol,inactive,GLYCERIN,,unii
+mitchum-clear-gel,linalool,inactive,"LINALOOL, (+/-)-",,unii
+monistat-1-combination-pack,miconazole,active,Miconazole Nitrate,Miconazole nitrate 2% (external cream) Vaginal antifungal,moiety
+monistat-1-combination-pack,glycerol,inactive,GLYCERIN,,unii
+monistat-1-combination-pack,benzoic-acid,inactive,Benzoic Acid,,unii
+monistat-1-combination-pack,potassium-hydroxide,inactive,Potassium Hydroxide,,unii
+monistat-1-combination-pack,propylene-glycol,inactive,Propylene Glycol,,unii
+monistat-1-combination-pack,water,inactive,Water,,unii
+monistat-7,miconazole,active,Miconazole Nitrate,Vaginal antifungal,moiety
+monistat-7,benzoic-acid,inactive,Benzoic Acid,,unii
+monistat-7,potassium-hydroxide,inactive,Potassium Hydroxide,,unii
+monistat-7,propylene-glycol,inactive,Propylene Glycol,,unii
+monistat-7,water,inactive,Water,,unii
+monodox,doxycycline,active,DOXYCYCLINE,,moiety
+monodox,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+monodox,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+monodox,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+monodox,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+morning-coffee,caffeine,world,,,world
+morning-coffee,chlorogenic-acid,world,,,world
+morning-coffee,theobromine,world,,,world
+morning-coffee,niacin,world,,,world
+morning-coffee,paraxanthine,world,,,world
+morning-coffee,adenosine,world,,,world
+morning-coffee,theophylline,world,,,world
+motrin-ib,ibuprofen,active,IBUPROFEN,Pain reliever/fever reducer,unii
+motrin-ib,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+motrin-ib,water,inactive,WATER,,unii
+motrin-ib,sorbitol,inactive,SORBITOL,,unii
+mounjaro,sodium-chloride,inactive,Sodium Chloride,,unii
+mounjaro,sodium-hydroxide,inactive,Sodium Hydroxide,,unii
+mounjaro,water,inactive,Water,,unii
+mounjaro,benzyl-alcohol,inactive,Benzyl Alcohol,,unii
+mounjaro,glycerol,inactive,Glycerin,,unii
+mounjaro,phenol,inactive,Phenol,,unii
+mucinex,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+mucinex,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+mucinex,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+mucinex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+mucinex-d,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+mucinex-d,pseudoephedrine,active,PSEUDOEPHEDRINE HYDROCHLORIDE,Nasal Decongestant,moiety
+mucinex-d,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+mucinex-d,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+mucinex-d,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+mucinex-dm,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+mucinex-dm,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+mucinex-dm,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+mucinex-dm,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+mushrooms,monosodium-glutamate,curated,,,curated
+mushrooms,ergocalciferol,curated,,,curated
+mushrooms,chitin,curated,,,curated
+mushrooms,selenium,curated,,,curated
+mushrooms,copper,curated,,,curated
+mushrooms,riboflavin,curated,,,curated
+mushrooms,agaritine,curated,,,curated
+mylanta-spiced-apple-cider,calcium-carbonate,active,CALCIUM CARBONATE,Antacid,unii
+mylanta-spiced-apple-cider,magnesium-hydroxide,active,MAGNESIUM HYDROXIDE,Antacid,unii
+mylanta-spiced-apple-cider,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+mylanta-spiced-apple-cider,glycerol,inactive,GLYCERIN,,unii
+mylanta-spiced-apple-cider,water,inactive,WATER,,unii
+mylanta-spiced-apple-cider,sodium-carbonate,inactive,SODIUM CARBONATE,,unii
+mylanta-spiced-apple-cider,sorbitol,inactive,SORBITOL,,unii
+mylanta-spiced-apple-cider,sucralose,inactive,SUCRALOSE,,unii
+mylanta-spiced-apple-cider,sucrose,inactive,SUCROSE,,unii
+myrbetriq,mirabegron,active,MIRABEGRON,,unii
+myrbetriq,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+myrbetriq,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+myrbetriq,mannitol,inactive,MANNITOL,,unii
+myrbetriq,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+narcan,naloxone,active,NALOXONE HYDROCHLORIDE,Emergency treatment of opioid overdose,moiety
+narcan,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+narcan,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+narcan,water,inactive,WATER,,unii
+nasacort-allergy-24hr,triamcinolone-acetonide,active,TRIAMCINOLONE ACETONIDE,Allergy symptom reliever,unii
+nasacort-allergy-24hr,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+nasacort-allergy-24hr,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+nasacort-allergy-24hr,water,inactive,WATER,,unii
+nayzilam,midazolam,active,MIDAZOLAM,,unii
+nayzilam,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+nayzilam,water,inactive,WATER,,unii
+nayzilam,ethanol,inactive,ALCOHOL,,unii
+neurontin,gabapentin,active,GABAPENTIN,,unii
+neurontin,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+neurontin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+neurontin,water,inactive,WATER,,unii
+neurontin,glycerol,inactive,GLYCERIN,,unii
+neurontin,xylitol,inactive,XYLITOL,,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,salicylic-acid,active,SALICYLIC ACID,Acne treatment,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+neutrogena-oil-free-acne-wash-pink-grapefruit,glycerol,inactive,GLYCERIN,,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,water,inactive,WATER,,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,allura-red-ac,inactive,RED 40,,unii
+neutrogena-oil-free-acne-wash-pink-grapefruit,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+neutrogena-sheer-zinc-face-spf-50,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+neutrogena-sheer-zinc-face-spf-50,glycerol,inactive,GLYCERIN,,unii
+neutrogena-sheer-zinc-face-spf-50,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+neutrogena-sheer-zinc-face-spf-50,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+neutrogena-sheer-zinc-face-spf-50,water,inactive,WATER,,unii
+neutrogena-t-sal-shampoo,salicylic-acid,active,SALICYLIC ACID,"Anti-Dandruff, Anti-Seborrheic Dermatitis and Anti-Psoriasis",unii
+neutrogena-t-sal-shampoo,water,inactive,WATER,,unii
+neutrogena-t-sal-shampoo,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+neutrogena-t-sal-shampoo,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+neutrogena-t-sal-shampoo,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+neutrogena-t-sal-shampoo,panthenol,inactive,PANTHENOL,,unii
+neutrogena-ultra-sheer-spf-55,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM ANHYDROUS,,parent
+neutrogena-ultra-sheer-spf-55,water,inactive,WATER,,unii
+neutrogena-ultra-sheer-spf-55,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+neutrogena-ultra-sheer-spf-55,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+neutrogena-ultra-sheer-spf-55,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+nexium,esomeprazole,active,ESOMEPRAZOLE MAGNESIUM TRIHYDRATE,,moiety
+nexium,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+nexium,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+nexium,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+nexium,ethanol,inactive,ALCOHOL,,unii
+nexium,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+nexium,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+nexium,potassium-sorbate,inactive,POTASSIUM SORBATE,,unii
+nexium,water,inactive,WATER,,unii
+nexium,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+nexium-24hr,esomeprazole,active,ESOMEPRAZOLE MAGNESIUM TRIHYDRATE,Acid reducer,moiety
+nexium-24hr,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+nexium-24hr,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+nexium-24hr,sucrose,inactive,SUCROSE,,unii
+nicorette,nicotine,active,NICOTINE,Stop smoking aid,unii
+nicorette,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+nicorette,mannitol,inactive,MANNITOL,,unii
+nicorette,sodium-carbonate,inactive,SODIUM CARBONATE,,unii
+nicorette,sucralose,inactive,SUCRALOSE,,unii
+norvasc,amlodipine,active,AMLODIPINE BESYLATE,,moiety
+norvasc,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+norvasc,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+norvir,ritonavir,active,RITONAVIR,,unii
+norvir,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+norvir,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+norvir,ethanol,inactive,ALCOHOL,,unii
+norvir,water,inactive,WATER,,unii
+norvir,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+norvir,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+norvir,saccharin,inactive,SACCHARIN SODIUM,,parent
+norvir,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+nucynta,tapentadol,active,TAPENTADOL HYDROCHLORIDE,,moiety
+nucynta,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+nucynta,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+nucynta,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+nuts,oleic-acid,curated,,,curated
+nuts,linoleic-acid,curated,,,curated
+nuts,tocopherol,curated,,,curated
+nuts,magnesium,curated,,,curated
+nuts,copper,curated,,,curated
+nuts,selenium,curated,,,curated
+nuts,phytic-acid,curated,,,curated
+nuts,biotin,curated,,,curated
+nuvigil,armodafinil,active,ARMODAFINIL,,unii
+nuvigil,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+nuvigil,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+olay-complete-spf-15-sensitive,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+olay-complete-spf-15-sensitive,water,inactive,WATER,,unii
+olay-complete-spf-15-sensitive,glycerol,inactive,GLYCERIN,,unii
+olay-complete-spf-15-sensitive,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+orajel-4x-toothache-and-gum,benzocaine,active,BENZOCAINE,"Oral antiseptic, Oral pain reliever, Oral astringent",unii
+orajel-4x-toothache-and-gum,menthol,active,"MENTHOL, UNSPECIFIED FORM","Oral antiseptic, Oral pain reliever, Oral astringent",skeleton
+orajel-4x-toothache-and-gum,sorbic-acid,inactive,SORBIC ACID,,unii
+orajel-4x-toothache-and-gum,saccharin,inactive,SACCHARIN SODIUM,,parent
+orajel-4x-toothache-and-gum,water,inactive,WATER,,unii
+orajel-4x-toothache-and-gum,glycyrrhizin,inactive,AMMONIUM GLYCYRRHIZATE,,parent
+orajel-4x-toothache-and-gum,raspberry-ketone,inactive,RASPBERRY KETONE,,unii
+ozempic,semaglutide,active,SEMAGLUTIDE,,unii
+ozempic,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+ozempic,phenol,inactive,PHENOL,,unii
+ozempic,water,inactive,WATER,,unii
+ozempic,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+ozempic,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+panoxyl,salicylic-acid,active,SALICYLIC ACID,Acne medication,unii
+panoxyl,water,inactive,WATER,,unii
+panoxyl,ethylenediaminetetraacetic-acid,inactive,TETRASODIUM EDTA,,parent
+panoxyl,gluconic-acid,inactive,SODIUM GLUCONATE,,parent
+panoxyl,glycerol,inactive,GLYCERIN,,unii
+panoxyl,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+parodontax,glycerol,inactive,GLYCERIN,,unii
+parodontax,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+parodontax,saccharin,inactive,SACCHARIN SODIUM,,parent
+paxil,paroxetine,active,PAROXETINE HYDROCHLORIDE,,moiety
+paxil,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+paxil,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+paxlovid,ritonavir,active,RITONAVIR,,unii
+paxlovid,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+paxlovid,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+paxlovid,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+pepcid-complete,famotidine,active,FAMOTIDINE,Acid reducer,skeleton
+pepcid-complete,calcium-carbonate,active,CALCIUM CARBONATE,Antacid,unii
+pepcid-complete,magnesium-hydroxide,active,MAGNESIUM HYDROXIDE,Antacid,unii
+pepcid-complete,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+pepcid-complete,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+pepcid-complete,sucralose,inactive,SUCRALOSE,,unii
+pepsi-max,water,part,,,qid
+pepsi-max,phosphoric-acid,part,,,qid
+pepsi-max,caffeine,part,,,qid
+pepsodent-complete-care,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity toothpaste,unii
+pepsodent-complete-care,sorbitol,inactive,SORBITOL,,unii
+pepsodent-complete-care,water,inactive,WATER,,unii
+pepsodent-complete-care,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+pepsodent-complete-care,ethanol,inactive,ALCOHOL,,unii
+pepsodent-complete-care,saccharin,inactive,SACCHARIN SODIUM,,moiety
+pepto-bismol,bismuth-subsalicylate,active,BISMUTH SUBSALICYLATE,Upset stomach reliever and antidiarrheal,unii
+pepto-bismol,benzoic-acid,inactive,BENZOIC ACID,,unii
+pepto-bismol,sucralose,inactive,SUCRALOSE,,unii
+pepto-bismol,salicylic-acid,inactive,SALICYLIC ACID,,unii
+pepto-bismol,sorbic-acid,inactive,SORBIC ACID,,unii
+pepto-bismol,water,inactive,WATER,,unii
+pepto-bismol,methyl-cellulose,inactive,"METHYLCELLULOSE, UNSPECIFIED",,unii
+percocet,oxycodone,active,OXYCODONE HYDROCHLORIDE,,moiety
+percocet,acetaminophen,active,ACETAMINOPHEN,,unii
+percocet,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+percocet,stearic-acid,inactive,STEARIC ACID,,unii
+percocet,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+percocet,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+percocet,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+pfas,perfluorooctanoic-acid,class,,,class
+pfas,perfluorooctanesulfonic-acid,class,,,class
+pfas,perfluorononanoic-acid,class,,,class
+pfas,perfluorohexanesulfonic-acid,class,,,class
+phenergan,promethazine,active,PROMETHAZINE HYDROCHLORIDE,,moiety
+phenergan,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+phenergan,phenol,inactive,PHENOL,,unii
+phenergan,water,inactive,WATER,,unii
+phenergan,acetic-acid,inactive,ACETIC ACID,,unii
+phillips-milk-of-magnesia-wild-cherry,magnesium-hydroxide,active,MAGNESIUM HYDROXIDE,Saline laxative,unii
+phillips-milk-of-magnesia-wild-cherry,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+phillips-milk-of-magnesia-wild-cherry,glycerol,inactive,GLYCERIN,,unii
+phillips-milk-of-magnesia-wild-cherry,water,inactive,WATER,,unii
+phillips-milk-of-magnesia-wild-cherry,sodium-hypochlorite,inactive,SODIUM HYPOCHLORITE,,unii
+phillips-milk-of-magnesia-wild-cherry,sucrose,inactive,SUCROSE,,unii
+plan-b-one-step,levonorgestrel,active,LEVONORGESTREL,Emergency contraceptive,unii
+plan-b-one-step,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+plan-b-one-step,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+plan-b-one-step,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+plaquenil,hydroxychloroquine,active,hydroxychloroquine sulfate,,moiety
+plaquenil,dicalcium-phosphate,inactive,"Calcium Phosphate, Dibasic, Anhydrous",,unii
+plaquenil,magnesium-stearate,inactive,Magnesium Stearate,,unii
+plavix,clopidogrel,active,CLOPIDOGREL BISULFATE,,moiety
+plavix,mannitol,inactive,MANNITOL,,unii
+plavix,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+precedex,dexmedetomidine,active,DEXMEDETOMIDINE HYDROCHLORIDE,,moiety
+precedex,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+precedex,water,inactive,WATER,,unii
+pred-mild,prednisolone,active,PREDNISOLONE ACETATE,,moiety
+pred-mild,boric-acid,inactive,BORIC ACID,,unii
+pred-mild,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+pred-mild,water,inactive,WATER,,unii
+pred-mild,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+prevacid,sucrose,inactive,sucrose,,unii
+prevacid,silicon-dioxide,inactive,silicon dioxide,,unii
+prevacid,brilliant-blue-fcf,inactive,FD&C Blue No. 1,,unii
+prevacid,allura-red-ac,inactive,FD&C Red No. 40,,unii
+prevacid,phenylalanine,inactive,phenylalanine,,unii
+prevacid,lactose,inactive,lactose monohydrate,,alias
+prevacid,aspartame,inactive,aspartame,,unii
+prevacid,magnesium-stearate,inactive,magnesium stearate,,unii
+prevacid,citric-acid,inactive,citric acid monohydrate,,parent
+prevacid,mannitol,inactive,mannitol,,unii
+prilosec-otc,omeprazole,active,OMEPRAZOLE MAGNESIUM,Acid reducer,moiety
+prilosec-otc,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+prilosec-otc,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+prilosec-otc,saccharin,inactive,SACCHARIN SODIUM,,parent
+prilosec-otc,sucrose,inactive,SUCROSE,,unii
+pristiq,desvenlafaxine,active,DESVENLAFAXINE SUCCINATE,,moiety
+pristiq,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+pristiq,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+proactiv-benzoyl-peroxide-wash,benzoyl-peroxide,active,BENZOYL PEROXIDE,Acne treatment,unii
+proactiv-benzoyl-peroxide-wash,water,inactive,WATER,,unii
+proactiv-benzoyl-peroxide-wash,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+procardia-xl,nifedipine,active,NIFEDIPINE,,unii
+procardia-xl,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+procardia-xl,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+processed-snacks,monosodium-glutamate,curated,,,curated
+processed-snacks,sodium-chloride,curated,,,curated
+processed-snacks,maltodextrin,curated,,,curated
+processed-snacks,silicon-dioxide,curated,,,curated
+processed-snacks,allura-red-ac,curated,,,curated
+processed-snacks,propylene-glycol,curated,,,curated
+processed-snacks,acrylamide,curated,,,curated
+processed-snacks,sodium-benzoate,curated,,,curated
+processed-snacks,potassium-sorbate,curated,,,curated
+prograf,tacrolimus,active,TACROLIMUS,,unii
+prograf,ethanol,inactive,ALCOHOL,,unii
+prograf,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+proscar,finasteride,active,FINASTERIDE,,unii
+proscar,docusate,inactive,DOCUSATE SODIUM,,unii
+proscar,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+proscar,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+proscar,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+provigil,modafinil,active,MODAFINIL,,unii
+provigil,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+provigil,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+provigil,water,inactive,Water,,unii
+prozac,fluoxetine,active,Fluoxetine hydrochloride,,moiety
+prozac,sodium-lauryl-sulfate,inactive,Sodium lauryl sulfate,,unii
+prozac,brilliant-blue-fcf,inactive,FD&C Blue No. 1,,unii
+prozac,benzyl-alcohol,inactive,Benzyl Alcohol,,unii
+prozac,propionic-acid,inactive,Sodium Propionate,,parent
+prozac,carboxymethyl-cellulose,inactive,Carboxymethylcellulose,,unii
+prozac,sunset-yellow-fcf,inactive,FD&C Yellow No. 6,,unii
+purell-advanced-hand-sanitizer-foam,ethanol,active,ALCOHOL,Antimicrobial,unii
+purell-advanced-hand-sanitizer-foam,water,inactive,WATER,,unii
+purell-advanced-hand-sanitizer-foam,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+purell-advanced-hand-sanitizer-foam,glycerol,inactive,GLYCERIN,,unii
+qelbree,viloxazine,active,VILOXAZINE HYDROCHLORIDE,,moiety
+qelbree,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+qelbree,water,inactive,WATER,,unii
+qelbree,ammonia,inactive,AMMONIA,,unii
+qelbree,oleic-acid,inactive,OLEIC ACID,,unii
+qelbree,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+qelbree,ethanol,inactive,ALCOHOL,,unii
+qelbree,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+qelbree,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+qelbree,potassium-hydroxide,inactive,POTASSIUM HYDROXIDE,,unii
+qelbree,sucrose,inactive,SUCROSE,,unii
+qelbree,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+qelbree,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+quviviq,daridorexant,active,daridorexant,,unii
+quviviq,mannitol,inactive,Mannitol,,unii
+quviviq,water,inactive,WATER,,unii
+quviviq,silicon-dioxide,inactive,Silicon dioxide,,unii
+quviviq,magnesium-stearate,inactive,Magnesium stearate,,unii
+quviviq,glycerol,inactive,GLYCERIN,,unii
+raldesy,trazodone,active,TRAZODONE HYDROCHLORIDE,,moiety
+raldesy,glycerol,inactive,GLYCERIN,,unii
+raldesy,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+raldesy,sorbitol,inactive,SORBITOL,,unii
+raldesy,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+raldesy,sucralose,inactive,SUCRALOSE,,unii
+raldesy,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+raldesy,phosphoric-acid,inactive,PHOSPHORIC ACID,,unii
+raldesy,water,inactive,WATER,,unii
+red-meat,creatine,curated,,,curated
+red-meat,carnosine,curated,,,curated
+red-meat,taurine,curated,,,curated
+red-meat,cholesterol,curated,,,curated
+red-meat,vitamin-b12,curated,,,curated
+red-meat,iron,curated,,,curated
+red-meat,zinc,curated,,,curated
+red-meat,coenzyme-q10,curated,,,curated
+red-meat,palmitic-acid,curated,,,curated
+red-meat,stearic-acid,curated,,,curated
+red-meat,oleic-acid,curated,,,curated
+reglan,metoclopramide,active,METOCLOPRAMIDE HYDROCHLORIDE,,moiety
+reglan,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+reglan,stearic-acid,inactive,STEARIC ACID,,unii
+reglan,lactose,inactive,ANHYDROUS LACTOSE,,alias
+reglan,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+reglan,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+reglan,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+reglan,mannitol,inactive,MANNITOL,,unii
+remeron,mirtazapine,active,MIRTAZAPINE,,unii
+remeron,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+remeron,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+remeron,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+remeron,aspartame,inactive,ASPARTAME,,unii
+remeron,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+remeron,mannitol,inactive,MANNITOL,,unii
+remeron,sodium-bicarbonate,inactive,SODIUM BICARBONATE,,unii
+remeron,sucrose,inactive,SUCROSE,,unii
+restasis,ciclosporin,active,CYCLOSPORINE,,unii
+restasis,glycerol,inactive,GLYCERIN,,unii
+restasis,water,inactive,WATER,,unii
+restasis,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+restoril,temazepam,active,TEMAZEPAM,,unii
+restoril,ethanol,inactive,ALCOHOL,,unii
+restoril,ethyl-acetate,inactive,ETHYL ACETATE,,unii
+restoril,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+restoril,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+restoril,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+restoril,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+restoril,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+restoril,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+retin-a,tretinoin,active,TRETINOIN,,unii
+retin-a,stearic-acid,inactive,STEARIC ACID,,unii
+retin-a,sorbic-acid,inactive,SORBIC ACID,,unii
+retin-a,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+retin-a,water,inactive,WATER,,unii
+retin-a,ethanol,inactive,ALCOHOL,,unii
+retrovir,zidovudine,active,ZIDOVUDINE,,unii
+retrovir,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+retrovir,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+retrovir,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+retrovir,glycerol,inactive,GLYCERIN,,unii
+retrovir,sucrose,inactive,SUCROSE,,unii
+retrovir,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+retrovir,water,inactive,WATER,,unii
+rexulti,brexpiprazole,active,brexpiprazole,,unii
+rexulti,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+rexulti,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+ricola-max-honey-lemon,menthol,active,MENTHOL,"Cough suppressant, Oral anesthetic",skeleton
+ricola-max-honey-lemon,sucrose,inactive,SUCROSE,,unii
+ricola-max-honey-lemon,glycerol,inactive,GLYCERIN,,unii
+risperdal,risperidone,active,RISPERIDONE,,unii
+risperdal,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+risperdal,lactose,inactive,ANHYDROUS LACTOSE,,alias
+risperdal,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+risperdal,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+risperdal,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+risperdal,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+risperdal,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+risperdal,mannitol,inactive,MANNITOL,,unii
+risperdal,glycine,inactive,GLYCINE,,unii
+risperdal,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+risperdal,aspartame,inactive,ASPARTAME,,unii
+risperdal,tartaric-acid,inactive,TARTARIC ACID,,skeleton
+risperdal,benzoic-acid,inactive,BENZOIC ACID,,unii
+risperdal,water,inactive,WATER,,unii
+ritalin,methylphenidate,active,METHYLPHENIDATE HYDROCHLORIDE,,alias
+ritalin,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+ritalin,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+ritalin,sucrose,inactive,SUCROSE,,unii
+robaxin,methocarbamol,active,METHOCARBAMOL,,unii
+robaxin,water,inactive,WATER,,unii
+robaxin,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+robitussin-long-acting-coughgels,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+robitussin-long-acting-coughgels,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+robitussin-long-acting-coughgels,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+robitussin-long-acting-coughgels,glycerol,inactive,GLYCERIN,,unii
+robitussin-long-acting-coughgels,mannitol,inactive,MANNITOL,,unii
+robitussin-long-acting-coughgels,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+robitussin-long-acting-coughgels,water,inactive,WATER,,unii
+robitussin-long-acting-coughgels,sorbitol,inactive,SORBITOL,,unii
+rolaids-advanced-soft-chews,calcium-carbonate,active,CALCIUM CARBONATE,Antacid,unii
+rolaids-advanced-soft-chews,magnesium-hydroxide,active,MAGNESIUM HYDROXIDE,Antacid,unii
+rolaids-advanced-soft-chews,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+rolaids-advanced-soft-chews,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+rolaids-advanced-soft-chews,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+rolaids-advanced-soft-chews,glycerol,inactive,GLYCERIN,,unii
+rolaids-advanced-soft-chews,sucrose,inactive,SUCROSE,,unii
+rolaids-advanced-soft-chews,water,inactive,WATER,,unii
+romaine-lettuce,ascorbic-acid,part,,,qid
+romaine-lettuce,calcium,part,,,qid
+romaine-lettuce,iron,part,,,qid
+romaine-lettuce,phosphorus,part,,,qid
+romaine-lettuce,potassium,part,,,qid
+romaine-lettuce,water,part,,,qid
+romaine-lettuce,folic-acid,part,,,qid
+roxicodone,oxycodone,active,OXYCODONE HYDROCHLORIDE,,moiety
+roxicodone,stearic-acid,inactive,STEARIC ACID,,unii
+roxicodone,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+roxicodone,water,inactive,WATER,,unii
+safeguard-antibacterial-hand-wash,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+safeguard-antibacterial-hand-wash,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+safeguard-antibacterial-hand-wash,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+safeguard-antibacterial-hand-wash,water,inactive,WATER,,unii
+safeguard-antibacterial-hand-wash,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+safeguard-antibacterial-hand-wash,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+safeguard-antibacterial-hand-wash,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+safeguard-antibacterial-hand-wash,salicylic-acid,inactive,SALICYLIC ACID,,unii
+safeguard-antibacterial-hand-wash,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+salonpas,diclofenac,active,DICLOFENAC SODIUM,Arthritis pain reliever,moiety
+salonpas,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+salonpas,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+salonpas,water,inactive,WATER,,unii
+salonpas,ammonia,inactive,AMMONIA,,unii
+sandimmune,ciclosporin,active,CYCLOSPORINE,,unii
+sandimmune,ethanol,inactive,ALCOHOL,,unii
+sandimmune,glycerol,inactive,GLYCERIN,,unii
+sandimmune,sorbitol,inactive,SORBITOL,,unii
+selsun-blue-normal-to-oily,water,inactive,WATER,,unii
+selsun-blue-normal-to-oily,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+selsun-blue-normal-to-oily,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+selsun-blue-normal-to-oily,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+selsun-blue-normal-to-oily,menthol,inactive,MENTHOL,,skeleton
+sensodyne,potassium-nitrate,active,POTASSIUM NITRATE,Antihypersensitivity,unii
+sensodyne,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+sensodyne,water,inactive,WATER,,unii
+sensodyne,sorbitol,inactive,SORBITOL,,unii
+sensodyne,glycerol,inactive,GLYCERIN,,unii
+sensodyne,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+sensodyne,saccharin,inactive,SACCHARIN SODIUM,,parent
+sensodyne,sucralose,inactive,SUCRALOSE,,unii
+sensodyne-pronamel-intensive-enamel-repair,potassium-nitrate,active,POTASSIUM NITRATE,Antihypersensitivity,unii
+sensodyne-pronamel-intensive-enamel-repair,sodium-fluoride,active,SODIUM FLUORIDE,Anticavity,unii
+sensodyne-pronamel-intensive-enamel-repair,water,inactive,WATER,,unii
+sensodyne-pronamel-intensive-enamel-repair,sorbitol,inactive,SORBITOL,,unii
+sensodyne-pronamel-intensive-enamel-repair,glycerol,inactive,GLYCERIN,,unii
+sensodyne-pronamel-intensive-enamel-repair,lactic-acid,inactive,SODIUM LACTATE,,parent
+sensodyne-pronamel-intensive-enamel-repair,saccharin,inactive,SACCHARIN SODIUM,,parent
+sensodyne-pronamel-intensive-enamel-repair,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+seroquel,quetiapine,active,QUETIAPINE FUMARATE,,moiety
+seroquel,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+seroquel,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+seroquel,water,inactive,WATER,,unii
+shellfish,copper,curated,,,curated
+shellfish,zinc,curated,,,curated
+shellfish,taurine,curated,,,curated
+shellfish,vitamin-b12,curated,,,curated
+shellfish,iodine,curated,,,curated
+shellfish,glycine,curated,,,curated
+shellfish,cholesterol,curated,,,curated
+simply-saline-wound-care,water,inactive,WATER,,unii
+simply-saline-wound-care,sodium-bicarbonate,inactive,SODIUM BICARBONATE,,unii
+simply-saline-wound-care,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+singulair,montelukast,active,MONTELUKAST SODIUM,,moiety
+singulair,mannitol,inactive,MANNITOL,,unii
+singulair,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+singulair,aspartame,inactive,ASPARTAME,,unii
+singulair,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+smarties,shellac,part,,,qid
+smarties,maltodextrin,part,,,qid
+smarties,curcumin,part,,,qid
+smarties,carmine,part,,,qid
+smarties,beta-carotene,part,,,qid
+soft-drinks,carbon-dioxide,curated,,,curated
+soft-drinks,citric-acid,curated,,,curated
+soft-drinks,phosphoric-acid,curated,,,curated
+soft-drinks,sucrose,curated,,,curated
+soft-drinks,caffeine,curated,,,curated
+soft-drinks,sodium-benzoate,curated,,,curated
+soft-drinks,allura-red-ac,curated,,,curated
+soft-drinks,aspartame,curated,,,curated
+soft-drinks,water,curated,,,curated
+softsoap-antibacterial-hand-soap,water,inactive,WATER,,unii
+softsoap-antibacterial-hand-soap,glycerol,inactive,GLYCERIN,,unii
+softsoap-antibacterial-hand-soap,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+softsoap-antibacterial-hand-soap,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+softsoap-antibacterial-hand-soap,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+softsoap-antibacterial-hand-soap,ethylenediaminetetraacetic-acid,inactive,EDETATE SODIUM,,parent
+softsoap-antibacterial-hand-soap,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+softsoap-antibacterial-hand-soap,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+solarcaine-burn-relief,lidocaine,active,LIDOCAINE HYDROCHLORIDE,External Analgesic,moiety
+solarcaine-burn-relief,water,inactive,WATER,,unii
+solarcaine-burn-relief,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+solarcaine-burn-relief,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+soltamox,tamoxifen,active,TAMOXIFEN CITRATE,,moiety
+soltamox,ethanol,inactive,ALCOHOL,,unii
+soltamox,glycerol,inactive,GLYCERIN,,unii
+soltamox,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+soltamox,sorbitol,inactive,SORBITOL,,unii
+soltamox,water,inactive,WATER,,unii
+sominex,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Nighttime sleep-aid,moiety
+sominex,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+sominex,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+sominex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+sominex,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+sominex,stearic-acid,inactive,STEARIC ACID,,unii
+soy-sauce,monosodium-glutamate,curated,,,curated
+soy-sauce,sodium-chloride,curated,,,curated
+soy-sauce,lactic-acid,curated,,,curated
+soy-sauce,ethanol,curated,,,curated
+soy-sauce,histamine,curated,,,curated
+soy-sauce,tyramine,curated,,,curated
+spicy-dinner,capsaicin,world,,,world
+spicy-dinner,piperine,world,,,world
+spicy-dinner,gingerol,world,,,world
+spicy-dinner,shogaol,world,,,world
+spicy-dinner,allicin,world,,,world
+spicy-dinner,allyl-isothiocyanate,world,,,world
+spirits,ethanol,curated,,,curated
+spirits,isoamyl-alcohol,curated,,,curated
+spirits,acetaldehyde,curated,,,curated
+spirits,ethyl-acetate,curated,,,curated
+spirits,methanol,curated,,,curated
+spirits,furfural,curated,,,curated
+spirits,vanillin,curated,,,curated
+spirits,guaiacol,curated,,,curated
+spirits,maltol,curated,,,curated
+spravato,esketamine,active,ESKETAMINE HYDROCHLORIDE,,moiety
+spravato,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+spravato,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+spravato,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+stridex-maximum-pads,salicylic-acid,active,SALICYLIC ACID,Acne medication,unii
+stridex-maximum-pads,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+stridex-maximum-pads,menthol,inactive,"MENTHOL, UNSPECIFIED FORM",,skeleton
+stridex-maximum-pads,water,inactive,WATER,,unii
+stridex-maximum-pads,ethylenediaminetetraacetic-acid,inactive,EDETATE SODIUM,,parent
+suboxone,buprenorphine,active,BUPRENORPHINE HYDROCHLORIDE,,moiety
+suboxone,naloxone,active,NALOXONE HYDROCHLORIDE,,moiety
+suboxone,maltitol,inactive,MALTITOL,,unii
+suboxone,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+suboxone,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+sudafed-pe-head-congestion-plus-pain,ibuprofen,active,IBUPROFEN,Pain reliever/fever reducer,unii
+sudafed-pe-head-congestion-plus-pain,phenylephrine,active,PHENYLEPHRINE HYDROCHLORIDE,Nasal decongestant,moiety
+sudafed-pe-head-congestion-plus-pain,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+sudafed-pe-head-congestion-plus-pain,stearic-acid,inactive,STEARIC ACID,,unii
+sudafed-pe-head-congestion-plus-pain,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+sudafed-pe-head-congestion-plus-pain,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+sudafed-sinus-congestion-plus-cold-severe,pseudoephedrine,active,PSEUDOEPHEDRINE HYDROCHLORIDE,Nasal decongestant,moiety
+sudafed-sinus-congestion-plus-cold-severe,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+sudafed-sinus-congestion-plus-cold-severe,stearic-acid,inactive,ZINC STEARATE,,parent
+sugar-free-gum,aspartame,curated,,,curated
+sugar-free-gum,erythritol,curated,,,curated
+sugar-free-gum,sorbitol,curated,,,curated
+sugar-free-gum,xylitol,curated,,,curated
+sun-bum-face-stick-spf-30,ascorbic-acid,inactive,ASCORBIC ACID,,unii
+sun-bum-face-stick-spf-30,water,inactive,WATER,,unii
+sun-bum-face-stick-spf-30,saccharin,inactive,SACCHARIN,,unii
+sun-bum-face-stick-spf-30,butylated-hydroxytoluene,inactive,BHT,,unii
+sun-bum-face-stick-spf-30,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+sun-bum-face-stick-spf-30,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+sunlenca,lenacapavir,active,LENACAPAVIR SODIUM,,moiety
+sunlenca,mannitol,inactive,MANNITOL,,unii
+sunlenca,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+sunlenca,water,inactive,WATER,,unii
+sunscreen-summer-skin,zinc-oxide,world,,,world
+sunscreen-summer-skin,melanin,world,,,world
+sunscreen-summer-skin,cholecalciferol,world,,,world
+sunscreen-summer-skin,retinol,world,,,world
+sunscreen-summer-skin,salicylic-acid,world,,,world
+sunscreen-summer-skin,hyaluronic-acid,world,,,world
+synthroid,levothyroxine,active,LEVOTHYROXINE SODIUM,,moiety
+synthroid,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+synthroid,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+synthroid,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+synthroid,sucrose,inactive,SUCROSE,,unii
+synthroid,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+synthroid,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+systane,propylene-glycol,active,Propylene Glycol,Lubricant,unii
+systane,boric-acid,inactive,Boric Acid,,unii
+systane,ethylenediaminetetraacetic-acid,inactive,Edetate Disodium,,parent
+systane,potassium-chloride,inactive,Potassium Chloride,,unii
+systane,sodium-chloride,inactive,Sodium Chloride,,unii
+systane,sorbitol,inactive,Sorbitol,,unii
+systane,water,inactive,Water,,unii
+systane,sodium-hydroxide,inactive,Sodium Hydroxide,,unii
+table-sugar,sucrose,curated,,,curated
+table-sugar,glucose,curated,,,curated
+table-sugar,fructose,curated,,,curated
+tamiflu,oseltamivir,active,OSELTAMIVIR PHOSPHATE,,alias
+tamiflu,sorbitol,inactive,SORBITOL,,unii
+tamiflu,citric-acid,inactive,MONOSODIUM CITRATE,,parent
+tamiflu,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+tamiflu,saccharin,inactive,SACCHARIN SODIUM,,parent
+tea,caffeine,curated,,,curated
+tea,theophylline,curated,,,curated
+tea,theobromine,curated,,,curated
+tea,theanine,curated,,,curated
+tea,epigallocatechin-gallate,curated,,,curated
+tea,catechin,curated,,,curated
+tea,gallic-acid,curated,,,curated
+tea,tannic-acid,curated,,,curated
+tea,quercetin,curated,,,curated
+tea,water,curated,,,curated
+tea,manganese,curated,,,curated
+tegretol,carbamazepine,active,CARBAMAZEPINE,,unii
+tegretol,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+tegretol,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+tegretol,potassium-sorbate,inactive,POTASSIUM SORBATE,,unii
+tegretol,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+tegretol,water,inactive,WATER,,unii
+tegretol,sorbitol,inactive,SORBITOL,,unii
+tegretol,sucrose,inactive,SUCROSE,,unii
+tegretol,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+tegretol,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+tegretol,glycerol,inactive,GLYCERIN,,unii
+tegretol,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+tegretol,stearic-acid,inactive,STEARIC ACID,,unii
+tegretol,mannitol,inactive,MANNITOL,,unii
+tegretol,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+theraflu-nasal-mist,oxymetazoline,active,OXYMETAZOLINE HYDROCHLORIDE,Nasal decongestant,moiety
+theraflu-nasal-mist,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+theraflu-nasal-mist,water,inactive,WATER,,unii
+theraflu-nasal-mist,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+theraflu-nasal-mist,disodium-phosphate,inactive,"SODIUM PHOSPHATE, DIBASIC, ANHYDROUS",,unii
+theraflu-nasal-mist,sorbitol,inactive,SORBITOL,,unii
+thinkbaby-spf-30-stick,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
+thinkbaby-spf-30-stick,squalene,inactive,SQUALENE,,unii
+thinkbaby-spf-30-stick,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+tiger-balm,camphor,active,Camphor (Synthetic),Topical Analgesic,skeleton
+tiger-balm,menthol,active,"Menthol, Unspecified Form",Topical Analgesic,skeleton
+tiger-balm,glycerol,inactive,Glycerin,,unii
+tiger-balm,propylene-glycol,inactive,Propylene Glycol,,unii
+tiger-balm,sorbitol,inactive,Sorbitol,,unii
+tiger-balm,water,inactive,Water,,unii
+toms-of-maine-kids-silly-strawberry,glycerol,inactive,GLYCERIN,,unii
+toms-of-maine-kids-silly-strawberry,water,inactive,WATER,,unii
+toms-of-maine-kids-silly-strawberry,calcium-carbonate,inactive,CALCIUM CARBONATE,,unii
+toms-of-maine-kids-silly-strawberry,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+tonic-water,quinine,curated,,,curated
+tonic-water,carbon-dioxide,curated,,,curated
+tonic-water,citric-acid,curated,,,curated
+tonic-water,sucrose,curated,,,curated
+tonic-water,sodium-benzoate,curated,,,curated
+topamax,topiramate,active,TOPIRAMATE,,unii
+topamax,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+topamax,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+topamax,water,inactive,WATER,,unii
+topamax,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+trexall,methotrexate,active,METHOTREXATE SODIUM,,moiety
+trexall,lactose,inactive,ANHYDROUS LACTOSE,,alias
+trexall,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+trexall,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+trexall,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+trileptal,oxcarbazepine,active,OXCARBAZEPINE,,unii
+trileptal,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+trileptal,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+trileptal,water,inactive,WATER,,unii
+trileptal,saccharin,inactive,SACCHARIN SODIUM,,parent
+trileptal,ascorbic-acid,inactive,ASCORBIC ACID,,unii
+trileptal,carboxymethyl-cellulose,inactive,CARBOXYMETHYLCELLULOSE,,unii
+trileptal,sorbitol,inactive,SORBITOL,,unii
+trileptal,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+trileptal,sorbic-acid,inactive,SORBIC ACID,,unii
+trintellix,vortioxetine,active,VORTIOXETINE HYDROBROMIDE,,moiety
+trintellix,mannitol,inactive,MANNITOL,,unii
+trintellix,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+tucks-triple-relief,glycerol,active,GLYCERIN,Protectant,unii
+tucks-triple-relief,phenylephrine,active,PHENYLEPHRINE HYDROCHLORIDE,Vasoconstrictor,moiety
+tucks-triple-relief,water,inactive,WATER,,unii
+tucks-triple-relief,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+tums,calcium-carbonate,active,CALCIUM CARBONATE,Antacid,unii
+tums,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+tums,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+tums,tartrazine,inactive,FD&C YELLOW NO. 5,,unii
+tums,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+tums,sucrose,inactive,SUCROSE,,unii
+tylenol-cold-plus-flu-severe,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+tylenol-cold-plus-flu-severe,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+tylenol-cold-plus-flu-severe,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+tylenol-cold-plus-flu-severe,phenylephrine,active,PHENYLEPHRINE HYDROCHLORIDE,Nasal decongestant,moiety
+tylenol-cold-plus-flu-severe,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+tylenol-cold-plus-flu-severe,sucralose,inactive,SUCRALOSE,,unii
+tylenol-extra-strength,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+tylenol-extra-strength,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+tylenol-extra-strength,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+tylenol-extra-strength,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+tylenol-extra-strength,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+tylenol-pm,acetaminophen,active,ACETAMINOPHEN,Pain reliever,unii
+tylenol-pm,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Nighttime sleep aid,moiety
+tylenol-pm,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+tylenol-pm,stearic-acid,inactive,STEARIC ACID,,unii
+unisom-sleepgels,diphenhydramine,active,DIPHENHYDRAMINE HYDROCHLORIDE,Nighttime sleep-aid,moiety
+unisom-sleepgels,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+unisom-sleepgels,glycerol,inactive,GLYCERIN,,unii
+unisom-sleepgels,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+unisom-sleepgels,sorbitol,inactive,SORBITOL,,unii
+unisom-sleepgels,water,inactive,WATER,,unii
+unisom-sleeptabs,doxylamine,active,DOXYLAMINE SUCCINATE,Nighttime sleep-aid,moiety
+unisom-sleeptabs,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+unisom-sleeptabs,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+unithroid,levothyroxine,active,levothyroxine sodium,,moiety
+unithroid,silicon-dioxide,inactive,silicon dioxide,,unii
+unithroid,lactose,inactive,"Lactose, Unspecified Form",,alias
+unithroid,magnesium-stearate,inactive,magnesium stearate,,unii
+unithroid,sunset-yellow-fcf,inactive,FD&C Yellow No. 6,,unii
+unithroid,brilliant-blue-fcf,inactive,FD&C Blue No. 1,,unii
+unithroid,allura-red-ac,inactive,FD&C Red No. 40,,unii
+valio-valsa-milk-salt,potassium,part,,,qid
+valio-valsa-milk-salt,magnesium,part,,,qid
+valio-valsa-milk-salt,calcium,part,,,qid
+valio-valsa-milk-salt,sodium,part,,,qid
+valium,diazepam,active,DIAZEPAM,,unii
+valium,lactose,inactive,ANHYDROUS LACTOSE,,alias
+valium,stearic-acid,inactive,CALCIUM STEARATE,,parent
+valium,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+valium,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+valtrex,aciclovir,active,VALACYCLOVIR HYDROCHLORIDE,,moiety
+valtrex,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+valtrex,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+vazalore,aspirin,active,ASPIRIN,Non steroidal Anti inflammatory Drug,unii
+vazalore,potassium-chloride,inactive,POTASSIUM CHLORIDE,,unii
+vazalore,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+vazalore,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+vazalore,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+vazalore,oleic-acid,inactive,OLEIC ACID,,unii
+vegeta,monosodium-glutamate,part,,,qid
+vegeta,disodium-inosinate,part,,,qid
+vegeta,riboflavin,part,,,qid
+veklury,remdesivir,active,REMDESIVIR,,unii
+veklury,water,inactive,WATER,,unii
+veklury,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+viagra,sildenafil,active,SILDENAFIL CITRATE,,moiety
+viagra,dicalcium-phosphate,inactive,ANHYDROUS DIBASIC CALCIUM PHOSPHATE,,unii
+viagra,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+viagra,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,phenylephrine,active,PHENYLEPHRINE HYDROCHLORIDE,Nasal decongestant,moiety
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,doxylamine,active,DOXYLAMINE SUCCINATE,Antihistamine,moiety
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,glycerol,inactive,GLYCERIN,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,water,inactive,WATER,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,saccharin,inactive,SACCHARIN SODIUM,,parent
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,sorbitol,inactive,SORBITOL,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,sucralose,inactive,SUCRALOSE,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+vicks-dayquil-and-nyquil-kids-honey-cold-and-cough,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+vicks-dayquil-severe-cold-and-flu,phenylephrine,active,PHENYLEPHRINE HYDROCHLORIDE,Nasal decongestant,moiety
+vicks-dayquil-severe-cold-and-flu,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+vicks-dayquil-severe-cold-and-flu,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+vicks-dayquil-severe-cold-and-flu,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+vicks-dayquil-severe-cold-and-flu,mannitol,inactive,MANNITOL,,unii
+vicks-dayquil-severe-cold-and-flu,glycerol,inactive,GLYCERIN,,unii
+vicks-dayquil-severe-cold-and-flu,ascorbic-acid,inactive,ASCORBIC ACID,,unii
+vicks-dayquil-severe-cold-and-flu,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+vicks-dayquil-severe-cold-and-flu,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+vicks-dayquil-severe-cold-and-flu,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+vicks-dayquil-severe-cold-and-flu,water,inactive,WATER,,unii
+vicks-dayquil-severe-cold-and-flu,sorbitol,inactive,SORBITOL,,unii
+vicks-nyquil-intense-flu-liquicaps,dextromethorphan,active,DEXTROMETHORPHAN HYDROBROMIDE,Cough suppressant,moiety
+vicks-nyquil-intense-flu-liquicaps,doxylamine,active,DOXYLAMINE SUCCINATE,Antihistamine,moiety
+vicks-nyquil-intense-flu-liquicaps,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+vicks-nyquil-intense-flu-liquicaps,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+vicks-nyquil-intense-flu-liquicaps,glycerol,inactive,GLYCERIN,,unii
+vicks-nyquil-intense-flu-liquicaps,water,inactive,WATER,,unii
+vicks-nyquil-intense-flu-liquicaps,sorbitol,inactive,SORBITOL,,unii
+vicks-nyquil-intense-flu-liquicaps,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+vicks-nyquil-intense-flu-liquicaps,mannitol,inactive,MANNITOL,,unii
+vicks-sinex-severe-pain-mucus-and-chest,acetaminophen,active,ACETAMINOPHEN,Pain reliever/fever reducer,unii
+vicks-sinex-severe-pain-mucus-and-chest,guaifenesin,active,GUAIFENESIN,Expectorant,unii
+vicks-sinex-severe-pain-mucus-and-chest,glycerol,inactive,GLYCERIN,,unii
+vicks-sinex-severe-pain-mucus-and-chest,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+vicks-sinex-severe-pain-mucus-and-chest,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+vicks-sinex-severe-pain-mucus-and-chest,mannitol,inactive,MANNITOL,,unii
+vicks-sinex-severe-pain-mucus-and-chest,sorbitol,inactive,SORBITOL,,unii
+vicks-sinex-severe-pain-mucus-and-chest,water,inactive,WATER,,unii
+vicks-vapocool,menthol,active,MENTHOL,Oral anesthetic,skeleton
+vicks-vapocool,sucrose,inactive,SUCROSE,,unii
+vicks-vapocool,potassium-sorbate,inactive,POTASSIUM SORBATE,,unii
+vicks-vapocool,citric-acid,inactive,CITRIC ACID,,parent
+vicks-vapocool,glycerol,inactive,GLYCERIN,,unii
+vicks-vapocool,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+vicks-vapocool,water,inactive,WATER,,unii
+vicks-vaporub,camphor,active,CAMPHOR (SYNTHETIC),Cough suppressant & topical analgesic,skeleton
+vicks-vaporub,menthol,active,MENTHOL,Cough suppressant & topical analgesic,skeleton
+vicks-vaporub,thymol,inactive,THYMOL,,unii
+victoza,liraglutide,active,LIRAGLUTIDE,,unii
+victoza,phenol,inactive,PHENOL,,unii
+victoza,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+victoza,water,inactive,WATER,,unii
+viibryd,vilazodone,active,VILAZODONE HYDROCHLORIDE,,moiety
+viibryd,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+viibryd,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+viibryd,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+viibryd,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+viibryd,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+viibryd,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+visine-red-eye-total-comfort,boric-acid,inactive,BORIC ACID,,unii
+visine-red-eye-total-comfort,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+visine-red-eye-total-comfort,glycerol,inactive,GLYCERIN,,unii
+visine-red-eye-total-comfort,water,inactive,WATER,,unii
+visine-red-eye-total-comfort,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+vivitrol,naltrexone,active,naltrexone,,unii
+vivitrol,sodium-chloride,inactive,sodium chloride,,unii
+vivitrol,water,inactive,water,,unii
+vivitrol,sodium-hydroxide,inactive,sodium hydroxide,,unii
+voltaren-arthritis-pain,diclofenac,active,DICLOFENAC SODIUM,Arthritis pain reliever,moiety
+voltaren-arthritis-pain,ammonia,inactive,AMMONIA,,unii
+voltaren-arthritis-pain,isopropyl-alcohol,inactive,ISOPROPYL ALCOHOL,,unii
+voltaren-arthritis-pain,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+voltaren-arthritis-pain,water,inactive,WATER,,unii
+vraylar,cariprazine,active,CARIPRAZINE,,unii
+vraylar,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+vraylar,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+vraylar,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+vusion,miconazole,active,MICONAZOLE NITRATE,,moiety
+vusion,zinc-oxide,active,ZINC OXIDE,,unii
+vusion,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+vyvanse,lisdexamfetamine,active,LISDEXAMFETAMINE DIMESYLATE,,moiety
+vyvanse,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+vyvanse,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+vyvanse,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+vyvanse,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+vyvanse,mannitol,inactive,MANNITOL,,unii
+vyvanse,sucralose,inactive,SUCRALOSE,,unii
+wegovy,semaglutide,active,SEMAGLUTIDE,,unii
+wegovy,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+wegovy,water,inactive,WATER,,unii
+wegovy,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+wellbutrin-sr,bupropion,active,BUPROPION HYDROCHLORIDE,,moiety
+wellbutrin-sr,cysteine,inactive,CYSTEINE HYDROCHLORIDE,,parent
+wellbutrin-sr,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+wellbutrin-sr,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+wellbutrin-sr,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+wet-ones,water,inactive,WATER,,unii
+wet-ones,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+wet-ones,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+wet-ones,potassium-sorbate,inactive,POTASSIUM SORBATE,,unii
+wet-ones,ethanol,inactive,ALCOHOL,,unii
+whipped-cream,nitrous-oxide,curated,,,curated
+whipped-cream,cholesterol,curated,,,curated
+whipped-cream,casein,curated,,,curated
+whipped-cream,sucrose,curated,,,curated
+whipped-cream,vanillin,curated,,,curated
+wine,ethanol,curated,,,curated
+wine,resveratrol,curated,,,curated
+wine,tannic-acid,curated,,,curated
+wine,tartaric-acid,curated,,,curated
+wine,malic-acid,curated,,,curated
+wine,cyanidin,curated,,,curated
+wine,quercetin,curated,,,curated
+wine,catechin,curated,,,curated
+wine,gallic-acid,curated,,,curated
+wine,succinic-acid,curated,,,curated
+wine,glycerol,curated,,,curated
+wine,acetic-acid,curated,,,curated
+wine,isoamyl-alcohol,curated,,,curated
+wine,potassium-bitartrate,curated,,,curated
+wine,sodium-metabisulfite,curated,,,curated
+wine,water,curated,,,curated
+wine,sulfur-dioxide,curated,,,curated
+wine,acetaldehyde,curated,,,curated
+wine,histamine,curated,,,curated
+wine,tyramine,curated,,,curated
+wine,methanol,curated,,,curated
+womens-rogaine-foam,butane,inactive,BUTANE,,unii
+womens-rogaine-foam,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+womens-rogaine-foam,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+womens-rogaine-foam,glycerol,inactive,GLYCERIN,,unii
+womens-rogaine-foam,propane,inactive,PROPANE,,unii
+womens-rogaine-foam,water,inactive,WATER,,unii
+womens-rogaine-foam,ethanol,inactive,ALCOHOL,,unii
+xalatan,disodium-phosphate,inactive,"SODIUM PHOSPHATE, DIBASIC, ANHYDROUS",,unii
+xalatan,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+xalatan,water,inactive,WATER,,unii
+xanax,alprazolam,active,ALPRAZOLAM,,unii
+xanax,docusate,inactive,DOCUSATE SODIUM,,unii
+xanax,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+xanax,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+xanax,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+xanax,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+xanax,sunset-yellow-fcf,inactive,FD&C YELLOW NO. 6,,unii
+xarelto,rivaroxaban,active,RIVAROXABAN,,unii
+xarelto,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+xarelto,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+xarelto,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+xarelto,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+xarelto,mannitol,inactive,MANNITOL,,unii
+xarelto,sodium-benzoate,inactive,SODIUM BENZOATE,,unii
+xarelto,sucralose,inactive,SUCRALOSE,,unii
+xifaxan,rifaximin,active,RIFAXIMIN,,unii
+xifaxan,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+xifaxan,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+xifaxan,propylene-glycol,inactive,PROPYLENE GLYCOL,,unii
+xylocaine,lidocaine,active,LIDOCAINE HYDROCHLORIDE,,moiety
+xylocaine,epinephrine,active,EPINEPHRINE BITARTRATE,,moiety
+xylocaine,sodium-chloride,inactive,SODIUM CHLORIDE,,unii
+xylocaine,ethylenediaminetetraacetic-acid,inactive,EDETATE DISODIUM,,parent
+xylocaine,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+xylocaine,water,inactive,WATER,,unii
+xyzal-allergy-24hr,levocetirizine,active,LEVOCETIRIZINE DIHYDROCHLORIDE,Antihistamine,moiety
+xyzal-allergy-24hr,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+xyzal-allergy-24hr,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+xyzal-allergy-24hr,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+your-workout,adenosine-triphosphate,world,,,world
+your-workout,creatine,world,,,world
+your-workout,lactic-acid,world,,,world
+your-workout,beta-hydroxybutyric-acid,world,,,world
+your-workout,epinephrine,world,,,world
+your-workout,carnitine,world,,,world
+zaditor,ketotifen,active,Ketotifen Fumarate,Antihistamine,moiety
+zaditor,glycerol,inactive,Glycerin,,unii
+zaditor,sodium-hydroxide,inactive,Sodium Hydroxide,,unii
+zaditor,water,inactive,Water,,unii
+zanaflex,tizanidine,active,TIZANIDINE HYDROCHLORIDE,,moiety
+zanaflex,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+zanaflex,stearic-acid,inactive,STEARIC ACID,,unii
+zanaflex,lactose,inactive,ANHYDROUS LACTOSE,,alias
+zegerid-otc,omeprazole,active,Omeprazole,Acid reducer,unii
+zegerid-otc,sodium-bicarbonate,active,Sodium Bicarbonate,Allows absorption of this omeprazole product,unii
+zegerid-otc,brilliant-blue-fcf,inactive,Fd&C Blue No. 1,,unii
+zegerid-otc,allura-red-ac,inactive,Fd&C Red No. 40,,unii
+zegerid-otc,sodium-lauryl-sulfate,inactive,Sodium Lauryl Sulfate,,unii
+zepbound,sodium-chloride,inactive,Sodium Chloride,,unii
+zepbound,sodium-hydroxide,inactive,Sodium Hydroxide,,unii
+zepbound,water,inactive,Water,,unii
+zepbound,benzyl-alcohol,inactive,Benzyl Alcohol,,unii
+zepbound,glycerol,inactive,Glycerin,,unii
+zepbound,phenol,inactive,Phenol,,unii
+zestril,lisinopril,active,LISINOPRIL,,moiety
+zestril,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zestril,mannitol,inactive,MANNITOL,,unii
+zetia,ezetimibe,active,EZETIMIBE,,unii
+zetia,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+zetia,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zetia,sodium-lauryl-sulfate,inactive,SODIUM LAURYL SULFATE,,unii
+zicam,mannitol,inactive,MANNITOL,,unii
+zicam,stearic-acid,inactive,STEARIC ACID,,unii
+zicam,glycyrrhizin,inactive,AMMONIUM GLYCYRRHIZATE,,parent
+zicam,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zicam,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+zicam,sucralose,inactive,SUCRALOSE,,unii
+zithromax,azithromycin,active,AZITHROMYCIN DIHYDRATE,,moiety
+zithromax,citric-acid,inactive,ANHYDROUS CITRIC ACID,,unii
+zithromax,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
+zocor,simvastatin,active,SIMVASTATIN,,unii
+zocor,ascorbic-acid,inactive,ASCORBIC ACID,,unii
+zocor,citric-acid,inactive,CITRIC ACID MONOHYDRATE,,parent
+zocor,lactose,inactive,"LACTOSE, UNSPECIFIED FORM",,alias
+zocor,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zoloft,sertraline,active,SERTRALINE HYDROCHLORIDE,,moiety
+zoloft,brilliant-blue-fcf,inactive,FD&C BLUE NO. 1,,unii
+zoloft,allura-red-ac,inactive,FD&C RED NO. 40,,unii
+zoloft,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zoloft,aluminium-oxide,inactive,ALUMINUM OXIDE,,unii
+zoloft,glycerol,inactive,GLYCERIN,,unii
+zoloft,ethanol,inactive,ALCOHOL,,unii
+zoloft,menthol,inactive,"MENTHOL, UNSPECIFIED FORM",,skeleton
+zoloft,butylated-hydroxytoluene,inactive,BUTYLATED HYDROXYTOLUENE,,unii
+zonalon,doxepin,active,DOXEPIN HYDROCHLORIDE,,skeleton
+zonalon,sorbitol,inactive,SORBITOL,,unii
+zonalon,benzyl-alcohol,inactive,BENZYL ALCOHOL,,unii
+zonalon,water,inactive,WATER,,unii
+zovirax,aciclovir,active,acyclovir,,unii
+zovirax,sodium-lauryl-sulfate,inactive,Sodium lauryl sulfate,,unii
+zovirax,water,inactive,Water,,unii
+zovirax,propylene-glycol,inactive,Propylene glycol,,unii
+zyloprim,allopurinol,active,allopurinol,,skeleton
+zyloprim,lactose,inactive,lactose,,alias
+zyloprim,magnesium-stearate,inactive,magnesium stearate,,unii
+zyloprim,sunset-yellow-fcf,inactive,FD&C Yellow No. 6,,unii
+zyprexa,olanzapine,active,Olanzapine,,unii
+zyprexa,lactose,inactive,"Lactose, Unspecified Form",,alias
+zyprexa,magnesium-stearate,inactive,Magnesium stearate,,unii
+zyprexa,mannitol,inactive,Mannitol,,unii
+zyprexa,aspartame,inactive,Aspartame,,unii
+zyprexa,tartaric-acid,inactive,Tartaric acid,,skeleton
+zyprexa,sodium-hydroxide,inactive,Sodium hydroxide,,unii
+zyrtec,cetirizine,active,CETIRIZINE HYDROCHLORIDE,Antihistamine,moiety
+zyrtec,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zyrtec,mannitol,inactive,MANNITOL,,unii
+zyrtec,sucralose,inactive,SUCRALOSE,,unii
+zyrtec,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+zyrtec-allergy,cetirizine,active,CETIRIZINE HYDROCHLORIDE,Antihistamine,moiety
+zyrtec-allergy,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+zyrtec-allergy,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+zyrtec-allergy,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zyrtec-d,cetirizine,active,CETIRIZINE HYDROCHLORIDE,Antihistamine,moiety
+zyrtec-d,pseudoephedrine,active,PSEUDOEPHEDRINE HYDROCHLORIDE,Nasal decongestant,moiety
+zyrtec-d,silicon-dioxide,inactive,SILICON DIOXIDE,,unii
+zyrtec-d,lactose,inactive,LACTOSE MONOHYDRATE,,alias
+zyrtec-d,magnesium-stearate,inactive,MAGNESIUM STEARATE,,unii
+zyvox,linezolid,active,LINEZOLID,,unii
+zyvox,citric-acid,inactive,TRISODIUM CITRATE DIHYDRATE,,parent
+zyvox,sodium-hydroxide,inactive,SODIUM HYDROXIDE,,unii
