@@ -173,7 +173,8 @@ def test_seed_names_every_problem_at_once(tmp_path):
             {"slug": "Bad Slug", "name": "x", "kind": "medicine", "dailymed": SETID},
             {"slug": "dup", "name": "A — B", "kind": "medicine", "dailymed": SETID2},
             {"slug": "dup", "name": "x", "kind": "gadget", "wikidata": "Q1"},
-            {"slug": "two", "name": "x", "kind": "food", "wikidata": "Q2", "world": "morning-coffee"},
+            {"slug": "two", "name": "x", "kind": "food", "dailymed": SETID2, "world": "morning-coffee"},
+            {"slug": "none", "name": "x", "kind": "food"},
             {"slug": "nope", "name": "x", "kind": "food", "world": "no-such-world"},
             {"slug": "badid", "name": "x", "kind": "food", "dailymed": "not-a-set-id"},
             {"slug": "again", "name": "x", "kind": "medicine", "dailymed": SETID},
@@ -181,7 +182,7 @@ def test_seed_names_every_problem_at_once(tmp_path):
         ])
     msg = str(err.value)
     for want in ("lowercase words", "slug used twice", "em or en dash", "kind must be one of",
-                 "exactly one of", "no world 'no-such-world'", "not a DailyMed set id",
+                 "stands alone", "needs one of", "no world 'no-such-world'", "not a DailyMed set id",
                  "same dailymed item", "unknown field(s) logo"):
         assert want in msg, want
 
@@ -190,8 +191,11 @@ def test_the_committed_seed_is_valid():
     seed = products.load_seed()
     assert seed, "products.yaml is empty"
     assert {p["kind"] for p in seed} <= set(products.KINDS)
-    worlds = [p for p in seed if p["source"] == "world"]
+    worlds = [p for p in seed for s in [p, *p.get("also", [])] if s["source"] == "world"]
     assert len(worlds) == 10                    # the ten everyday worlds are the first ten
+    # Amendment (2026-10-22): MoleculeFinder's curated food hubs make pages too.
+    assert {"coffee", "tea", "wine", "beer", "chocolate", "cocoa"} <= {
+        s["item"] for p in seed for s in [p, *p.get("also", [])] if s["source"] == "curated"}
 
 
 # ── compile: matching and the gate ────────────────────────────────────────────
@@ -210,10 +214,11 @@ UNIIS = {1983: ["362O9ITL9D"], 5360696: ["7355X3ROTS"], 11177: ["70097M6I30"], 3
          2519: ["3G6A5W338E"], 962: ["059QF0KO0R"], 5757: ["4TI98Z838E"], 9999999: ["4TI98Z838E"]}
 
 
-def _compile(seed, labels=None, parts=None):
+def _compile(seed, labels=None, parts=None, **kw):
     labels = labels or {}
+    kw = {"parents": {}, "props": {}, "aliases": {}, "hubs": {}, **kw}
     return products.compile_products(RECORDS, seed, spl=lambda s: labels.get(s), parts=parts or {},
-                                     uniis=UNIIS, worlds=WORLDS)
+                                     uniis=UNIIS, worlds=WORLDS, **kw)
 
 
 def _p(slug, kind, source, item, name=None):
@@ -395,13 +400,15 @@ def test_the_fetch_stage_warms_products_with_the_unii_expiry(tmp_path, monkeypat
     seed = [{"slug": "x", "name": "x", "kind": "drink", "source": "world", "item": "morning-coffee"}]
     monkeypatch.setattr(pipeline.products, "load_seed", lambda: seed)
 
-    def warm(s, cids, fetch_uniis):
+    def warm(s, cids, fetch_uniis, fetch_props):
         warmed.append((s, cids))
         fetch_uniis(cids)
+        fetch_props([5143])
     monkeypatch.setattr(pipeline.products, "warm", warm)
     pipeline.stage_fetch(Settings(None, None))
     assert warmed == [(seed, [2519])]
     assert seen["unii"] == pipeline.UNII_CACHE_TTL_DAYS
+    assert seen["props"] is None        # parents' properties: the permanent property cache
 
 
 def test_export_refuses_records_listing_products_without_the_staged_products(tmp_path, monkeypatch):
@@ -414,3 +421,164 @@ def test_export_refuses_records_listing_products_without_the_staged_products(tmp
     monkeypatch.setattr(snapshot_export, "export", lambda *a, **k: pytest.fail("exported"))
     with pytest.raises(SystemExit, match="lists products"):
         pipeline.stage_export(None)
+
+
+# ── amendments (2026-10-22): salts and hydrates by rule, curated foods, the queue ──────────────
+def _ing(role, name, unii, moiety=()):
+    return {"role": role, "name": name, "unii": unii, "moiety": list(moiety)}
+
+
+def _label(*ings):
+    return {"doc_type": "HUMAN PRESCRIPTION DRUG LABEL", "ingredients": list(ings),
+            "active_lines": [], "purpose_lines": [], "purpose_rows": []}
+
+
+SKEL = [{"slug": "lactose", "cid": 6134, "title": "Lactose", "inchikey": "GUBGYTABKSRVRQ-DCSYEGIMSA-N",
+         "molecular_formula": "C12H22O11"},
+        {"slug": "maltose", "cid": 439186, "title": "Maltose", "inchikey": "GUBGYTABKSRVRQ-PICCSMPSSA-N",
+         "molecular_formula": "C12H22O11"},
+        {"slug": "menthol", "cid": 16666, "title": "Menthol", "inchikey": "NOOLISFMXDJSKH-KXUCPTDWSA-N",
+         "molecular_formula": "C10H20O"},
+        {"slug": "saccharin", "cid": 5143, "title": "Saccharin", "inchikey": "CVHZOJJKTDOEJC-UHFFFAOYSA-N",
+         "molecular_formula": "C7H5NO3S"},
+        {"slug": "hydrogen-fluoride", "cid": 14917, "title": "Hydrogen fluoride", "inchikey": "KRHYYFGTRYWZRS-UHFFFAOYSA-N",
+         "molecular_formula": "FH"},
+        {"slug": "acetic-acid", "cid": 176, "title": "Acetic acid", "inchikey": "QTBSBXVTEAMEQO-UHFFFAOYSA-N",
+         "molecular_formula": "C2H4O2"}]
+
+
+def test_carbon_count_reads_carbon_and_not_chlorine_calcium_or_copper():
+    assert products.carbon_count("C12H22O11") == 12
+    assert products.carbon_count("CaCO3") == 1
+    assert products.carbon_count("C2HCl3") == 2
+    assert products.carbon_count("CuCl2") == 0
+    assert products.carbon_count(None) == 0
+
+
+def test_parent_rule_parent_cid_then_one_skeleton_never_a_tie_never_an_inorganic_acid():
+    parents = {"SACCHNA": [5143],              # saccharin sodium: parent is a catalog CID
+               "RACMENT": [1254],              # racemic menthol: parent shares menthol's skeleton
+               "LACTMON": [84571],             # lactose monohydrate: lactose and maltose share it
+               "NAF": [14917],                 # sodium fluoride: parent is hydrogen fluoride
+               "TIO2": []}                     # titanium dioxide: no parent
+    props = {1254: {"InChIKey": "NOOLISFMXDJSKH-UHFFFAOYSA-N"}, 84571: {"InChIKey": "GUBGYTABKSRVRQ-QUYVBRFLSA-N"}}
+    got = products.parent_index(SKEL, parents, props, {})
+    assert got == {"SACCHNA": ("saccharin", "parent"), "RACMENT": ("menthol", "skeleton")}
+    got = products.parent_index(SKEL, parents, props, {"LACTMON": "lactose"})
+    assert got["LACTMON"] == ("lactose", "alias")
+    with pytest.raises(products.ProductSeedError, match="no molecule"):
+        products.parent_index(SKEL, {}, {}, {"X": "no-such-slug"})
+
+
+def test_an_active_resolves_through_its_moiety_so_zinc_acetate_is_never_acetic_acid():
+    by_parent = products.parent_index(SKEL, {"ZNACET": [176], "ZINC": [], "SACCHNA": [5143]}, {}, {})
+    label = _label(_ing("active", "ZINC ACETATE ANHYDROUS", "ZNACET", ["ZINC"]),
+                   _ing("inactive", "SACCHARIN SODIUM", "SACCHNA"))
+    mols, unmatched = products._dailymed_molecules(label, {}, by_parent)
+    assert [(m["slug"], m["role"], m["match"], m["listed_as"]) for m in mols] == [
+        ("saccharin", "inactive", "parent", "SACCHARIN SODIUM")]
+    assert unmatched == ["ZINC ACETATE ANHYDROUS"]
+
+
+def test_compile_counts_rule_matches_and_names_the_active_it_still_lacks():
+    label = _label(_ing("active", "TIRZEPATIDE", "OYN3CCI6QE"),
+                   _ing("inactive", "WATER", "059QF0KO0R"), _ing("inactive", "CAFFEINE", "3G6A5W338E"),
+                   _ing("inactive", "SACCHARIN SODIUM", "SACCHNA"))
+    recs = RECORDS + [{"slug": "saccharin", "cid": 5143, "title": "Saccharin", "molecular_formula": "C7H5NO3S"}]
+    passed, report = products.compile_products(
+        recs, [_p("mounjaro", "medicine", "dailymed", SETID, "Mounjaro")], spl=lambda s: label, parts={},
+        uniis=UNIIS, worlds=WORLDS, parents={"SACCHNA": [5143], "OYN3CCI6QE": []}, props={}, aliases={}, hubs={})
+    assert [m["slug"] for m in passed[0]["molecules"]] == ["water", "caffeine", "saccharin"]
+    assert passed[0]["actives_not_in_catalog"] == ["TIRZEPATIDE"]
+    assert report["matched_by_rule"] == {"parent": 1, "skeleton": 0, "alias": 0}
+    assert report["next_tranche_queue"][0]["name"] == "TIRZEPATIDE"
+
+
+def test_the_queue_lists_actives_then_inactives_each_by_label_count(tmp_path):
+    a = _label(_ing("active", "TIRZEPATIDE", "T1"), _ing("inactive", "TALC", "TALC1"),
+               _ing("inactive", "TITANIUM DIOXIDE", "TIO2"), _ing("inactive", "WATER", "059QF0KO0R"))
+    b = _label(_ing("active", "TITANIUM DIOXIDE", "TIO2"), _ing("inactive", "TALC", "TALC1"),
+               _ing("inactive", "IRON OXIDE", "FE1"))
+    c = _label(_ing("inactive", "TITANIUM DIOXIDE", "TIO2"), _ing("inactive", "TALC", "TALC1"))
+    seed = [_p("a", "medicine", "dailymed", SETID), _p("b", "cosmetic", "dailymed", SETID2),
+            _p("c", "medicine", "dailymed", "11111111-2222-3333-4444-555555555555")]
+    labels = {SETID: a, SETID2: b, seed[2]["item"]: c}
+    _, report = _compile(seed, labels, parents={"TIO2": [], "T1": [], "TALC1": [], "FE1": []})
+    rows = report["next_tranche_queue"]
+    assert [(r["section"], r["name"], r["labels"], r["labels_as_active"]) for r in rows] == [
+        ("active", "TITANIUM DIOXIDE", 3, 1), ("active", "TIRZEPATIDE", 1, 1),
+        ("inactive", "TALC", 3, 0), ("inactive", "IRON OXIDE", 1, 0)]
+    out = tmp_path / "q.csv"
+    products.write_queue(rows, out)
+    lines = out.read_text().splitlines()
+    assert lines[0] == ",".join(products.QUEUE_FIELDS)
+    assert lines[1].startswith("1,active,TITANIUM DIOXIDE,TIO2,3,1,")
+
+
+HUBS = {"coffee": {"name": "Coffee", "molecules": [{"slug": "caffeine", "note": "~95 mg per 8 oz cup"},
+                                                  {"slug": "water"}, {"slug": "m1"}]},
+        "beans": {"name": "Beans", "molecules": [{"slug": "m2"}, {"slug": "m3"}]}}
+
+
+def test_a_curated_hub_is_a_page_and_a_combined_row_is_one_union_curated_first():
+    seed = [{**_p("coffee", "drink", "curated", "coffee"), "also": [{"source": "world", "item": "morning-coffee"},
+                                                                   {"source": "wikidata", "item": "Q8486"}]},
+            _p("beans", "food", "curated", "beans")]
+    passed, report = _compile(seed, parts={"Q8486": {"P527": ["Q60235"], "P186": []}}, hubs=HUBS)
+    coffee = passed[0]
+    assert coffee["source"] == {"type": "curated", "hub": "coffee", "title": "Coffee"}
+    roles = [(m["slug"], m["role"]) for m in coffee["molecules"]]
+    assert roles[:3] == [("caffeine", "curated"), ("water", "curated"), ("m1", "curated")]
+    assert coffee["molecules"][0]["note"] == "~95 mg per 8 oz cup"
+    assert len(roles) == len({s for s, _ in roles})            # one entry per molecule
+    # Wikidata's only part (caffeine) is already listed: Wikidata adds nothing and is not cited.
+    assert [a["type"] for a in coffee.get("also", [])] == ["world"]
+    assert report["failures"][0]["reason"] == (
+        "MoleculeFinder's curated list lists 2 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3")
+    with pytest.raises(products.ProductSeedError, match="no curated food hub"):
+        _compile([_p("x", "food", "curated", "nope")], hubs=HUBS)
+
+
+def test_curated_hubs_read_the_records_food_memberships():
+    recs = [{"slug": "caffeine", "categories": [{"slug": "coffee", "name": "Coffee", "kind": "food",
+                                                 "note": "~95 mg per 8 oz cup", "source": "curated"},
+                                                {"slug": "stimulant", "kind": "type", "source": "curated"}]},
+            {"slug": "water", "categories": [{"slug": "coffee", "name": "Coffee", "kind": "food", "source": "curated"}]}]
+    hubs = products.curated_hubs(recs)
+    assert set(hubs) == {"coffee"}
+    assert hubs["coffee"]["molecules"][0] == {"slug": "caffeine", "note": "~95 mg per 8 oz cup"}
+
+
+def test_warm_asks_pubchem_for_the_parent_of_each_unclaimed_label_unii_once(tmp_path, monkeypatch):
+    monkeypatch.setattr(products, "RAW_CACHE", tmp_path)
+    monkeypatch.setattr(products, "DAILYMED_DIR", tmp_path / "dailymed")
+    monkeypatch.setattr(products, "PARTS_CACHE", tmp_path / "wikidata" / "product_parts.json")
+    monkeypatch.setattr(products.wikidata, "parts_for_qids", lambda qids: {q: {"P527": [], "P186": []} for q in qids})
+    label = _label(_ing("active", "SERTRALINE HYDROCHLORIDE", "UTI8907Y6X", ["QUC7NX6WMB"]),
+                   _ing("inactive", "MAGNESIUM STEARATE", "70097M6I30"))
+    (tmp_path / "dailymed").mkdir()
+    products.cache.write_json(products._spl_path(SETID), label)
+    asked, props = [], []
+    seed = [_p("zoloft", "medicine", "dailymed", SETID),
+            {**_p("milk", "drink", "curated", "milk"), "also": [{"source": "wikidata", "item": "Q8495"}]}]
+
+    def parents(u):
+        asked.append(u)
+        return [12345]
+    stats = products.warm(seed, [11177], lambda cids: {11177: ["70097M6I30"]}, props.extend, parents)
+    assert sorted(asked) == ["QUC7NX6WMB", "UTI8907Y6X"]         # the moiety too; never a claimed UNII
+    assert props == [12345]
+    assert stats["items"] == 1                                   # a combined row's Wikidata item is fetched
+    products.warm(seed, [11177], lambda cids: {11177: ["70097M6I30"]}, props.extend, parents)
+    assert sorted(asked) == ["QUC7NX6WMB", "UTI8907Y6X"]         # cached: not asked again
+
+
+def test_the_committed_aliases_name_real_molecules_and_the_queue_is_committed():
+    from moleculefinder_etl.config import SEED_DIR
+    aliases = products.load_unii_aliases()
+    snapshots = SEED_DIR.parent / "snapshots" / "molecules"
+    assert aliases and all((snapshots / f"{slug}.json").exists() for slug in aliases.values())
+    queue = (SEED_DIR / "next_tranche_queue.csv").read_text().splitlines()
+    assert queue[0] == ",".join(products.QUEUE_FIELDS)
+    sections = [line.split(",")[1] for line in queue[1:]]
+    assert sections == sorted(sections)                          # every active before any inactive

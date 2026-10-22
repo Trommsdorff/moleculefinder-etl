@@ -236,6 +236,26 @@ def uniis(cids: list[int]) -> dict[int, list[str]]:
 
 
 @_pubchem_retry
+def unii_parents(unii: str) -> list[int]:
+    """The PubChem PARENT compound(s) of the substance an FDA UNII names (run C1 amendment).
+
+    A DailyMed label lists an ingredient in the form it is used: a salt (sertraline
+    hydrochloride), a hydrate (lactose monohydrate) or a stereo form (racemic menthol). PubChem
+    resolves the ``UNII-XXXXXXXXXX`` synonym to that form's CID and, with ``cids_type=parent``,
+    to its parent: the salt's or hydrate's neutral, single-component compound. One GET per UNII
+    (the name namespace takes one name a request). An empty list when PubChem has no parent
+    (titanium dioxide, a polymer, a mixture) or does not know the UNII at all.
+    """
+    _throttle()
+    url = f"{PUBCHEM_REST}/compound/name/{quote('UNII-' + unii)}/cids/JSON?cids_type=parent"
+    r = _session.get(url, timeout=30)
+    if r.status_code in (400, 404):            # 400: a name PubChem cannot parse is not a UNII it holds
+        return []
+    r.raise_for_status()
+    return [int(c) for c in r.json().get("IdentifierList", {}).get("CID", [])]
+
+
+@_pubchem_retry
 def pug_view_dated(cid: int, heading: str) -> "cache.Entry":
     """Fetch a PUG-View annotation heading, and say how old the answer is.
 
