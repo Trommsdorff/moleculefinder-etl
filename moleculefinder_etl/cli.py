@@ -23,9 +23,11 @@ STAGES = {
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mfetl", description="MoleculeFinder ETL")
-    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences"], help="pipeline stage to run")
+    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset"], help="pipeline stage to run")
     p.add_argument("--target", type=int, default=None, help="canon size (default from env)")
     p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
+    p.add_argument("--version", dest="dataset_version", default=None,
+                   help="dataset: the version to stamp (default: the snapshot's YYYY.MM)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -45,6 +47,11 @@ def main(argv: list[str] | None = None) -> int:
         # Deliberate and offline from the weekly run, which only reads the committed file.
         from . import licences
         return licences.run()
+    if args.stage == "dataset":
+        # The CC0 dataset for Zenodo and Kaggle (run D), rebuilt from the committed snapshot into
+        # data/dataset/. Offline; refuses unless data/raw_cache is main's pinned inputs.
+        from . import dataset
+        return dataset.run(version=args.dataset_version)
     if args.stage == "migrate":
         # Database migrations over SUPABASE_DB_URL; needs no REST keys.
         from . import migrate
