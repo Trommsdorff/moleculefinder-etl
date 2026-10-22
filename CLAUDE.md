@@ -723,7 +723,8 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Run C2 (2026-10-22): the front door's ETL half. BUILT, waiting for "deploy"
+## Run C2 (2026-10-22): the front door's ETL half. DEPLOYED 2026-10-22 (web `2b67549`)
+**DEPLOYED 2026-10-22 about 19:17 UTC on Garrett's word.** ETL `main` 7cabb07 -> `7703167` (deploys nothing); web `main` c9fc016 -> `2b67549`, GitHub deployment `7261339955` Production success. No other branch was waiting; pushed at 19:16, clear of the news cron. Live: `/`, `/whats-in`, `/whats-in/pfas`, `/whats-in/energy-drinks`, `/in/energy-drinks`, both new /m pages, `/about` and the PFAS card 200; an unknown product 404; the home title, description, stamp "915 molecules · 405 products" and all eight cards; no index in the page; `/search-index.json` 1,320 entries (405 products); sitemap 1,676. Live search (headless Brave): coffee -> Coffee; zoloft -> Zoloft; caffeine -> Caffeine; sertraline -> Sertraline, Zoloft; pfas -> PFAS. IndexNow run 39838830285: 1,671 -> 1,676, 5 new, 60 changed, 0 removed, 65 submitted and 65 accepted, audit exact, `indexnow-last` -> `2b67549`. Live Lighthouse (mobile, median of 3, Brave): `/` perf 99, SEO 100, LCP 2.15 s, CLS 0, 312 KB; `/whats-in/pfas` 99, 100, 2.20 s, 0, 283 KB; `/whats-in/energy-drinks` 99, 100, 2.17 s, 0, 284 KB; `/m/caffeine` 98, 100, 2.29 s, 0, 392 KB. Next, Garrett's step: the Product Hunt launch.
 Branch `front-door-2026-10` (code `8bc6916`, data `e5d39f6`, plus notes), never pushed. Full record: the plan's DONE block.
 - **PFNA (67821) and PFHxS (67734)**, a two-row addition `2026-10-runC2` (tests/test_scope_b_canon.py ADDITIONS). 915.
 - **Class pages** (`transform/products.py`): `sources/seeds/product_classes.yaml` (PFAS: four slugs, `rule:
