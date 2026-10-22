@@ -1,0 +1,1387 @@
+{
+ "seeded": 447,
+ "passed": 346,
+ "failed": 101,
+ "by_kind": {
+  "food": 13,
+  "drink": 5,
+  "medicine": 258,
+  "cosmetic": 54,
+  "household": 12,
+  "moment": 4
+ },
+ "min_molecules": 3,
+ "failures": [
+  {
+   "slug": "chocolate-bar",
+   "name": "Chocolate (the food)",
+   "kind": "food",
+   "source": "wikidata",
+   "item": "Q195",
+   "reason": "Wikidata lists 6 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "beer",
+   "name": "Beer",
+   "kind": "drink",
+   "source": "wikidata",
+   "item": "Q44",
+   "reason": "Wikidata lists 5 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "water"
+   ]
+  },
+  {
+   "slug": "coca-cola",
+   "name": "Coca-Cola",
+   "kind": "drink",
+   "source": "wikidata",
+   "item": "Q2813",
+   "reason": "Wikidata lists 0 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "coffee",
+   "name": "Coffee",
+   "kind": "drink",
+   "source": "wikidata",
+   "item": "Q8486",
+   "reason": "Wikidata lists 3 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "red-bull",
+   "name": "Red Bull",
+   "kind": "drink",
+   "source": "wikidata",
+   "item": "Q51482",
+   "reason": "Wikidata lists 4 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "caffeine",
+    "taurine"
+   ]
+  },
+  {
+   "slug": "tea",
+   "name": "Tea",
+   "kind": "drink",
+   "source": "wikidata",
+   "item": "Q6097",
+   "reason": "Wikidata lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "water",
+    "caffeine"
+   ]
+  },
+  {
+   "slug": "wine",
+   "name": "Wine",
+   "kind": "drink",
+   "source": "wikidata",
+   "item": "Q282",
+   "reason": "Wikidata lists 2 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "abilify",
+   "name": "Abilify",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "c040bd1d-45b7-49f2-93ea-aed7220b30ac",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "aripiprazole",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "abraxane",
+   "name": "Abraxane",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "24d10449-2936-4cd3-b7db-a7683db721e4",
+   "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "paclitaxel"
+   ]
+  },
+  {
+   "slug": "actos",
+   "name": "Actos",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "d2ddc491-88a9-4063-9150-443b4fa4330c",
+   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "pioglitazone",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "addyi",
+   "name": "Addyi",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "3819daf3-e935-2c53-c527-e1d57922f394",
+   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "flibanserin",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "aleve",
+   "name": "Aleve",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "00ef5b30-71d0-4cb4-84a3-48c67d1cea2a",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "naproxen",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "atacand",
+   "name": "Atacand",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "94a59260-d2b6-464a-b5b9-bbc599e57e10",
+   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "candesartan",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "atrovent-hfa",
+   "name": "Atrovent HFA",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "170e98ef-5560-4068-be7d-e649068eb884",
+   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "benicar",
+   "name": "Benicar",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "dc3f1fd4-5578-4c5d-be7b-12e3f8f3e7df",
+   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "olmesartan",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "butrans",
+   "name": "Butrans",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "794aa355-66de-41b8-aedf-f2c40f6bc664",
+   "reason": "the label lists 4 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "buprenorphine"
+   ]
+  },
+  {
+   "slug": "caplyta",
+   "name": "Caplyta",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "db730b06-6351-47fd-8183-e61e61bbead5",
+   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "catapres-tts-1",
+   "name": "Catapres-TTS-1",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "d4a55825-7041-42f4-b3b2-dd7a25dbe793",
+   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "clonidine",
+    "silicon-dioxide"
+   ]
+  },
+  {
+   "slug": "claritin",
+   "name": "Claritin",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "660ac9df-f1b1-4c89-94dd-9fae0a013f3c",
+   "reason": "the label lists 4 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "loratadine",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "compro",
+   "name": "Compro",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "ea381bc5-0957-4c91-826a-0ff680cebacc",
+   "reason": "the label lists 6 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "prochlorperazine",
+    "glycerol"
+   ]
+  },
+  {
+   "slug": "contepo",
+   "name": "Contepo",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "855574f2-39f8-43bc-a3d2-79dbb578cb94",
+   "reason": "the label lists 2 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "fosfomycin",
+    "succinic-acid"
+   ]
+  },
+  {
+   "slug": "conzip",
+   "name": "Conzip",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "a65b4d05-3a1c-4aa1-848a-d20ac9aaf62f",
+   "reason": "the label lists 18 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "tramadol",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "cozaar",
+   "name": "Cozaar",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "9949448f-c3b9-44ee-94ed-c1aca8c90f39",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "losartan",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "crestor",
+   "name": "Crestor",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "325a5d0e-9a72-4015-9fcd-1655fb504cee",
+   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "rosuvastatin",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "cytotec",
+   "name": "Cytotec",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "4ab12da7-5731-4e06-bf1c-bc3f2e711f12",
+   "reason": "the label lists 4 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "misoprostol"
+   ]
+  },
+  {
+   "slug": "dermoplast-first-aid-spray",
+   "name": "Dermoplast First Aid Spray",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "ec93011d-7069-4021-8dd2-3d51eb6026e1",
+   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "benzocaine",
+    "ethanol"
+   ]
+  },
+  {
+   "slug": "dulcolax",
+   "name": "Dulcolax",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "ed16d0f4-74e7-4fa3-989d-c6840a5d3e71",
+   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "effexor-xr",
+   "name": "Effexor XR",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "c848a5d8-ba94-4c84-80e3-0bf35fb8e32e",
+   "reason": "the label lists 8 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "venlafaxine"
+   ]
+  },
+  {
+   "slug": "emsam",
+   "name": "Emsam",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "b891bd9f-fdb8-4862-89c5-ecdd700398a3",
+   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "fioricet",
+   "name": "Fioricet",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "c018be7d-f7b8-45e2-97b8-8e7a71740657",
+   "reason": "the label lists 3 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "acetaminophen",
+    "caffeine"
+   ]
+  },
+  {
+   "slug": "flagyl",
+   "name": "Flagyl",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "a2883ca1-5a9a-4259-9d80-46ab67274384",
+   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "metronidazole",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "flonase-allergy-relief",
+   "name": "Flonase Allergy Relief",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "b6134ba0-b70a-4eac-9a82-cef64b242c1d",
+   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "fluticasone-propionate",
+    "water"
+   ]
+  },
+  {
+   "slug": "fortaz",
+   "name": "Fortaz",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "78982c98-7866-49f1-989f-a289c4242358",
+   "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "sodium-carbonate"
+   ]
+  },
+  {
+   "slug": "foundayo",
+   "name": "Foundayo",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "8ac446c5-feba-474f-a103-23facb9b5c62",
+   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "sodium-carbonate",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "gocovri",
+   "name": "Gocovri",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "2bee0631-0028-1314-e063-6394a90aaaed",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "amantadine",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "inbrija",
+   "name": "Inbrija",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "077c0f39-a3a2-4b2b-a184-09131889dcfb",
+   "reason": "the label lists 3 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "l-dopa",
+    "sodium-chloride"
+   ]
+  },
+  {
+   "slug": "intuniv",
+   "name": "Intuniv",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "b972af81-3a37-40be-9fe1-3ddf59852528",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "guanfacine",
+    "fumaric-acid"
+   ]
+  },
+  {
+   "slug": "januvia",
+   "name": "Januvia",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "f85a48d0-0407-4c50-b0fa-7673a160bf01",
+   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "dicalcium-phosphate",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "jardiance",
+   "name": "Jardiance",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "faf3dd6a-9cd0-39c2-0d2e-232cb3f67565",
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "empagliflozin"
+   ]
+  },
+  {
+   "slug": "journavx",
+   "name": "Journavx",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "f0976da4-1d20-4517-945c-b60ed2f41c12",
+   "reason": "the label lists 10 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "keflex",
+   "name": "Keflex",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "68fba58a-7748-4581-8432-f5286c46d90a",
+   "reason": "the label lists 9 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "levoxyl",
+   "name": "Levoxyl",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "758588c3-c63e-491b-0aa2-4f50d80cb174",
+   "reason": "the label lists 3 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "levothyroxine",
+    "sodium-bicarbonate"
+   ]
+  },
+  {
+   "slug": "lotrimin-af",
+   "name": "Lotrimin AF",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "163996c6-af54-21ac-e063-6394a90ac05c",
+   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "miconazole",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "lumigan",
+   "name": "Lumigan",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "a5e67c75-db88-4372-bb07-c8dd15c97631",
+   "reason": "the label lists 6 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "sodium-chloride",
+    "water"
+   ]
+  },
+  {
+   "slug": "mucinex-fast-max-cold-and-flu",
+   "name": "Mucinex Fast-Max Cold and Flu",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "31ac6883-ffcd-39de-e063-6294a90a52dd",
+   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "acetaminophen",
+    "dextromethorphan"
+   ]
+  },
+  {
+   "slug": "neosporin",
+   "name": "Neosporin",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "7e971c99-1f3f-4a9f-5084-fbe5b9f1a9e1",
+   "reason": "the label lists 4 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "nicoderm-cq",
+   "name": "NicoDerm CQ",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "93b2d1b9-83c1-40b5-b6af-90c38c8d6cef",
+   "reason": "the label lists 3 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "nicotine"
+   ]
+  },
+  {
+   "slug": "nuvigil",
+   "name": "Nuvigil",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "a69631d0-1263-769e-b232-4ab9160e0fa3",
+   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "armodafinil",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "oxytrol",
+   "name": "Oxytrol",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "20dee37f-1412-44ed-9e8b-f4379ce23eb0",
+   "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "oxybutynin"
+   ]
+  },
+  {
+   "slug": "pamelor",
+   "name": "Pamelor",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "e17dc299-f52d-414d-ab6e-e809bd6f8acb",
+   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "nortriptyline",
+    "sunset-yellow-fcf"
+   ]
+  },
+  {
+   "slug": "plavix",
+   "name": "Plavix",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "de8b0b67-eb25-4684-83b5-7ad785314227",
+   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "clopidogrel",
+    "mannitol"
+   ]
+  },
+  {
+   "slug": "preparation-h",
+   "name": "Preparation H",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "40fde50a-3cc0-4286-9b33-8f3912254c33",
+   "reason": "the label lists 5 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "phenylephrine"
+   ]
+  },
+  {
+   "slug": "proair-digihaler",
+   "name": "ProAir Digihaler",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "667ce3ec-5217-4b10-b712-f3e54fbbf087",
+   "reason": "the label lists 2 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "prograf",
+   "name": "Prograf",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "7f667de1-9dfa-4bd6-8ba0-15ee2d78873b",
+   "reason": "the label lists 6 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "tacrolimus",
+    "ethanol"
+   ]
+  },
+  {
+   "slug": "provayblue",
+   "name": "Provayblue",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "4f6848e5-35ed-4046-b13c-3032b5ba3232",
+   "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "water"
+   ]
+  },
+  {
+   "slug": "pyridium",
+   "name": "Pyridium",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "165d01d4-a9f7-2293-e054-00144ff8d46c",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "phenazopyridine",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "rasonque",
+   "name": "Rasonque",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "13a65923-d072-4dac-8620-8eabbf8c3641",
+   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "rexulti",
+   "name": "Rexulti",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "2d301358-6291-4ec1-bd87-37b4ad9bd850",
+   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "brexpiprazole",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "ricola-max-honey-lemon",
+   "name": "Ricola Max Honey Lemon",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "27c0d805-ae15-46c7-965f-e6b3eeb3e013",
+   "reason": "the label lists 3 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "sucrose",
+    "glycerol"
+   ]
+  },
+  {
+   "slug": "ritalin",
+   "name": "Ritalin",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "d6fb2750-cdab-4749-ba0d-7534840a5892",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "magnesium-stearate",
+    "sucrose"
+   ]
+  },
+  {
+   "slug": "sezaby",
+   "name": "Sezaby",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "8c7d0402-4977-4c25-bc4b-11db91339e9a",
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "phenobarbital"
+   ]
+  },
+  {
+   "slug": "soma",
+   "name": "Soma",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "6297cf20-830a-11dc-94c8-0002a5d5c51b",
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "carisoprodol"
+   ]
+  },
+  {
+   "slug": "spravato",
+   "name": "Spravato",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "d81a6a79-a74a-44b7-822c-0dfa3036eaed",
+   "reason": "the label lists 4 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "esketamine",
+    "sodium-hydroxide"
+   ]
+  },
+  {
+   "slug": "strattera",
+   "name": "Strattera",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "309de576-c318-404a-bc15-660c2b1876fb",
+   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "atomoxetine",
+    "sodium-lauryl-sulfate"
+   ]
+  },
+  {
+   "slug": "stromectol",
+   "name": "Stromectol",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "681888c9-af79-4b7d-ae80-c3f4f6f1effd",
+   "reason": "the label lists 6 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "magnesium-stearate",
+    "citric-acid"
+   ]
+  },
+  {
+   "slug": "sudafed-sinus-congestion-plus-cold-severe",
+   "name": "Sudafed Sinus Congestion + Cold Severe",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "537e1a0d-820d-c3f7-e063-6294a90a56ea",
+   "reason": "the label lists 12 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "pseudoephedrine",
+    "acetaminophen"
+   ]
+  },
+  {
+   "slug": "tamiflu",
+   "name": "Tamiflu",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "ee3c9555-60f2-4f82-a760-11983c86e97b",
+   "reason": "the label lists 18 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "sorbitol",
+    "sodium-benzoate"
+   ]
+  },
+  {
+   "slug": "tenormin",
+   "name": "Tenormin",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "6e850b1e-28a4-4ff8-8ed7-bb0b29faa28a",
+   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "atenolol",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "tinactin",
+   "name": "Tinactin",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "c3b715a9-233a-401a-ba60-f78c1ddf1ded",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "propylene-glycol",
+    "water"
+   ]
+  },
+  {
+   "slug": "transderm-scop",
+   "name": "Transderm Scop",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "b877a694-a1d0-4280-937a-a06820b12a88",
+   "reason": "the label lists 7 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "tylenol-8-hr-arthritis-pain",
+   "name": "Tylenol 8 HR Arthritis Pain",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "3af22fc8-e4e0-4863-8696-6bc1257047cb",
+   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "acetaminophen",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "tylenol-regular-strength",
+   "name": "Tylenol Regular Strength",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "1622f694-4d63-4c56-8737-fae31f0ecfb7",
+   "reason": "the label lists 4 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "acetaminophen",
+    "magnesium-stearate"
+   ]
+  },
+  {
+   "slug": "vancocin",
+   "name": "Vancocin",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "a078d9c2-f89c-4f9f-8ded-60ffb2983c3f",
+   "reason": "the label lists 8 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "vancomycin"
+   ]
+  },
+  {
+   "slug": "ventolin-hfa",
+   "name": "Ventolin HFA",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "d92c5d6b-ff10-4087-36a2-1cfc464cb967",
+   "reason": "the label lists 2 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "vicks-vaporub",
+   "name": "Vicks VapoRub",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "699691ae-d2a1-a8bb-e053-2991aa0acfea",
+   "reason": "the label lists 8 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "thymol"
+   ]
+  },
+  {
+   "slug": "wellbutrin-xl",
+   "name": "Wellbutrin XL",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "a435da9d-f6e8-4ddc-897d-8cd2bf777b21",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "bupropion",
+    "silicon-dioxide"
+   ]
+  },
+  {
+   "slug": "zomig",
+   "name": "Zomig",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "2438c223-605b-4885-afc3-a6794f190f89",
+   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "citric-acid",
+    "water"
+   ]
+  },
+  {
+   "slug": "zyloprim",
+   "name": "Zyloprim",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "342832b5-1a32-4bea-bc49-ab0fd152154e",
+   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "magnesium-stearate",
+    "sunset-yellow-fcf"
+   ]
+  },
+  {
+   "slug": "arrid-extra-dry",
+   "name": "Arrid Extra Dry",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "95b978ff-259d-4dea-867d-cf59a01cbd24",
+   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "butane",
+    "1-1-difluoroethane"
+   ]
+  },
+  {
+   "slug": "australian-gold-lip-balm-spf-30",
+   "name": "Australian Gold Lip Balm SPF 30",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "32725ca7-ec21-4643-bdc6-278fd647b95d",
+   "reason": "the label lists 7 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "ban-roll-on-unscented",
+   "name": "Ban Roll-On Unscented",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "57a3d112-3f8e-4d23-864f-d834bcf25385",
+   "reason": "the label lists 9 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "water"
+   ]
+  },
+  {
+   "slug": "banana-boat-sport-ultra-lip-balm",
+   "name": "Banana Boat Sport Ultra Lip Balm",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "c7a3c03b-7fee-404c-e053-2a95a90a3a97",
+   "reason": "the label lists 17 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "blistex",
+   "name": "Blistex",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "38c455d3-7ec9-4493-9c06-b8aa018de7d9",
+   "reason": "the label lists 25 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "water",
+    "saccharin"
+   ]
+  },
+  {
+   "slug": "carmex-lip-balm-spf-30",
+   "name": "Carmex Lip Balm SPF 30",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "ea66ce2c-4e47-451c-b8f6-1f15a23b5cab",
+   "reason": "the label lists 11 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "tocopherol"
+   ]
+  },
+  {
+   "slug": "coppertone-sport-lip-balm-spf-30",
+   "name": "Coppertone Sport Lip Balm SPF 30",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "47bc6776-1130-0162-e063-6294a90a2adc",
+   "reason": "the label lists 20 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "tocopherol"
+   ]
+  },
+  {
+   "slug": "desitin-multi-purpose-healing-ointment",
+   "name": "Desitin Multi-Purpose Healing Ointment",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "30f06dbb-de8c-43ee-b1ed-99ffd59dd3ab",
+   "reason": "the label lists 5 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "parodontax",
+   "name": "Parodontax",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "0f07aa1a-97be-44af-92d8-a10777e24e0a",
+   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "glycerol",
+    "sodium-lauryl-sulfate"
+   ]
+  },
+  {
+   "slug": "proactiv-benzoyl-peroxide-wash",
+   "name": "Proactiv Benzoyl Peroxide Wash",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "58e195bd-f062-00b8-e063-6294a90aee60",
+   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "benzoyl-peroxide",
+    "water"
+   ]
+  },
+  {
+   "slug": "right-guard-sport-invisible-solid",
+   "name": "Right Guard Sport Invisible Solid",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "f8aee3c2-3a39-7fae-e053-6394a90a64c4",
+   "reason": "the label lists 2 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "secret-invisible-solid",
+   "name": "Secret Invisible Solid",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "4250ed91-9678-2bad-e063-6394a90a8e7a",
+   "reason": "the label lists 12 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "speed-stick-power",
+   "name": "Speed Stick Power",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "f1150258-059c-4292-a483-2cdf2fa3da68",
+   "reason": "the label lists 13 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "citric-acid"
+   ]
+  },
+  {
+   "slug": "stridex-maximum-pads",
+   "name": "Stridex Maximum Pads",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "a3b16d52-76a5-438b-a120-bb59ce062cc1",
+   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "salicylic-acid",
+    "water"
+   ]
+  },
+  {
+   "slug": "suave",
+   "name": "Suave",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "445ef219-0712-4083-87d8-fc75dea4058d",
+   "reason": "the label lists 9 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "butylated-hydroxytoluene"
+   ]
+  },
+  {
+   "slug": "supergoop-unseen-sunscreen-spf-50",
+   "name": "Supergoop Unseen Sunscreen SPF 50",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "21b3491f-7b02-9bc5-e063-6294a90a0dc3",
+   "reason": "the label lists 22 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "silicon-dioxide",
+    "tocopherol"
+   ]
+  },
+  {
+   "slug": "thinkbaby-spf-30-stick",
+   "name": "Thinkbaby SPF 30 Stick",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "06862b00-c937-41af-ab5d-cea34160d035",
+   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "zinc-oxide",
+    "squalene"
+   ]
+  },
+  {
+   "slug": "arm-and-hammer-baking-soda",
+   "name": "Arm & Hammer Baking Soda",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "643fe204-4a7b-00e4-e053-2a91aa0aef06",
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "sodium-bicarbonate"
+   ]
+  },
+  {
+   "slug": "betadine",
+   "name": "Betadine",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "c927c742-ee92-459b-a8cf-cc2a791d596b",
+   "reason": "not a label for people (DailyMed lists it as OTC ANIMAL DRUG LABEL)",
+   "matched": []
+  },
+  {
+   "slug": "epsom-salt",
+   "name": "Epsom salt",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "709ad74e-d95d-409d-bd7a-185411fc4bac",
+   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "matched": []
+  },
+  {
+   "slug": "gentian-violet",
+   "name": "Gentian violet",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "bf7824f0-8a4f-a063-e053-2995a90ae9a1",
+   "reason": "the label lists 3 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "water",
+    "ethanol"
+   ]
+  },
+  {
+   "slug": "hydrogen-peroxide-3",
+   "name": "Hydrogen peroxide 3%",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "11854afb-db97-5a43-e063-6394a90aa39c",
+   "reason": "the label lists 2 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "hydrogen-peroxide",
+    "water"
+   ]
+  },
+  {
+   "slug": "isopropyl-rubbing-alcohol",
+   "name": "Isopropyl rubbing alcohol",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "4b87d4cc-163e-1432-e063-6294a90af483",
+   "reason": "the label lists 2 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
+   "matched": [
+    "isopropyl-alcohol",
+    "water"
+   ]
+  }
+ ],
+ "label_ingredients_not_in_catalog": [
+  {
+   "name": "TITANIUM DIOXIDE",
+   "labels": 132
+  },
+  {
+   "name": "MICROCRYSTALLINE CELLULOSE",
+   "labels": 86
+  },
+  {
+   "name": "STARCH, CORN",
+   "labels": 71
+  },
+  {
+   "name": "HYPROMELLOSE, UNSPECIFIED",
+   "labels": 68
+  },
+  {
+   "name": "POLYETHYLENE GLYCOL, UNSPECIFIED",
+   "labels": 61
+  },
+  {
+   "name": "TALC",
+   "labels": 54
+  },
+  {
+   "name": "LACTOSE MONOHYDRATE",
+   "labels": 51
+  },
+  {
+   "name": "FERRIC OXIDE RED",
+   "labels": 48
+  },
+  {
+   "name": "FERRIC OXIDE YELLOW",
+   "labels": 43
+  },
+  {
+   "name": "CROSCARMELLOSE SODIUM",
+   "labels": 40
+  },
+  {
+   "name": "POLYSORBATE 80",
+   "labels": 38
+  },
+  {
+   "name": "XANTHAN GUM",
+   "labels": 33
+  },
+  {
+   "name": "FD&C BLUE NO. 2",
+   "labels": 31
+  },
+  {
+   "name": "D&C YELLOW NO. 10",
+   "labels": 30
+  },
+  {
+   "name": "EDETATE DISODIUM",
+   "labels": 29
+  },
+  {
+   "name": "POVIDONE, UNSPECIFIED",
+   "labels": 29
+  },
+  {
+   "name": "GELATIN, UNSPECIFIED",
+   "labels": 28
+  },
+  {
+   "name": "SACCHARIN SODIUM",
+   "labels": 28
+  },
+  {
+   "name": "CARNAUBA WAX",
+   "labels": 27
+  },
+  {
+   "name": "CELLULOSE, MICROCRYSTALLINE",
+   "labels": 26
+  },
+  {
+   "name": "CITRIC ACID MONOHYDRATE",
+   "labels": 26
+  },
+  {
+   "name": "DIMETHICONE",
+   "labels": 25
+  },
+  {
+   "name": "HYDROXYPROPYL CELLULOSE (1600000 WAMW)",
+   "labels": 25
+  },
+  {
+   "name": "FERROSOFERRIC OXIDE",
+   "labels": 23
+  },
+  {
+   "name": "SODIUM STARCH GLYCOLATE TYPE A POTATO",
+   "labels": 23
+  },
+  {
+   "name": "HYPROMELLOSES",
+   "labels": 22
+  },
+  {
+   "name": "BENZALKONIUM CHLORIDE",
+   "labels": 20
+  },
+  {
+   "name": "POLYETHYLENE GLYCOL 400",
+   "labels": 20
+  },
+  {
+   "name": "MINERAL OIL",
+   "labels": 19
+  },
+  {
+   "name": "METHYLPARABEN",
+   "labels": 18
+  },
+  {
+   "name": "HYDROCHLORIC ACID",
+   "labels": 17
+  },
+  {
+   "name": "PHENOXYETHANOL",
+   "labels": 17
+  },
+  {
+   "name": "SHELLAC",
+   "labels": 17
+  },
+  {
+   "name": "COCAMIDOPROPYL BETAINE",
+   "labels": 16
+  },
+  {
+   "name": "HYDRATED SILICA",
+   "labels": 16
+  },
+  {
+   "name": "LACTOSE, UNSPECIFIED FORM",
+   "labels": 16
+  },
+  {
+   "name": "TRIACETIN",
+   "labels": 15
+  },
+  {
+   "name": "PROPYLPARABEN",
+   "labels": 14
+  },
+  {
+   "name": ".ALPHA.-TOCOPHEROL ACETATE",
+   "labels": 13
+  },
+  {
+   "name": "ALOE VERA LEAF",
+   "labels": 13
+  },
+  {
+   "name": "HYPROMELLOSE 2910 (6 MPA.S)",
+   "labels": 13
+  },
+  {
+   "name": "PETROLATUM",
+   "labels": 13
+  },
+  {
+   "name": "POLYVINYL ALCOHOL, UNSPECIFIED",
+   "labels": 13
+  },
+  {
+   "name": "POVIDONE",
+   "labels": 13
+  },
+  {
+   "name": "CETYL ALCOHOL",
+   "labels": 12
+  },
+  {
+   "name": "MEDIUM-CHAIN TRIGLYCERIDES",
+   "labels": 12
+  },
+  {
+   "name": "MENTHOL",
+   "labels": 12
+  },
+  {
+   "name": "AVOBENZONE",
+   "labels": 11
+  },
+  {
+   "name": "CAPRYLYL GLYCOL",
+   "labels": 11
+  },
+  {
+   "name": "POLYETHYLENE GLYCOL 3350",
+   "labels": 11
+  },
+  {
+   "name": "CARBOXYMETHYLCELLULOSE SODIUM, UNSPECIFIED",
+   "labels": 10
+  },
+  {
+   "name": "GELATIN",
+   "labels": 10
+  },
+  {
+   "name": "OCTISALATE",
+   "labels": 10
+  },
+  {
+   "name": "POLOXAMER 407",
+   "labels": 10
+  },
+  {
+   "name": "ETHYLHEXYLGLYCERIN",
+   "labels": 9
+  },
+  {
+   "name": "GLYCERYL MONOSTEARATE",
+   "labels": 9
+  },
+  {
+   "name": "HOMOSALATE",
+   "labels": 9
+  },
+  {
+   "name": "HYDROXYPROPYL CELLULOSE, UNSPECIFIED",
+   "labels": 9
+  },
+  {
+   "name": "MALTODEXTRIN",
+   "labels": 9
+  },
+  {
+   "name": "OCTOCRYLENE",
+   "labels": 9
+  }
+ ]
+}
