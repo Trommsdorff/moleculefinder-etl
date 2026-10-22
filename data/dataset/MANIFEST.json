@@ -1,0 +1,97 @@
+{
+ "title": "MoleculeFinder: the molecules in everyday foods, drinks and products",
+ "version": "2026.10",
+ "license": "CC0-1.0",
+ "snapshot_refreshed": "2026-10-21",
+ "snapshot_sha256": "e04a867f99eae38678a9961288d454f7c9a91e87f7f16a4607bd8775840fcbd1",
+ "inputs_fingerprint": "17122735c9f9516757ef6bbf57bd2e2dc93e2b3778cbc463497dace8e9813656",
+ "rows": {
+  "molecules": 915,
+  "products": 405,
+  "product_molecules": 2367,
+  "categories": 167,
+  "molecule_categories": 5066,
+  "relationships": 16,
+  "similarity": 3302,
+  "worlds": 10,
+  "world_molecules": 60,
+  "licences": 296
+ },
+ "withheld": {
+  "ld50": 41,
+  "ghs_molecules": 650,
+  "ghs_hubs": 10,
+  "licences": 29,
+  "cas_numbers": 842
+ },
+ "files": {
+  "CITATION.cff": {
+   "bytes": 827,
+   "sha256": "8f1b1039bbb91345347f1d7ab17256ce9f24506188c5f7205e606f1a35a6e48c"
+  },
+  "LICENSE.txt": {
+   "bytes": 7048,
+   "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+  },
+  "README.md": {
+   "bytes": 15832,
+   "sha256": "61759503634ba005fe907b8a35fa1dafe0f7521864bf38fa7cb9d9a387d81dec"
+  },
+  "categories.csv": {
+   "bytes": 5730,
+   "sha256": "14fee905cd564fbf1958ab5a930194424bfa32f6b92ca53c3c06950012adf940"
+  },
+  "datapackage.json": {
+   "bytes": 22941,
+   "sha256": "6669a2c4e715cf0a5f8864737d519c8355e55b338d1cf75a5fb0a8f39d58bbfb"
+  },
+  "dataset-metadata.json": {
+   "bytes": 17830,
+   "sha256": "c507a3b58d6c66dd6a2dca9199fca41c9edc782dcaa9cd9ffee442a45bd8da36"
+  },
+  "licences.csv": {
+   "bytes": 55074,
+   "sha256": "bff3eb9d3a4854af41c9a5cd83953cf64e52986214f268ea22abb6e2f1bab8f8"
+  },
+  "molecule_categories.csv": {
+   "bytes": 133366,
+   "sha256": "967ad58bfb3be02688a2f81ed7e4336bf1f803e9306e45eb6a801c7a17d3e1e0"
+  },
+  "moleculefinder.json": {
+   "bytes": 3211268,
+   "sha256": "338fb4ce91ee01217c172c1c0d138ddd32744ce56bb1b6660c7dbb615fac5765"
+  },
+  "molecules.csv": {
+   "bytes": 728731,
+   "sha256": "a565c2bd9b7a7bdb525d0300d7f4abcef88e5c1a8f3ea63ff63922cc7fa26145"
+  },
+  "product_molecules.csv": {
+   "bytes": 136216,
+   "sha256": "d462ea4013827c2e27721c25204ff3e616f2d2bdaffb6938ae2f3dca7a079771"
+  },
+  "products.csv": {
+   "bytes": 111066,
+   "sha256": "52e4cd2ed70003f3b87dbace5409cdf4c3a4bd1f8eecfa7d3133521b91c47aad"
+  },
+  "relationships.csv": {
+   "bytes": 1028,
+   "sha256": "aa04a127b22a3b536b437ae99dd47136d11bcb22d2e62324bd036b18a20d9dd2"
+  },
+  "similarity.csv": {
+   "bytes": 110493,
+   "sha256": "c1c564251c16aba40494a7185f9d36c719c62f30eb8e65e1fd024c083935a3f7"
+  },
+  "world_molecules.csv": {
+   "bytes": 1562,
+   "sha256": "f634792844b7fbbbe64d58911b437a90f59330dbb9aee1a8ffce10923c4dfe6e"
+  },
+  "worlds.csv": {
+   "bytes": 626,
+   "sha256": "e303c1dcaf19aba4bf098e5f143c1eebf7a48a9496fb80afe3f091ace0d8d836"
+  },
+  "zenodo.json": {
+   "bytes": 1678,
+   "sha256": "4aaf8b306c8a22e811d4c3108aa06fef79dd56227d1dc8fc7512edb31972d939"
+  }
+ }
+}

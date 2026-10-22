@@ -1,0 +1,168 @@
+slug,name,kind,molecules
+addiction-medicine,Addiction medicines,family,3
+aerosol-can,Aerosol cans,product,6
+alcohol,Alcohols,family,7
+alcohols,Alcohols,functional_group,254
+aldehyde,Aldehydes,family,11
+aldehydes,Aldehydes,functional_group,18
+alkaloid,Plant alkaloids,family,18
+alkane,Alkanes,family,4
+allergy,Allergy,use,13
+alpha-2-agonist,Alpha-2 agonists,family,3
+amides,Amides,functional_group,148
+amine,Amines,family,13
+amines,Amines,functional_group,201
+amino-acid,Amino acids,family,35
+anaesthetic,Anaesthetics,family,5
+analgesic,Non-opioid painkillers,family,10
+antibiotic,Antibiotics,family,25
+anticoagulant,Blood thinners,family,4
+anticonvulsant,Anticonvulsants,family,9
+antidepressant,Antidepressants,family,8
+antidiabetic,Diabetes medicines,family,8
+antiemetic,Anti-nausea medicines,family,3
+antifungal,Antifungals,family,4
+antihistamine,Antihistamines,family,6
+antihypertensive,Blood-pressure medicines,family,16
+antineoplastic,Cancer medicines,family,11
+antiparasitic,Antiparasitics,family,3
+antipsychotic,Antipsychotics,family,12
+antiseptic,Antiseptic,use,5
+antispasmodic,Antispasmodics,family,4
+antiviral,Antivirals,family,7
+anxiolytic,Anti-anxiety medicines,family,3
+aromatic,Aromatic hydrocarbons,family,3
+aromatics,Aromatics,functional_group,384
+barbiturate,Barbiturates,family,5
+battery-and-electronics,Batteries and electronics,product,11
+beer,Beer,food,14
+benzodiazepine,Benzodiazepines,family,12
+beta-blocker,Beta blockers,family,6
+black-pepper,Black pepper,food,6
+body-endogenous,Body,bucket,132
+bread,Bread,food,9
+breakfast-cereal,Breakfast cereal,food,10
+carboxylic-acids,Carboxylic Acids,functional_group,163
+carotenoid,Carotenoids,family,5
+cheese,Cheese,food,7
+chili-peppers,Chili peppers,food,10
+chocolate,Chocolate,food,17
+citrus,Citrus,food,7
+cocoa,Cocoa,food,13
+coffee,Coffee,food,14
+corticosteroid,Corticosteroids,family,12
+cough-and-cold,Cough and cold,use,8
+cured-meat,Cured meat,food,7
+depressant,Depressant,type,1
+diet-soda,Diet Soda,food,6
+eggs,Eggs,food,8
+element,Chemical elements,family,70
+element-aluminium,Aluminium,element,4
+element-bromine,Bromine,element,4
+element-calcium,Calcium,element,12
+element-chlorine,Chlorine,element,87
+element-cobalt,Cobalt,element,5
+element-fluorine,Fluorine,element,44
+element-iodine,Iodine,element,8
+element-iron,Iron,element,3
+element-magnesium,Magnesium,element,11
+element-material,Element & material,bucket,78
+element-nitrogen,Nitrogen,element,476
+element-phosphorus,Phosphorus,element,33
+element-potassium,Potassium,element,13
+element-sodium,Sodium,element,36
+element-sulfur,Sulfur,element,118
+element-zinc,Zinc,element,3
+energy-drinks,Energy drinks,food,22
+ester,Esters,family,8
+esters,Esters,functional_group,87
+ethers,Ethers,functional_group,221
+everyday-chemistry,Everyday chemistry,bucket,54
+fatty-acid,Fatty acids,family,20
+first-aid-kit,First aid kit,product,8
+fish,Fish,food,8
+flavonoid,Flavonoids,family,13
+food-flavor,Food & flavor,bucket,98
+fruit,Fruit,food,12
+fuel-and-flame,Fuel and flame,product,8
+garden-and-pest,Garden and pest control,product,8
+glycoside,Glycosides,family,7
+halogenated,Halogenated,functional_group,137
+heartburn-and-digestion,Heartburn and digestion,use,14
+honey,Honey,food,8
+hormone,Hormone,type,5
+hormone-medicine,Hormone medicines,family,13
+hot-sauce,Hot sauce,food,8
+household-cleaner,Household cleaners,product,12
+hypnotic,Sleep medicines,family,7
+immunosuppressant,Immunosuppressants,family,3
+inorganic,Inorganic compounds,family,24
+ketone,Ketones,family,7
+ketones,Ketones,functional_group,96
+leafy-greens,Leafy greens,food,8
+lipid-lowering,Cholesterol medicines,family,5
+methylxanthine,Methylxanthine,type,3
+milk,Milk,food,7
+mineral,Hard mineral solids,family,4
+muscle-relaxant,Muscle relaxants,family,5
+mushrooms,Mushrooms,food,7
+neurotransmitter,Neurotransmitters,family,8
+nsaid,NSAIDs,family,10
+nucleobase,Nucleobases,family,14
+nutrient-vitamin,Nutrient,bucket,71
+nuts,Nuts,food,8
+opioid,Opioids,family,12
+organic-acid,Organic acids,family,37
+organohalogen,Organohalogens,family,6
+otc,Over-the-counter medicines,family,36
+otc-medicine,OTC medicine,bucket,50
+over-1000-g-mol,Over 1000 g/mol,size,28
+pain-and-fever,Pain and fever,use,5
+paint-and-solvent,Paint and solvent,product,10
+parkinsons-medicine,Parkinson's medicines,family,6
+peptide,Peptides,family,15
+phenolic,Phenolic compounds,family,34
+phenols,Phenols,functional_group,112
+phosphates,Phosphates,functional_group,31
+plant-compound,Plant,bucket,83
+polymer,Polymers,family,3
+polysaccharide,Polysaccharides,family,8
+prescription-medicine,Prescription medicine,bucket,286
+processed-snacks,Processed snacks,food,9
+protein,Proteins,family,7
+pungent,Pungent,type,2
+red-meat,Red meat,food,11
+respiratory,Airway medicines,family,6
+retinoid,Retinoids,family,3
+scent-aroma,Scent & aroma,bucket,39
+shellfish,Shellfish,food,7
+skin-and-topical,Skin and topical,use,12
+skincare,Skincare,product,12
+sleep-and-calm,Sleep and calm,use,3
+snri,SNRIs,family,3
+soft-drinks,Soft drinks,food,9
+soy-sauce,Soy sauce,food,6
+spirits,Spirits,food,9
+ssri,SSRIs,family,7
+steroid,Steroid,type,5
+steroid-hormone,Steroid hormones,family,14
+stevia,Stevia,food,2
+stimulant,Stimulants,family,12
+sugar,Sugars,family,21
+sugar-alcohol,Sugar alcohols,family,8
+sugar-free-gum,Sugar Free Gum,food,4
+sulfur,Sulfur compounds,family,3
+sweetener,Sweetener,bucket,24
+table-sugar,Table sugar,food,3
+tabletop-sweetener,Tabletop Sweetener,food,11
+tea,Tea,food,11
+terpene,Terpenes,family,6
+terpenoid,Terpenoids,family,20
+thiols,Thiols,functional_group,9
+tonic-water,Tonic water,food,5
+toothpaste,Toothpaste,product,8
+tricyclic-antidepressant,Tricyclic antidepressants,family,5
+under-100-g-mol,Under 100 g/mol,size,125
+vitamin,Vitamins,family,27
+whipped-cream,Whipped cream,food,5
+wine,Wine,food,21

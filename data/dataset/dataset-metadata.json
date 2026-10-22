@@ -1,0 +1,533 @@
+{
+  "title": "MoleculeFinder: Molecules in Everyday Products",
+  "id": "trommsdorff/moleculefinder",
+  "subtitle": "915 molecules, 405 foods, drinks and products, CC0",
+  "description": "915 molecules from everyday life (coffee, chili, chocolate, sweeteners, medicines, cleaning products, PFAS) and the 405 foods, drinks and products they are in, from MoleculeFinder (https://moleculefinder.com). Each molecule carries its PubChem identity and computed properties (formula, weight, SMILES, InChI, descriptors), its Wikidata item and names, MoleculeFinder's one-line description and everyday group, and, where a US government source reports it, one LD50 with species, route and source. Product ingredient lists are read from DailyMed labels, Wikidata and MoleculeFinder's curated food lists, matched to molecules by code, never by name. Also included: curated relationships, structural neighbours, the ten everyday worlds and FDA approval records. Every column states its source; every field is public domain or CC0, and the whole dataset is released under CC0 1.0. Snapshot of 2026-10-21.\n\nColumn dictionary and provenance: README.md. Website: https://moleculefinder.com",
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ],
+  "keywords": [
+    "chemistry",
+    "food",
+    "education",
+    "biology"
+  ],
+  "resources": [
+    {
+      "path": "molecules.csv",
+      "description": "One row per molecule (915 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "MoleculeFinder's identifier; the page is https://moleculefinder.com/m/<slug>."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "description": "The name MoleculeFinder uses (its page title)."
+          },
+          {
+            "name": "pubchem_cid",
+            "type": "number",
+            "description": "PubChem Compound ID. Blank for the 18 hand-modelled biopolymers and mixtures, which have no single PubChem compound."
+          },
+          {
+            "name": "wikidata_qid",
+            "type": "string",
+            "description": "Wikidata item."
+          },
+          {
+            "name": "wikipedia_title",
+            "type": "string",
+            "description": "English Wikipedia article title (the title only, no Wikipedia text)."
+          },
+          {
+            "name": "molecular_formula",
+            "type": "string",
+            "description": "Molecular formula (Hill order)."
+          },
+          {
+            "name": "molecular_weight",
+            "type": "number",
+            "description": "Molecular weight, g/mol."
+          },
+          {
+            "name": "canonical_smiles",
+            "type": "string",
+            "description": "SMILES without stereochemistry (PubChem ConnectivitySMILES)."
+          },
+          {
+            "name": "isomeric_smiles",
+            "type": "string",
+            "description": "SMILES with stereochemistry."
+          },
+          {
+            "name": "inchi",
+            "type": "string",
+            "description": "Standard InChI."
+          },
+          {
+            "name": "inchikey",
+            "type": "string",
+            "description": "Standard InChIKey."
+          },
+          {
+            "name": "xlogp",
+            "type": "number",
+            "description": "XLogP3 partition coefficient."
+          },
+          {
+            "name": "tpsa",
+            "type": "number",
+            "description": "Topological polar surface area, square angstroms."
+          },
+          {
+            "name": "h_bond_donors",
+            "type": "number",
+            "description": "Hydrogen bond donor count."
+          },
+          {
+            "name": "h_bond_acceptors",
+            "type": "number",
+            "description": "Hydrogen bond acceptor count."
+          },
+          {
+            "name": "rotatable_bonds",
+            "type": "number",
+            "description": "Rotatable bond count."
+          },
+          {
+            "name": "complexity",
+            "type": "number",
+            "description": "Bertz/Hendrickson complexity."
+          },
+          {
+            "name": "formal_charge",
+            "type": "number",
+            "description": "Formal charge."
+          },
+          {
+            "name": "wikidata_description",
+            "type": "string",
+            "description": "Wikidata's short English description."
+          },
+          {
+            "name": "other_names",
+            "type": "string",
+            "description": "Up to four other names, the Wikidata label then aliases, separated by ' | '."
+          },
+          {
+            "name": "brand_names",
+            "type": "string",
+            "description": "Curated brand names, separated by ' | '."
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "description": "MoleculeFinder's one-line description of the molecule (the page's own)."
+          },
+          {
+            "name": "why_it_matters",
+            "type": "string",
+            "description": "MoleculeFinder's curated line on why the molecule matters in everyday life."
+          },
+          {
+            "name": "group",
+            "type": "string",
+            "description": "MoleculeFinder's everyday group (food-flavor, sweetener, prescription-medicine...)."
+          },
+          {
+            "name": "family",
+            "type": "string",
+            "description": "Chemical or drug family (alkaloid, ssri, terpenoid...)."
+          },
+          {
+            "name": "is_otc",
+            "type": "boolean",
+            "description": "Sold over the counter in the US (MoleculeFinder's allowlist)."
+          },
+          {
+            "name": "dual_use",
+            "type": "boolean",
+            "description": "Also has a common use outside medicine or food."
+          },
+          {
+            "name": "macromolecule",
+            "type": "boolean",
+            "description": "A biopolymer or mixture with no single structure drawing."
+          },
+          {
+            "name": "ld50_mg_per_kg",
+            "type": "number",
+            "description": "The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources)."
+          },
+          {
+            "name": "ld50_species",
+            "type": "string",
+            "description": "Species of that LD50."
+          },
+          {
+            "name": "ld50_route",
+            "type": "string",
+            "description": "Route of that LD50 (oral, dermal, inhalation, iv, other)."
+          },
+          {
+            "name": "ld50_sources",
+            "type": "string",
+            "description": "The US government sources reporting that LD50, separated by ' | '."
+          },
+          {
+            "name": "half_life_hours",
+            "type": "number",
+            "description": "Elimination half-life in people, hours (8 molecules)."
+          },
+          {
+            "name": "relative_sweetness",
+            "type": "number",
+            "description": "Sweetness relative to sucrose = 1."
+          },
+          {
+            "name": "scoville_shu",
+            "type": "number",
+            "description": "Pungency of the pure compound, Scoville heat units."
+          },
+          {
+            "name": "odor_threshold_ng_m3",
+            "type": "number",
+            "description": "Odor detection threshold, ng per cubic metre of air."
+          },
+          {
+            "name": "pageviews_monthly",
+            "type": "number",
+            "description": "English Wikipedia page views per month, the demand signal MoleculeFinder ranks by."
+          },
+          {
+            "name": "catalog_batch",
+            "type": "string",
+            "description": "The tranche that added the molecule (blank: the original everyday core)."
+          },
+          {
+            "name": "url",
+            "type": "string",
+            "description": "The molecule's MoleculeFinder page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "products.csv",
+      "description": "One row per food, drink, product or class page (405 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "MoleculeFinder's identifier; the page is https://moleculefinder.com/whats-in/<slug>."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Product, food or drink name, used only to name it."
+          },
+          {
+            "name": "kind",
+            "type": "string",
+            "description": "food, drink, medicine, cosmetic, household, chemistry (a class such as PFAS) or moment (an everyday world)."
+          },
+          {
+            "name": "source_type",
+            "type": "string",
+            "description": "Where the ingredient list comes from: dailymed, wikidata, world, curated or class."
+          },
+          {
+            "name": "source_id",
+            "type": "string",
+            "description": "The DailyMed set id, Wikidata QID, world slug, curated hub or class slug."
+          },
+          {
+            "name": "source_url",
+            "type": "string",
+            "description": "The label or item the list was read from."
+          },
+          {
+            "name": "also_from",
+            "type": "string",
+            "description": "Further sources a food or drink combines, as type:id, separated by ' | '."
+          },
+          {
+            "name": "labeler",
+            "type": "string",
+            "description": "The label's labeler (DailyMed products)."
+          },
+          {
+            "name": "document_type",
+            "type": "string",
+            "description": "The label's document type (DailyMed products)."
+          },
+          {
+            "name": "label_effective",
+            "type": "string",
+            "description": "The label version's effective date, YYYYMMDD (DailyMed products)."
+          },
+          {
+            "name": "ingredients_listed",
+            "type": "number",
+            "description": "Ingredients the source lists."
+          },
+          {
+            "name": "molecules_in_dataset",
+            "type": "number",
+            "description": "Of those, the molecules in this dataset (rows in product_molecules.csv)."
+          },
+          {
+            "name": "url",
+            "type": "string",
+            "description": "The product's MoleculeFinder page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "product_molecules.csv",
+      "description": "Which molecules each product lists (2,367 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "product_slug",
+            "type": "string",
+            "description": "products.slug"
+          },
+          {
+            "name": "molecule_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          },
+          {
+            "name": "role",
+            "type": "string",
+            "description": "active, inactive (label ingredients), part (Wikidata), curated, world or class."
+          },
+          {
+            "name": "listed_as",
+            "type": "string",
+            "description": "The ingredient's name on the label, where it differs in form (sertraline hydrochloride)."
+          },
+          {
+            "name": "purpose",
+            "type": "string",
+            "description": "The label's own purpose line for an active ingredient."
+          },
+          {
+            "name": "matched_by",
+            "type": "string",
+            "description": "How the ingredient was matched to the molecule: unii, moiety, parent, skeleton or alias (labels); qid, curated, world or class otherwise. Never by name."
+          }
+        ]
+      }
+    },
+    {
+      "path": "categories.csv",
+      "description": "Moleculefinder's groups, families, food and product hubs, functional groups (167 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "MoleculeFinder's identifier; the hub is https://moleculefinder.com/in/<slug>."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Category name."
+          },
+          {
+            "name": "kind",
+            "type": "string",
+            "description": "bucket, family, food, product, use, type, functional_group (RDKit SMARTS), element or size."
+          },
+          {
+            "name": "molecules",
+            "type": "number",
+            "description": "Members (rows in molecule_categories.csv)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "molecule_categories.csv",
+      "description": "Which molecules each category holds (5,066 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "molecule_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          },
+          {
+            "name": "category_slug",
+            "type": "string",
+            "description": "categories.slug"
+          },
+          {
+            "name": "note",
+            "type": "string",
+            "description": "The curated note, where there is one (caffeine in coffee: ~95 mg per 8 oz cup)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "relationships.csv",
+      "description": "Curated molecule-to-molecule links (becomes, affects) (16 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "from_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          },
+          {
+            "name": "relation",
+            "type": "string",
+            "description": "becomes (a metabolite or product) or affects (acts on)."
+          },
+          {
+            "name": "to_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          },
+          {
+            "name": "note",
+            "type": "string",
+            "description": "What the relation is (major metabolite, receptor antagonist)."
+          },
+          {
+            "name": "confidence",
+            "type": "string",
+            "description": "from_source or inferred, as the site labels it."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarity.csv",
+      "description": "Structural neighbours (tanimoto, morgan fingerprints) (3,302 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "molecule_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          },
+          {
+            "name": "neighbor_slug",
+            "type": "string",
+            "description": "molecules.slug of a structural neighbour."
+          },
+          {
+            "name": "tanimoto",
+            "type": "number",
+            "description": "Tanimoto similarity of Morgan fingerprints (radius 2, 2048 bits)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "worlds.csv",
+      "description": "The ten everyday worlds (10 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "MoleculeFinder's identifier; the page is https://moleculefinder.com/roam/<slug>."
+          },
+          {
+            "name": "title",
+            "type": "string",
+            "description": "The everyday world (Morning coffee, After the rain...)."
+          },
+          {
+            "name": "blurb",
+            "type": "string",
+            "description": "One line about it."
+          }
+        ]
+      }
+    },
+    {
+      "path": "world_molecules.csv",
+      "description": "Which molecules each world holds (60 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "world_slug",
+            "type": "string",
+            "description": "worlds.slug"
+          },
+          {
+            "name": "molecule_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          }
+        ]
+      }
+    },
+    {
+      "path": "licences.csv",
+      "description": "The fda marketing record for each approved medicine (drugs@fda) (296 rows).",
+      "schema": {
+        "fields": [
+          {
+            "name": "molecule_slug",
+            "type": "string",
+            "description": "molecules.slug"
+          },
+          {
+            "name": "regulator",
+            "type": "string",
+            "description": "US Food and Drug Administration."
+          },
+          {
+            "name": "application",
+            "type": "string",
+            "description": "The application (NDA, ANDA or BLA number)."
+          },
+          {
+            "name": "product",
+            "type": "string",
+            "description": "A product marketed under it."
+          },
+          {
+            "name": "authorised",
+            "type": "string",
+            "description": "Original approval date, YYYY-MM-DD."
+          },
+          {
+            "name": "holder",
+            "type": "string",
+            "description": "The application holder."
+          },
+          {
+            "name": "combination_only",
+            "type": "boolean",
+            "description": "Marketed only in combination with another active ingredient."
+          },
+          {
+            "name": "source_url",
+            "type": "string",
+            "description": "The application's Drugs@FDA page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "moleculefinder.json",
+      "description": "Every table in one JSON file."
+    }
+  ]
+}
