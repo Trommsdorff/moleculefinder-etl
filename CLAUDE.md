@@ -18,6 +18,13 @@ Full design: `../MoleculeFinder_Technical_Build_Plan.md` (sections 4–7).
    row per stage.
 
 ## Commands
+**STANDING ORDER (Garrett, 2026-10-21): local servers and local runs use BLANKED database keys** unless the
+step genuinely needs the live database (a migration, a deploy check). Blank them on the command itself:
+`SUPABASE_URL= SUPABASE_SERVICE_KEY= SUPABASE_DB_URL= <command>` (the `.env`/`.env.local` files hold the live
+keys). **Every session stops its own servers and checks for leftovers before it closes:**
+`lsof -nP -iTCP -sTCP:LISTEN | grep -E 'node|python'` must show nothing the session started. A leftover server
+holding live keys was found on port 3000 on 2026-10-21.
+
 **A build on this Mac is PINNED (2026-10-20): run `mfetl sync-inputs` first.** It downloads the exact
 inputs main was built from (the weekly run's artifact); `mfetl all` then reproduces main, fetching only
 what is genuinely new (a tranche's molecules). Without the sync, a pinned export refuses. See "Run A,
@@ -715,6 +722,60 @@ web CLAUDE.md). A reason to come back and a thing to share.
   `5cc2a62` touching only `data/LAST_CHECK`; `sync-web` "web repo snapshot already identical — no PR
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
+
+## Run B2 (2026-10-21): the two fields run B waits for. BUILT on `names-licences-2026-10`, NOT PUSHED
+Commit `02e928f` (code, seeds, data). Web `2457707` carries the sync. Waiting for "deploy".
+- **`wikidata_names` on every record** (`assemble.wikidata_display_names`): up to four names from the
+  Wikidata label then aliases, through exactly the synonym line's filters (readable, not near the title,
+  not on the do-not-use list) with NO PubChem synonym. 582 of 913 carry at least one. The web's
+  "What else is X called?" reads it with the curated brands.
+- **Fourteen do-not-use names added** (each with a reason in `synonym_do_not_use.yaml`): Wikidata aliases
+  that are slang (Effies, Herbal Ecstasy, NOS) or name a different substance (Lormetazepam under lorazepam,
+  retinoic acid under isotretinoin, acylcarnitine under SAMe, alpha-type CGRP, CGRP, CALCA and katacalcin
+  under calcitonin, flue gas, root bark oil, Moderateafinil, Silymarin). They were already on the live
+  synonym line under the H1; they leave it too (10 lines change). Two titles gain a parenthetical:
+  "Modafinil (Provigil)" and "S-adenosyl methionine (SAMe)".
+- **A licence record for every medicine** (`moleculefinder_etl/licences.py`, `mfetl licences`). Reads the
+  Drugs@FDA data files (zip, public domain) and the EMA's medicines JSON (centrally authorised; the
+  regulator named is the European Commission, which grants the authorisation on the EMA's assessment),
+  matches each of the 336 medicines (`prescription-medicine` + `otc-medicine`) by active ingredient, and
+  writes `sources/seeds/licences.yaml` (GENERATED, committed, sorted) with `regulator`, `register`,
+  `application`, `product`, `authorised`, `holder`, `combination`, `basis`, `source`, `read`.
+  - FDA: only products marketed today (Prescription or OTC; Discontinued and tentative do not count);
+    a single-ingredient product first, then NDA/BLA before ANDA, then the oldest original approval.
+    Source = the application's Drugs@FDA overview page. EMA: Human + Authorised; originator before generic.
+  - Matching: the ingredient is one of the molecule's names, alone or followed only by salt/ester/hydrate
+    words (`SALT_WORDS`). Names: title, preferred name, Wikipedia title, Wikidata label and aliases, EXCEPT
+    an alias sitting inside the title (the racemate or parent: "citalopram" under escitalopram, "ofloxacin"
+    under levofloxacin) or another catalog molecule's own name ("omeprazole" under esomeprazole). Only a
+    TRAILING parenthesis is stripped ("(S)-citalopram" stays escitalopram). Every alias-driven match was
+    audited: all 15 are INN/USAN spellings (aciclovir/acyclovir, pethidine/meperidine, rifampicin/rifampin).
+  - **MHRA was read BY HAND** into `sources/seeds/licences_mhra.yaml` (substance as the index spells it,
+    one product, date read; source = the public substance page). The site's GraphQL API answered 503 to
+    every request on 2026-10-21; its fallback is an Azure search index behind a key shipped in the site's
+    script, which was NOT used; product pages (with PL numbers) sit behind a disclaimer that was not
+    accepted on anyone's behalf, so MHRA records carry no licence number. Used only where FDA and EMA have
+    nothing. `mfetl licences` re-merges the file on every run.
+  - **Counts: 295 Drugs@FDA, 1 EMA (agomelatine), 23 MHRA, 6 hand rulings unchanged = 325 of 336.**
+    11 in no register, listed in the seed header, no record, no licence answer: amobarbital, bromazepam,
+    cortisone, levomethamphetamine, metamizole, oxymetholone, phenazopyridine, rilmenidine, secobarbital,
+    tianeptine, trimetazidine. 6 records are combination-only (`combination: true`; 5 FDA, 1 MHRA).
+  - `relationships.attach_licences` runs after `attach_approvals` (the hand rulings win) and refuses an
+    unknown slug, a non-medicine, a missing or unknown field, or a source that is not `https` on fda.gov,
+    ema.europa.eu, mhra.gov.uk or aifa.gov.it (`is_regulator_url`). **A build only reads the committed
+    file: `mfetl all` and the weekly run make no register request.** Refresh = run `mfetl licences` by
+    hand and review the diff; it deletes its downloads (`data/regulators/`, gitignored) when done.
+  - Registry: `drugs_at_fda`, `ema`, `mhra` sources (terms checked: EMA allows commercial reuse with EMA
+    acknowledged as the source; MHRA content is Crown copyright under OGL v3).
+- **Build:** `mfetl sync-inputs` (17122735c9f95167), then `mfetl all` with all three database keys blanked:
+  exit 0, 0 PubChem POSTs, inputs pinned. The diff is exactly `wikidata_names` (913 files), `approval`
+  (319), and the do-not-use list's 10 lines and 2 titles; index, boards, roam, worlds, meta untouched.
+  Snapshot guard, `inputs.py` and `.github/` untouched. 612 tests (588), ruff 119 against main's 118 (the
+  file idiom in `registry.py`/`assemble.py`). `tests/test_licences.py` (21) includes the order's test:
+  every medicine's record names its regulator and a regulator source, none cites anything else (the four
+  sourceless hand rulings, meldonium, phenibut, clenbuterol, clostebol, are named exceptions).
+- **Deploy:** push ETL `main` (fast-forward to `names-licences-2026-10`; nothing deploys), then web `main`.
+  The next Monday run rebuilds from these seeds with no change.
 
 ## Run A (2026-10-20) — inputs travel with the snapshot; molecules in the news. DEPLOYED 2026-10-20
 **DEPLOYED 2026-10-20 about 19:00 UTC on Garrett's word.** (1) `mfetl migrate --apply` applied 0006 to the live database; the public key over REST: `molecule_news` five name columns 200, `select=*` 401, `updated_at` 401, `molecule_news_match` 401, an insert 401 (`molecule` 200, `event` 401 as before). (2) ETL `main` 4ae9022 -> `ef418fe` (the migrations check green). `news.yml` dry run 39479474794: 60 requests, 0 failed, 3,064 headlines, 70 molecules. Real run 39479816293: 3,036 headlines, 74 molecules, 314 rows in `molecule_news_match` (counted with the service key, nothing printed), 74 in `molecule_news`, the feed 200 with exactly five keys per molecule and `"ranked_by": "count"` (served `public, max-age=300`), IndexNow 75 URLs HTTP 200. Home eight: Ammonia, Ethanol, Uranium, Fentanyl, Magnesium, Creatine, Caffeine, Arsenic. PFOA and PFOS were not reached in that run (their batch past the budget); the rotated runs reach it. (3) Web `main` 4f15bbb -> `d3fe15c` (with `b5f9c40`), GitHub deployment `7208573405` Production success; IndexNow run 39480305068: 1,262 -> 1,265, 3 new, 21 changed, 24 submitted and 24 accepted, audit exact, `indexnow-last` moved to `d3fe15c`. Live: sitemap 1,265; the two PFAS pages and `/in/organohalogen` 200; the home cards render and the badge shows on `/m/ammonia` (53 headlines) and `/m/sucrose`. Live Lighthouse (mobile, median of 3, Brave): `/` perf 99, SEO 100, LCP 2.15 s, CLS 0, 298 KB; `/m/caffeine` 99, 100, 2.16 s, CLS 0, 376 KB; `/m/ammonia` (badge) 99, 100, 2.24 s, CLS 0, 366 KB. Spike ranking from about 2026-11-17.
