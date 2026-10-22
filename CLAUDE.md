@@ -723,7 +723,36 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Run C1 (2026-10-22): What's in it, the product pages. BUILT, waiting for "deploy"
+## Run C1 (2026-10-22): What's in it, the product pages. BUILT and AMENDED, waiting for "deploy"
+**Amendments (Garrett, same day), commits `a11246a` (code) and `d3d4b7c` (data): 403 pages (was 346).**
+- **Curated foods and drinks.** A seed row `curated: <hub>` reads the records' curated `kind: food` memberships
+  (`products.curated_hubs`: food_hubs.yaml plus the curated overlays, the list `/in/<hub>` shows; order of
+  food_hubs.yaml, then slug). A food or drink row may name curated, world and wikidata together (never with
+  dailymed): one page, their union, curated first, one entry per molecule; a source that adds no molecule is not
+  cited (`also`). Molecule entries `role: "curated"` carry `hub` and the hub's `note`. 33 curated rows; 30 new pages;
+  chocolate, citrus and milk combined; `tabletop-sweetener` left out (alternatives, not ingredients); no energy drink
+  hub exists. `warm` now fetches a combined row's Wikidata item too (it had read only a row's first source).
+- **Salts, hydrates and stereo forms by rule** (`products.parent_index`, `_resolve`). A label UNII no molecule
+  claims goes to PubChem (`pubchem.unii_parents`: `compound/name/UNII-<code>/cids?cids_type=parent`, one GET a UNII,
+  400/404 = none; cached as `pubchem/uniiparent-<UNII>.json`, UNII TTL; parents' properties through the permanent
+  `props` cache for the InChIKey). An ACTIVE is looked up by its active moiety (zinc acetate's moiety is zinc, so a
+  lozenge never lists acetic acid; PubChem files methylphenidate's own UNII under the dex form), an excipient by its
+  own UNII. Accepted when the parent CID is a catalog CID (`parent`), else exactly one catalog molecule shares the
+  parent's InChIKey first block (`skeleton`), and that molecule has 2+ carbons (`carbon_count`; an inorganic salt's
+  parent is its acid). Hand list `sources/seeds/unii_aliases.yaml` (`alias`), 5 entries, only for forms the rule cannot
+  reach: three lactose forms (lactose and maltose share a skeleton), methylphenidate, oseltamivir. Matches: 125
+  parent, 46 skeleton, 88 alias (`products_gate.json` `matched_by_rule`). 839 label UNIIs looked up; the first run
+  without them in the cache costs about 840 GETs (3 minutes).
+- **`data/seed/next_tranche_queue.csv`** (committed, written by `stage_transform`, `products.write_queue`): every label
+  ingredient MF lacks, by UNII (or name), actives first (an ingredient active on ANY seeded label), each section by
+  label count: rank, section, name, unii, labels, labels_as_active, pubchem_parent_cid, example_products. 656 rows (76
+  active, 580 inactive). The gate report keeps its top 60.
+- Results: medicine 280, cosmetic 59, household 12, food 35, drink 13, moment 4; 70 fail (34 with 2, 23 with 1, 12 with
+  0, 1 animal label); inactive-only label pages 55 -> 49; 415 molecules carry `products` (320). Pinned build
+  (`sync-inputs` 17122735c9f95167, keys blanked), exit 0; molecule files differ from main by `products` alone.
+  650 tests (641; `test_products.py` 38), ruff 120 (the branch baseline). Protected files untouched (git diff
+  empty; their suites, 203 tests, pass).
+
 Branch `whats-in-2026-10` (from `main` `47d6515`, the waiting Run B2 notes commit): code `5f190d7`, data
 `03b2927`, helper `d429710`, plus its notes commit. Never pushed. Plan: `../BUILD-PLAN-growth-2026-10-18.md`
 run C, first half (C2 changes the front door). Decisions (Garrett, 2026-10-22): URL `/whats-in/<product>`
