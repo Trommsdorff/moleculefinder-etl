@@ -12,6 +12,7 @@ foods:
   - { category: coffee,    note: "~95 mg per 8 oz cup" }
   - { category: tea,       note: "~47 mg per 8 oz cup" }
   - { category: chocolate }
+  - { category: energy-drinks, note: "~80 mg per 250 ml can" }
 smell_card: null
 editorial: |
   Caffeine is the world's most widely used psychoactive drug, and the only one

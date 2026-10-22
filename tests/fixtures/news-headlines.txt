@@ -69,9 +69,13 @@ MSG concert lineup announced - Example News => -
 # The outlet never matches
 Weekly science roundup: new telescopes and rovers - Caffeine Weekly => -
 Researchers test ethanol in jet fuel blend - Example News => ethanol
-# Run A's two-row addition (2026-10-20): PFOA and PFOS by name; "PFAS" alone is a class and names neither.
+# Run A's two-row addition (2026-10-20): PFOA and PFOS by name; "PFAS" alone is a class and names neither
+# molecule. Since Run C2 (2026-10-22) it matches the PFAS class page, slug "pfas" (/whats-in/pfas).
 Regulators set drinking water limits for PFOA and PFOS - Example News => perfluorooctanesulfonic-acid, perfluorooctanoic-acid
 Town finds PFOS in well water near the old air base - Example News => perfluorooctanesulfonic-acid
 Study tracks perfluorooctanoic acid in blood samples - Example News => perfluorooctanoic-acid
-PFAS forever chemicals found in rainwater across the region - Example News => -
+PFAS forever chemicals found in rainwater across the region - Example News => pfas
+# Run C2's two-row addition (2026-10-22): PFNA and PFHxS by name and by their news abbreviations.
+Blood tests find PFNA and PFHxS in firefighters - Example News => perfluorohexanesulfonic-acid, perfluorononanoic-acid
+State limits perfluorononanoic acid in drinking water - Example News => perfluorononanoic-acid
 Boots on the ground to advance vanadium mine plans - Example News => -

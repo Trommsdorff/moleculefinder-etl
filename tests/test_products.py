@@ -23,7 +23,7 @@ import pytest
 from moleculefinder_etl import inputs
 from moleculefinder_etl.load import snapshot_export
 from moleculefinder_etl.sources import dailymed, registry
-from moleculefinder_etl.transform import products
+from moleculefinder_etl.transform import products, relationships
 
 SETID = "5d12e396-f82d-4c44-e063-6294a90ae291"
 SETID2 = "fda754f6-d0f3-4dce-a17a-927d64f912f7"
@@ -582,3 +582,85 @@ def test_the_committed_aliases_name_real_molecules_and_the_queue_is_committed():
     assert queue[0] == ",".join(products.QUEUE_FIELDS)
     sections = [line.split(",")[1] for line in queue[1:]]
     assert sections == sorted(sections)                          # every active before any inactive
+
+
+# ── Run C2 (2026-10-22): the PFAS class page and the energy drinks hub ───────
+def test_formula_counts_and_the_perfluorinated_rule():
+    assert products.formula_counts("C8HF15O2") == {"C": 8, "H": 1, "F": 15, "O": 2}
+    assert products.formula_counts("C6HF13O3S") == {"C": 6, "H": 1, "F": 13, "O": 3, "S": 1}
+    assert products.formula_counts(None) == {}
+    for f in ("C8HF15O2", "C8HF17O3S", "C9HF17O2", "C6HF13O3S"):       # PFOA, PFOS, PFNA, PFHxS
+        assert products.perfluorinated(f), f
+    # A CF3 group does not make a perfluorinated chain: fluoxetine, 1,1-difluoroethane, sucralose.
+    for f in ("C17H18F3NO", "C2H4F2", "C12H19Cl3O8", "C8H10N4O2"):
+        assert not products.perfluorinated(f), f
+
+
+CLASS_RECORDS = [
+    {"slug": "pfoa", "cid": 9554, "title": "Perfluorooctanoic acid", "molecular_formula": "C8HF15O2"},
+    {"slug": "pfos", "cid": 74483, "title": "Perfluorooctanesulfonic acid", "molecular_formula": "C8HF17O3S"},
+    {"slug": "pfna", "cid": 67821, "title": "Perfluorononanoic acid", "molecular_formula": "C9HF17O2"},
+    {"slug": "fluoxetine", "cid": 3386, "title": "Fluoxetine", "molecular_formula": "C17H18F3NO"},
+]
+CLASSES = {"pfas": {"name": "PFAS", "title": "PFAS (per- and polyfluoroalkyl substances)",
+                    "rule": "perfluorinated", "molecules": ["pfoa", "pfos", "pfna"]}}
+
+
+def _class_compile(classes):
+    return products.compile_products(
+        CLASS_RECORDS, [_p("pfas", "chemistry", "class", "pfas", "PFAS")], spl=lambda s: None, parts={},
+        uniis={}, worlds=WORLDS, parents={}, props={}, aliases={}, hubs={}, classes=classes)
+
+
+def test_a_class_page_lists_its_checked_members_with_their_atoms():
+    passed, report = _class_compile(CLASSES)
+    (pfas,) = passed
+    assert pfas["kind"] == "chemistry" and report["by_kind"]["chemistry"] == 1
+    assert pfas["source"] == {"type": "class", "class": "pfas",
+                              "title": "PFAS (per- and polyfluoroalkyl substances)", "rule": "perfluorinated"}
+    assert [(m["slug"], m["role"], m["carbons"], m["fluorines"]) for m in pfas["molecules"]] == [
+        ("pfoa", "class", 8, 15), ("pfos", "class", 8, 17), ("pfna", "class", 9, 17)]
+
+
+def test_a_class_member_that_fails_its_rule_or_is_not_a_molecule_stops_the_build():
+    bad = {"pfas": {**CLASSES["pfas"], "molecules": ["pfoa", "pfos", "fluoxetine", "nope"]}}
+    with pytest.raises(products.ProductSeedError) as err:
+        _class_compile(bad)
+    assert "nope" in str(err.value) and "fluoxetine (C17H18F3NO fails the perfluorinated rule)" in str(err.value)
+    with pytest.raises(products.ProductSeedError, match="no class 'pfas'"):
+        _class_compile({})
+
+
+def test_a_class_row_stands_alone_and_is_kind_chemistry(tmp_path):
+    with pytest.raises(products.ProductSeedError) as err:
+        _seed(tmp_path, [
+            {"slug": "pfas", "name": "PFAS", "kind": "food", "class": "pfas"},
+            {"slug": "pfas2", "name": "PFAS two", "kind": "chemistry", "class": "pfas2", "world": "morning-coffee"},
+            {"slug": "cola", "name": "Cola", "kind": "chemistry", "wikidata": "Q1"},
+        ])
+    msg = str(err.value)
+    assert "a class page is kind chemistry, and only a class page is" in msg
+    assert "a class page stands alone" in msg
+
+
+def test_load_classes_names_every_problem(tmp_path):
+    p = tmp_path / "product_classes.yaml"
+    p.write_text("pfas:\n  name: PFAS\n  title: PFAS\n  rule: guess\n  molecules: [a]\n")
+    with pytest.raises(products.ProductSeedError) as err:
+        products.load_classes(p)
+    assert "rule must be one of perfluorinated" in str(err.value)
+    assert "3+ molecules" in str(err.value)
+
+
+def test_the_committed_classes_and_the_new_seed_rows():
+    assert products.load_classes() == {"pfas": {
+        "name": "PFAS", "title": "PFAS (per- and polyfluoroalkyl substances)", "rule": "perfluorinated",
+        "molecules": ["perfluorooctanoic-acid", "perfluorooctanesulfonic-acid", "perfluorononanoic-acid",
+                      "perfluorohexanesulfonic-acid"]}}
+    seed = {p["slug"]: p for p in products.load_seed()}
+    assert (seed["pfas"]["kind"], seed["pfas"]["source"], seed["pfas"]["item"]) == ("chemistry", "class", "pfas")
+    assert (seed["energy-drinks"]["kind"], seed["energy-drinks"]["source"]) == ("drink", "curated")
+    hub = relationships.load_food_hubs()["energy-drinks"]["molecules"]
+    for s in ("caffeine", "taurine", "sucrose", "glucose", "citric-acid", "sodium-benzoate", "nicotinamide",
+              "pantothenic-acid", "pyridoxine", "cyanocobalamin"):
+        assert s in hub, s

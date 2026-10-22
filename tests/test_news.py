@@ -24,8 +24,10 @@ REPO = Path(__file__).resolve().parents[1]
 FIXTURE = REPO / "tests" / "fixtures" / "news-headlines.txt"
 WORKFLOW = REPO / ".github" / "workflows" / "news.yml"
 MOLECULES = news.load_molecules()
-INDEX = news.build_index(MOLECULES)
+INDEX = news.build_index(MOLECULES)                      # molecules only
 SLUGS = {m["slug"] for m in MOLECULES}
+# The job's own index (Run C2): the molecules plus the class pages with a class term (PFAS).
+JOB_INDEX = news.build_index(MOLECULES, news.load_classes())
 CASES = news.parse_fixture(FIXTURE.read_text())
 NOW = datetime(2026, 10, 20, 12, 0, tzinfo=UTC)
 FEED_KEYS = {"slug", "name", "first_seen", "last_seen", "hits"}
@@ -39,12 +41,12 @@ def test_the_fixture_has_forty_shapes_each_with_an_expectation():
 
 
 def test_every_slug_the_fixture_expects_is_in_the_catalogue():
-    assert sorted({s for _, exp in CASES for s in exp or []} - SLUGS) == []
+    assert sorted({s for _, exp in CASES for s in exp or []} - SLUGS - set(JOB_INDEX["paths"])) == []
 
 
 @pytest.mark.parametrize("headline, expected", CASES, ids=[h[:60] for h, _ in CASES])
 def test_fixture_headline(headline, expected):
-    assert news.match_headline(news.strip_source(headline), INDEX) == sorted(expected)
+    assert news.match_headline(news.strip_source(headline), JOB_INDEX) == sorted(expected)
 
 
 def test_common_words_never_match_on_their_own():
@@ -299,3 +301,58 @@ def test_the_cron_is_six_hourly_installs_nothing_and_never_prints_headlines():
 def test_the_weekly_loop_does_not_know_the_news_job_exists():
     etl = (REPO / ".github" / "workflows" / "etl.yml").read_text()
     assert "news" not in etl.replace("newsletter", "")
+
+
+# ── Run C2 (2026-10-22): one class term, "PFAS", for the PFAS class page ─────
+CLASSES = news.load_classes()
+CLASS_INDEX = news.build_index(MOLECULES, CLASSES)
+
+
+def test_the_snapshot_has_the_pfas_class_page_and_one_class_term():
+    assert CLASSES == {"pfas": "PFAS"}
+    assert news.CLASS_TERMS == {"pfas": ["PFAS"]}          # "no other class terms yet"
+
+
+def test_pfas_matches_the_class_page_never_a_molecule():
+    assert news.match_headline("PFAS forever chemicals found in rainwater across the region", CLASS_INDEX) == ["pfas"]
+    assert news.match_headline("New PFAS-free packaging rules take effect", CLASS_INDEX) == ["pfas"]
+    # Named molecules still match themselves beside the class.
+    assert news.match_headline("EPA sets PFAS limits, including PFOA and PFOS", CLASS_INDEX) == [
+        "perfluorooctanesulfonic-acid", "perfluorooctanoic-acid", "pfas"]
+    # Without the class page in the snapshot the term does not exist (Run A's rule).
+    assert "pfas" not in INDEX["terms"]
+    assert news.match_headline("PFAS forever chemicals found in rainwater", INDEX) == []
+
+
+def test_the_class_term_is_asked_every_run_and_never_inside_a_molecule_batch():
+    assert news.class_queries(CLASS_INDEX) == ["pfas"]
+    assert all("pfas" not in q.split(" OR ") for q in news.queries(CLASS_INDEX))
+    assert news.class_queries(INDEX) == []
+
+
+def test_a_class_links_its_own_page_and_a_molecule_its_own():
+    assert news.page_path("pfas", CLASS_INDEX) == "/whats-in/pfas"
+    assert news.page_path("caffeine", CLASS_INDEX) == "/m/caffeine"
+    assert news.page_path("pfas", INDEX) == "/m/pfas"     # no class page: never reached (no term)
+
+
+def test_a_class_row_in_the_feed_carries_the_same_five_names_only_fields():
+    rows = news.matches([{"title": "PFAS found in rainwater - Example News", "source": "Example News",
+                          "link": "https://example.invalid/1", "pubDate": "", "query": "pfas"}],
+                        CLASS_INDEX, NOW, 7)
+    found = news.tally(rows, CLASS_INDEX["names"], NOW)
+    planned, entrants = news.plan_write(found, [], NOW)
+    known = SLUGS | set(CLASS_INDEX["paths"])
+    feed = news.build_feed(planned, known, NOW)
+    assert [m["slug"] for m in feed["molecules"]] == ["pfas"]
+    assert set(feed["molecules"][0]) == FEED_KEYS
+    assert feed["molecules"][0]["name"] == "PFAS"
+    assert [e["slug"] for e in entrants] == ["pfas"]
+    # The feed drops a class row when the class page is not in the snapshot.
+    assert news.build_feed(planned, SLUGS, NOW)["molecules"] == []
+
+
+def test_a_class_never_shadows_a_molecule_slug():
+    idx = news.build_index(MOLECULES, {"caffeine": "Caffeine class"})
+    assert idx["paths"] == {}
+    assert idx["names"]["caffeine"] == "Caffeine"

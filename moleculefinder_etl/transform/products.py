@@ -14,6 +14,11 @@ INPUTS
 * Wikidata (CC0) "has part(s)" (P527) and "made from material" (P186), read by
   ``sources/wikidata.parts_for_qids``.
 * ``worlds.yaml`` for the ten worlds.
+* Class pages (Run C2, 2026-10-22): ``sources/seeds/product_classes.yaml`` names a class of
+  chemicals (PFAS) and the catalog molecules in it, and a seed row ``class: <slug>`` makes the
+  page. Membership is hand-curated like a food hub, then CHECKED against each member's formula
+  by the class's rule (PFAS: perfluorinated, so at most one hydrogen and at least 2C - 1
+  fluorines), so a wrong slug fails the build instead of shipping a false member.
 * MoleculeFinder's own curated food hubs (amendment, 2026-10-22): the ``kind: food`` categories
   ``food_hubs.yaml`` and the curated overlays put on the records, the same membership /in/coffee
   shows. A seed row names a hub with ``curated: <hub slug>``. A curated row may also name a world
@@ -67,10 +72,14 @@ PRODUCTS_YAML = SEEDS_DIR / "products.yaml"
 MIN_MOLECULES = 3
 # The page's kinds, in the order the /whats-in index lists them. "moment" holds the worlds
 # that are an experience, not a thing you buy (the smell after rain, falling asleep, a workout).
-KINDS = ("food", "drink", "medicine", "cosmetic", "household", "moment")
+# "chemistry" (Run C2) holds class pages: a class of everyday chemicals (PFAS), not a product.
+KINDS = ("food", "drink", "medicine", "cosmetic", "household", "chemistry", "moment")
 # The order a combined row's molecules are listed in: curated first, then the world, then Wikidata.
-SOURCE_KEYS = ("dailymed", "curated", "world", "wikidata")
+SOURCE_KEYS = ("dailymed", "class", "curated", "world", "wikidata")
+# Sources that stand alone on a row (no second source).
+SOLE_SOURCES = ("dailymed", "class")
 UNII_ALIASES_YAML = SEEDS_DIR / "unii_aliases.yaml"
+CLASSES_YAML = SEEDS_DIR / "product_classes.yaml"
 
 DAILYMED_DIR = RAW_CACHE / "dailymed"
 SPL_PREFIX = "spl1"                   # bump when ``dailymed.parse`` changes what it keeps
@@ -130,6 +139,11 @@ def load_seed(path: Path | None = None, worlds: list[dict] | None = None) -> lis
         if "dailymed" in sources and len(sources) > 1:
             errors.append(f"{where}: a DailyMed label stands alone (no second source)")
             continue
+        if "class" in sources and len(sources) > 1:
+            errors.append(f"{where}: a class page stands alone (no second source)")
+            continue
+        if ("class" in sources) != (kind == "chemistry"):
+            errors.append(f"{where}: a class page is kind chemistry, and only a class page is")
         items = []
         for key in sources:
             value = str(row[key]).strip()
@@ -139,8 +153,8 @@ def load_seed(path: Path | None = None, worlds: list[dict] | None = None) -> lis
                 errors.append(f"{where}: not a Wikidata QID: {value}")
             if key == "world" and value not in world_slugs:
                 errors.append(f"{where}: no world {value!r} in worlds.yaml")
-            if key == "curated" and not _SLUG.match(value):
-                errors.append(f"{where}: not a food hub slug: {value}")
+            if key in ("curated", "class") and not _SLUG.match(value):
+                errors.append(f"{where}: not a {'food hub' if key == 'curated' else 'class'} slug: {value}")
             if (key, value) in seen_source:
                 errors.append(f"{where}: same {key} item as {seen_source[(key, value)]}")
             seen_source[(key, value)] = str(slug)
@@ -151,6 +165,76 @@ def load_seed(path: Path | None = None, worlds: list[dict] | None = None) -> lis
         out.append(entry)
     if errors:
         raise ProductSeedError("products.yaml:\n  " + "\n  ".join(errors))
+    return out
+
+
+# ── class pages (Run C2) ──────────────────────────────────────────────────────
+_ATOM = re.compile(r"([A-Z][a-z]?)(\d*)")
+
+
+def formula_counts(formula: str | None) -> dict[str, int]:
+    """{"C": 8, "H": 1, "F": 15, ...} from a molecular formula; {} for none or a charged one."""
+    if not formula or not re.fullmatch(r"(?:[A-Z][a-z]?\d*)+", formula):
+        return {}
+    out: dict[str, int] = {}
+    for el, n in _ATOM.findall(formula):
+        out[el] = out.get(el, 0) + (int(n) if n else 1)
+    return out
+
+
+def perfluorinated(formula: str | None) -> bool:
+    """The PFAS rule for a class member, read off the formula alone: carbon and fluorine, at most
+    one hydrogen (the acid's), and at least 2C - 1 fluorines, which is what a fully fluorinated
+    carbon chain carries (a carboxylic acid's carbonyl carbon is the one without fluorine)."""
+    c = formula_counts(formula)
+    carbons, fluorines = c.get("C", 0), c.get("F", 0)
+    return carbons >= 2 and c.get("H", 0) <= 1 and fluorines >= 2 * carbons - 1
+
+
+CLASS_RULES = {"perfluorinated": perfluorinated}
+
+
+def load_classes(path: Path | None = None) -> dict[str, dict]:
+    """product_classes.yaml -> {class slug: {"name", "title", "rule", "molecules": [slug, ...]}}."""
+    path = path or CLASSES_YAML
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text()) or {}
+    errors: list[str] = []
+    out: dict[str, dict] = {}
+    for slug, row in data.items():
+        if not _SLUG.match(str(slug)) or not isinstance(row, dict):
+            errors.append(f"{slug}: a class is a slug with a mapping")
+            continue
+        mols = row.get("molecules") or []
+        if row.get("rule") not in CLASS_RULES:
+            errors.append(f"{slug}: rule must be one of {', '.join(CLASS_RULES)}")
+        if not row.get("name") or not row.get("title") or len(mols) < MIN_MOLECULES:
+            errors.append(f"{slug}: needs a name, a title and {MIN_MOLECULES}+ molecules")
+        if any(d in str(row.get("name", "")) + str(row.get("title", "")) for d in _DASHES):
+            errors.append(f"{slug}: em or en dash")
+        out[str(slug)] = {"name": str(row.get("name")), "title": str(row.get("title")),
+                          "rule": row.get("rule"), "molecules": [str(m) for m in mols]}
+    if errors:
+        raise ProductSeedError("product_classes.yaml:\n  " + "\n  ".join(errors))
+    return out
+
+
+def class_members(cls_slug: str, cls: dict, by_slug: dict[str, dict]) -> list[dict]:
+    """The class's molecule entries, each checked: a catalog molecule whose formula passes the
+    class's rule. A slug that fails either stops the build, naming it."""
+    rule = CLASS_RULES[cls["rule"]]
+    bad = [s for s in cls["molecules"] if s not in by_slug]
+    bad += [f"{s} ({by_slug[s].get('molecular_formula')} fails the {cls['rule']} rule)"
+            for s in cls["molecules"] if s in by_slug and not rule(by_slug[s].get("molecular_formula"))]
+    if bad:
+        raise ProductSeedError(f"product_classes.yaml {cls_slug}: " + ", ".join(bad))
+    out = []
+    for s in cls["molecules"]:
+        counts = formula_counts(by_slug[s].get("molecular_formula"))
+        # The atoms the rule read, so the page's line is the formula's own numbers.
+        out.append({"slug": s, "role": "class", "class": cls_slug,
+                    "carbons": counts.get("C", 0), "fluorines": counts.get("F", 0)})
     return out
 
 
@@ -479,7 +563,8 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                      parents: dict[str, list[int]] | None = None,
                      props: dict[int, dict] | None = None,
                      aliases: dict[str, str] | None = None,
-                     hubs: dict[str, dict] | None = None) -> tuple[list[dict], dict]:
+                     hubs: dict[str, dict] | None = None,
+                     classes: dict[str, dict] | None = None) -> tuple[list[dict], dict]:
     """(products that pass the gate, the gate report). Reads only caches and records.
 
     ``spl`` (setid -> parsed label or ``{"missing": True}`` or None), ``parts``, ``uniis``,
@@ -499,6 +584,7 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
     by_parent = parent_index(records, {u: c for u, c in parents.items() if u not in by_unii}, props,
                              load_unii_aliases() if aliases is None else aliases)
     hubs = curated_hubs(records) if hubs is None else hubs
+    classes = load_classes() if classes is None else classes
     by_qid = {r["wikidata_qid"]: r["slug"] for r in records if r.get("wikidata_qid")}
     titles = {r["slug"]: r["title"] for r in records}
     world_by_slug = {w["slug"]: w for w in worlds}
@@ -548,6 +634,15 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                 q["products"].add(p["slug"])
                 if ing["role"] == "active":
                     q["active"].add(p["item"])
+            sources = [source]
+        elif p["source"] == "class":
+            cls = classes.get(p["item"])
+            if cls is None:
+                raise ProductSeedError(f"products.yaml {p['slug']}: no class {p['item']!r} in product_classes.yaml")
+            mols = class_members(p["item"], cls, by_slug)
+            listed = len(mols)
+            words = ["MoleculeFinder's class list"]
+            source = {"type": "class", "class": p["item"], "title": cls["title"], "rule": cls["rule"]}
             sources = [source]
         else:
             mols, sources, words, gone = [], [], [], []

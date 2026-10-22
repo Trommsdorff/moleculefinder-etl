@@ -1,0 +1,23 @@
+# Class pages for /whats-in (growth plan run C2, 2026-10-22). HAND-MAINTAINED.
+#
+# A class is a family of everyday chemicals that people meet as one name in the news and on
+# packaging ("PFAS-free"), not as a product. Its page lists the catalog molecules in it, each line
+# from the molecule's own structured fields (formula, LD50 or GHS label), nothing written about the
+# class itself. A products.yaml row `class: <slug>` (kind chemistry) makes the page, and it passes
+# the same gate as every product: three or more MoleculeFinder molecules.
+#
+# Membership is curated, then CHECKED: every slug must be a catalog molecule whose formula passes
+# the class's `rule` (transform/products.py, CLASS_RULES), or the build stops and names it.
+#   perfluorinated: carbon and fluorine with at most one hydrogen and at least 2C - 1 fluorines,
+#                   the formula of a fully fluorinated carbon chain.
+# The rule is a check on the list, not a search: fluoxetine has a CF3 group and is not on this page.
+
+pfas:
+  name: PFAS
+  title: "PFAS (per- and polyfluoroalkyl substances)"
+  rule: perfluorinated
+  molecules:
+    - perfluorooctanoic-acid          # PFOA (Run A)
+    - perfluorooctanesulfonic-acid    # PFOS (Run A)
+    - perfluorononanoic-acid          # PFNA (Run C2)
+    - perfluorohexanesulfonic-acid    # PFHxS (Run C2)

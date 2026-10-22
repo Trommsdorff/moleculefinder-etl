@@ -912,3 +912,5 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 920,Clostebol,68947,5625,prescription-medicine,anabolic-steroid,,,,,2026-10-A
 921,Perfluorooctanoic acid,9554,8330,everyday-chemistry,organohalogen,,,,,2026-10-runA
 922,Perfluorooctanesulfonic acid,74483,3087,everyday-chemistry,organohalogen,,,,,2026-10-runA
+923,Perfluorononanoic acid,67821,745,everyday-chemistry,organohalogen,,,,,2026-10-runC2
+924,Perfluorohexanesulfonic acid,67734,696,everyday-chemistry,organohalogen,,,,,2026-10-runC2

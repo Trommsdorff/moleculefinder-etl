@@ -2,7 +2,8 @@
 #
 # One row per product, food or drink: slug (the URL, /whats-in/<slug>; permanent once live), name
 # (shown as the product's name and nothing more: no logo, no packaging, no claim beyond its
-# ingredient list), kind (food, drink, medicine, cosmetic, household, moment) and ONE source item:
+# ingredient list), kind (food, drink, medicine, cosmetic, household, chemistry, moment) and ONE
+# source item:
 #   dailymed: <set id>   the product's SPL label on DailyMed (public domain): its ingredient list,
 #                        active/inactive split and OTC "Purpose" lines. Pick the brand owner's
 #                        label, not a repackager's; scripts/draft_products.py drafts candidates.
@@ -10,6 +11,8 @@
 #   world: <slug>        one of the ten everyday worlds (worlds.yaml)
 #   curated: <hub slug>  a MoleculeFinder curated food hub (food_hubs.yaml plus the curated overlays:
 #                        the membership /in/<hub> lists). Amendment, 2026-10-22.
+#   class: <slug>        a class of everyday chemicals in product_classes.yaml (PFAS), kind chemistry,
+#                        standing alone. Run C2, 2026-10-22.
 # A food or drink row may name more than one of curated, world and wikidata (never with dailymed): the
 # page is their union, curated first, then the world, then Wikidata, one entry per molecule.
 #
@@ -34,6 +37,8 @@ products:
   - {slug: sunscreen-summer-skin, name: "Sunscreen and summer skin", kind: moment, world: sunscreen-summer-skin}
   - {slug: citrus, name: "Citrus", kind: food, curated: citrus, world: citrus}
   - {slug: your-workout, name: "Your workout", kind: moment, world: your-workout}
+  # Run C2 (2026-10-22): the PFAS class page, the four PFAS molecules MoleculeFinder holds.
+  - {slug: pfas, name: "PFAS", kind: chemistry, class: pfas}
   # Foods and drinks from Wikidata. Several marquee foods are seeded although Wikidata gives them
   # fewer than three molecule parts today; the gate report says so, and they appear on their own
   # once Wikidata's statements do.
@@ -49,12 +54,13 @@ products:
   # MoleculeFinder's curated food hubs (amendment, 2026-10-22): the same membership /in/<hub> lists.
   # Coffee, tea, wine, beer, milk, chocolate and citrus are above, combined with their Wikidata item or
   # world. Left out on purpose: tabletop-sweetener (the sweeteners in it are alternatives to one another,
-  # not the ingredients of one thing). No hub exists for energy drinks.
+  # not the ingredients of one thing). Energy drinks have their own hub since Run C2.
   - {slug: cocoa, name: "Cocoa", kind: food, curated: cocoa}
   - {slug: spirits, name: "Spirits", kind: drink, curated: spirits}
   - {slug: soft-drinks, name: "Soft drinks", kind: drink, curated: soft-drinks}
   - {slug: diet-soda, name: "Diet soda", kind: drink, curated: diet-soda}
   - {slug: tonic-water, name: "Tonic water", kind: drink, curated: tonic-water}
+  - {slug: energy-drinks, name: "Energy drinks", kind: drink, curated: energy-drinks}   # Run C2
   - {slug: bread, name: "Bread", kind: food, curated: bread}
   - {slug: breakfast-cereal, name: "Breakfast cereal", kind: food, curated: breakfast-cereal}
   - {slug: cheese, name: "Cheese", kind: food, curated: cheese}

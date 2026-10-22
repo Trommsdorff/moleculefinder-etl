@@ -991,3 +991,8 @@ clostebol: "A chlorinated form of testosterone, licensed in Italy in a wound-hea
 # PubChem's Use and Manufacturing section (HSDB) and Wikidata's PFAS classification) ──
 perfluorooctanoic-acid: "PFOA, a fully fluorinated PFAS surfactant used in fire-fighting foams, paints, polishes, carpets and food-contact packaging."
 perfluorooctanesulfonic-acid: "PFOS, a PFAS surfactant once used in fire-fighting foams, floor polishes, metal plating and circuit-board etching. 3M phased it out by 2001."
+
+# ── Run C2 addition 2026-10-runC2 (two rows, not a tranche, for the PFAS class page; written from
+# the structured record: PubChem's Use and Manufacturing section (HSDB, ECHA, EPA)) ──
+perfluorononanoic-acid: "PFNA, a nine-carbon PFAS surfactant used mainly as a processing aid in making fluoropolymers, and in fire-fighting foams and textile finishes."
+perfluorohexanesulfonic-acid: "PFHxS, a six-carbon PFAS once used in fire-fighting foams and carpet stain and water repellents, phased out under US EPA rules."
