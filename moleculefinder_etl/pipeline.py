@@ -246,6 +246,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_brands(kept)
     # Licence basis for medicines admitted under a ruling (approvals.yaml, 2026-10-18).
     relationships.attach_approvals(kept)
+    # Licence records read from the regulators' own registers (licences.yaml, run B2); the hand
+    # rulings above win. Reads the committed file only: no request.
+    relationships.attach_licences(kept)
     # Odor detection thresholds for the "Most pungent" (stinkiest) leaderboard.
     relationships.attach_odor_thresholds(kept)
     # kind:"use" hubs from the hand-maintained OTC allowlist (what a medicine is taken

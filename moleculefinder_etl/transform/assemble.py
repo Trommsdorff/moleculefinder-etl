@@ -232,6 +232,14 @@ def _wikidata_names(row: dict) -> list:
     return [row.get("wikidata_label"), *(row.get("wikidata_aliases") or [])]
 
 
+def wikidata_display_names(title: "str | None", row: dict) -> list[str]:
+    """Up to four other names from Wikidata alone: the label, then the aliases, through exactly the
+    synonym line's filters (readable, not the title or a near duplicate of it, not on the do-not-use
+    list) with no PubChem synonym behind them (Garrett, 2026-10-21: PubChem's trade-name noise must
+    not reach the "What else is X called?" answer). Exported on its own as ``wikidata_names``."""
+    return display_synonyms(title, _wikidata_names(row), [])
+
+
 # ── Names that are not the molecule (Garrett, 2026-09-12) ────────────────────────────────────
 # PubChem lists some synonyms that name something else: the plant a compound is found in, the
 # insect a pigment is made from, a class of compounds, a material. They stay off the synonym line
@@ -975,6 +983,8 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         # attach_title_synonyms fills in once the description exists.
         "display_synonyms": display_synonyms(_normalize_greek(title), _wikidata_names(row),
                                              _clean_synonyms(syns, title)),
+        # The Short answers' "What else is X called?" (run B2): the same filters, Wikidata only.
+        "wikidata_names": wikidata_display_names(_normalize_greek(title), row),
         "title_synonym": None,
         **_carried_svg(iso, prior),
         # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
@@ -1077,6 +1087,7 @@ def assemble_handmodel(row: dict, meta: dict, taken: set) -> dict:
         "cas": None,                 # no single compound ⇒ no CAS Registry Number
         "synonyms": [name],
         "display_synonyms": display_synonyms(_normalize_greek(name), _wikidata_names(row), []),
+        "wikidata_names": wikidata_display_names(_normalize_greek(name), row),
         "title_synonym": None,       # attach_title_synonyms; a macromolecule's title never shows it
         "structure_svg": None,       # no single structure — the web variant omits the render
         "structure_svg_key": None,

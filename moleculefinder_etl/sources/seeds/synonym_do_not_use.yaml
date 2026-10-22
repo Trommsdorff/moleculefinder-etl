@@ -47,3 +47,33 @@
   why: street slang for flunitrazepam tablets, not a name for the molecule
 - name: floonies
   why: street slang for flunitrazepam tablets, not a name for the molecule
+- name: Effies
+  why: street name for ephedrine pills, not a name for the molecule (a Wikidata alias; run B2, 2026-10-21)
+- name: Herbal Ecstasy
+  why: marketing and street name for ephedra products, not a name for the molecule (a Wikidata alias)
+- name: NOS
+  why: street and brand name for nitrous oxide canisters, not a name for the molecule (a Wikidata alias)
+# Wikidata aliases that name a different substance (run B2, 2026-10-21): they reached the synonym line
+# through the Wikidata names and would have become "What else is X called?" answers.
+- name: Lormetazepam
+  why: a different benzodiazepine, listed as an alias of lorazepam on Wikidata
+- name: retinoic acid
+  why: names tretinoin (all-trans) and the class, not isotretinoin (13-cis), where Wikidata lists it
+- name: acylcarnitine
+  why: a different class of compound, listed as an alias of S-adenosyl methionine on Wikidata
+- name: alpha-type CGRP
+  why: calcitonin gene-related peptide, a different peptide, listed as an alias of calcitonin
+- name: CALCA
+  why: the gene that encodes calcitonin, not the hormone
+- name: flue gas
+  why: a mixture of combustion gases, listed as an alias of carbon monoxide on Wikidata
+- name: root bark oil
+  why: an essential oil that contains camphor, not camphor itself
+- name: Moderateafinil
+  why: not a name (a garbled alias of modafinil on Wikidata)
+- name: Silymarin
+  why: the milk thistle extract, a mixture of several flavonolignans, not silibinin alone
+- name: CGRP
+  why: calcitonin gene-related peptide, a different peptide, listed as an alias of calcitonin
+- name: katacalcin
+  why: a different peptide cut from the same precursor, listed as an alias of calcitonin

@@ -30,6 +30,19 @@ SOURCES: dict[str, dict] = {
     "epa_comptox": dict(name="EPA CompTox", license="US Government Public Domain",
                      license_url="https://www.epa.gov/", homepage="https://comptox.epa.gov/",
                      commercial_ok=True, attribution_required=False),
+    # Licence records (run B2, moleculefinder_etl/licences.py), read from the regulators' own data.
+    "drugs_at_fda": dict(name="Drugs@FDA", license="US Government Public Domain",
+                     license_url="https://www.fda.gov/about-fda/about-website/website-policies",
+                     homepage="https://www.fda.gov/drugs/drug-approvals-and-databases/drugsfda-data-files",
+                     commercial_ok=True, attribution_required=False),
+    "ema":      dict(name="European Medicines Agency", license="Reproduction authorised, source acknowledged",
+                     license_url="https://www.ema.europa.eu/en/about-us/legal-notice",
+                     homepage="https://www.ema.europa.eu/en/medicines/download-medicine-data",
+                     commercial_ok=True, attribution_required=True),
+    "mhra":     dict(name="MHRA Products", license="Open Government Licence v3.0",
+                     license_url="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+                     homepage="https://products.mhra.gov.uk/",
+                     commercial_ok=True, attribution_required=True),
 }
 
 # Non-commercial / share-alike sources we must NOT ingest on an ad-supported site.
