@@ -202,6 +202,39 @@ def synonyms(cids: list[int], limit: int = 60) -> dict[int, list[str]]:
     return out
 
 
+_UNII = re.compile(r"^UNII-([0-9A-Z]{10})$")
+
+
+@_pubchem_retry
+def uniis(cids: list[int]) -> dict[int, list[str]]:
+    """Batched UNII lookup (growth plan run C1). Returns {cid: [UNII, ...]}, read from the
+    ``UNII-XXXXXXXXXX`` entries of each CID's FULL PubChem synonym list, in PubChem's order.
+
+    The FDA's UNII is the code a DailyMed label carries for every ingredient, so it is the one
+    deterministic join from a label to a molecule (no name matching). It is not in the stored
+    60-name synonym window (registry codes sit deep in the list), so it is its own request: the
+    same batched POST as ``synonyms``, with the whole list read and only the UNIIs kept. A CID
+    PubChem knows no UNII for comes back as an empty list.
+    """
+    out: dict[int, list[str]] = {}
+    for chunk in _chunks(cids, PUBCHEM_BATCH):
+        _throttle()
+        body = "cid=" + ",".join(str(c) for c in chunk)
+        url = f"{PUBCHEM_REST}/compound/cid/synonyms/JSON"
+        started = time.monotonic()
+        r = _session.post(url, data=body,
+                          headers={"Content-Type": "application/x-www-form-urlencoded"},
+                          timeout=60)
+        _log_post("uniis", chunk, r, started)
+        if r.status_code == 404:
+            continue
+        r.raise_for_status()
+        for info in r.json().get("InformationList", {}).get("Information", []):
+            codes = [m.group(1) for m in (_UNII.match(s) for s in info.get("Synonym") or []) if m]
+            out[int(info["CID"])] = list(dict.fromkeys(codes))
+    return out
+
+
 @_pubchem_retry
 def pug_view_dated(cid: int, heading: str) -> "cache.Entry":
     """Fetch a PUG-View annotation heading, and say how old the answer is.

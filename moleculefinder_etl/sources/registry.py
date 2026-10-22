@@ -43,12 +43,19 @@ SOURCES: dict[str, dict] = {
                      license_url="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
                      homepage="https://products.mhra.gov.uk/",
                      commercial_ok=True, attribution_required=True),
+    # Product labels (growth plan run C1): DailyMed SPL documents, published by the US National
+    # Library of Medicine; the labels are US government public domain.
+    "dailymed": dict(name="DailyMed", license="US Government Public Domain",
+                     license_url="https://dailymed.nlm.nih.gov/dailymed/app-support-web-services.cfm",
+                     homepage="https://dailymed.nlm.nih.gov/",
+                     commercial_ok=True, attribution_required=False),
 }
 
 # Non-commercial / share-alike sources we must NOT ingest on an ad-supported site.
 BLOCKED: frozenset[str] = frozenset({
     "drugbank", "hmdb", "foodb", "flavordb", "leffingwell",  # non-commercial
     "chembl",                                                 # CC BY-SA: isolate, don't blend
+    "openfoodfacts",                                          # ODbL share-alike (Garrett, 2026-10-18)
 })
 
 

@@ -22,9 +22,9 @@ from functools import partial
 from pathlib import Path
 
 from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
-                     SYNONYMS_CACHE_TTL_DAYS)
+                     SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
-from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured
+from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
 from . import freshness, inputs
@@ -36,6 +36,11 @@ log = logging.getLogger("mfetl")
 FETCHED = SEED_DIR / "fetched.json"
 MOLECULES = SEED_DIR / "molecules.json"
 DEFERRED = SEED_DIR / "deferred.json"
+# What's in it (run C1): the products that passed the gate, handed from transform to export
+# (gitignored, like molecules.json), and the gate's report (committed: every seeded product
+# that failed, and why).
+PRODUCTS_STAGED = SEED_DIR / "products.json"
+PRODUCTS_GATE = SEED_DIR / "products_gate.json"
 
 
 def _require(path: Path, prior: str) -> None:
@@ -152,6 +157,14 @@ def stage_fetch(settings: Settings) -> None:
             ghs_hits += 1
         if i % 25 == 0:
             log.info("  annotations: %d/%d CIDs", i, len(cids))
+
+    # What's in it (run C1): the seeded products' labels and Wikidata parts, and every
+    # molecule's UNII codes, into raw_cache like everything else. After the synonym POSTs, so
+    # the throttle line above covers the PubChem ones; the UNII POSTs log their own lines.
+    seed = products.load_seed()
+    if seed:
+        products.warm(seed, cids, lambda c: _fetch_cached(c, products.UNII_PREFIX, pubchem.uniis,
+                                                          UNII_CACHE_TTL_DAYS))
 
     FETCHED.parent.mkdir(parents=True, exist_ok=True)
     FETCHED.write_text(json.dumps([{"cid": c, "props": props.get(c) or {}, "synonyms": syns.get(c) or []}
@@ -280,6 +293,21 @@ def stage_transform(settings: Settings) -> list[dict]:
     # files into every weekly diff, which is the churn run 3 existed to remove.
     freshness.merge({freshness.TOXICITY: freshness.from_entries(tox_freshness)})
 
+    # What's in it (run C1): the products whose source lists 3+ molecules this catalog holds,
+    # and on each of those molecules the products it is in. Offline: the cache only. Last, so
+    # a product line can read every field assembled above; nothing above reads it.
+    seed = products.load_seed()
+    if seed:
+        passed, report = products.compile_products(kept, seed)
+        products.attach_products(kept, passed)
+        PRODUCTS_STAGED.write_text(json.dumps(passed, ensure_ascii=False))
+        PRODUCTS_GATE.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n")
+        log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s)",
+                 report["passed"], report["seeded"], products.MIN_MOLECULES,
+                 report["by_kind"], report["failed"], PRODUCTS_GATE.name)
+    else:
+        PRODUCTS_STAGED.unlink(missing_ok=True)
+
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],
                                    ensure_ascii=False))
@@ -354,8 +382,16 @@ def stage_export(settings: Settings) -> Path:
     inputs.before_export()
     # The featured builder runs inside export, for the date meta.json gets.
     builder = partial(featured.build_featured, queue, molecules) if queue is not None else None
+    # Products staged by transform, the other half of every record's `products` field. Records
+    # that list products with no staged file means the two came from different runs: refuse
+    # rather than export molecule pages pointing at product pages that would not exist.
+    staged = json.loads(PRODUCTS_STAGED.read_text()) if PRODUCTS_STAGED.exists() else None
+    if staged is None and any(m.get("products") for m in molecules):
+        raise SystemExit(f"molecules.json lists products but there is no {PRODUCTS_STAGED.name}; "
+                         f"run `mfetl transform` again")
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
-                                  today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META))
+                                  today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
+                                  products=staged)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)

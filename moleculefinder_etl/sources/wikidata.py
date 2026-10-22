@@ -147,6 +147,50 @@ def names_for_qids(qids: list[str]) -> dict[str, dict]:
     return out
 
 
+# Product parts (growth plan run C1). A food or drink's "has part(s)" (P527) and "made from
+# material" (P186) values, read from the Wikidata API like the names above and for the same
+# reason: wbgetentities returns an item's statements in the order Wikidata stores them, where
+# SPARQL's order depends on which backend answers. Deprecated statements are left out.
+PART_PROPERTIES = ("P527", "P186")
+
+
+def parts_for_qids(qids: list[str]) -> dict[str, dict]:
+    """Return {qid: {"P527": [qid, ...], "P186": [qid, ...]}} for the given items, each list in
+    the item's own order. An id Wikidata reports missing is left out."""
+    ids = sorted({q for q in qids if q}, key=lambda q: (_qid_sort_key(q), q))
+    out: dict[str, dict] = {}
+    for i in range(0, len(ids), NAMES_BATCH):
+        r = requests.get(
+            WIKIDATA_API,
+            params={"action": "wbgetentities", "ids": "|".join(ids[i:i + NAMES_BATCH]),
+                    "props": "claims", "format": "json"},
+            headers={"User-Agent": USER_AGENT},
+            timeout=60,
+        )
+        r.raise_for_status()
+        body = r.json()
+        if "error" in body:
+            err = body["error"]
+            raise RuntimeError(f"wbgetentities {err.get('code')}: {err.get('info')}")
+        for qid, entity in (body.get("entities") or {}).items():
+            if "missing" in entity:
+                continue
+            claims = entity.get("claims") or {}
+            row: dict[str, list[str]] = {}
+            for prop in PART_PROPERTIES:
+                vals: list[str] = []
+                for st in claims.get(prop) or []:
+                    if st.get("rank") == "deprecated":
+                        continue
+                    value = ((st.get("mainsnak") or {}).get("datavalue") or {}).get("value") or {}
+                    target = value.get("id") if isinstance(value, dict) else None
+                    if target and target not in vals:
+                        vals.append(target)
+                row[prop] = vals
+            out[qid] = row
+    return out
+
+
 PLACEHOLDER_DESCRIPTION = "chemical compound"
 
 

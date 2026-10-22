@@ -47,6 +47,14 @@ PUGVIEW_CACHE_TTL_DAYS = float(os.getenv("MFETL_PUGVIEW_TTL_DAYS", "30"))
 # is one re-fetch a month, in batched POSTs of PUBCHEM_BATCH CIDs.
 SYNONYMS_CACHE_TTL_DAYS = float(os.getenv("MFETL_SYNONYMS_TTL_DAYS", "30"))
 
+# Product inputs (growth plan run C1, "What's in it"): DailyMed labels and Wikidata parts are
+# re-read by the weekly run like the Wikidata descriptions (a label's ingredient list and an
+# item's statements are edited upstream), and travel with the snapshot through the inputs
+# artifact like every other input. The UNII codes come from PubChem synonym lists and expire
+# with them.
+PRODUCTS_CACHE_TTL_DAYS = float(os.getenv("MFETL_PRODUCTS_TTL_DAYS", "6"))
+UNII_CACHE_TTL_DAYS = float(os.getenv("MFETL_UNII_TTL_DAYS", str(SYNONYMS_CACHE_TTL_DAYS)))
+
 # ── Canon selection ──────────────────────────────────────────────────────────
 CANON_TARGET = int(os.getenv("MFETL_CANON_TARGET", "10000"))
 SIMILARITY_TOP_N = 30
