@@ -723,7 +723,8 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Run B2 (2026-10-21): the two fields run B waits for. BUILT on `names-licences-2026-10`, NOT PUSHED
+## Run B2 (2026-10-21): the two fields run B waits for. DEPLOYED 2026-10-22 (ETL `105ce67`, web `86c8671`)
+**DEPLOYED 2026-10-22 about 00:34 UTC on Garrett's word.** ETL `main` be00c11 -> `105ce67` (deploys nothing; no workflow ran); web `main` 6d36028 -> `86c8671` (with the Run E notes commit `f9b633b`), GitHub deployment `7240665097` Production success. No other branch was waiting. Live: `/m/sertraline` (Zoloft, NDA 019839), `/m/agomelatine` (European Commission, Valdoxan), `/m/zopiclone` (MHRA, Zimovane) each one FAQPage of 4 questions and a License row with its register's attribution; `/m/caffeine` 5 questions with its Wikidata names; `/m/lorazepam` no Lormetazepam; titles "Modafinil (Provigil)"; `/about/methodology` lists the three registers; sitemap 1,267. IndexNow run 39700502442: 1,267 -> 1,267, 0 new, 1,058 changed, 1,058 accepted, audit exact, `indexnow-last` -> `86c8671`. Live Lighthouse (mobile, median of 3, Brave): `/m/caffeine` perf 98, SEO 100, LCP 2.29 s, CLS 0, 389 KB; `/m/orforglipron` 98, 100, 2.33 s, CLS 0, 424 KB.
 Commit `02e928f` (code, seeds, data). Web `2457707` carries the sync. Waiting for "deploy".
 - **`wikidata_names` on every record** (`assemble.wikidata_display_names`): up to four names from the
   Wikidata label then aliases, through exactly the synonym line's filters (readable, not near the title,
