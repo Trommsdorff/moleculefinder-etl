@@ -723,6 +723,56 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
+## Run C1 (2026-10-22): What's in it, the product pages. BUILT, waiting for "deploy"
+Branch `whats-in-2026-10` (from `main` `47d6515`, the waiting Run B2 notes commit): code `5f190d7`, data
+`03b2927`, helper `d429710`, plus its notes commit. Never pushed. Plan: `../BUILD-PLAN-growth-2026-10-18.md`
+run C, first half (C2 changes the front door). Decisions (Garrett, 2026-10-22): URL `/whats-in/<product>`
+(never `/in/`); a product page exists only when MF already holds THREE OR MORE of its molecules (a gate,
+not a quota); the ten worlds are the first ten products.
+- **Seed `sources/seeds/products.yaml` (HAND-MAINTAINED, 447 candidates):** slug, name, kind (food, drink,
+  medicine, cosmetic, household, moment) and ONE source item: `dailymed: <set id>` (418), `wikidata: <QID>`
+  (19), `world: <slug>` (10). `scripts/draft_products.py` drafts rows (brand owner's label, newest, never a
+  repackager's: the Drugs@FDA holder for the 155 NDA brands in licences.yaml, a labeler stop list
+  otherwise) and never writes the seed. `transform/products.load_seed` refuses a bad row, naming all.
+- **Fetch (stage 1, `products.warm`), into raw_cache so the inputs artifact carries them:** each label
+  (`sources/dailymed.py`: ingredients with class, UNII and active moiety; the OTC active and purpose lines;
+  labeler, document type, version; `dailymed/spl1-<setid>.json`, 6-day expiry like Wikidata; a 404 is
+  cached as `{"missing": true}`; a transient failure after 3 tries FAILS the run), the Wikidata items'
+  P527/P186 via `wbgetentities` (stored order; `wikidata/product_parts.json`), and every molecule's UNII
+  codes (`pubchem.uniis`, the full synonym list's `UNII-` entries, `pubchem/unii-<cid>.json`, 30-day
+  expiry; 6 batched POSTs). A never-cached item is a miss even in a pinned build.
+- **Match by code only (`compile_products`):** a label ingredient's UNII, else its active moiety's UNII,
+  against PubChem's UNIIs for the molecule's CID; a UNII two molecules share matches neither. A Wikidata
+  part's QID against `wikidata_qid`. No name matching, no Wikipedia prose; Open Food Facts is BLOCKED in
+  the registry. An active's purpose is read off the label (a table row naming it, else the active and
+  purpose lines paired by position, else a single purpose for all); 173 of 325 active lines carry one.
+- **The gate:** 3+ distinct molecules, and a DailyMed label must be a label for people (Betadine's set id
+  was an animal label). **346 of 447 pass:** medicine 258 (153 prescription, 105 OTC), cosmetic 54,
+  household 12, food 13 (4 worlds, 9 Wikidata), drink 5 (2 worlds, 3 Wikidata), moment 4 (the after-rain,
+  sleep, workout and sunscreen worlds). 101 fail, every one in `data/seed/products_gate.json` (committed,
+  rewritten weekly) with its reason; 58 had 2 molecules, 23 had 1, 19 had 0, 1 was the animal label. The
+  report also ranks the label ingredients MF lacks (titanium dioxide 132 labels, microcrystalline cellulose
+  86, corn starch 71, talc 54, lactose monohydrate 51, iron oxides 48/43): the tranche queue's product
+  order. Coffee, tea, wine, beer, chocolate, Coca-Cola and Red Bull fail: Wikidata gives them 0 to 2
+  molecule parts.
+- **Both directions are one fact:** `attach_products` writes `products` (slug, name, kind, role) on each of
+  the 320 molecules in a product, the exact reverse of `products.json`; a molecule in none gets no field.
+  55 label products have no ACTIVE ingredient that is an MF molecule (racemic menthol, tirzepatide's UNII,
+  titanium dioxide...); they pass on inactives and carry `actives_not_in_catalog` (the label's names).
+- **Export:** `snapshot_export.export(products=...)` writes `products.json`; None removes it. `stage_export`
+  refuses records listing products with no staged `data/seed/products.json` (gitignored, written by transform).
+- **Build:** `mfetl sync-inputs` (17122735c9f95167), `mfetl all` with all three database keys blanked: exit 0,
+  0 property/synonym POSTs, pinned. Against main: 320 molecule files differ by `products` alone;
+  `products.json` and `products_gate.json` new; index, boards, roam, worlds, comparisons, featured and meta
+  byte-identical. **Untouched:** `.github/` (etl.yml, news.yml), `snapshot_guard.py`, `news.py`, `inputs.py`,
+  `cache.py` (git diff empty). One existing test edited: the props/syn60 wiring test in
+  `test_cache_safety.py` now stubs the product seed (it would otherwise reach DailyMed); the products wiring
+  has its own test. 641 tests (612), ruff 120 against main's 119 (registry.py's own `dict()` idiom).
+- **Weekly run, from the first Monday after deploy:** about 418 DailyMed requests (4 a second, about 2
+  minutes), 6 UNII POSTs, the artifact about 2 MB bigger. A withdrawn label drops its page through the gate.
+- **Deploy:** push ETL `main` BEFORE or WITH web `main` (sync-web copies the snapshot whole: a Monday run on
+  the old ETL would remove products.json from the web). Nothing deploys from this repo.
+
 ## Run B2 (2026-10-21): the two fields run B waits for. DEPLOYED 2026-10-22 (ETL `105ce67`, web `86c8671`)
 **DEPLOYED 2026-10-22 about 00:34 UTC on Garrett's word.** ETL `main` be00c11 -> `105ce67` (deploys nothing; no workflow ran); web `main` 6d36028 -> `86c8671` (with the Run E notes commit `f9b633b`), GitHub deployment `7240665097` Production success. No other branch was waiting. Live: `/m/sertraline` (Zoloft, NDA 019839), `/m/agomelatine` (European Commission, Valdoxan), `/m/zopiclone` (MHRA, Zimovane) each one FAQPage of 4 questions and a License row with its register's attribution; `/m/caffeine` 5 questions with its Wikidata names; `/m/lorazepam` no Lormetazepam; titles "Modafinil (Provigil)"; `/about/methodology` lists the three registers; sitemap 1,267. IndexNow run 39700502442: 1,267 -> 1,267, 0 new, 1,058 changed, 1,058 accepted, audit exact, `indexnow-last` -> `86c8671`. Live Lighthouse (mobile, median of 3, Brave): `/m/caffeine` perf 98, SEO 100, LCP 2.29 s, CLS 0, 389 KB; `/m/orforglipron` 98, 100, 2.33 s, CLS 0, 424 KB.
 Commit `02e928f` (code, seeds, data). Web `2457707` carries the sync. Waiting for "deploy".
