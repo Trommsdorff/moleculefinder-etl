@@ -16,6 +16,7 @@ leaking in. Everything is normalized into mg/kg and labeled via `confidence.py`.
 from __future__ import annotations
 import re
 
+from ..sources import registry
 from .confidence import label_for
 
 # Known laboratory species -> normalized name. Membership in this set is the
@@ -71,34 +72,79 @@ def _to_mgkg(value: str, unit: str) -> float:
     return round(float(value.replace(",", "")) * _UNIT_TO_MGKG[unit.lower()], 4)
 
 
-def parse_ld50(pug_view: dict | None) -> list[dict]:
+def parse_ld50(pug_view: dict | None, *, withheld: list | None = None, gate: bool = True) -> list[dict]:
     """Return toxicity_value rows sorted oral-first, then lowest (deadliest) first.
 
-    Each row: endpoint, species, route (enum), value_num (mg/kg), unit, confidence.
+    Each row: endpoint, species, route (enum), value_num (mg/kg), unit, confidence, and
+    `sources`: the registry keys of every source whose own text reports that row.
+
+    THE SOURCE-LICENCE RULE (2026-10-23): each PUG-View Information item names its reference,
+    and an item counts only when that reference is a registered source that may be displayed
+    (`registry.may_display`). A row no displayable source reports is not returned at all; a row
+    that two sources report keeps only the displayable ones. An unregistered source counts as
+    not displayable. When `withheld` is a list, each (species, route, value, source name) a
+    non-displayable source alone reported is appended to it, for the run log.
+
+    `gate=False` is for tracing only (the dataset's `ld50_sources`): every source counts, and
+    `sources` holds the registry key, or the raw SourceName when it is not registered.
     """
     if not pug_view:
         return []
-    seen: set[tuple] = set()
-    rows: list[dict] = []
-    for text in _iter_strings(pug_view):
-        if "LD50" not in text:
-            continue
-        for rx in (_FORM_A, _FORM_B):
-            for m in rx.finditer(text):
-                species = _SPECIES[m.group("species").lower()]
-                route = _ROUTE[m.group("route").lower()]
-                value = _to_mgkg(m.group("value"), m.group("unit"))
-                key = (species, route, value)
-                if key in seen:
-                    continue
-                seen.add(key)
-                rows.append({
-                    "endpoint": "LD50", "species": species, "route": route,
-                    "value_num": value, "unit": "mg/kg", "confidence": label_for("ld50_raw"),
-                })
+    rec = pug_view.get("Record", pug_view)
+    names = {r.get("ReferenceNumber"): r.get("SourceName") for r in rec.get("Reference", []) or []}
+    by_key: dict[tuple, dict] = {}
+    refused: dict[tuple, set] = {}
+    for info in _iter_information(rec):
+        source_name = names.get(info.get("ReferenceNumber"))
+        key_src = registry.pugview_key(source_name)
+        ok = registry.may_display(key_src)
+        if not gate:
+            ok, key_src = True, key_src or source_name or "(no source named)"
+        for text in _iter_strings(info):
+            if "LD50" not in text:
+                continue
+            for rx in (_FORM_A, _FORM_B):
+                for m in rx.finditer(text):
+                    species = _SPECIES[m.group("species").lower()]
+                    route = _ROUTE[m.group("route").lower()]
+                    value = _to_mgkg(m.group("value"), m.group("unit"))
+                    key = (species, route, value)
+                    if not ok:
+                        refused.setdefault(key, set()).add(source_name or "(no source named)")
+                        continue
+                    row = by_key.get(key)
+                    if row is None:
+                        row = by_key[key] = {
+                            "endpoint": "LD50", "species": species, "route": route,
+                            "value_num": value, "unit": "mg/kg", "confidence": label_for("ld50_raw"),
+                            "sources": [],
+                        }
+                    if key_src not in row["sources"]:
+                        row["sources"].append(key_src)
+    rows = list(by_key.values())
+    for row in rows:
+        row["sources"].sort()
+    if withheld is not None:
+        for key in sorted(k for k in refused if k not in by_key):
+            withheld.append({"species": key[0], "route": key[1], "value_num": key[2],
+                             "sources": sorted(refused[key])})
     # Oral first (the route the dose hook scales), then most-potent first.
     rows.sort(key=lambda r: (r["route"] != "oral", r["value_num"]))
     return rows
+
+
+def _iter_information(node):
+    """Yield every Information item in a PUG-View tree (each names its ReferenceNumber)."""
+    if isinstance(node, dict):
+        for info in node.get("Information", []) or []:
+            if isinstance(info, dict):
+                yield info
+        for k, v in node.items():
+            if k != "Information":
+                yield from _iter_information(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from _iter_information(v)
 
 
 def _iter_strings(node):

@@ -13,7 +13,9 @@ def _two_molecules():
         canon_row(2519, "Caffeine", tier="marquee", summary="a stimulant"),
         fetched(CAFFEINE_PROPS, synonyms=["caffeine", "Guaranine"],
                 curated=yaml.safe_load((CURATED_DIR / "caffeine.yaml").read_text()),
-                ghs={"signal_word": "Danger", "pictograms": ["GHS06"], "h_statements": ["H302"],
+                toxicity=[{"endpoint": "LD50", "species": "rat", "route": "oral", "value_num": 192.0,
+                           "unit": "mg/kg", "confidence": "from_source"}],
+                ghs={"signal_word": "Danger", "pictograms": ["GHS06"], "h_statements": ["H302"], "sources": ["echa"],
                      "confidence": "from_source"}),
         set())
     theo = assemble.assemble_record(canon_row(5429, "Theobromine"), fetched(THEOBROMINE_PROPS), set())

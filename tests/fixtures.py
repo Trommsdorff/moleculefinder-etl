@@ -7,19 +7,30 @@ parser tests exercise real-world formatting without any network.
 from __future__ import annotations
 
 
-def tox_record(strings: list[str]) -> dict:
-    """A PUG-View 'Toxicity' record whose String leaves are `strings`."""
-    return {"Record": {"Section": [{"TOCHeading": "Non-Human Toxicity Values", "Information": [
-        {"Value": {"StringWithMarkup": [{"String": s}]}} for s in strings]}]}}
+def tox_record(strings: list[str], source: str | None = "Hazardous Substances Data Bank (HSDB)") -> dict:
+    """A PUG-View 'Toxicity' record whose String leaves are `strings`, each Information item
+    citing reference 1, `source` (a PUG-View SourceName; None for no reference)."""
+    ref = {"ReferenceNumber": 1} if source else {}
+    rec = {"Section": [{"TOCHeading": "Non-Human Toxicity Values", "Information": [
+        {**ref, "Value": {"StringWithMarkup": [{"String": s}]}} for s in strings]}]}
+    if source:
+        rec["Reference"] = [{"ReferenceNumber": 1, "SourceName": source}]
+    return {"Record": rec}
 
 
-def ghs_record(strings: list[str], picto_urls: list[str] | None = None) -> dict:
-    """A PUG-View 'GHS Classification' record with String leaves + pictogram Markup URLs."""
-    info = [{"Value": {"StringWithMarkup": [{"String": s}]}} for s in strings]
+def ghs_record(strings: list[str], picto_urls: list[str] | None = None,
+               source: str | None = "European Chemicals Agency (ECHA)") -> dict:
+    """A PUG-View 'GHS Classification' record with String leaves + pictogram Markup URLs, every
+    item citing reference 1, `source`."""
+    ref = {"ReferenceNumber": 1} if source else {}
+    info = [{**ref, "Value": {"StringWithMarkup": [{"String": s}]}} for s in strings]
     if picto_urls:
-        info.append({"Value": {"StringWithMarkup": [
+        info.append({**ref, "Value": {"StringWithMarkup": [
             {"String": "Pictogram(s)", "Markup": [{"URL": u, "Type": "Icon"} for u in picto_urls]}]}})
-    return {"Record": {"Section": [{"TOCHeading": "GHS Classification", "Information": info}]}}
+    rec = {"Section": [{"TOCHeading": "GHS Classification", "Information": info}]}
+    if source:
+        rec["Reference"] = [{"ReferenceNumber": 1, "SourceName": source}]
+    return {"Record": rec}
 
 
 # Property blocks in the *current* PubChem field naming (SMILES/ConnectivitySMILES).
@@ -52,5 +63,24 @@ def canon_row(cid, title, **kw):
 
 
 def fetched(props, **kw):
+    # A parsed toxicity row names its sources (the source-licence rule); a test row that does
+    # not say otherwise is HSDB's, as parse_ld50 would have stamped it.
+    tox = [r if "sources" in r else {**r, "sources": ["hsdb"]} for r in kw.get("toxicity", [])]
     return {"props": props, "synonyms": kw.get("synonyms", []), "curated": kw.get("curated"),
-            "toxicity": kw.get("toxicity", []), "ghs": kw.get("ghs")}
+            "toxicity": tox, "ghs": kw.get("ghs")}
+
+
+def sourced(rec: dict) -> dict:
+    """A hand-built test record made to cite its sources the way an assembled one does, so the
+    export's licence gate (transform/licence_gate.py) passes it: a summary cites Wikidata, and
+    an LD50 is a toxicity row HSDB reports."""
+    rec = dict(rec)
+    if rec.get("summary") and "summary_source" not in rec:
+        rec["summary_source"] = "wikidata"
+    if rec.get("ld50_mg_per_kg") is not None and not rec.get("toxicity"):
+        rec.setdefault("ld50_species", "rat")
+        rec.setdefault("ld50_route", "oral")
+        rec["toxicity"] = [{"endpoint": "LD50", "species": rec["ld50_species"], "route": rec["ld50_route"],
+                            "value_num": rec["ld50_mg_per_kg"], "unit": "mg/kg",
+                            "confidence": "from_source", "sources": ["hsdb"]}]
+    return rec

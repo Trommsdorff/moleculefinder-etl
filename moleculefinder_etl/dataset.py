@@ -34,6 +34,7 @@ import hashlib
 import io
 import json
 import logging
+import re
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -41,6 +42,7 @@ from typing import Any
 
 from .config import DATA, RAW_CACHE, SNAPSHOTS
 from .sources import cache as rawcache
+from .sources import registry
 from .transform.toxicity import parse_ld50
 
 log = logging.getLogger("mfetl.dataset")
@@ -48,33 +50,51 @@ log = logging.getLogger("mfetl.dataset")
 OUT = DATA / "dataset"
 SITE = "https://moleculefinder.com"
 TITLE = "MoleculeFinder: the molecules in everyday foods, drinks and products"
-KAGGLE_ID = "trommsdorff/moleculefinder"
+PUBLISHED = Path(__file__).resolve().parent / "sources" / "seeds" / "dataset_published.yaml"
+_DOI = re.compile(r"^10\.\d{4,9}/\S+$")
+
+
+class Unpublished(RuntimeError):
+    """The published-record fields (sources/seeds/dataset_published.yaml) are missing or empty."""
+
+
+def published(path: Path = PUBLISHED) -> dict[str, Any]:
+    """Where the dataset is published: the concept DOI, the Zenodo record, the Kaggle id and each
+    version's DOI. Raises `Unpublished` when any of them is empty or not a DOI, so `mfetl dataset`
+    cannot write a package that does not carry them (Garrett, 2026-10-23)."""
+    import yaml
+    try:
+        p = yaml.safe_load(path.read_text()) or {}
+    except OSError as e:
+        raise Unpublished(f"{path} is missing: {e}") from e
+    problems = []
+    if not _DOI.match(str(p.get("concept_doi") or "")):
+        problems.append("concept_doi is empty or not a DOI")
+    if not str(p.get("zenodo_record") or "").startswith("https://zenodo.org/records/"):
+        problems.append("zenodo_record is empty")
+    if not str(p.get("kaggle") or "").count("/") == 1:
+        problems.append("kaggle is empty (owner/slug)")
+    versions = p.get("versions") or {}
+    if not versions:
+        problems.append("versions is empty")
+    problems += [f"versions.{v} is empty or not a DOI" for v, d in versions.items() if not _DOI.match(str(d or ""))]
+    if problems:
+        raise Unpublished(f"{path.name}: " + "; ".join(problems))
+    return {"concept_doi": str(p["concept_doi"]), "zenodo_record": p["zenodo_record"],
+            "kaggle": p["kaggle"], "versions": {str(v): str(d) for v, d in versions.items()}}
+
+
 LICENSE_ID = "CC0-1.0"
 
-# PUG-View reference sources whose content is a work of the US federal government (17 U.S.C. 105).
-# An LD50 is kept only when one of these reports it. Anything else (T3DB, Haz-Map, StatPearls,
-# ILO-WHO ICSC, EFSA, IARC, CIR, RAIS, personal collections) is withheld, whatever its terms say,
-# because a CC0 release cannot carry a term it does not own.
-PUBLIC_DOMAIN_TOX_SOURCES = frozenset({
-    "Hazardous Substances Data Bank (HSDB)",
-    "ChemIDplus",
-    "EPA Toxicity Values Database (ToxValDB)",
-    "EPA Human Health Benchmarks for Pharmaceuticals (HHB-Rx)",
-    "EPA Regional Screening Levels for Chemical Contaminants at Superfund Sites",
-    "EPA Integrated Risk Information System (IRIS)",
-    "EPA Pesticide Ecotoxicity Database",
-    "EPA Provisional Peer-Reviewed Toxicity Values (PPRTVs)",
-    "EPA Safe Drinking Water Act (SDWA)",
-    "FDA Liver Toxicity Knowledge Base (LTKB)",
-    "Drugs and Lactation Database (LactMed)",
-    "LiverTox",
-    "The National Institute for Occupational Safety and Health (NIOSH)",
-    "Agency for Toxic Substances and Disease Registry (ATSDR)",
-    "NTP Technical Reports",
-    "USGS Health-Based Screening Levels for Evaluating Water-Quality Data",
-    "USGS Columbia Environmental Research Center",
-    "USDA APHIS Chemical Effects Database",
-})
+# PUG-View reference sources whose content is public domain (a US federal government work, 17
+# U.S.C. 105). An LD50 is kept only when one of these reports it. Since 2026-10-23 the list is
+# READ from the source registry (sources/registry.py: the public-domain and CC0 classes), the
+# same registry the site's source-licence rule reads, so the two cannot drift. The dataset rule
+# is stricter than the site's: a CC0 release cannot carry an attribution term it does not own,
+# so attribution-class sources (ECHA, Safe Work Australia, EUR-Lex) stay out of it.
+PUBLIC_DOMAIN_TOX_SOURCES = frozenset(
+    name for s in registry.SOURCES.values() if s["licence_class"] in ("public_domain", "cc0")
+    for name in s.get("pugview_names", ()))
 
 # Category kinds left out: `poison` hubs are built from the GHS classification.
 EXCLUDED_CATEGORY_KINDS = frozenset({"poison"})
@@ -204,6 +224,8 @@ class Build:
     snapshot_sha: str
     inputs: str | None
     withheld: dict[str, Any] = field(default_factory=dict)
+    # Where the dataset is published (`published()`); read at write time when left empty.
+    published: dict[str, Any] = field(default_factory=dict)
 
 
 # ── reading ─────────────────────────────────────────────────────────────────
@@ -255,7 +277,7 @@ def ld50_sources(record: dict | None, value: float, species: str | None, route: 
     def walk(node: Any) -> None:
         if isinstance(node, dict):
             for info in node.get("Information", []) or []:
-                for row in parse_ld50({"Information": [info]}):
+                for row in parse_ld50({"Information": [info]}, gate=False):
                     if (abs(row["value_num"] - value) < 1e-9 and row.get("species") == species
                             and row.get("route") == route):
                         src = names.get(info.get("ReferenceNumber"))
@@ -511,6 +533,8 @@ def write(b: Build, out: Path = OUT) -> dict[str, Any]:
     }, ensure_ascii=False, indent=1, sort_keys=False) + "\n"
     counts = {name: len(b.tables[name]) for name in TABLES}
     from . import dataset_docs  # the README, LICENSE and metadata texts
+    if not b.published:
+        b.published = published()
     files.update(dataset_docs.render(b, counts))
     manifest = {
         "title": TITLE, "version": b.version, "license": LICENSE_ID, "snapshot_refreshed": b.refreshed,
@@ -534,10 +558,16 @@ def write(b: Build, out: Path = OUT) -> dict[str, Any]:
 def run(version: str | None = None, out: Path = OUT) -> int:
     """`mfetl dataset`: verify the pinned inputs, build, check the counts, write. Exit code."""
     from . import inputs
+    try:
+        pub = published()
+    except Unpublished as e:
+        log.error("dataset: %s; refused, nothing written", e)
+        return 1
     fp = inputs.verify()
     snap = load_snapshot()
     v = version or (snap["refreshed"] or "")[:7].replace("-", ".")
     b = build(snap, version=v, inputs=fp)
+    b.published = pub
     problems = check_counts(b, snap)
     if problems:
         for p in problems:

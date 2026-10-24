@@ -1,0 +1,9 @@
+# The MoleculeFinder dataset as published (Garrett uploaded version 2026.10 on 2026-10-23; Zenodo
+# dates it 2026-10-24). Every package `mfetl dataset` builds carries these, and it REFUSES to build
+# if any field is empty: a package that cannot say where it is published is not shipped.
+# After a new version is uploaded, add its version DOI under `versions`.
+concept_doi: 10.5281/zenodo.23605767    # Zenodo's "Cite all versions" DOI: always the latest version
+zenodo_record: https://zenodo.org/records/23605768
+kaggle: trommsdorff/moleculefinder-molecules-in-everyday-products
+versions:                                # each published version's own DOI
+  "2026.10": 10.5281/zenodo.23605768

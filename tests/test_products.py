@@ -359,8 +359,9 @@ def test_export_writes_products_json_and_removes_it_without_a_seed(tmp_path, mon
     monkeypatch.setattr(snapshot_export, "SNAPSHOTS", tmp_path)
     monkeypatch.setattr(freshness, "load", lambda path=None: {})
     recs = [{"cid": 2519, "slug": "caffeine", "title": "Caffeine", "synonyms": []}]
-    snapshot_export.export(recs, {}, today="2026-10-22", products=[{"slug": "p", "molecules": []}])
-    assert json.loads((tmp_path / "products.json").read_text()) == {"products": [{"slug": "p", "molecules": []}]}
+    snapshot_export.export(recs, {}, today="2026-10-22", products=[{"slug": "p", "source": {"type": "curated"}, "molecules": []}])
+    assert json.loads((tmp_path / "products.json").read_text()) == {
+        "products": [{"slug": "p", "source": {"type": "curated"}, "molecules": []}]}
     snapshot_export.export(recs, {}, today="2026-10-23")
     assert not (tmp_path / "products.json").exists()
     assert json.loads((tmp_path / "meta.json").read_text()) == {"refreshed": "2026-10-23"}

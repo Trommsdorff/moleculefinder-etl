@@ -40,7 +40,7 @@ pytestmark_built = pytest.mark.skipif(not BUILT, reason="data/dataset not built 
 @pytestmark_built
 def test_the_package_holds_exactly_its_files_and_their_checksums():
     manifest = json.loads((PKG / "MANIFEST.json").read_text())
-    on_disk = {p.name for p in PKG.iterdir()}
+    on_disk = {p.name for p in PKG.iterdir() if p.name != ".DS_Store"}   # Finder metadata, gitignored
     assert on_disk == EXPECTED_FILES
     for name, meta in manifest["files"].items():
         data = (PKG / name).read_bytes()
@@ -253,3 +253,47 @@ def test_run_refuses_a_cache_that_is_not_mains(monkeypatch, tmp_path: Path):
     with pytest.raises(inputs.InputsMismatch):
         dataset.run(out=tmp_path / "pkg")
     assert not (tmp_path / "pkg").exists()
+
+
+# ── the published record (2026-10-23): every package carries its DOIs ────────
+def test_the_published_record_is_complete():
+    p = dataset.published()
+    assert p["concept_doi"] == "10.5281/zenodo.23605767"
+    assert p["versions"]["2026.10"] == "10.5281/zenodo.23605768"
+    assert p["kaggle"] == "trommsdorff/moleculefinder-molecules-in-everyday-products"
+
+
+@pytest.mark.parametrize("text", [
+    "concept_doi: ''\nzenodo_record: https://zenodo.org/records/1\nkaggle: a/b\nversions: {'1': 10.5281/zenodo.1}\n",
+    "concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/1\nkaggle: ''\nversions: {'1': 10.5281/zenodo.1}\n",
+    "concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/1\nkaggle: a/b\nversions: {}\n",
+    "concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/1\nkaggle: a/b\nversions: {'1': ''}\n",
+    "",
+])
+def test_an_empty_doi_field_refuses_the_build(tmp_path, text):
+    f = tmp_path / "dataset_published.yaml"
+    f.write_text(text)
+    with pytest.raises(dataset.Unpublished):
+        dataset.published(f)
+
+
+def test_run_refuses_before_writing_when_a_doi_is_missing(tmp_path, monkeypatch):
+    f = tmp_path / "dataset_published.yaml"
+    f.write_text("concept_doi: ''\n")
+    monkeypatch.setattr(dataset, "PUBLISHED", f)
+    monkeypatch.setattr(dataset.published, "__defaults__", (f,))
+    out = tmp_path / "out"
+    assert dataset.run(out=out) == 1
+    assert not out.exists()
+
+
+def test_the_committed_package_carries_the_dois():
+    p = dataset.published()
+    readme = (PKG / "README.md").read_text()
+    cff = (PKG / "CITATION.cff").read_text()
+    zen = json.loads((PKG / "zenodo.json").read_text())
+    for doi in [p["concept_doi"], *p["versions"].values()]:
+        assert doi in readme and doi in cff
+    assert p["kaggle"] in readme and p["zenodo_record"] in readme
+    assert p["concept_doi"] in zen["notes"]
+    assert json.loads((PKG / "dataset-metadata.json").read_text())["id"] == p["kaggle"]

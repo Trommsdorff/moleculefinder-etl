@@ -11,17 +11,18 @@ import json
 
 from moleculefinder_etl import freshness
 from moleculefinder_etl.load import snapshot_export
+from tests.fixtures import sourced
 
 
 def _records() -> list[dict]:
-    return [
+    return [sourced(r) for r in [
         {"cid": 2519, "slug": "caffeine", "title": "Caffeine", "wikidata_qid": "Q60235",
          "summary": "central nervous system stimulant", "ld50_mg_per_kg": 192.0,
          "molecular_formula": "C8H10N4O2", "synonyms": []},
         {"cid": 5429, "slug": "theobromine", "title": "Theobromine", "wikidata_qid": "Q407118",
          "summary": "bitter alkaloid of the cacao plant", "ld50_mg_per_kg": 950.0,
          "molecular_formula": "C7H8N4O2", "synonyms": []},
-    ]
+    ]]
 
 
 def _meta(tmp_path) -> dict:

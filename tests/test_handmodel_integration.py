@@ -17,7 +17,8 @@ def _mixed_records():
                    "MolecularFormula": "C8H10N4O2", "MolecularWeight": "194.19"},
          "synonyms": ["Caffeine"], "curated": None,
          "toxicity": [{"endpoint": "LD50", "species": "rat", "route": "oral",
-                       "value_num": 192.0, "unit": "mg/kg", "confidence": "from_source"}],
+                       "value_num": 192.0, "unit": "mg/kg", "confidence": "from_source",
+                       "sources": ["hsdb"]}],
          "ghs": None}, set())
     collagen = assemble.assemble_handmodel(
         {"cid": -101, "tier": "marquee", "enwiki_title": "Collagen", "pageviews": 51000, "summary": None},

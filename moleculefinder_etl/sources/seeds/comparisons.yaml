@@ -83,8 +83,7 @@ acetaminophen/ibuprofen: >
   outside the US, acts mainly in the central nervous system and does very little for
   inflammation, which is why a sprain and a headache are not the same problem for it. The
   functional groups in the table show the split, ibuprofen carrying a carboxylic acid and
-  acetaminophen an amide and a phenol. Their reported oral LD50 values differ by a factor
-  of three, 1944 mg/kg in rats for acetaminophen against 636 mg/kg for ibuprofen, though
+  acetaminophen an amide and a phenol. Their reported oral LD50 values differ by a factor of nearly four, 2400 mg/kg in rats for acetaminophen against 636 mg/kg for ibuprofen, though
   the risks that actually matter for each are organ specific rather than a matter of the
   headline number.
 
@@ -95,9 +94,7 @@ acetaminophen/aspirin: >
   for days. Acetaminophen does not do that at all: it works centrally, has little
   anti-inflammatory effect, and leaves clotting alone. The table shows aspirin's carboxylic
   acid and ester against acetaminophen's amide and phenol, which is the structural reason
-  aspirin irritates a stomach lining and acetaminophen does not. Reported oral LD50 in rats
-  is 200 mg/kg for aspirin against 1944 mg/kg for acetaminophen, an unusually wide gap for
-  two drugs sold on the same shelf.
+  aspirin irritates a stomach lining and acetaminophen does not. Reported oral LD50 in rats is 200 mg/kg for aspirin against 2400 mg/kg for acetaminophen, an unusually wide gap for two drugs sold on the same shelf.
 
 aspirin/ibuprofen: >
   Both are NSAIDs that work by blocking COX enzymes, and both carry a carboxylic acid on an
@@ -311,9 +308,7 @@ ethanol/methanol: >
   between an intoxicant and a poison. The body oxidises both with the same enzymes.
   Ethanol becomes acetaldehyde and then acetic acid, which the body handles routinely.
   Methanol becomes formaldehyde and then formic acid, which attacks the optic nerve and
-  drives the acidosis that makes methanol poisoning dangerous. The listed oral LD50 values
-  are similar, both near 5628 mg/kg in rats, which is exactly why the LD50 is a poor guide
-  here: the danger is what the metabolites do, not the parent molecule. Methanol is present
+  drives the acidosis that makes methanol poisoning dangerous. Methanol's listed oral LD50 is 5628 mg/kg in rats, not a figure that marks it as a poison, which is exactly why the LD50 is a poor guide here: the danger is what the metabolites do, not the parent molecule. Methanol is present
   in tiny amounts in fermented drinks and is the reason improperly distilled spirits are
   hazardous.
 
@@ -324,9 +319,7 @@ ethanol/isopropyl-alcohol: >
   dangerous picture than drinking ethanol. As a disinfectant, 70 percent solutions of
   either outperform higher concentrations, because some water is needed for the alcohol to
   get through a cell wall before it denatures the proteins inside. Isopropyl alcohol
-  evaporates leaving less residue, which is why it is the one used on electronics. The
-  reported oral LD50 values are 5628 mg/kg in rats for ethanol and 4797 mg/kg in dogs for
-  isopropyl alcohol.
+  evaporates leaving less residue, which is why it is the one used on electronics. The reported oral LD50 for isopropyl alcohol is 4797 mg/kg in dogs.
 
 acetone/isopropyl-alcohol: >
   These two are one oxidation step apart: remove two hydrogens from isopropyl alcohol and
@@ -1183,7 +1176,6 @@ gabapentin/pregabalin: >
   amount rises and the response is hard to predict, while pregabalin is absorbed
   proportionally and predictably. Pregabalin is the smaller molecule at 159.23 against 171.24
   and is a controlled substance in the US and the UK where gabapentin's status varies.
-  Gabapentin's reported oral LD50 is 8000 mg/kg in rats.
 
 prednisone/dexamethasone: >
   Both are corticosteroids that suppress inflammation through the glucocorticoid receptor, and
@@ -1253,9 +1245,7 @@ benzene/toluene: >
   reason. Toluene is not classified as a carcinogen, because the body can oxidise that methyl
   group and excrete the result, a route benzene has no equivalent of. Toluene is still a
   neurotoxin on repeated inhalation, which is what makes solvent abuse dangerous, and it is
-  the smell of paint thinner and permanent marker. Reported oral LD50 values are 3306 mg/kg in
-  rats for benzene and 5000 mg/kg for toluene, which understates how differently the two
-  behave over long exposure.
+  the smell of paint thinner and permanent marker. Benzene's reported oral LD50 is 3306 mg/kg in rats, a figure that understates how differently the two behave over long exposure.
 
 formaldehyde/acetaldehyde: >
   Both are small aldehydes, both are reactive, and both are classified as carcinogenic to
