@@ -729,7 +729,7 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
-## Trust run 2 (2026-10-24): a label's other ingredients, named. BUILT on `trust-2026-10`, waiting for deploy
+## Trust run 2 (2026-10-24): a label's other ingredients, named. DEPLOYED 2026-10-24 with trust run 3 (ETL `b7b034d`)
 Item 2 of the agreed trust list (company CLAUDE.md, "Trust run 1"). Branch `trust-2026-10` from `main` `5e5c379`:
 code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
 - `products.compile_products` stored `not_in_catalog = len(unmatched)`. It now stores the names it already had
@@ -753,7 +753,15 @@ code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
   rebuild products.json with the count, and the web would show no names until the next deploy). Nothing deploys from
   this repo.
 
-## Trust run 3 (2026-10-24): the label join reads the FDA's own UNII table. BUILT on `trust-2026-10`, waiting for deploy
+## Trust run 3 (2026-10-24): the label join reads the FDA's own UNII table. DEPLOYED 2026-10-24 (ETL `b7b034d`, web `9f8bc4a`)
+**DEPLOYED 2026-10-24 about 23:30 UTC on Garrett's word**, with trust runs 1 and 2 and web `indexnow-dataset-2026-10`.
+ETL `main` f4fac9f -> `b7b034d` (with `5e5c379`; deploys nothing, no workflow ran); web `main` 45808d9 -> `9f8bc4a`,
+GitHub deployment `7305985915` Production success; IndexNow run 40143070998: 1,678 -> 1,686, 8 new, 417 changed, 425
+accepted, audit exact. Live: 34 of 34 checks (the company CLAUDE.md lists them). **Monday 2026-10-26 is the first
+weekly run on this code**: it downloads the FDA table (`data/raw_cache/fda/`), re-reads the 897 synonym lists as
+`unii2` (6 POSTs) and asks about 790 parents by CID (`pubchem/parent-<cid>.json`, about 3 minutes); after that it is
+warm. If its data PR goes red on `tests/test_unii_index.py` or the web sweep, a refreshed label is showing a molecule
+as "not yet": add the code to `unii_aliases.yaml` (a form) or `substances` (the molecule's own code), never a name rule.
 Closes the gap trust run 2 found: 23 label ingredients shown as "not yet MoleculeFinder molecules" that ARE
 MoleculeFinder molecules (153 entries on 118 pages; Mounjaro's live "tirzepatide is not yet in MoleculeFinder"
 beside `/m/tirzepatide`). Garrett's ruling: fix the matching, never soften the line; a label ingredient is matched by
