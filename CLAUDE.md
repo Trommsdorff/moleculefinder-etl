@@ -729,6 +729,30 @@ web CLAUDE.md). A reason to come back and a thing to share.
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
 
+## Trust run 2 (2026-10-24): a label's other ingredients, named. BUILT on `trust-2026-10`, waiting for deploy
+Item 2 of the agreed trust list (company CLAUDE.md, "Trust run 1"). Branch `trust-2026-10` from `main` `5e5c379`:
+code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
+- `products.compile_products` stored `not_in_catalog = len(unmatched)`. It now stores the names it already had
+  (`products._not_in_catalog`): `{"name", "role"}` in label order, actives first, one per name, as the label prints
+  them; a name a listed molecule already carries is left out (none does today). `actives_not_in_catalog` unchanged;
+  the list's actives are exactly it. The gate, the matching and every other field are untouched. Display only.
+- Tests: 735 (733; `test_products.py` 46: the list's order, actives first, dedupe, the left-out name, a world
+  product carries no list). Ruff 130, the same as `main`; the two changed files clean.
+- Pinned build (`sync-inputs` 17122735c9f95167, all three keys blanked), exit 0: the ONLY change under `data/` is
+  `not_in_catalog` in `products.json`, on the 351 DailyMed products: **339 list 2,482 names** (102 active, 753
+  distinct), 12 an empty list. Every other field, `products_gate.json`, the queue and every molecule file identical.
+- **Found, not fixed (needs Garrett):** 23 of the listed names are the exact title of an MF molecule, 153 rows on 118
+  pages (polysorbate 80 on 45, xanthan gum 33, shellac 17, gelatin 10, maltodextrin 9, acesulfame potassium 7,
+  tirzepatide 2, ...). The code match missed them: hand-modelled molecules have no UNII (xanthan gum, gelatin,
+  carrageenan, pectin, agar, guar gum), a label's form has its own UNII (polysorbate 80, lactic acid, the salts), and
+  PubChem lists tirzepatide's UNII bare (`OYN3CCI6QE`), not as `UNII-OYN3CCI6QE`, so `pubchem.uniis` never reads it.
+  So the live Mounjaro page already says "tirzepatide, is not yet in MoleculeFinder" beside an existing
+  `/m/tirzepatide`. The fix belongs here (read bare UNII synonyms; give the hand-modelled records their UNIIs or hand
+  aliases, each checked), and it changes product pages and possibly the gate, so it is a run of its own.
+- **Deploy: ETL `main` FIRST, then web `main`, both before Monday 2026-10-26's weekly run** (it would otherwise
+  rebuild products.json with the count, and the web would show no names until the next deploy). Nothing deploys from
+  this repo.
+
 ## The source-licence rule and the registry (2026-10-23). DEPLOYED 2026-10-24 (ETL `41a688d`, web `f164fba`)
 **DEPLOYED 2026-10-24 about 01:24 UTC on Garrett's word** (2026-10-23 his time), as built (NITE and CAS out). ETL `main` 0b9d3c9 -> `41a688d` (with `cbfe63f`; no workflow ran); web `main` 7585f9e -> `f164fba` (with `e936096`), GitHub deployment `7292228245` Production success. No other branch was waiting; pushed at 01:23, clear of the news cron. IndexNow run 40049651456: 1,678 -> 1,678, 0 new, 1,404 changed, 0 removed, 1,404 submitted and 1,404 accepted, audit exact, `indexnow-last` -> `f164fba`. Live, 14 of 14 checks: /m/caffeine (LD50 "HSDB via PubChem", the Hazard label row with ECHA's attribution, signal word Warning, no CAS), /m/ethanol (no LD50, Danger), /m/acetaminophen 2,400 (rat, oral), /m/capsaicin 47.2 (mouse, oral), /best/deadliest without ethanol or methotrexate, /about/methodology (citation, both DOIs, the not-used list), /classroom (the dataset block, Kaggle link), /embed ("Download the dataset"), /embed/caffeine.json (source "HSDB via PubChem"), /vs/acetaminophen-vs-ibuprofen (2400, no 1944), sitemap 1,678. Live Lighthouse (mobile, median of 3, Brave): /m/caffeine perf 98, SEO 100, LCP 2.29 s, CLS 0, 382 KB; /classroom 99, 100, 2.18 s, 0, 289 KB; /m/ethanol 98, 100, 2.32 s, 0, 375 KB. **Next, Garrett (optional, not urgent):** upload dataset 2026.10.1 as a New version on Zenodo and replace the Kaggle files, then send the new version DOI.
 Run D found 41 live LD50s whose only source, T3DB, restricts commercial reuse. Fixed at the root, not by deleting
@@ -897,6 +921,11 @@ not a quota); the ten worlds are the first ten products.
   the 320 molecules in a product, the exact reverse of `products.json`; a molecule in none gets no field.
   55 label products have no ACTIVE ingredient that is an MF molecule (racemic menthol, tirzepatide's UNII,
   titanium dioxide...); they pass on inactives and carry `actives_not_in_catalog` (the label's names).
+  Every DailyMed product also carries `not_in_catalog`: since Trust run 2 (2026-10-24) the LIST of its label
+  ingredients that are not MF molecules, `{"name": <the label's name>, "role": "active" | "inactive"}`, label
+  order, actives first, one entry per name, a name a listed molecule carries left out (it was a bare count). Its
+  actives are exactly `actives_not_in_catalog`, which stays as it was. Display only: the web prints the names as
+  plain text; nothing is matched or linked by name.
 - **Export:** `snapshot_export.export(products=...)` writes `products.json`; None removes it. `stage_export`
   refuses records listing products with no staged `data/seed/products.json` (gitignored, written by transform).
 - **Build:** `mfetl sync-inputs` (17122735c9f95167), `mfetl all` with all three database keys blanked: exit 0,
