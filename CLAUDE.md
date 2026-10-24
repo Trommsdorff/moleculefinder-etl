@@ -753,6 +753,134 @@ code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
   rebuild products.json with the count, and the web would show no names until the next deploy). Nothing deploys from
   this repo.
 
+## Trust run 3 (2026-10-24): the label join reads the FDA's own UNII table. BUILT on `trust-2026-10`, waiting for deploy
+Closes the gap trust run 2 found: 23 label ingredients shown as "not yet MoleculeFinder molecules" that ARE
+MoleculeFinder molecules (153 entries on 118 pages; Mounjaro's live "tirzepatide is not yet in MoleculeFinder"
+beside `/m/tirzepatide`). Garrett's ruling: fix the matching, never soften the line; a label ingredient is matched by
+CODE only. Commits `e9e7ba3` (code), `fcb572e` (data), plus this notes commit, on top of trust runs 1 and 2.
+Never pushed.
+- **Why they missed (diagnosis, all 23).** (a) PubChem lists the molecule's UNII bare or under another CID, 5:
+  acesulfame potassium and potassium (bare), sodium metabisulfite and sodium bisulfite (PubChem lists no synonyms;
+  the FDA links the code to another CID with the same InChIKey), tirzepatide (bare; the FDA registers the protein
+  with no PubChem CID). (b) A hydrate or unspecified form PubChem has no parent for, 5: magnesium carbonate
+  (0E53J927NA is the hydrate, CID 71376; the record is magnesite), calcium chloride (the dihydrate), sodium acetate
+  (the trihydrate), zinc sulfate and lactic acid ("UNSPECIFIED FORM", no PubChem CID at all); PubChem's parent
+  lookup answers "no CIDs for the given type" for an inorganic hydrate. (c) Neither PubChem nor the FDA links the
+  code to a compound, 13: the six hand-modelled polymers and mixtures (xanthan gum, gelatin, carrageenan, agar, guar
+  gum, pectin: no PubChem compound), five the FDA registers as a polymer or mixture without a PubChem CID whose
+  PubChem page lists no UNII (polysorbate 80, shellac, maltodextrin, hyaluronic acid, butylated hydroxyanisole),
+  pembrolizumab (CID 254741536 lists no synonyms) and minoxidil (the FDA draws the other tautomer, InChIKey
+  ZFMITUMMTDLWHR vs PubChem's ZIMGGGWCDYVHOY, no CID; PubChem's 261 synonyms hold no UNII). The same reading also
+  explained 102 label codes whose parent lookup (`compound/name/UNII-<code>`) had come back empty: PubChem had no
+  such synonym, not no parent. The table, one row per name (label code; the record; cause; how it is reached now):
+
+  | Label name (code) | Record | Cause | Why the code match missed it | Reached now by |
+  |---|---|---|---|---|
+  | acesulfame potassium (23OV73Q5G9) | acesulfame-potassium, CID 11074431 | a | PubChem lists the code bare; the parent lookup reached the acid, CID 36573 | FDA table, CID |
+  | potassium (RWP5GA015D) | potassium, CID 5462222 | a | PubChem lists the code bare | FDA table, CID |
+  | sodium metabisulfite (4VON5FNS3C) | sodium-metabisulfite, CID 51000477 | a | PubChem lists no synonyms; the FDA links the code to CID 656671, same InChIKey | FDA table, InChIKey |
+  | sodium bisulfite (TZX5469Z6I) | sodium-bisulfite, CID 656672 | a | PubChem lists no synonyms; the FDA links the code to CID 18000336, same InChIKey | FDA table, InChIKey |
+  | tirzepatide (OYN3CCI6QE) | tirzepatide, CID 156588324 | a | PubChem lists the code bare; the FDA registers the protein with no CID | PubChem's bare code, listed by the FDA table |
+  | magnesium carbonate (0E53J927NA) | magnesium-carbonate, CID 11029 | b | the code is the hydrate (CID 71376); no PubChem parent; the record is magnesite | alias |
+  | calcium chloride (M4I0D6VV5M) | calcium-chloride, CID 24854 | b | the dihydrate (CID 24844); no PubChem parent; the record is the anhydrous salt | alias |
+  | sodium acetate (4550K0SC9B) | sodium-acetate, CID 517045 | b | the trihydrate (CID 23665404); no PubChem parent; the record is the anhydrous salt | alias |
+  | zinc sulfate (89DS0H96TB) | zinc-sulfate, CID 24424 | b | "UNSPECIFIED FORM", no PubChem CID at all | alias |
+  | lactic acid (33X04XA5AT) | lactic-acid, CID 612 | b | "UNSPECIFIED FORM", no PubChem CID; the record is DL-lactic acid | alias |
+  | polysorbate 80 (6OZP39ZG8H) | polysorbate-80, CID 5281955 | c | the FDA registers a polymer with no PubChem link; PubChem's CID lists no UNII | substance |
+  | shellac (46N107B71O) | shellac, CID 6850749 | c | structurally diverse, no PubChem link; PubChem's CID lists no UNII | substance |
+  | maltodextrin (7CVR7L4A2D) | maltodextrin, CID 62698 | c | polymer, no PubChem link; PubChem's CID lists no UNII | substance |
+  | hyaluronic acid (S270N0TRQY) | hyaluronic-acid, CID 24759 | c | polymer, no PubChem link; PubChem's CID lists no UNII | substance |
+  | butylated hydroxyanisole (REK4960K2U) | butylated-hydroxyanisole, CID 24667 | c | the FDA registers the two-isomer mixture with no PubChem link; PubChem's CID lists no UNII | substance |
+  | pembrolizumab (DPT0O3T46P) | pembrolizumab, CID 254741536 | c | protein, no PubChem link; PubChem lists no synonyms at all | substance |
+  | minoxidil (5965120SH1) | minoxidil, CID 4201 | c | the FDA draws the other tautomer (InChIKey ZFMITUMMTDLWHR), no CID; PubChem's 261 synonyms hold no UNII | substance |
+  | xanthan gum (TTV12P4NEE) | xanthan-gum, hand-modelled | c | no PubChem compound; the FDA registers it with no PubChem link | substance |
+  | gelatin (2G86QN327L) | gelatin, hand-modelled | c | as xanthan gum ("GELATIN, UNSPECIFIED") | substance |
+  | carrageenan (5C69YCD2YJ) | carrageenan, hand-modelled | c | as xanthan gum | substance |
+  | agar (89T13OHQ2B) | agar, hand-modelled | c | as xanthan gum ("AGAR, UNSPECIFIED") | substance |
+  | guar gum (E89I1637KE) | guar-gum, hand-modelled | c | no PubChem compound on the record (the FDA links CID 44134661, which the record does not carry) | substance |
+  | pectin (89NA02M4RX) | pectin, hand-modelled | c | as xanthan gum | substance |
+- **`sources/fda_unii.py`, the FDA's UNII table** (`precision.fda.gov/uniisearch/archive/latest/UNII_Data.zip`,
+  14.5 MB, redirects to the newest edition; checked 2026-10-24: `UNII_Records_4Aug2026.txt`, tab-separated,
+  171,912 rows, no UNII twice, 126,672 with a PubChem CID, 129,398 with an InChIKey; the enclosed README documents
+  the columns). Parsed BY COLUMN NAME (UNII, DISPLAY_NAME, PUBCHEM, INCHIKEY, SUBSTANCE_TYPE; a renamed column or
+  a missing records file fails the run) into `data/raw_cache/fda/unii-records-v2.json` (13.7 MB, a dated envelope
+  like the labels; the prefix is bumped when the kept columns change), so it travels with the snapshot through the
+  inputs artifact; re-read weekly (`FDA_UNII_CACHE_TTL_DAYS`, 6). Registered `fda_unii`, `public_domain` (FDA website
+  policies: "in the public domain and may be republished, reprinted and otherwise used freely"); `sources.json`
+  carries it. A pipeline `compile_products` with a label seeded and no table in the cache REFUSES.
+- **The molecule side of the join (`products.unii_index`, `_record_codes`)** is now a UNION of the FDA's table and
+  PubChem's lists, each with codes the other lacks: a code names a record when the FDA's PubChem CID for it is the
+  record's (`cid`, 788 codes), when the FDA's InChIKey is the record's exactly (`inchikey`, 22; the FDA links some
+  substances to another CID of the same structure), when PubChem's synonym list for the CID carries it (`pubchem`,
+  160: a `UNII-` entry, or a BARE code the table lists, never a bare code it does not, which is a screening-library
+  id of the same shape), or when the hand list's new `substances` section says so (`substance`, 16; see below). A
+  code two records claim goes to the one holding it by the FDA's own link or the hand list when exactly one does,
+  else to neither. `pubchem.uniis` now keeps bare codes (cache prefix `unii` -> `unii2`, re-read once, 6 POSTs).
+  864 of 915 molecules hold a code (was 789 with any PubChem `UNII-` entry). `data/seed/unii_index.json`
+  (committed, one line per code: slug, how, the FDA's display name) is the index, 1,118 codes.
+- **A code the FDA registers as a source-defined substance (ISO 11238 `structurallyDiverse`: cochineal, corn syrup)
+  joins no record by any automatic route**, only by the hand list. Found while measuring: the FDA links COCHINEAL
+  to carminic acid's CID (it would have put carmine on Hysingla's page, and Garrett ruled in run 6 that cochineal
+  is not a name for carmine) and CORN SYRUP to a glucose whose parent is glucose (6 pages would have listed
+  glucose). Every other non-chemical link checked is right and kept: semaglutide on Ozempic and Wegovy (protein),
+  carboxymethylcellulose (polymer), permethrin and doxepin (isomer mixtures), the 19 "MENTHOL, UNSPECIFIED FORM"
+  rows (mixture) that run C1 designed the skeleton rule for.
+- **The by-rule route (`parent_index`)** asks PubChem for a label code's parent BY THE FDA'S CID
+  (`pubchem.cid_parents`, cached `pubchem/parent-<cid>.json`) when the table has one, else by the `UNII-` synonym
+  as before; the FDA's InChIKey skeleton counts beside the parents' (L-lactic acid reaches DL-lactic acid with no
+  parent at all); a hand alias is FINAL (it was a gap-filler): without that, potassium citrate monohydrate on
+  Halls would list citric acid. An alias on an ACTIVE's own code applies after its moiety reached nothing; the two
+  rules never do (zinc acetate stays zinc acetate, not acetic acid).
+- **The hand list (`sources/seeds/unii_aliases.yaml`)** has two sections now. `substances` (the molecule's OWN
+  code; the FDA display name IS the molecule): the 13 of cause (c) above plus casein, fibrin and hemoglobin (hand-
+  modelled, exact FDA names) and ivermectin (the FDA registers the B1a/B1b mixture with no PubChem link; the code
+  came up on Stromectol, a page that now passes the gate). `aliases` gains eight forms: calcium chloride dihydrate,
+  magnesium carbonate hydrate, sodium acetate trihydrate, potassium citrate monohydrate, sodium borate (the
+  decahydrate, for borax), carboxymethylcellulose sodium ("cellulose gum", the salt of the polymer), and zinc
+  sulfate and lactic acid unspecified forms; the last two of those surfaced through the web's name sweep, which is
+  what it is for. Every code is checked at build time (a slug must be a molecule; a code must be in the table) and
+  `tests/test_unii_index.py` checks each substance's FDA display name against its molecule's title.
+- **A label that gives no UNII for an ingredient is not matched at all** (gate reason "the label gives no UNII code
+  for N ingredient(s) (...)"). Keflex's label names Cellulose, D&C Yellow No. 10, FD&C Blue No. 1, FD&C Yellow No. 6
+  and silicone with no codes, three of them molecules here under other titles; nothing can match a code-less row,
+  and the page would have called them not MoleculeFinder molecules on no evidence. Keflex is the only such label.
+- **Every matched row and every `not_in_catalog` entry carries `unii`**, the code it was decided on (a row: the
+  ingredient's own or its moiety's; an entry: the label's code, None when the label gives none). Display only.
+- **Pinned rebuild** (`sync-inputs` 17122735c9f95167, all three keys blanked, exit 0; the artifact predates run C1,
+  so the 790 parent lookups were fetched once, plus the table and the 6 `unii2` POSTs): **all 153 entries moved
+  into the linked lists; 268 label rows gained on 164 pages (231 direct, 4 parent, 30 alias, 3 moiety), 0 lost**;
+  one label name moved molecule (Halls' potassium citrate: citric acid -> potassium citrate, the alias); 18 rows
+  keep their molecule and are now direct. **413 product pages (405): flagyl, flonase-allergy-relief, foundayo,
+  pamelor, strattera, stromectol, supergoop-unseen-sunscreen-spf-50 and zomig pass the gate** (62 fail, was 70;
+  keflex held as above); none gone. Molecules with "Found in these products" 424 -> 446 (22 gain it: tirzepatide,
+  pembrolizumab, polysorbate-80, xanthan gum, borax... and metronidazole, fluticasone propionate, nortriptyline,
+  orforglipron, ivermectin through the new pages). **47 molecule files change, by `products` alone**; the other
+  changes are products.json, products_gate.json (new `matched_by_code` and `unii_index` counts), the queue,
+  sources.json and the new unii_index.json; meta.json unchanged (2026-10-21). Mounjaro: 7 molecules, tirzepatide
+  its active, no "not yet" sentence, two names left (sodium phosphate dibasic heptahydrate, hydrochloric acid).
+  Advil 12 molecules and 14 names (shellac and gelatin moved); CeraVe 13 and 35 (titanium dioxide active first);
+  Sun Bum 8 and 55. The two directions are one fact (2,635 pairs each way). Gate totals: 1,861 rows by the
+  ingredient's code, 155 by its moiety, 127 parent, 32 skeleton, 116 alias.
+- **Tests: 755 (735)**: `test_fda_unii.py` (7: the parser by column name, the refusals, the Table, the dated cache,
+  the registry, PubChem's bare codes), `test_unii_matching.py` (10: the union and the authority rule, bare codes,
+  substances, the source-defined guard, the FDA skeleton, alias wins, an alias on an active's own code, parents by
+  the FDA's CID, rows carry codes, the code-less gate, the refusal without a table, the index file) and
+  `test_unii_index.py` (5, over the committed snapshot and index: no name shown as not in the catalog carries a
+  code that reaches a molecule, with ONE exemption by design, an active whose own code resolves only by rule;
+  every matched row's code reaches its molecule; no such name is a molecule's title; the hand list is in the
+  index with its names). `test_products.py` fixtures now hold codes as PubChem writes them (`UNII-...`). Ruff 131
+  = main's 130 + one C408 for the registry entry, in that file's established `dict(...)` style.
+- **The weekly run from the first Monday after deploy:** downloads the FDA table (14.5 MB) each week, re-reads
+  the 897 synonym lists once (6 POSTs) and asks about 790 parents by CID once (3 minutes), then is warm. The
+  artifact grows by about 7 MB (the table compresses to 6 MB).
+- **Open, for Garrett (one question):** the hand-modelled polymers' FORMS are the biggest names still shown as
+  "not yet MoleculeFinder molecules": MICROCRYSTALLINE CELLULOSE (122 labels) and POWDERED CELLULOSE (7) beside
+  `/m/cellulose`, STARCH, CORN (80) and STARCH, POTATO beside `/m/starch`, SOYBEAN LECITHIN (9) beside `/m/lecithin`.
+  Each is the same substance in a named physical form or from a named source; each is one `aliases` line if he
+  rules they are forms of the molecule. Not done here: it changes about 200 pages and is his call.
+- **Deploy: ETL `main` FIRST, then web `main`, trust runs 1 to 3 together, before Monday 2026-10-26's weekly run.**
+  Nothing deploys from this repo.
+
 ## The source-licence rule and the registry (2026-10-23). DEPLOYED 2026-10-24 (ETL `41a688d`, web `f164fba`)
 **DEPLOYED 2026-10-24 about 01:24 UTC on Garrett's word** (2026-10-23 his time), as built (NITE and CAS out). ETL `main` 0b9d3c9 -> `41a688d` (with `cbfe63f`; no workflow ran); web `main` 7585f9e -> `f164fba` (with `e936096`), GitHub deployment `7292228245` Production success. No other branch was waiting; pushed at 01:23, clear of the news cron. IndexNow run 40049651456: 1,678 -> 1,678, 0 new, 1,404 changed, 0 removed, 1,404 submitted and 1,404 accepted, audit exact, `indexnow-last` -> `f164fba`. Live, 14 of 14 checks: /m/caffeine (LD50 "HSDB via PubChem", the Hazard label row with ECHA's attribution, signal word Warning, no CAS), /m/ethanol (no LD50, Danger), /m/acetaminophen 2,400 (rat, oral), /m/capsaicin 47.2 (mouse, oral), /best/deadliest without ethanol or methotrexate, /about/methodology (citation, both DOIs, the not-used list), /classroom (the dataset block, Kaggle link), /embed ("Download the dataset"), /embed/caffeine.json (source "HSDB via PubChem"), /vs/acetaminophen-vs-ibuprofen (2400, no 1944), sitemap 1,678. Live Lighthouse (mobile, median of 3, Brave): /m/caffeine perf 98, SEO 100, LCP 2.29 s, CLS 0, 382 KB; /classroom 99, 100, 2.18 s, 0, 289 KB; /m/ethanol 98, 100, 2.32 s, 0, 375 KB. **Next, Garrett (optional, not urgent):** upload dataset 2026.10.1 as a New version on Zenodo and replace the Kaggle files, then send the new version DOI.
 Run D found 41 live LD50s whose only source, T3DB, restricts commercial reuse. Fixed at the root, not by deleting
