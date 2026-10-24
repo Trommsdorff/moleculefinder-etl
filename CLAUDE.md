@@ -775,7 +775,7 @@ values: commits `4e73e8f` (code), `2b32acf` (data and dataset 2026.10.1), `54914
   the old `KAGGLE_ID` was wrong) and goes into README.md (citation and links), CITATION.cff (`doi`, `identifiers`),
   zenodo.json (`doi` for a published version, `isNewVersionOf` otherwise, the concept DOI in `notes`) and the Kaggle
   metadata. **`mfetl dataset` refuses (exit 1, nothing written) when any of those fields is empty** (`Unpublished`).
-  **Since 2026-10-24 (branch `dataset-doi-2026-10`, `ba23f1c`): the citation is the concept DOI alone, with "This
+  **Since 2026-10-24 (`ba23f1c`, DEPLOYED 2026-10-24 with ETL `main` `f4fac9f`, web `45808d9`): the citation is the concept DOI alone, with "This
   version <v>, <its DOI>" beside it (README, CITATION.cff `doi`, zenodo.json `notes`).** Versions are listed oldest
   first; the last is the latest and `zenodo_record` must be its page. **A new version's DOI is recorded by `mfetl
   dataset --version V --doi D`** (never by hand); it refuses a non-Zenodo or reused DOI, a version already recorded
