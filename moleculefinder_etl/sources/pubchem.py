@@ -202,19 +202,27 @@ def synonyms(cids: list[int], limit: int = 60) -> dict[int, list[str]]:
     return out
 
 
-_UNII = re.compile(r"^UNII-([0-9A-Z]{10})$")
+_UNII = re.compile(r"^(UNII-)?([0-9A-Z]{10})$")
 
 
 @_pubchem_retry
 def uniis(cids: list[int]) -> dict[int, list[str]]:
-    """Batched UNII lookup (growth plan run C1). Returns {cid: [UNII, ...]}, read from the
-    ``UNII-XXXXXXXXXX`` entries of each CID's FULL PubChem synonym list, in PubChem's order.
+    """Batched UNII lookup (growth plan run C1). Returns {cid: [code, ...]}: every entry of each
+    CID's FULL PubChem synonym list shaped like a UNII, in PubChem's order, kept as PubChem
+    writes it: ``UNII-XXXXXXXXXX``, or the bare ten characters.
 
     The FDA's UNII is the code a DailyMed label carries for every ingredient, so it is the one
     deterministic join from a label to a molecule (no name matching). It is not in the stored
     60-name synonym window (registry codes sit deep in the list), so it is its own request: the
-    same batched POST as ``synonyms``, with the whole list read and only the UNIIs kept. A CID
+    same batched POST as ``synonyms``, with the whole list read and only the codes kept. A CID
     PubChem knows no UNII for comes back as an empty list.
+
+    Since trust run 3 (2026-10-24) the bare form is kept too: PubChem files tirzepatide's UNII as
+    ``OYN3CCI6QE``, never ``UNII-OYN3CCI6QE``. A bare ten-character code is not necessarily a
+    UNII (``HMS3264B22`` is a screening-library id of the same shape), so the reader
+    (``transform/products.unii_index``) accepts a bare code only when the FDA's own UNII table
+    lists it. The molecule side of the match is built from that table first; this list is the
+    fallback for a record the table does not link.
     """
     out: dict[int, list[str]] = {}
     for chunk in _chunks(cids, PUBCHEM_BATCH):
@@ -230,9 +238,36 @@ def uniis(cids: list[int]) -> dict[int, list[str]]:
             continue
         r.raise_for_status()
         for info in r.json().get("InformationList", {}).get("Information", []):
-            codes = [m.group(1) for m in (_UNII.match(s) for s in info.get("Synonym") or []) if m]
+            codes = [s for s in info.get("Synonym") or [] if _UNII.match(s)]
             out[int(info["CID"])] = list(dict.fromkeys(codes))
     return out
+
+
+def split_unii(code: str) -> tuple[str, bool]:
+    """``"UNII-ABC..."`` -> ``("ABC...", False)``; a bare ten-character code -> ``(code, True)``."""
+    m = _UNII.match(code)
+    if not m:
+        return code, True
+    return m.group(2), m.group(1) is None
+
+
+@_pubchem_retry
+def cid_parents(cid: int) -> list[int]:
+    """The PubChem PARENT compound(s) of a CID (trust run 3): the neutral, single-component
+    compound of a salt or hydrate, or the compound itself when it already is one. An empty list
+    when PubChem has no parent for it (an inorganic salt and its hydrates, a polymer, a mixture).
+
+    ``unii_parents`` below asks the same question by the ``UNII-<code>`` synonym, which fails
+    whenever PubChem files the code bare or not at all (102 label UNIIs on 2026-10-24). With the
+    FDA's table giving a label UNII its PubChem CID, the question is asked by CID instead.
+    """
+    _throttle()
+    url = f"{PUBCHEM_REST}/compound/cid/{int(cid)}/cids/JSON?cids_type=parent"
+    r = _session.get(url, timeout=30)
+    if r.status_code in (400, 404):
+        return []
+    r.raise_for_status()
+    return [int(c) for c in r.json().get("IdentifierList", {}).get("CID", [])]
 
 
 @_pubchem_retry

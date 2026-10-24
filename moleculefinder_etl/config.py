@@ -55,6 +55,12 @@ SYNONYMS_CACHE_TTL_DAYS = float(os.getenv("MFETL_SYNONYMS_TTL_DAYS", "30"))
 PRODUCTS_CACHE_TTL_DAYS = float(os.getenv("MFETL_PRODUCTS_TTL_DAYS", "6"))
 UNII_CACHE_TTL_DAYS = float(os.getenv("MFETL_UNII_TTL_DAYS", str(SYNONYMS_CACHE_TTL_DAYS)))
 
+# The FDA's own UNII table (trust run 3, 2026-10-24; sources/fda_unii.py): every UNII with the
+# PubChem CID and InChIKey the FDA records for it. The "latest" link always serves the newest
+# edition (a new one every month or two), re-read weekly like the labels; 14.5 MB zipped.
+FDA_UNII_URL = "https://precision.fda.gov/uniisearch/archive/latest/UNII_Data.zip"
+FDA_UNII_CACHE_TTL_DAYS = float(os.getenv("MFETL_FDA_UNII_TTL_DAYS", "6"))
+
 # ── Canon selection ──────────────────────────────────────────────────────────
 CANON_TARGET = int(os.getenv("MFETL_CANON_TARGET", "10000"))
 SIMILARITY_TOP_N = 30

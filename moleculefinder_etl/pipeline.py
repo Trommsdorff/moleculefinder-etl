@@ -42,6 +42,9 @@ DEFERRED = SEED_DIR / "deferred.json"
 PRODUCTS_STAGED = SEED_DIR / "products.json"
 PRODUCTS_GATE = SEED_DIR / "products_gate.json"
 NEXT_TRANCHE_QUEUE = SEED_DIR / "next_tranche_queue.csv"
+# Trust run 3: every UNII that reaches a molecule, and how (committed; tests/test_unii_index.py
+# holds products.json to it in both directions).
+UNII_INDEX = SEED_DIR / "unii_index.json"
 
 
 def _require(path: Path, prior: str) -> None:
@@ -306,6 +309,8 @@ def stage_transform(settings: Settings) -> list[dict]:
         PRODUCTS_STAGED.write_text(json.dumps(passed, ensure_ascii=False))
         # The next tranche's queue, every label ingredient MF lacks, is its own committed CSV.
         products.write_queue(report.pop("next_tranche_queue"), NEXT_TRANCHE_QUEUE)
+        # The UNII index, every code that reaches a molecule and how, is its own committed file.
+        products.write_unii_index(report.pop("unii_index_entries"), UNII_INDEX, products.fda_unii.cached())
         PRODUCTS_GATE.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n")
         log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s)",
                  report["passed"], report["seeded"], products.MIN_MOLECULES,

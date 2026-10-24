@@ -49,11 +49,31 @@ compiling (``compile_products``) reads only the cache and the records.
 
 THE LABEL'S OTHER INGREDIENTS (Trust run 2, 2026-10-24). A DailyMed product's ``not_in_catalog``
 is the list of its label ingredients that are not MoleculeFinder molecules, each
-``{"name": <the label's name>, "role": "active" | "inactive"}``, in label order, actives first,
-one entry per name (it was a bare count). The page shows them as plain unlinked text under "Also
-on the label". This is display, not matching: the names link to nothing, and the gate still counts
-only molecules matched by code. ``actives_not_in_catalog`` (the actives' names alone) stays as it
-was; the page's unmatched-active sentence reads it.
+``{"name": <the label's name>, "role": "active" | "inactive", "unii": <the label's code>}``, in
+label order, actives first, one entry per name (it was a bare count). The page shows them as plain
+unlinked text under "Also on the label". This is display, not matching: the names link to nothing,
+and the gate still counts only molecules matched by code. ``actives_not_in_catalog`` (the actives'
+names alone) stays as it was; the page's unmatched-active sentence reads it.
+
+THE MOLECULE SIDE OF THE JOIN IS THE FDA'S OWN TABLE (Trust run 3, 2026-10-24). Until this run a
+molecule's UNIIs were read from PubChem's synonym list alone, and PubChem files many codes bare,
+under another compound, or not at all, so 23 label ingredients that ARE MoleculeFinder molecules
+(polysorbate 80, xanthan gum, tirzepatide...) were shown as not in the catalog on 118 pages.
+``unii_index`` now reads ``sources/fda_unii.py``, the FDA's UNII table, as well: a UNII belongs to a
+record when the FDA's PubChem CID for it is the record's CID (``cid``), when the FDA's InChIKey is
+the record's exactly (``inchikey``), when PubChem's synonym list for the record's CID carries it
+(``pubchem``: a ``UNII-`` entry, or a bare code the table lists, never a bare code it does not), or
+when the hand list's ``substances`` say so (``substance``: the codes of records neither source
+links, hand-modelled polymers and proteins, a biologic with no PubChem synonyms). The sources are a
+union, since each has codes the other lacks. A code two records claim goes to the one holding it by
+the FDA's own link or the hand list, when exactly one does, else to neither. The by-rule route asks
+PubChem for a label UNII's parent BY THE FDA'S CID (``pubchem.cid_parents``) instead of by the
+``UNII-`` synonym PubChem may not hold, and the FDA's InChIKey skeleton counts beside the parents'.
+A hand alias is final. Every matched row and every ``not_in_catalog`` entry carries the code it was decided on
+(``unii``), and ``data/seed/unii_index.json`` (committed, ``write_unii_index``) lists every code
+that reaches a molecule and how, so ``tests/test_unii_index.py`` can hold both directions over the
+real snapshot: no name shown as not in the catalog carries a code that reaches a molecule, and
+every matched row's code reaches the molecule it is listed under.
 
 Product names are used as names only: no logos, no packaging, no claim beyond the ingredient
 list. Every value here is from the source (``from_source``).
@@ -69,7 +89,7 @@ from pathlib import Path
 import yaml
 
 from ..config import PRODUCTS_CACHE_TTL_DAYS, RAW_CACHE, SEEDS_DIR, UNII_CACHE_TTL_DAYS
-from ..sources import cache, dailymed, pubchem, wikidata
+from ..sources import cache, dailymed, fda_unii, pubchem, wikidata
 from ..sources.registry import assert_not_blocked
 from .confidence import FROM_SOURCE
 from .relationships import load_food_hubs, load_worlds
@@ -92,9 +112,17 @@ CLASSES_YAML = SEEDS_DIR / "product_classes.yaml"
 DAILYMED_DIR = RAW_CACHE / "dailymed"
 SPL_PREFIX = "spl1"                   # bump when ``dailymed.parse`` changes what it keeps
 PARTS_CACHE = RAW_CACHE / "wikidata" / "product_parts.json"
-UNII_PREFIX = "unii"
-PARENT_PREFIX = "uniiparent"          # pubchem/uniiparent-<UNII>.json: the UNII's parent CIDs
+# pubchem/unii2-<cid>.json: the codes shaped like a UNII in the CID's full synonym list. Was "unii"
+# (the ``UNII-`` entries only); bumped 2026-10-24 so a pinned build, which never expires an entry,
+# re-reads the lists with the bare codes kept (pubchem.uniis). The old files are left to be evicted.
+UNII_PREFIX = "unii2"
+PARENT_PREFIX = "uniiparent"          # pubchem/uniiparent-<UNII>.json: the UNII's parent CIDs, asked by synonym
+CID_PARENT_PREFIX = "parent"          # pubchem/parent-<cid>.json: a CID's parent CIDs, asked by the FDA's CID
 MIN_PARENT_CARBONS = 2
+# How a UNII reaches a molecule, in the committed index: directly, by the FDA's PubChem CID or
+# InChIKey for it, by PubChem's own synonym list, or by the hand list of substances; or by rule.
+DIRECT_HOWS = ("cid", "inchikey", "pubchem", "substance")
+RULE_HOWS = ("parent", "skeleton", "alias")
 
 _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _QID = re.compile(r"^Q[1-9][0-9]*$")
@@ -273,6 +301,17 @@ def _parent_path(unii: str) -> Path:
     return RAW_CACHE / "pubchem" / f"{PARENT_PREFIX}-{unii}.json"
 
 
+def _cid_parent_path(cid: int) -> Path:
+    return RAW_CACHE / "pubchem" / f"{CID_PARENT_PREFIX}-{int(cid)}.json"
+
+
+def _label_parent_path(unii: str, table: fda_unii.Table | None) -> Path:
+    """Where a label UNII's parent CIDs are cached: by the FDA's PubChem CID for it when the table
+    has one (the question PubChem can always answer), else by the ``UNII-`` synonym."""
+    cid = table.cid(unii) if table is not None else None
+    return _cid_parent_path(cid) if cid else _parent_path(unii)
+
+
 def label_uniis(seed: list[dict], spl=None) -> list[str]:
     """Every ingredient and active-moiety UNII on the seeded labels the cache holds, sorted."""
     out: set[str] = set()
@@ -287,11 +326,12 @@ def label_uniis(seed: list[dict], spl=None) -> list[str]:
     return sorted(out)
 
 
-def read_parents(uniis) -> dict[str, list[int]]:
-    """The cached parent CIDs per UNII (written by the fetch stage). Missing means not looked up."""
+def read_parents(uniis, table: fda_unii.Table | None = None) -> dict[str, list[int]]:
+    """The cached parent CIDs per label UNII (written by the fetch stage): by the FDA's CID for
+    the UNII when the table has one, else by synonym. Missing means not looked up."""
     out: dict[str, list[int]] = {}
     for u in uniis:
-        hit = cache.read_json(_parent_path(u), UNII_CACHE_TTL_DAYS)
+        hit = cache.read_json(_label_parent_path(u, table), UNII_CACHE_TTL_DAYS)
         if hit is not None and isinstance(hit.value, list):
             out[u] = [int(c) for c in hit.value]
     return out
@@ -313,11 +353,13 @@ def read_props(cids) -> dict[int, dict]:
 
 
 def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
-         fetch_parents=None) -> dict[str, int]:
+         fetch_parents=None, fetch_table=None, fetch_cid_parents=None) -> dict[str, int]:
     """Fetch whatever the product pages need that the cache does not hold fresh: each seeded
-    DailyMed label, the seeded Wikidata items' parts, every molecule's UNII codes (through
-    ``fetch_uniis``, the pipeline's batched per-CID cache), the PubChem parent of every label
-    UNII no molecule claims, and those parents' properties (``fetch_props``, the pipeline's
+    DailyMed label, the seeded Wikidata items' parts, the FDA's UNII table (``fetch_table``,
+    default ``fda_unii.warm``; a test passes ``lambda: None`` for no table), every molecule's UNII
+    codes (through ``fetch_uniis``, the pipeline's batched per-CID cache), the PubChem parent of
+    every label UNII no molecule claims (by the FDA's CID for it, ``fetch_cid_parents``, else by
+    synonym, ``fetch_parents``), and those parents' properties (``fetch_props``, the pipeline's
     permanent property cache) for the InChIKey skeleton. Returns request counts for the log."""
     assert_not_blocked("dailymed")
     labels = fetched_labels = 0
@@ -347,26 +389,38 @@ def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
         PARTS_CACHE.parent.mkdir(parents=True, exist_ok=True)
         PARTS_CACHE.write_text(json.dumps({cache.ENVELOPE_KEY: cache.ENVELOPE_VERSION,
                                            "fetched_at": at, "entries": stored}, sort_keys=True))
-    known = {u for codes in (fetch_uniis(cids) or {}).values() for u in (codes or [])}
+    # The molecule side of the join: the FDA's table first, PubChem's synonym lists as the fallback,
+    # the hand list's substances; the same reading ``unii_index`` makes of the assembled records.
+    table = fetch_table() if fetch_table is not None else fda_unii.warm()
+    pubchem_codes = fetch_uniis(cids) or {}
+    inchikeys = {c: (p.get("InChIKey") or None) for c, p in read_props(cids).items()}
+    known: set[str] = set(load_unii_substances())
+    for c in cids:
+        known.update(_record_codes(c, inchikeys.get(c), pubchem_codes.get(c) or [], table))
 
-    # Salts, hydrates and stereo forms: the parent of every label UNII no molecule claims.
+    # Salts, hydrates and stereo forms: the parent of every label UNII no molecule claims, asked
+    # by the FDA's PubChem CID for the UNII when the table has one, else by the UNII- synonym.
     fetch_parents = fetch_parents or pubchem.unii_parents
+    fetch_cid_parents = fetch_cid_parents or pubchem.cid_parents
     unclaimed = [u for u in label_uniis(seed) if u not in known]
-    parents = read_parents(unclaimed)
+    parents = read_parents(unclaimed, table)
     asked = [u for u in unclaimed if u not in parents]
     for i, u in enumerate(asked, 1):
-        parents[u] = fetch_parents(u)
-        cache.write_json(_parent_path(u), parents[u])
+        cid = table.cid(u) if table is not None else None
+        parents[u] = fetch_cid_parents(cid) if cid else fetch_parents(u)
+        cache.write_json(_label_parent_path(u, table), parents[u])
         if i % 100 == 0:
             log.info("  products: parent compounds %d/%d", i, len(asked))
     parent_cids = sorted({c for cs in parents.values() for c in cs} - set(cids))
     if fetch_props is not None and parent_cids:
         fetch_props(parent_cids)
     log.info("  products: %d DailyMed label(s), %d fetched; %d Wikidata item(s), %d fetched; "
-             "UNII codes for %d CID(s); parents of %d unclaimed label UNII(s), %d fetched",
-             labels, fetched_labels, len(qids), len(missing), len(cids), len(unclaimed), len(asked))
+             "UNII codes for %d CID(s), FDA table %s; parents of %d unclaimed label UNII(s), %d fetched",
+             labels, fetched_labels, len(qids), len(missing), len(cids),
+             f"{len(table)} UNIIs ({table.file})" if table is not None else "absent", len(unclaimed), len(asked))
     return {"labels": labels, "labels_fetched": fetched_labels, "items": len(qids),
-            "items_fetched": len(missing), "parents": len(unclaimed), "parents_fetched": len(asked)}
+            "items_fetched": len(missing), "parents": len(unclaimed), "parents_fetched": len(asked),
+            "fda_uniis": len(table) if table is not None else 0}
 
 
 def read_uniis(cids: list[int]) -> dict[int, list[str]]:
@@ -380,14 +434,78 @@ def read_uniis(cids: list[int]) -> dict[int, list[str]]:
 
 
 # ── compile ───────────────────────────────────────────────────────────────────
-def unii_index(records: list[dict], uniis: dict[int, list[str]]) -> dict[str, str]:
-    """UNII -> slug, for UNIIs exactly one molecule claims. A code two molecules share (a
-    medicine and its own drug-form duplicate) matches neither: a miss before a wrong match."""
-    owners: dict[str, set[str]] = {}
+def _record_codes(cid: int, inchikey: str | None, pubchem_codes: list[str],
+                  table: fda_unii.Table | None) -> dict[str, str]:
+    """The UNIIs that name one record, code -> how (trust run 3), from both sources. The FDA's
+    table: every UNII whose PubChem CID is the record's (``cid``), then every UNII whose InChIKey
+    is the record's exactly (``inchikey``; the FDA links some substances to another CID of the
+    same structure). PubChem's own synonym list for the CID (``pubchem``): a ``UNII-`` entry, or a
+    bare code the table lists (a bare code the table does not know is a screening-library id of
+    the same shape, not a UNII). The two are a UNION, not a preference: the FDA registers many
+    forms with no PubChem link ("TOCOPHEROL", "CITRIC ACID", the unspecified forms) that PubChem
+    files under the molecule's CID, and the FDA links other codes to a different PubChem CID of
+    the same substance than PubChem lists them under (zinc oxide), so either source alone loses
+    codes the other has. Where the two disagree about WHICH record a code names, ``unii_index``
+    lets the FDA's explicit link decide. A code the FDA registers as a source-defined substance
+    (``fda_unii.SOURCE_DEFINED_KINDS``: cochineal, corn syrup) joins no record here, whatever
+    either source links it to; only the hand list may carry such a code."""
+    got: dict[str, str] = {}
+    if table is not None:
+        if cid > 0:
+            for u in table.by_cid.get(cid, []):
+                if table.defined_by_structure(u):
+                    got[u] = "cid"
+        if inchikey:
+            for u in table.by_inchikey.get(inchikey, []):
+                if table.defined_by_structure(u):
+                    got.setdefault(u, "inchikey")
+    for code in pubchem_codes:
+        u, bare = pubchem.split_unii(code)
+        if bare and (table is None or u not in table):
+            continue
+        if table is not None and not table.defined_by_structure(u):
+            continue
+        got.setdefault(u, "pubchem")
+    return got
+
+
+# The routes that state what a code means on the FDA's or a human's authority. A code two records
+# claim goes to the one that holds it by such a route, when exactly one does; a code PubChem's
+# lists put on two records, or two records hold by the FDA's own links, matches neither.
+AUTHORITATIVE_HOWS = ("cid", "inchikey", "substance")
+
+
+def _owner(claims: dict[str, str]) -> tuple[str, str] | None:
+    if len(claims) == 1:
+        return next(iter(claims.items()))
+    decided = [(slug, how) for slug, how in claims.items() if how in AUTHORITATIVE_HOWS]
+    return decided[0] if len(decided) == 1 else None
+
+
+def unii_index(records: list[dict], uniis: dict[int, list[str]], table: fda_unii.Table | None = None,
+               substances: dict[str, str] | None = None) -> dict[str, tuple[str, str]]:
+    """UNII -> (slug, how), for UNIIs one molecule claims (``_record_codes`` per record, plus the
+    hand list's ``substances``). A code two molecules share (a medicine and its own drug-form
+    duplicate) goes to the one the FDA's own link or the hand list gives it to, and when neither
+    or both decide it, to neither: a miss before a wrong match (``_owner``). A substance naming no
+    molecule, or a code the FDA table on hand does not know, stops the build."""
+    by_slug = {r["slug"] for r in records}
+    for u, slug in (substances or {}).items():
+        if slug not in by_slug:
+            raise ProductSeedError(f"unii_aliases.yaml substances: {u} names no molecule {slug!r}")
+        if table is not None and u not in table:
+            raise ProductSeedError(f"unii_aliases.yaml substances: {u} is not a UNII in the FDA table ({table.file})")
+    owners: dict[str, dict[str, str]] = {}
     for r in records:
-        for u in uniis.get(int(r["cid"]), []):
-            owners.setdefault(u, set()).add(r["slug"])
-    return {u: next(iter(s)) for u, s in owners.items() if len(s) == 1}
+        cid = int(r["cid"])
+        codes = _record_codes(cid, r.get("inchikey"), uniis.get(cid, []) if cid > 0 else [], table)
+        for u, slug in (substances or {}).items():
+            if slug == r["slug"]:
+                codes.setdefault(u, "substance")
+        for u, how in codes.items():
+            owners.setdefault(u, {})[r["slug"]] = how
+    decided = {u: _owner(claims) for u, claims in owners.items()}
+    return {u: owner for u, owner in decided.items() if owner is not None}
 
 
 _CARBON = re.compile(r"C(?![a-z])(\d*)")
@@ -398,20 +516,36 @@ def carbon_count(formula: str | None) -> int:
     return sum(int(n or 1) for n in _CARBON.findall(formula or ""))
 
 
-def load_unii_aliases(path: Path | None = None) -> dict[str, str]:
-    """The hand list: UNII -> molecule slug, for forms the parent rule does not reach."""
+def _hand_list(path: Path | None, section: str) -> dict[str, str]:
     path = path or UNII_ALIASES_YAML
     if not path.exists():
         return {}
     data = yaml.safe_load(path.read_text()) or {}
-    return {str(u).strip(): str(s).strip() for u, s in (data.get("aliases") or {}).items()}
+    return {str(u).strip(): str(s).strip() for u, s in (data.get(section) or {}).items()}
+
+
+def load_unii_aliases(path: Path | None = None) -> dict[str, str]:
+    """The hand list's ``aliases``: a FORM's UNII -> molecule slug (a hydrate, an unspecified form,
+    a stereo form), for forms the parent rule does not reach. A hand ruling is final."""
+    return _hand_list(path, "aliases")
+
+
+def load_unii_substances(path: Path | None = None) -> dict[str, str]:
+    """The hand list's ``substances`` (trust run 3): a molecule's OWN UNII -> its slug, for records
+    neither the FDA table nor PubChem links to their code (hand-modelled polymers and proteins, a
+    biologic with no PubChem synonyms, a tautomer the FDA draws differently)."""
+    return _hand_list(path, "substances")
 
 
 def parent_index(records: list[dict], parents: dict[str, list[int]], props: dict[int, dict],
-                 aliases: dict[str, str] | None = None) -> dict[str, tuple[str, str]]:
+                 aliases: dict[str, str] | None = None,
+                 table: fda_unii.Table | None = None) -> dict[str, tuple[str, str]]:
     """UNII -> (slug, how) for label UNIIs no molecule claims: ``parent`` (the parent CID is a
-    catalog CID), ``skeleton`` (one catalog molecule shares the parent's InChIKey first block) or
-    ``alias`` (the hand list). Exactly one molecule must qualify, with two or more carbons."""
+    catalog CID), ``skeleton`` (one catalog molecule shares the InChIKey first block of a parent,
+    or of the FDA's own structure for the UNII) or ``alias`` (the hand list, which is final and
+    wins over the two rules). Exactly one molecule must qualify, with two or more carbons. A code
+    the FDA registers as a source-defined substance (corn syrup) is no form of any molecule, so
+    neither rule applies to it; only the hand list may."""
     by_slug = {r["slug"]: r for r in records}
     cid_owners: dict[int, set[str]] = {}
     skel_owners: dict[str, set[str]] = {}
@@ -422,11 +556,15 @@ def parent_index(records: list[dict], parents: dict[str, list[int]], props: dict
             skel_owners.setdefault(str(r["inchikey"])[:14], set()).add(r["slug"])
     out: dict[str, tuple[str, str]] = {}
     for u, cids in parents.items():
+        if table is not None and not table.defined_by_structure(u):
+            continue
         how = "parent"
         found = set().union(*(cid_owners.get(c, set()) for c in cids)) if cids else set()
         if not found:
             how = "skeleton"
-            keys = {str((props.get(c) or {}).get("InChIKey") or "")[:14] for c in cids} - {""}
+            keys = {str((props.get(c) or {}).get("InChIKey") or "")[:14] for c in cids}
+            keys.add(str((table.inchikey(u) if table is not None else None) or "")[:14])
+            keys -= {""}
             found = set().union(*(skel_owners.get(k, set()) for k in keys)) if keys else set()
         if len(found) == 1:
             slug = next(iter(found))
@@ -435,31 +573,38 @@ def parent_index(records: list[dict], parents: dict[str, list[int]], props: dict
     for u, slug in (aliases or {}).items():
         if slug not in by_slug:
             raise ProductSeedError(f"unii_aliases.yaml: {u} names no molecule {slug!r}")
-        out.setdefault(u, (slug, "alias"))
+        out[u] = (slug, "alias")              # a hand ruling is final (trust run 3; was a gap-filler)
     return out
 
 
-def _resolve(ing: dict, by_unii: dict[str, str], by_parent: dict[str, tuple[str, str]]):
-    """(slug, how) for one label ingredient, or (None, None)."""
+def _resolve(ing: dict, by_unii: dict[str, tuple[str, str]], by_parent: dict[str, tuple[str, str]]):
+    """(slug, how, the code it was decided on) for one label ingredient, or (None, None, None)."""
     if ing.get("unii") and ing["unii"] in by_unii:
-        return by_unii[ing["unii"]], "unii"
+        return by_unii[ing["unii"]][0], "unii", ing["unii"]
     for m in ing.get("moiety") or []:
         if m in by_unii:
-            return by_unii[m], "moiety"
+            return by_unii[m][0], "moiety", m
     # By rule. An active's parent is looked up from its ACTIVE MOIETY, the label's own statement of
     # what the active is: zinc acetate's moiety is zinc, so a lozenge never lists acetic acid as its
     # active, and methylphenidate hydrochloride (whose UNII PubChem files under the dex form) reaches
     # methylphenidate. An ingredient with no moiety (an excipient) is looked up by its own UNII.
     for u in ing.get("moiety") or [ing.get("unii")]:
         if u and u in by_parent:
-            return by_parent[u]
-    return None, None
+            return by_parent[u][0], by_parent[u][1], u
+    # A hand ALIAS on the active's own code is a ruling on exactly that code, so it still applies
+    # when the moiety reached nothing (trust run 3: magnesium carbonate hydrate as an active, whose
+    # moiety is the carbonate ion). The two rules are never applied to an active's own code.
+    own = by_parent.get(ing.get("unii") or "")
+    if own is not None and own[1] == "alias":
+        return own[0], own[1], ing["unii"]
+    return None, None, None
 
 
-def _dailymed_molecules(spl: dict, by_unii: dict[str, str],
+def _dailymed_molecules(spl: dict, by_unii: dict[str, tuple[str, str]],
                         by_parent: dict[str, tuple[str, str]] | None = None) -> tuple[list[dict], list[str]]:
     """The label's molecules in label order, actives first, and the names of ingredients that
-    are not MoleculeFinder molecules. One entry per molecule; active wins over inactive."""
+    are not MoleculeFinder molecules. One entry per molecule; active wins over inactive. Each
+    entry carries the code it was matched on (``unii``: the ingredient's own, or its moiety's)."""
     purpose = dailymed.purposes(spl)
     found: dict[str, dict] = {}
     unmatched: list[str] = []
@@ -467,28 +612,33 @@ def _dailymed_molecules(spl: dict, by_unii: dict[str, str],
         for ing in spl.get("ingredients", []):
             if ing["role"] != role:
                 continue
-            slug, via = _resolve(ing, by_unii, by_parent or {})
+            slug, via, code = _resolve(ing, by_unii, by_parent or {})
             if slug is None:
                 if ing["name"] not in unmatched:
                     unmatched.append(ing["name"])
                 continue
             if slug in found:
                 continue
-            entry = {"slug": slug, "role": role, "listed_as": ing["name"], "match": via}
+            entry = {"slug": slug, "role": role, "listed_as": ing["name"], "match": via, "unii": code}
             if role == "active" and purpose.get(ing["name"]):
                 entry["purpose"] = purpose[ing["name"]]
             found[slug] = entry
     return list(found.values()), unmatched
 
 
-def _not_in_catalog(unmatched: list[str], unmatched_actives: list[str], mols: list[dict]) -> list[dict]:
+def _not_in_catalog(unmatched: list[str], unmatched_actives: list[str], mols: list[dict],
+                    spl: dict | None = None) -> list[dict]:
     """The label's ingredients that are not MoleculeFinder molecules, as the label names them: label
-    order, actives first, one entry per name (Trust run 2, 2026-10-24). Shown on the page as plain
-    unlinked text, never matched to anything; a name a listed molecule already carries is left out.
-    The actives here are exactly ``actives_not_in_catalog``."""
+    order, actives first, one entry per name (Trust run 2, 2026-10-24), each with the label's UNII
+    for it (trust run 3; None when the label gives none). Shown on the page as plain unlinked text,
+    never matched to anything; a name a listed molecule already carries is left out. The actives
+    here are exactly ``actives_not_in_catalog``."""
     shown = {m["listed_as"] for m in mols}
     actives = set(unmatched_actives)
-    return [{"name": n, "role": "active" if n in actives else "inactive"}
+    codes: dict[str, str | None] = {}
+    for ing in (spl or {}).get("ingredients", []):
+        codes.setdefault(ing["name"], ing.get("unii") or None)
+    return [{"name": n, "role": "active" if n in actives else "inactive", "unii": codes.get(n)}
             for n in unmatched if n not in shown]
 
 
@@ -575,6 +725,29 @@ def write_queue(rows: list[dict], path: Path) -> None:
             w.writerow({k: r[k] for k in QUEUE_FIELDS})
 
 
+def unii_index_entries(by_unii: dict[str, tuple[str, str]], by_parent: dict[str, tuple[str, str]],
+                       table: fda_unii.Table | None) -> dict[str, dict]:
+    """Every code that reaches a molecule, with how and the FDA's display name for the code
+    (trust run 3): the direct index, then the by-rule resolutions of the label UNIIs. Sorted by
+    code, so the committed file diffs line by line."""
+    out: dict[str, dict] = {}
+    for source in (by_unii, by_parent):
+        for u, (slug, how) in source.items():
+            out.setdefault(u, {"slug": slug, "how": how, "name": table.name(u) if table is not None else None})
+    return dict(sorted(out.items()))
+
+
+def write_unii_index(entries: dict[str, dict], path: Path, table: fda_unii.Table | None = None) -> None:
+    """``data/seed/unii_index.json``: one line per code, so a weekly diff reads as codes moving."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [f"  {json.dumps(u)}: {json.dumps(e, ensure_ascii=False)}" for u, e in entries.items()]
+    body = ",\n".join(lines)
+    head = {"source": (f"FDA Substance Registration System ({table.file})" if table is not None else None),
+            "how": {"direct": list(DIRECT_HOWS), "by_rule": list(RULE_HOWS)}, "count": len(entries)}
+    path.write_text("{\n" + ",\n".join(f" {json.dumps(k)}: {json.dumps(v)}" for k, v in head.items())
+                    + ",\n \"uniis\": {\n" + body + "\n }\n}\n")
+
+
 def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                      spl=None, parts: dict[str, dict] | None = None,
                      uniis: dict[int, list[str]] | None = None,
@@ -583,25 +756,44 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                      props: dict[int, dict] | None = None,
                      aliases: dict[str, str] | None = None,
                      hubs: dict[str, dict] | None = None,
-                     classes: dict[str, dict] | None = None) -> tuple[list[dict], dict]:
+                     classes: dict[str, dict] | None = None,
+                     table: fda_unii.Table | None | bool = None,
+                     substances: dict[str, str] | None = None) -> tuple[list[dict], dict]:
     """(products that pass the gate, the gate report). Reads only caches and records.
 
     ``spl`` (setid -> parsed label or ``{"missing": True}`` or None), ``parts``, ``uniis``,
-    ``parents``, ``props``, ``aliases`` and ``hubs`` default to the cache and seeds; tests pass
-    their own. The report's ``next_tranche_queue`` is the rows ``write_queue`` writes."""
+    ``parents``, ``props``, ``aliases``, ``substances`` and ``hubs`` default to the cache and
+    seeds; tests pass their own. ``table`` is the FDA's UNII table: None reads the cache and
+    REFUSES when it is not there while a label is seeded (the fetch stage puts it there); a test
+    passes ``False`` for no table. The report's ``next_tranche_queue`` is the rows ``write_queue``
+    writes, and its ``unii_index`` the entries ``write_unii_index`` writes."""
     seed = load_seed() if seed is None else seed
     worlds = load_worlds() if worlds is None else worlds
     spl = spl or spl_cached
     parts = _read_parts() if parts is None else parts
     uniis = read_uniis([int(r["cid"]) for r in records if int(r["cid"]) > 0]) if uniis is None else uniis
+    if table is None:
+        table = fda_unii.cached()
+        if table is None and any(p["source"] == "dailymed" for p in seed):
+            raise SystemExit("the FDA UNII table is not in data/raw_cache (fda/); run `mfetl fetch` first, "
+                             "which fetches it. Matching labels without it would silently miss molecules.")
+    elif table is False:
+        table = None
+    substances = load_unii_substances() if substances is None else substances
     by_slug = {r["slug"]: r for r in records}
-    by_unii = unii_index(records, uniis)
+    by_unii = unii_index(records, uniis, table, substances)
     if parents is None:
-        parents = read_parents(label_uniis(seed, spl))
+        parents = read_parents(label_uniis(seed, spl), table)
     if props is None:
         props = read_props(sorted({c for cs in parents.values() for c in cs}))
-    by_parent = parent_index(records, {u: c for u, c in parents.items() if u not in by_unii}, props,
-                             load_unii_aliases() if aliases is None else aliases)
+    # Every unclaimed label UNII reaches the rules, looked up or not: the FDA's InChIKey for it
+    # can decide a skeleton match with no parent at all.
+    unclaimed = {u: list(c) for u, c in parents.items() if u not in by_unii}
+    for u in label_uniis(seed, spl):
+        if u not in by_unii:
+            unclaimed.setdefault(u, [])
+    by_parent = parent_index(records, unclaimed, props,
+                             load_unii_aliases() if aliases is None else aliases, table)
     hubs = curated_hubs(records) if hubs is None else hubs
     classes = load_classes() if classes is None else classes
     by_qid = {r["wikidata_qid"]: r["slug"] for r in records if r.get("wikidata_qid")}
@@ -612,6 +804,7 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
     failed: list[dict] = []
     queue: dict[str, dict] = {}
     rule_matches: Counter[str] = Counter()
+    code_matches: Counter[str] = Counter()
     for p in seed:
         base = {"slug": p["slug"], "name": p["name"], "kind": p["kind"]}
         listed = 0
@@ -628,6 +821,17 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                                "reason": f"not a label for people (DailyMed lists it as {label.get('doc_type') or 'unknown'})",
                                "matched": []})
                 continue
+            # A label that gives no UNII for an ingredient cannot be matched by code for that
+            # ingredient, and the page would then name it as not a MoleculeFinder molecule on no
+            # evidence (trust run 3: Keflex's label names "Cellulose" and "FD&C Blue No. 1" with no
+            # codes, and both are molecules here). Such a label is not matched at all.
+            uncoded = list(dict.fromkeys(i["name"] for i in label.get("ingredients", []) if not i.get("unii")))
+            if uncoded:
+                failed.append({**base, "source": "dailymed", "item": p["item"],
+                               "reason": (f"the label gives no UNII code for {len(uncoded)} ingredient(s) "
+                                          f"({', '.join(uncoded)}), which cannot be matched by code"),
+                               "matched": []})
+                continue
             mols, unmatched = _dailymed_molecules(label, by_unii, by_parent)
             matched_actives = {m["listed_as"] for m in mols if m["role"] == "active"}
             # The label's active ingredients that are not MoleculeFinder molecules, by the label's own
@@ -640,7 +844,8 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
                       "doc_type": label.get("doc_type") or None, "version": label.get("version"),
                       "effective": label.get("effective") or None,
                       "url": dailymed.LABEL_PAGE.format(setid=p["item"])}
-            rule_matches.update(m["match"] for m in mols if m["match"] in ("parent", "skeleton", "alias"))
+            rule_matches.update(m["match"] for m in mols if m["match"] in RULE_HOWS)
+            code_matches.update(m["match"] for m in mols if m["match"] in ("unii", "moiety"))
             for ing in label.get("ingredients", []):
                 if ing["name"] not in unmatched:
                     continue
@@ -718,19 +923,28 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
         if len(sources) > 1:
             entry["also"] = sources[1:]
         if p["source"] == "dailymed":
-            entry["not_in_catalog"] = _not_in_catalog(unmatched, unmatched_actives, mols)
+            entry["not_in_catalog"] = _not_in_catalog(unmatched, unmatched_actives, mols, label)
             entry["actives_not_in_catalog"] = list(dict.fromkeys(unmatched_actives))
         products.append(entry)
 
     products.sort(key=lambda x: x["slug"])
     by_kind = Counter(p["kind"] for p in products)
     queue_rows = _queue_rows(queue)
+    direct_hows = Counter(how for _, how in by_unii.values())
     report = {
         "seeded": len(seed), "passed": len(products), "failed": len(failed),
         "by_kind": {k: by_kind.get(k, 0) for k in KINDS},
         "min_molecules": MIN_MOLECULES,
+        # Label ingredients matched directly, by the ingredient's own code or its active moiety's.
+        "matched_by_code": {k: code_matches.get(k, 0) for k in ("unii", "moiety")},
         # Label ingredients reached through PubChem's parent compound or the hand list, by rule.
-        "matched_by_rule": {k: rule_matches.get(k, 0) for k in ("parent", "skeleton", "alias")},
+        "matched_by_rule": {k: rule_matches.get(k, 0) for k in RULE_HOWS},
+        # The molecule side of the join (trust run 3): how many codes the FDA's table gives the
+        # catalog by CID and by InChIKey, how many come from PubChem's own lists, how many from the
+        # hand list; and the table's edition.
+        "unii_index": {"fda_table": table.file if table is not None else None,
+                       "codes": {k: direct_hows.get(k, 0) for k in DIRECT_HOWS},
+                       "molecules_with_a_code": len({slug for slug, _ in by_unii.values()})},
         "failures": sorted(failed, key=lambda f: (KINDS.index(f["kind"]), f["slug"])),
         # The label ingredients MoleculeFinder does not hold, by how many seeded labels list them:
         # the molecules that would open the most product pages. The whole list is
@@ -738,6 +952,7 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
         "label_ingredients_not_in_catalog": [{"name": r["name"], "labels": r["labels"]}
                                              for r in sorted(queue_rows, key=lambda r: (-r["labels"], r["name"].lower()))[:60]],
         "next_tranche_queue": queue_rows,
+        "unii_index_entries": unii_index_entries(by_unii, by_parent, table),
     }
     return products, report
 

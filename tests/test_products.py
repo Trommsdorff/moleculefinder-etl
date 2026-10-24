@@ -210,13 +210,16 @@ RECORDS = [
     _rec("estradiol", 5757), _rec("estradiol-medication", 9999999),
     _rec("m1", 1), _rec("m2", 2), _rec("m3", 3), _rec("m4", 4),
 ]
-UNIIS = {1983: ["362O9ITL9D"], 5360696: ["7355X3ROTS"], 11177: ["70097M6I30"], 33258: ["WZB9127XOA"],
-         2519: ["3G6A5W338E"], 962: ["059QF0KO0R"], 5757: ["4TI98Z838E"], 9999999: ["4TI98Z838E"]}
+# The per-CID cache holds the codes as PubChem writes them (trust run 3): "UNII-" entries, or bare
+# codes, which count only when the FDA table on hand lists them (none here: no table).
+UNIIS = {1983: ["UNII-362O9ITL9D"], 5360696: ["UNII-7355X3ROTS"], 11177: ["UNII-70097M6I30"],
+         33258: ["UNII-WZB9127XOA"], 2519: ["UNII-3G6A5W338E"], 962: ["UNII-059QF0KO0R"],
+         5757: ["UNII-4TI98Z838E"], 9999999: ["UNII-4TI98Z838E"]}
 
 
 def _compile(seed, labels=None, parts=None, **kw):
     labels = labels or {}
-    kw = {"parents": {}, "props": {}, "aliases": {}, "hubs": {}, **kw}
+    kw = {"parents": {}, "props": {}, "aliases": {}, "hubs": {}, "table": False, "substances": {}, **kw}
     return products.compile_products(RECORDS, seed, spl=lambda s: labels.get(s), parts=parts or {},
                                      uniis=UNIIS, worlds=WORLDS, **kw)
 
@@ -236,7 +239,7 @@ def test_a_label_matches_by_unii_then_moiety_actives_first_with_purposes():
     assert mols[0]["purpose"] == "Pain reliever/fever reducer"
     assert "purpose" not in mols[2]
     assert passed[0]["listed"] == 5
-    assert passed[0]["not_in_catalog"] == [{"name": "MICROCRYSTALLINE CELLULOSE", "role": "inactive"}]
+    assert passed[0]["not_in_catalog"] == [{"name": "MICROCRYSTALLINE CELLULOSE", "role": "inactive", "unii": "OP1R32D61U"}]
     assert passed[0]["actives_not_in_catalog"] == []
     assert passed[0]["source"]["url"].endswith(SETID)
     assert report["label_ingredients_not_in_catalog"] == [{"name": "MICROCRYSTALLINE CELLULOSE", "labels": 1}]
@@ -255,7 +258,7 @@ def test_an_animal_label_fails_the_gate_and_an_unmatched_active_is_named():
            "active_lines": [], "purpose_lines": [], "purpose_rows": []}
     passed, _ = _compile([_p("x", "medicine", "dailymed", SETID)], {SETID: spl})
     assert passed[0]["actives_not_in_catalog"] == ["MENTHOL, UNSPECIFIED FORM"]
-    assert passed[0]["not_in_catalog"] == [{"name": "MENTHOL, UNSPECIFIED FORM", "role": "active"}]
+    assert passed[0]["not_in_catalog"] == [{"name": "MENTHOL, UNSPECIFIED FORM", "role": "active", "unii": "L7T10EIP3A"}]
 
 
 def test_the_label_names_its_other_ingredients_in_order_actives_first_once_each():
@@ -274,9 +277,9 @@ def test_the_label_names_its_other_ingredients_in_order_actives_first_once_each(
            "active_lines": [], "purpose_lines": [], "purpose_rows": []}
     passed, _ = _compile([_p("x", "medicine", "dailymed", SETID)], {SETID: spl})
     p = passed[0]
-    assert p["not_in_catalog"] == [{"name": "TIRZEPATIDE", "role": "active"},
-                                   {"name": "TALC", "role": "inactive"},
-                                   {"name": "SODIUM CHLORIDE", "role": "inactive"}]
+    assert p["not_in_catalog"] == [{"name": "TIRZEPATIDE", "role": "active", "unii": "OYN3CCI6QE"},
+                                   {"name": "TALC", "role": "inactive", "unii": "7SEV7J4R1U"},
+                                   {"name": "SODIUM CHLORIDE", "role": "inactive", "unii": "451W47IQ8X"}]
     assert [n["name"] for n in p["not_in_catalog"] if n["role"] == "active"] == p["actives_not_in_catalog"]
     assert not {n["name"] for n in p["not_in_catalog"]} & {m["listed_as"] for m in p["molecules"]}
     assert p["listed"] == 8
@@ -406,9 +409,9 @@ def test_warm_fetches_a_never_cached_wikidata_item_even_in_a_pinned_build(tmp_pa
     monkeypatch.setattr(products.wikidata, "parts_for_qids",
                         lambda qids: asked.extend(qids) or {q: {"P527": ["Q283"], "P186": []} for q in qids})
     seed = [{"slug": "x", "name": "x", "kind": "drink", "source": "wikidata", "item": "Q5"}]
-    products.warm(seed, [], lambda cids: None)
+    products.warm(seed, [], lambda cids: None, fetch_table=lambda: None)
     assert asked == ["Q5"]
-    products.warm(seed, [], lambda cids: None)          # cached now: a pinned build reuses it
+    products.warm(seed, [], lambda cids: None, fetch_table=lambda: None)   # cached now: a pinned build reuses it
     assert asked == ["Q5"]
 
 
@@ -440,7 +443,7 @@ def test_the_fetch_stage_warms_products_with_the_unii_expiry(tmp_path, monkeypat
     monkeypatch.setattr(pipeline.products, "warm", warm)
     pipeline.stage_fetch(Settings(None, None))
     assert warmed == [(seed, [2519])]
-    assert seen["unii"] == pipeline.UNII_CACHE_TTL_DAYS
+    assert seen[products.UNII_PREFIX] == pipeline.UNII_CACHE_TTL_DAYS
     assert seen["props"] is None        # parents' properties: the permanent property cache
 
 
@@ -520,7 +523,8 @@ def test_compile_counts_rule_matches_and_names_the_active_it_still_lacks():
     recs = RECORDS + [{"slug": "saccharin", "cid": 5143, "title": "Saccharin", "molecular_formula": "C7H5NO3S"}]
     passed, report = products.compile_products(
         recs, [_p("mounjaro", "medicine", "dailymed", SETID, "Mounjaro")], spl=lambda s: label, parts={},
-        uniis=UNIIS, worlds=WORLDS, parents={"SACCHNA": [5143], "OYN3CCI6QE": []}, props={}, aliases={}, hubs={})
+        uniis=UNIIS, worlds=WORLDS, parents={"SACCHNA": [5143], "OYN3CCI6QE": []}, props={}, aliases={}, hubs={},
+        table=False, substances={})
     assert [m["slug"] for m in passed[0]["molecules"]] == ["water", "caffeine", "saccharin"]
     assert passed[0]["actives_not_in_catalog"] == ["TIRZEPATIDE"]
     assert report["matched_by_rule"] == {"parent": 1, "skeleton": 0, "alias": 0}
@@ -598,11 +602,12 @@ def test_warm_asks_pubchem_for_the_parent_of_each_unclaimed_label_unii_once(tmp_
     def parents(u):
         asked.append(u)
         return [12345]
-    stats = products.warm(seed, [11177], lambda cids: {11177: ["70097M6I30"]}, props.extend, parents)
+    stats = products.warm(seed, [11177], lambda cids: {11177: ["UNII-70097M6I30"]}, props.extend, parents,
+                          fetch_table=lambda: None)
     assert sorted(asked) == ["QUC7NX6WMB", "UTI8907Y6X"]         # the moiety too; never a claimed UNII
     assert props == [12345]
     assert stats["items"] == 1                                   # a combined row's Wikidata item is fetched
-    products.warm(seed, [11177], lambda cids: {11177: ["70097M6I30"]}, props.extend, parents)
+    products.warm(seed, [11177], lambda cids: {11177: ["UNII-70097M6I30"]}, props.extend, parents, fetch_table=lambda: None)
     assert sorted(asked) == ["QUC7NX6WMB", "UTI8907Y6X"]         # cached: not asked again
 
 
@@ -642,7 +647,7 @@ CLASSES = {"pfas": {"name": "PFAS", "title": "PFAS (per- and polyfluoroalkyl sub
 def _class_compile(classes):
     return products.compile_products(
         CLASS_RECORDS, [_p("pfas", "chemistry", "class", "pfas", "PFAS")], spl=lambda s: None, parts={},
-        uniis={}, worlds=WORLDS, parents={}, props={}, aliases={}, hubs={}, classes=classes)
+        uniis={}, worlds=WORLDS, parents={}, props={}, aliases={}, hubs={}, classes=classes, table=False, substances={})
 
 
 def test_a_class_page_lists_its_checked_members_with_their_atoms():

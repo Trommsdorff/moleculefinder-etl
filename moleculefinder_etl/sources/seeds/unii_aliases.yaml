@@ -1,9 +1,50 @@
-# What's in it: UNII aliases (run C1 amendment, 2026-10-22). HAND-MAINTAINED, and meant to stay short.
+# What's in it: hand-ruled UNII codes (run C1 amendment, 2026-10-22; trust run 3, 2026-10-24).
+# HAND-MAINTAINED, and meant to stay short. Matching is by CODE only, never by name.
 #
-# A label ingredient reaches its molecule by code: its own UNII, its active moiety's UNII, then BY RULE
-# through PubChem's parent compound (the parent CID of a salt or hydrate, or one catalog molecule sharing
-# the parent's InChIKey skeleton; transform/products.py). This list is ONLY for forms that rule does not
-# reach: one line per FDA UNII, mapped to the catalog slug, with the reason. Every slug is checked.
+# A label ingredient reaches its molecule by code: its own UNII, its active moiety's UNII, then BY
+# RULE through PubChem's parent compound (the parent CID of a salt or hydrate, or one catalog
+# molecule sharing the parent's or the FDA's InChIKey skeleton; transform/products.py). The
+# molecule side of that join is the FDA's own UNII table (sources/fda_unii.py: the UNIIs whose
+# PubChem CID or InChIKey is the record's), with PubChem's synonym list as the fallback.
+#
+# Two lists, both checked at build time (a slug must be a catalog molecule; a code must be in the
+# FDA table when the table is on hand), and tests/test_unii_index.py checks each code's FDA
+# display name against the molecule it is ruled to be:
+#
+# `substances`: the molecule's OWN UNII, for a record neither the FDA table nor PubChem links to
+#   its code: a hand-modelled polymer, protein or mixture with no PubChem compound (xanthan gum),
+#   a substance the FDA registers without a PubChem CID whose PubChem page lists no UNII
+#   (polysorbate 80, shellac, pembrolizumab), or one the FDA draws as another tautomer (minoxidil).
+#   The FDA display name IS the molecule's name. Matched as "unii", like any direct code.
+#
+# `aliases`: a FORM of the molecule: a hydrate, an unspecified form, a stereo form, a salt's
+#   active moiety PubChem files elsewhere. The FDA display name is the molecule's name plus the
+#   form. Matched as "alias". A hand ruling here is final: it is applied after the parent and
+#   skeleton rules and wins over them (trust run 3).
+substances:
+  # Hand-modelled records (no PubChem compound, negative CID): the FDA's code for the substance.
+  TTV12P4NEE: xanthan-gum          # XANTHAN GUM (33 labels)
+  2G86QN327L: gelatin              # GELATIN, UNSPECIFIED (45 labels)
+  5C69YCD2YJ: carrageenan          # CARRAGEENAN
+  89T13OHQ2B: agar                 # AGAR, UNSPECIFIED
+  E89I1637KE: guar-gum             # GUAR GUM (the FDA links CID 44134661; the record is hand-modelled and has no CID)
+  89NA02M4RX: pectin               # PECTIN
+  48268V50D5: casein               # CASEIN
+  AQ4K8I4R6F: fibrin               # FIBRIN
+  VSU9IB86SP: hemoglobin           # HEMOGLOBIN
+  # Records with a PubChem CID the FDA table does not link (a polymer, mixture or protein the FDA
+  # registers without a PubChem CID) and whose PubChem synonym list carries no UNII:
+  6OZP39ZG8H: polysorbate-80       # POLYSORBATE 80 (46 labels; PubChem's CID is one representative ester)
+  46N107B71O: shellac              # SHELLAC (17 labels)
+  7CVR7L4A2D: maltodextrin         # MALTODEXTRIN
+  S270N0TRQY: hyaluronic-acid      # HYALURONIC ACID
+  REK4960K2U: butylated-hydroxyanisole  # BUTYLATED HYDROXYANISOLE (the FDA registers it as a mixture of the two isomers)
+  DPT0O3T46P: pembrolizumab        # PEMBROLIZUMAB (CID 254741536 has no synonyms on PubChem)
+  8883YP2R6D: ivermectin           # IVERMECTIN (the FDA registers the B1a/B1b mixture with no PubChem link; CID 9812710 lists no UNII)
+  # The FDA draws minoxidil as the other tautomer (InChIKey ZFMITUMMTDLWHR vs PubChem's
+  # ZIMGGGWCDYVHOY for CID 4201; same formula C9H15N5O) and records no PubChem CID; PubChem's 261
+  # synonyms for 4201 hold no UNII.
+  5965120SH1: minoxidil            # MINOXIDIL
 aliases:
   # Lactose: lactose and maltose share an InChIKey skeleton (same atoms and bonds, different sugar
   # stereo), so the skeleton rule refuses to choose. Every label form of lactose:
@@ -14,3 +55,18 @@ aliases:
   207ZZ9QZ49: methylphenidate    # METHYLPHENIDATE (Ritalin, Concerta): PubChem's CID is one enantiomer, whose
                                  # skeleton dexmethylphenidate shares
   K6106LV5Q8: oseltamivir        # OSELTAMIVIR (Tamiflu): PubChem resolves the UNII to oseltamivir carboxylate
+  # Hydrates and unspecified forms of inorganic and simple salts (trust run 3). PubChem has no
+  # parent compound for these (its parent is the neutral organic component, which an inorganic
+  # salt lacks), and an "unspecified form" has no PubChem CID at all, so the rule cannot reach the
+  # anhydrous salt MoleculeFinder holds. Same salt, another hydration state:
+  M4I0D6VV5M: calcium-chloride   # CALCIUM CHLORIDE (the dihydrate, CID 24844); the record is the anhydrous salt
+  0E53J927NA: magnesium-carbonate  # MAGNESIUM CARBONATE (the hydrate, CID 71376); the record is magnesite, MgCO3
+  4550K0SC9B: sodium-acetate     # SODIUM ACETATE (the trihydrate, CID 23665404); the record is the anhydrous salt
+  89DS0H96TB: zinc-sulfate       # ZINC SULFATE, UNSPECIFIED FORM (no PubChem CID); the record is the anhydrous salt
+  33X04XA5AT: lactic-acid        # LACTIC ACID, UNSPECIFIED FORM (no PubChem CID); the record is DL-lactic acid, CID 612
+  EE90ONI6FF: potassium-citrate  # POTASSIUM CITRATE (the monohydrate, CID 2735208); the record is the anhydrous salt, CID 13344.
+                                 # Without this the parent rule would list citric acid for it.
+  91MBZ8H3QO: borax              # SODIUM BORATE (the decahydrate, B4O7.2Na.10H2O, CID 16211214); the record is anhydrous
+                                 # sodium tetraborate, CID 10219853. Found by the web's name sweep (trust run 3).
+  K679OBS311: carboxymethyl-cellulose  # CARBOXYMETHYLCELLULOSE SODIUM, UNSPECIFIED ("cellulose gum" on labels; no PubChem CID):
+                                 # the sodium salt of the polymer; the record is carboxymethylcellulose, CID 24748

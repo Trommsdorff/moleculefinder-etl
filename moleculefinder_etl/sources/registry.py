@@ -81,6 +81,15 @@ SOURCES: dict[str, dict] = {
                      license_url="https://dailymed.nlm.nih.gov/dailymed/app-support-web-services.cfm",
                      homepage="https://dailymed.nlm.nih.gov/",
                      commercial_ok=True, attribution_required=False),
+    # The FDA's UNII table (trust run 3, 2026-10-24; sources/fda_unii.py): the code a label carries
+    # for each ingredient, with the PubChem CID and InChIKey the FDA records for it. FDA website
+    # policies: "Unless otherwise noted, the contents of the FDA website ... are not copyrighted.
+    # They are in the public domain and may be republished, reprinted and otherwise used freely."
+    "fda_unii": dict(name="FDA Substance Registration System (UNII)", license="US Government Public Domain",
+                     licence_class="public_domain",
+                     license_url="https://www.fda.gov/about-fda/about-website/website-policies",
+                     homepage="https://precision.fda.gov/uniisearch",
+                     commercial_ok=True, attribution_required=False),
 
     # ── The sources behind PubChem's annotations (2026-10-23). PubChem's own computed data is
     # public domain, but a PUG-View annotation (an LD50, a GHS classification) is a depositor's
@@ -185,7 +194,7 @@ BLOCKED: frozenset[str] = frozenset({
 SHORT_NAMES: dict[str, str] = {
     "ema": "EMA", "mhra": "MHRA", "hsdb": "HSDB", "t3db": "T3DB", "echa": "ECHA",
     "eu_clp": "EU CLP Regulation", "hcis": "Safe Work Australia", "nite": "NITE",
-    "cas_registry": "CAS Registry", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
+    "cas_registry": "CAS Registry", "fda_unii": "FDA UNII", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
     "niosh": "NIOSH", "atsdr": "ATSDR", "fda_ltkb": "FDA LTKB", "lactmed": "LactMed",
 }
 
