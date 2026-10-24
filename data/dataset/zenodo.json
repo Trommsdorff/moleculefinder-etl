@@ -45,5 +45,6 @@
       "scheme": "doi"
     }
   ],
-  "notes": "Cite all versions: https://doi.org/10.5281/zenodo.23605767. Kaggle copy: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products."
+  "doi": "10.5281/zenodo.23620892",
+  "notes": "Cite all versions: https://doi.org/10.5281/zenodo.23605767. This version 2026.10.1, https://doi.org/10.5281/zenodo.23620892. Kaggle copy: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products."
 }

@@ -3,7 +3,8 @@
 `mfetl dataset` rebuilds `data/dataset/` from the committed snapshot: MoleculeFinder's
 structured fields only, from public-domain and CC0 sources, released under CC0 1.0. Garrett
 uploads it by hand; nothing here talks to Zenodo or Kaggle. The next tranche republishes by
-running it again (the version is the snapshot's year and month unless `--version` says).
+running it again (the version is the snapshot's year and month unless `--version` says;
+`--doi` records the new version's own DOI once Zenodo mints it).
 
 What goes in, and why, is decided field by field (README "What is not in the dataset"):
 
@@ -52,6 +53,7 @@ SITE = "https://moleculefinder.com"
 TITLE = "MoleculeFinder: the molecules in everyday foods, drinks and products"
 PUBLISHED = Path(__file__).resolve().parent / "sources" / "seeds" / "dataset_published.yaml"
 _DOI = re.compile(r"^10\.\d{4,9}/\S+$")
+_ZENODO_DOI = re.compile(r"^10\.5281/zenodo\.(\d+)$")
 
 
 class Unpublished(RuntimeError):
@@ -78,10 +80,42 @@ def published(path: Path = PUBLISHED) -> dict[str, Any]:
     if not versions:
         problems.append("versions is empty")
     problems += [f"versions.{v} is empty or not a DOI" for v, d in versions.items() if not _DOI.match(str(d or ""))]
+    # The file lists versions oldest first; the last is the latest, and zenodo_record is its page.
+    if versions and not problems:
+        latest_record = _zenodo_record(str(list(versions.values())[-1]))
+        if latest_record and p.get("zenodo_record") != latest_record:
+            problems.append(f"zenodo_record is not the latest version's record ({latest_record})")
     if problems:
         raise Unpublished(f"{path.name}: " + "; ".join(problems))
     return {"concept_doi": str(p["concept_doi"]), "zenodo_record": p["zenodo_record"],
             "kaggle": p["kaggle"], "versions": {str(v): str(d) for v, d in versions.items()}}
+
+
+def _zenodo_record(doi: str) -> str | None:
+    m = _ZENODO_DOI.match(doi)
+    return f"https://zenodo.org/records/{m.group(1)}" if m else None
+
+
+def record_version(version: str, doi: str, path: Path = PUBLISHED) -> bool:
+    """Add a newly published version's own DOI to the published record (`mfetl dataset --version V
+    --doi D`): appended as the latest version, and zenodo_record moves to its page. True when the
+    file changed; False when it already says exactly this. Raises `Unpublished` for a DOI that is
+    not a Zenodo DOI, one already used, or a version already recorded with another DOI."""
+    m = _ZENODO_DOI.match(doi)
+    if not m:
+        raise Unpublished(f"--doi {doi!r} is not a Zenodo DOI (10.5281/zenodo.<number>)")
+    p = published(path)
+    if p["versions"].get(version) == doi:
+        return False
+    if version in p["versions"]:
+        raise Unpublished(f"version {version} is already recorded with {p['versions'][version]}")
+    if doi == p["concept_doi"] or doi in p["versions"].values():
+        raise Unpublished(f"{doi} is already the concept DOI or another version's DOI")
+    text = path.read_text()
+    text = re.sub(r"^zenodo_record:\s*\S+", f"zenodo_record: {_zenodo_record(doi)}", text, count=1, flags=re.MULTILINE)
+    path.write_text(text.rstrip("\n") + f'\n  "{version}": {doi}\n')
+    published(path)  # the edited file must read back complete
+    return True
 
 
 LICENSE_ID = "CC0-1.0"
@@ -555,11 +589,20 @@ def write(b: Build, out: Path = OUT) -> dict[str, Any]:
     return manifest
 
 
-def run(version: str | None = None, out: Path = OUT) -> int:
-    """`mfetl dataset`: verify the pinned inputs, build, check the counts, write. Exit code."""
+def run(version: str | None = None, out: Path = OUT, doi: str | None = None) -> int:
+    """`mfetl dataset`: verify the pinned inputs, build, check the counts, write. Exit code.
+
+    `doi` is a new version's own DOI, which Zenodo mints at upload (or reserves before it): given
+    with an explicit `version`, it is recorded in the published record once the build checks out,
+    so the package names it as this version's DOI and the site's lib/dataset.ts test can match it."""
     from . import inputs
+    if doi and not version:
+        log.error("dataset: --doi needs --version (the version that DOI was minted for); refused, nothing written")
+        return 1
     try:
         pub = published()
+        if doi and not _ZENODO_DOI.match(doi):
+            raise Unpublished(f"--doi {doi!r} is not a Zenodo DOI (10.5281/zenodo.<number>)")
     except Unpublished as e:
         log.error("dataset: %s; refused, nothing written", e)
         return 1
@@ -574,6 +617,17 @@ def run(version: str | None = None, out: Path = OUT) -> int:
             log.error("dataset: %s", p)
         log.error("dataset: refused, nothing written")
         return 1
+    if doi:
+        try:
+            if record_version(v, doi):
+                log.info("dataset: recorded version %s, %s, in %s", v, doi, PUBLISHED.name)
+            b.published = published()
+        except Unpublished as e:
+            log.error("dataset: %s; refused, nothing written", e)
+            return 1
+    elif v not in b.published["versions"]:
+        log.info("dataset: version %s has no DOI yet; after Zenodo mints it, rebuild with "
+                 "`mfetl dataset --version %s --doi <its DOI>`", v, v)
     manifest = write(b, out)
     log.info("dataset %s from snapshot %s (inputs %s): %s", v, snap["refreshed"], fp[:16],
              ", ".join(f"{k} {n}" for k, n in manifest["rows"].items()))

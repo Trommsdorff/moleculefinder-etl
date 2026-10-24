@@ -260,6 +260,8 @@ def test_the_published_record_is_complete():
     p = dataset.published()
     assert p["concept_doi"] == "10.5281/zenodo.23605767"
     assert p["versions"]["2026.10"] == "10.5281/zenodo.23605768"
+    assert list(p["versions"].items())[-1] == ("2026.10.1", "10.5281/zenodo.23620892")
+    assert p["zenodo_record"] == "https://zenodo.org/records/23620892"
     assert p["kaggle"] == "trommsdorff/moleculefinder-molecules-in-everyday-products"
 
 
@@ -268,6 +270,9 @@ def test_the_published_record_is_complete():
     "concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/1\nkaggle: ''\nversions: {'1': 10.5281/zenodo.1}\n",
     "concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/1\nkaggle: a/b\nversions: {}\n",
     "concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/1\nkaggle: a/b\nversions: {'1': ''}\n",
+    # zenodo_record left on an older version's page
+    ("concept_doi: 10.5281/zenodo.1\nzenodo_record: https://zenodo.org/records/2\nkaggle: a/b\n"
+     "versions: {'1': 10.5281/zenodo.2, '2': 10.5281/zenodo.3}\n"),
     "",
 ])
 def test_an_empty_doi_field_refuses_the_build(tmp_path, text):
@@ -297,3 +302,66 @@ def test_the_committed_package_carries_the_dois():
     assert p["kaggle"] in readme and p["zenodo_record"] in readme
     assert p["concept_doi"] in zen["notes"]
     assert json.loads((PKG / "dataset-metadata.json").read_text())["id"] == p["kaggle"]
+
+
+def test_the_committed_package_cites_the_concept_doi_with_this_version_beside_it():
+    p = dataset.published()
+    v, doi = list(p["versions"].items())[-1]
+    readme = (PKG / "README.md").read_text()
+    cite = readme.split("## Citation", 1)[1]
+    assert cite.split("\n\n")[1].rstrip().endswith(f"https://doi.org/{p['concept_doi']}")
+    assert f"This version {v}, https://doi.org/{doi}." in cite
+    assert f'doi: "{p["concept_doi"]}"' in (PKG / "CITATION.cff").read_text()
+    zen = json.loads((PKG / "zenodo.json").read_text())
+    assert zen["version"] == v and zen["doi"] == doi
+    assert f"This version {v}, https://doi.org/{doi}" in zen["notes"]
+
+
+# ── `mfetl dataset --version V --doi D` records a new version (2026-10-24) ───
+_SEED = ("# kept\nconcept_doi: 10.5281/zenodo.1    # concept\nzenodo_record: https://zenodo.org/records/2\n"
+         "kaggle: a/b\nversions:\n  \"2026.10\": 10.5281/zenodo.2\n")
+
+
+def test_recording_a_version_appends_it_as_the_latest(tmp_path):
+    f = tmp_path / "dataset_published.yaml"
+    f.write_text(_SEED)
+    assert dataset.record_version("2026.11", "10.5281/zenodo.9", f) is True
+    p = dataset.published(f)
+    assert list(p["versions"].items()) == [("2026.10", "10.5281/zenodo.2"), ("2026.11", "10.5281/zenodo.9")]
+    assert p["zenodo_record"] == "https://zenodo.org/records/9"
+    assert f.read_text().startswith("# kept\n") and "# concept" in f.read_text()
+    assert dataset.record_version("2026.11", "10.5281/zenodo.9", f) is False  # again: no change
+
+
+@pytest.mark.parametrize("version,doi", [
+    ("2026.11", "10.1234/other.9"),     # not a Zenodo DOI
+    ("2026.11", "10.5281/zenodo.1"),    # the concept DOI
+    ("2026.11", "10.5281/zenodo.2"),    # another version's DOI
+    ("2026.10", "10.5281/zenodo.9"),    # a version already recorded with another DOI
+])
+def test_recording_a_wrong_doi_refuses_and_leaves_the_file(tmp_path, version, doi):
+    f = tmp_path / "dataset_published.yaml"
+    f.write_text(_SEED)
+    with pytest.raises(dataset.Unpublished):
+        dataset.record_version(version, doi, f)
+    assert f.read_text() == _SEED
+
+
+def test_run_refuses_a_doi_without_a_version(tmp_path):
+    out = tmp_path / "out"
+    assert dataset.run(out=out, doi="10.5281/zenodo.9") == 1
+    assert not out.exists()
+
+
+def test_a_build_before_upload_names_the_latest_published_version(tmp_path):
+    from moleculefinder_etl import dataset_docs
+    f = tmp_path / "dataset_published.yaml"
+    f.write_text(_SEED)
+    b = dataset.Build({}, "2026.11", "2026-11-02", "sha", None, {})
+    b.published = dataset.published(f)
+    assert dataset_docs.this_version(b) == ("This version 2026.11 (its DOI is minted at upload); "
+                                            "latest published version 2026.10, https://doi.org/10.5281/zenodo.2")
+    assert dataset_docs.citation(b).endswith("https://doi.org/10.5281/zenodo.1")
+    rel = dataset_docs.zenodo(b, {"molecules": 0, "products": 0})["related_identifiers"]
+    assert {"identifier": "10.5281/zenodo.2", "relation": "isNewVersionOf",
+            "resource_type": "dataset", "scheme": "doi"} in rel

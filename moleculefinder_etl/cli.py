@@ -28,6 +28,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
     p.add_argument("--version", dest="dataset_version", default=None,
                    help="dataset: the version to stamp (default: the snapshot's YYYY.MM)")
+    p.add_argument("--doi", dest="dataset_doi", default=None,
+                   help="dataset: this version's own Zenodo DOI, recorded in dataset_published.yaml (needs --version)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -51,7 +53,7 @@ def main(argv: list[str] | None = None) -> int:
         # The CC0 dataset for Zenodo and Kaggle (run D), rebuilt from the committed snapshot into
         # data/dataset/. Offline; refuses unless data/raw_cache is main's pinned inputs.
         from . import dataset
-        return dataset.run(version=args.dataset_version)
+        return dataset.run(version=args.dataset_version, doi=args.dataset_doi)
     if args.stage == "migrate":
         # Database migrations over SUPABASE_DB_URL; needs no REST keys.
         from . import migrate

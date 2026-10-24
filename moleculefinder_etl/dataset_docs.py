@@ -51,10 +51,28 @@ def _kaggle_url(b: Build) -> str:
 
 
 def citation(b: Build) -> str:
-    """The one citation line (README, and the site's Sources & methodology page says the same)."""
-    doi = _version_doi(b) or b.published["concept_doi"]
-    return (f"{CREATOR} ({b.refreshed[:4]}). *{TITLE}* (Version {b.version}) [Data set]. Zenodo. "
-            f"{_doi_url(doi)}")
+    """The one citation line (README, and the site's Sources & methodology page says the same). It
+    cites the concept DOI, which every version shares, so no new version leaves it stale; the
+    version and its own DOI go beside it (`this_version`)."""
+    return (f"{CREATOR} ({b.refreshed[:4]}). *{TITLE}* [Data set]. Zenodo. "
+            f"{_doi_url(b.published['concept_doi'])}")
+
+
+def this_version(b: Build) -> str:
+    """The line beside the citation: this package's version and its own DOI, or, before Zenodo
+    mints that DOI, the latest published version it follows."""
+    doi = _version_doi(b)
+    if doi:
+        return f"This version {b.version}, {_doi_url(doi)}"
+    v, d = list(b.published["versions"].items())[-1]
+    return f"This version {b.version} (its DOI is minted at upload); latest published version {v}, {_doi_url(d)}"
+
+
+def _previous_version_doi(b: Build) -> str | None:
+    """The DOI of the published version this one follows (the record lists versions oldest first)."""
+    vs = list(b.published["versions"])
+    before = vs[:vs.index(b.version)] if b.version in vs else vs
+    return b.published["versions"][before[-1]] if before else None
 
 
 def description(b: Build, counts: dict[str, int]) -> str:
@@ -169,8 +187,10 @@ def readme(b: Build, counts: dict[str, int]) -> str:
         "",
         citation(b),
         "",
+        this_version(b) + ".",
+        "",
         f"- Every version (always the latest): {_doi_url(b.published['concept_doi'])}",
-        *[f"- Version {v}: {_doi_url(d)}" for v, d in sorted(b.published["versions"].items())],
+        *[f"- Version {v}: {_doi_url(d)}" for v, d in b.published["versions"].items()],
         f"- Zenodo: {b.published['zenodo_record']}",
         f"- Kaggle: {_kaggle_url(b)}",
         f"- Website: {SITE}/about/methodology",
@@ -201,13 +221,13 @@ def cff(b: Build) -> str:
         f'date-released: "{b.refreshed}"',
         f"license: {LICENSE_ID}",
         f'url: "{SITE}"',
-        f'doi: "{_version_doi(b) or b.published["concept_doi"]}"',
+        f'doi: "{b.published["concept_doi"]}"',
         f'repository: "{b.published["zenodo_record"]}"',
         "identifiers:",
         "  - type: doi",
         f'    value: "{b.published["concept_doi"]}"',
         '    description: "Every version (Zenodo concept DOI, always the latest)"',
-        *[line for v, d in sorted(b.published["versions"].items()) for line in (
+        *[line for v, d in b.published["versions"].items() for line in (
             "  - type: doi", f'    value: "{d}"', f'    description: "Version {v}"')],
         "  - type: url",
         f'    value: "{_kaggle_url(b)}"',
@@ -276,15 +296,16 @@ def zenodo(b: Build, counts: dict[str, int]) -> dict[str, Any]:
         "related_identifiers": [
             {"identifier": SITE, "relation": "isDocumentedBy", "resource_type": "other"},
             {"identifier": _kaggle_url(b), "relation": "isIdenticalTo", "resource_type": "dataset"},
-            # A version not yet published names the latest one it follows; Zenodo mints its own DOI
-            # under the same concept DOI when it is uploaded with "New version".
+            # The version this one follows; Zenodo mints this one's own DOI under the same concept
+            # DOI when it is uploaded with "New version".
             *[{"identifier": d, "relation": "isNewVersionOf", "resource_type": "dataset", "scheme": "doi"}
-              for v, d in sorted(b.published["versions"].items())[-1:] if b.version not in b.published["versions"]],
+              for d in [_previous_version_doi(b)] if d],
         ],
         # Zenodo deposit fields only: `doi` is set for a version already published (its own DOI);
         # the concept DOI travels in `notes`, which the form shows as "Additional notes".
         **({"doi": _version_doi(b)} if _version_doi(b) else {}),
-        "notes": f"Cite all versions: {_doi_url(b.published['concept_doi'])}. Kaggle copy: {_kaggle_url(b)}.",
+        "notes": (f"Cite all versions: {_doi_url(b.published['concept_doi'])}. {this_version(b)}. "
+                  f"Kaggle copy: {_kaggle_url(b)}."),
     }
 
 
