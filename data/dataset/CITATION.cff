@@ -9,10 +9,22 @@ type: dataset
 authors:
   - name: "MoleculeFinder"
     alias: "137 Finder LLC"
-version: "2026.10"
+version: "2026.10.1"
 date-released: "2026-10-21"
 license: CC0-1.0
 url: "https://moleculefinder.com"
+doi: "10.5281/zenodo.23605767"
+repository: "https://zenodo.org/records/23605768"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23605767"
+    description: "Every version (Zenodo concept DOI, always the latest)"
+  - type: doi
+    value: "10.5281/zenodo.23605768"
+    description: "Version 2026.10"
+  - type: url
+    value: "https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products"
+    description: "Kaggle copy"
 keywords:
   - chemistry
   - molecules

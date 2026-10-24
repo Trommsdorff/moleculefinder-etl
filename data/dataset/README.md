@@ -6,7 +6,7 @@ anything, no permission or credit needed. A citation is welcome (below).
 
 | | |
 |---|---|
-| **Version** | 2026.10 |
+| **Version** | 2026.10.1 |
 | **Snapshot** | MoleculeFinder data of 2026-10-21 |
 | **Molecules** | 915 |
 | **Products** | 405 |
@@ -191,21 +191,21 @@ The dataset is CC0, so it carries only fields whose sources are public domain or
 source asks for attribution, restricts reuse, or its terms could not be confirmed, the field is
 left out, even though MoleculeFinder's pages show it with the source named.
 
-- **GHS hazard classification** (signal word, pictograms, H-statements; on 650 molecules on the
+- **GHS hazard classification** (signal word, pictograms, H-statements; on 645 molecules on the
   site) and the 10 hazard categories built from it (acutely-toxic, compressed-gas, corrosive, environmental-hazard, flammable, ghs-danger, ghs-warning, health-hazard, irritant, oxidizing). PubChem
-  aggregates it mostly from the European Chemicals Agency's C&L Inventory, whose legal notice permits
-  reuse with the source acknowledged, and from Japan's NITE, Safe Work Australia and EUR-Lex, each
-  with its own terms.
-- **41 LD50 values** that no US government source reports in PubChem's record (their
-  only sources are, for example, T3DB (non-commercial terms), Haz-Map (all rights reserved),
-  StatPearls (CC BY-NC), the ILO-WHO cards (CC BY) or EFSA (source acknowledged)). Those rows keep
-  the molecule and leave the four LD50 columns empty. Every LD50 that is kept names its sources.
+  aggregates it from the European Chemicals Agency's C&L Inventory and EUR-Lex (reuse with the source
+  acknowledged) and Safe Work Australia (CC BY 4.0); the site shows it with that attribution, which a
+  CC0 release cannot carry. Japan's NITE classifications are used nowhere (NITE reserves publication).
+- **LD50 values from sources that are not US government works.** None is withheld: since
+  2026-10-23 MoleculeFinder shows an LD50 only from a source whose terms allow it, and every LD50
+  on the site is a US government value, so the dataset's LD50 columns match the site's. Every
+  LD50 kept names its sources.
 - **29 licence records** from the MHRA (Open Government Licence, attribution), the
   European Medicines Agency (reproduction with the source acknowledged) and national registers
   (Italy's AIFA, Latvia's medicines agency). Drugs@FDA records are kept.
-- **CAS Registry Numbers** (842 on the site). The CAS Registry is maintained by the
-  American Chemical Society, whose terms govern redistributing its numbers in bulk. Each row
-  carries the PubChem CID, InChIKey and Wikidata QID instead.
+- **CAS Registry Numbers.** The CAS Registry is maintained by the American Chemical Society, which
+  requires a licence to publish its numbers; since 2026-10-23 neither the site nor the dataset
+  carries them. Each row carries the PubChem CID, InChIKey and Wikidata QID instead.
 - **PubChem synonyms.** Depositors supply them under their own terms; the dataset's names come from
   Wikidata (`other_names`) and MoleculeFinder's curated brand list.
 - **Serving sizes**, a dosing figure, which MoleculeFinder keeps out of anything it publishes as data.
@@ -223,9 +223,13 @@ left out, even though MoleculeFinder's pages show it with the source named.
 
 ## Citation
 
-MoleculeFinder (137 Finder LLC) (2026). *MoleculeFinder: the molecules in everyday foods, drinks and products* (Version 2026.10) [Data set]. https://moleculefinder.com
+MoleculeFinder (137 Finder LLC) (2026). *MoleculeFinder: the molecules in everyday foods, drinks and products* (Version 2026.10.1) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.23605767
 
-The Zenodo DOI is added on the site's Sources & methodology page once it is minted.
+- Every version (always the latest): https://doi.org/10.5281/zenodo.23605767
+- Version 2026.10: https://doi.org/10.5281/zenodo.23605768
+- Zenodo: https://zenodo.org/records/23605768
+- Kaggle: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products
+- Website: https://moleculefinder.com/about/methodology
 
 ## Rebuilding
 
