@@ -16,6 +16,12 @@ Full design: `../MoleculeFinder_Technical_Build_Plan.md` (sections 4–7).
    throttles + caches). Cache raw responses so runs are resumable.
 5. **Idempotent loads.** Upsert by natural key (`ON CONFLICT`); one `ingest_run`
    row per stage.
+6. **THE SOURCE-LICENCE RULE (2026-10-23).** Every source has a licence class in
+   `sources/registry.py`, and whether its values may be displayed is DERIVED from the class.
+   A value reaches the snapshot only from a displayable source, and the export refuses
+   (`transform/licence_gate.py`) if any value cites a source with no entry or one that may
+   not be displayed. A new source, a new field or a new parser registers its source first.
+   See "The source-licence rule and the registry" below.
 
 ## Commands
 **STANDING ORDER (Garrett, 2026-10-21): local servers and local runs use BLANKED database keys** unless the
@@ -722,6 +728,56 @@ web CLAUDE.md). A reason to come back and a thing to share.
   `5cc2a62` touching only `data/LAST_CHECK`; `sync-web` "web repo snapshot already identical — no PR
   needed"; `all-clear` "no open refresh-failure issue, nothing to close"; `alarm` skipped. A fresh
   cache was saved as `pubchem-raw-35912517716`, so the Sep 28 cron should restore it warm.
+
+## The source-licence rule and the registry (2026-10-23). BUILT on `source-licence-2026-10`, NOT PUSHED
+Run D found 41 live LD50s whose only source, T3DB, restricts commercial reuse. Fixed at the root, not by deleting
+values: commits `4e73e8f` (code), `2b32acf` (data and dataset 2026.10.1), `5491468` (short names), plus notes.
+- **The registry** (`sources/registry.py::SOURCES`): every source has `licence_class`, one of `LICENCE_CLASSES`:
+  `public_domain`, `cc0`, `own` (MoleculeFinder curated, CC0 in the dataset), `computed` (RDKit) and `cc_by`, `ogl`,
+  `acknowledged` (these three may be displayed WITH their `attribution` line, which the entry must carry), and
+  `restricted`, `non_commercial`, `share_alike` (never displayed). `may_display(key)` reads the class; an unknown key is
+  False. BLOCKED (the firewall) is unchanged and sits beside it.
+- **PubChem's annotations are their depositors' content**, so each depositor is its own source, matched by its exact
+  PUG-View `SourceName` (`pugview_names`; `PUGVIEW_NAMES`, `pugview_key`). Registered 2026-10-23, with the terms read
+  that day: **HSDB, ChemIDplus and 16 more US government toxicology sources** (`public_domain`); **ECHA** (legal
+  notice: reproduction authorised, source acknowledged; `acknowledged`); **EUR-Lex, the CLP Regulation**
+  (Decision 2011/833/EU; `acknowledged`); **Safe Work Australia HCIS** (site-wide CC BY 4.0, "© Commonwealth of
+  Australia"; `cc_by`); **T3DB** (downloads page: commercial reuse "requires explicit permission of the authors";
+  `restricted`); **NITE-CMC** (site terms: "All information and materials appearing on this site are copyright
+  protected", publication needs permission; its GHS pages allow copying only for a label or SDS; `restricted`);
+  **the CAS Registry** (CAS: a licence is required to publish CAS RNs or use them to power a public platform;
+  `restricted`). An unregistered depositor fails closed (its values are dropped) until it is registered.
+- **Where the rule bites:** `toxicity.parse_ld50` and `ghs.parse_ghs` read each Information item with its reference
+  and keep only displayable sources; every LD50 row carries `sources` (registry keys) and so does `ghs`
+  (`withheld=` lists what was left out). `parse_ld50(..., gate=False)` is for tracing only (the dataset's
+  `ld50_sources`). `assemble`: `cas` only if `may_display("cas_registry")` (so none); a curated `dose_poison` pin must
+  equal a row a displayable source reports, or the build raises `LicenceRuleError` (capsaicin's pin said rat; HSDB
+  reports 47.2 in the MOUSE, fixed); the hazard hubs (`kind: poison`) cite the classification's sources
+  (`"echa+hcis"`). The loader's `_source: "pubchem"` columns are unchanged (the DB is not displayed).
+- **The gate** (`transform/licence_gate.py`): walks every displayed value of every record (explicit `source` fields,
+  implied ones in `IMPLIED`: a CAS number cites `cas_registry`, a drawing `rdkit`; licence records by register,
+  products by source type) and every mg/kg figure in the curated /vs prose (it must be a row a displayable source
+  reports for one of the pair). `snapshot_export.export` calls `enforce` after the snapshot guard and writes nothing
+  on a failure; `tests/test_licence_gate.py` (39) runs the same check on the committed snapshot. Hand-transcribed
+  single facts cited in seed files (half-lives, sweetness, Scoville, odor thresholds) are `curated`.
+- **`data/snapshots/sources.json`** = `registry.public_registry()` (name, short name, licence, class, may_display,
+  attribution, links). The web names sources and prints attribution from it (`scripts/source-names.mjs`).
+- **What the rule caught (pinned rebuild, inputs 17122735c9f95167, keys blanked, `MFETL_ALLOW_REGRESSION=1` for the
+  deliberate drop; a second rebuild without it: exit 0, `git status` clean):** the 41 LD50s (31 molecules lose their
+  LD50, 10 show another value a displayable source reports); 124 secondary LD50 rows on 73 Safety panels; NITE's
+  classifications (5 molecules lose their hazard label, 173 change, 26 of them Danger -> Warning); all 842 CAS numbers;
+  six /vs paragraphs that quoted T3DB figures (rewritten in `comparisons.yaml`). Boards 265 -> 235 each, no entrant;
+  dose hooks 265 -> 235. Full list: `../source-licence-rule-2026-10-23-changes.md`.
+- **The dataset:** `PUBLIC_DOMAIN_TOX_SOURCES` is now READ from the registry (the public-domain and CC0 classes). The
+  published record lives in `sources/seeds/dataset_published.yaml` (concept DOI 10.5281/zenodo.23605767, version
+  2026.10 = 10.5281/zenodo.23605768, the Zenodo record, Kaggle `trommsdorff/moleculefinder-molecules-in-everyday-products`;
+  the old `KAGGLE_ID` was wrong) and goes into README.md (citation and links), CITATION.cff (`doi`, `identifiers`),
+  zenodo.json (`doi` for a published version, `isNewVersionOf` otherwise, the concept DOI in `notes`) and the Kaggle
+  metadata. **`mfetl dataset` refuses (exit 1, nothing written) when any of those fields is empty** (`Unpublished`).
+  After uploading a new version, add its DOI under `versions`. Committed package: **2026.10.1**, not uploaded; it
+  differs from the published 2026.10 only by the 10 LD50s that now have a US government value (and the texts).
+- Checks: 724 ETL tests (677), ruff 129 = main's 120 + 9 C408 in the registry's established `dict(...)` style.
+  `.github`, snapshot_guard.py, news.py, inputs.py, cache.py, pipeline.py: git diff empty.
 
 ## Run D (2026-10-22): the CC0 dataset for Zenodo and Kaggle. DEPLOYED 2026-10-23 (ETL `0b9d3c9`, web `7585f9e`)
 **DEPLOYED 2026-10-23 about 01:18 UTC on Garrett's word** (2026-10-22 his time), with his two rulings: the Terms gain one sentence ("MoleculeFinder's descriptions and curated data are also released under CC0 1.0 in the MoleculeFinder dataset.", Terms dated October 2026; web `7585f9e`) and CAS numbers stay out of the dataset. ETL `main` 7703167 -> `0b9d3c9` (with `1d4b7f9`; no workflow ran); web `main` 2b67549 -> `7585f9e` (with `ab3068f`), GitHub deployment `7267757391` Production success. No other branch was waiting. Live: `/`, `/classroom`, `/embed`, `/legal/terms` 200 (the sentence and the date on the page; the home "For the classroom" card); `/embed.js`, `/embed/caffeine.json`, `/embed/caffeine.svg` 200 with ACAO `*`, an unknown card 404 with ACAO `*`; sitemap 1,678; `BASE=https://moleculefinder.com node scripts/check-embed.mjs` all checks passed (plain and hostile-CSS pages from disk). IndexNow run 39883365865: 1,676 -> 1,678, 2 new, 5 changed (`/` and the four legal pages, which share one source file), 7 submitted and 7 accepted, audit exact, `indexnow-last` -> `7585f9e`. Live Lighthouse (mobile, median of 3, Brave): `/classroom` perf 99, SEO 100, LCP 2.14 s, CLS 0, 294 KB; `/embed` 98, 100, 2.18 s, 0, 281 KB. **Next, Garrett:** upload to Zenodo then Kaggle, send the DOI. **Outreach HQ:** `/classroom` and `/embed` may now join MF's good pages.
