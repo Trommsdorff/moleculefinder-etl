@@ -1,21 +1,35 @@
 {
  "seeded": 475,
- "passed": 405,
- "failed": 70,
+ "passed": 413,
+ "failed": 62,
  "by_kind": {
   "food": 35,
   "drink": 14,
-  "medicine": 280,
-  "cosmetic": 59,
+  "medicine": 287,
+  "cosmetic": 60,
   "household": 12,
   "chemistry": 1,
   "moment": 4
  },
  "min_molecules": 3,
+ "matched_by_code": {
+  "unii": 1861,
+  "moiety": 155
+ },
  "matched_by_rule": {
-  "parent": 125,
-  "skeleton": 46,
-  "alias": 88
+  "parent": 127,
+  "skeleton": 32,
+  "alias": 116
+ },
+ "unii_index": {
+  "fda_table": "UNII_Records_4Aug2026.txt",
+  "codes": {
+   "cid": 788,
+   "inchikey": 22,
+   "pubchem": 160,
+   "substance": 16
+  },
+  "molecules_with_a_code": 864
  },
  "failures": [
   {
@@ -179,9 +193,10 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "c848a5d8-ba94-4c84-80e3-0bf35fb8e32e",
-   "reason": "the label lists 8 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
-    "venlafaxine"
+    "venlafaxine",
+    "gelatin"
    ]
   },
   {
@@ -190,8 +205,10 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "b891bd9f-fdb8-4862-89c5-ecdd700398a3",
-   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
-   "matched": []
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "selegiline"
+   ]
   },
   {
    "slug": "fioricet",
@@ -206,30 +223,6 @@
    ]
   },
   {
-   "slug": "flagyl",
-   "name": "Flagyl",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "a2883ca1-5a9a-4259-9d80-46ab67274384",
-   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "metronidazole",
-    "magnesium-stearate"
-   ]
-  },
-  {
-   "slug": "flonase-allergy-relief",
-   "name": "Flonase Allergy Relief",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "b6134ba0-b70a-4eac-9a82-cef64b242c1d",
-   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "fluticasone-propionate",
-    "water"
-   ]
-  },
-  {
    "slug": "fortaz",
    "name": "Fortaz",
    "kind": "medicine",
@@ -239,18 +232,6 @@
    "matched": [
     "ceftazidime",
     "sodium-carbonate"
-   ]
-  },
-  {
-   "slug": "foundayo",
-   "name": "Foundayo",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "8ac446c5-feba-474f-a103-23facb9b5c62",
-   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "sodium-carbonate",
-    "magnesium-stearate"
    ]
   },
   {
@@ -306,8 +287,9 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "f0976da4-1d20-4517-945c-b60ed2f41c12",
-   "reason": "the label lists 10 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
+    "suzetrigine",
     "magnesium-stearate"
    ]
   },
@@ -317,11 +299,8 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "68fba58a-7748-4581-8432-f5286c46d90a",
-   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "cefalexin",
-    "magnesium-stearate"
-   ]
+   "reason": "the label gives no UNII code for 5 ingredient(s) (Cellulose, D&C Yellow No. 10, FD&C Blue No. 1, FD&C Yellow No. 6, silicone), which cannot be matched by code",
+   "matched": []
   },
   {
    "slug": "levoxyl",
@@ -365,7 +344,7 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "7e971c99-1f3f-4a9f-5084-fbe5b9f1a9e1",
-   "reason": "the label lists 4 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
+   "reason": "the label gives no UNII code for 1 ingredient(s) (white petrolatum), which cannot be matched by code",
    "matched": []
   },
   {
@@ -388,18 +367,6 @@
    "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
    "matched": [
     "oxybutynin"
-   ]
-  },
-  {
-   "slug": "pamelor",
-   "name": "Pamelor",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "e17dc299-f52d-414d-ab6e-e809bd6f8acb",
-   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "nortriptyline",
-    "sunset-yellow-fcf"
    ]
   },
   {
@@ -430,8 +397,9 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "4f6848e5-35ed-4046-b13c-3032b5ba3232",
-   "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 2 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
+    "methylene-blue",
     "water"
    ]
   },
@@ -453,8 +421,10 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "13a65923-d072-4dac-8620-8eabbf8c3641",
-   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
-   "matched": []
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "daraxonrasib"
+   ]
   },
   {
    "slug": "sezaby",
@@ -476,30 +446,6 @@
    "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
    "matched": [
     "carisoprodol"
-   ]
-  },
-  {
-   "slug": "strattera",
-   "name": "Strattera",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "309de576-c318-404a-bc15-660c2b1876fb",
-   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "atomoxetine",
-    "sodium-lauryl-sulfate"
-   ]
-  },
-  {
-   "slug": "stromectol",
-   "name": "Stromectol",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "681888c9-af79-4b7d-ae80-c3f4f6f1effd",
-   "reason": "the label lists 6 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "magnesium-stearate",
-    "citric-acid"
    ]
   },
   {
@@ -567,9 +513,10 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "a078d9c2-f89c-4f9f-8ded-60ffb2983c3f",
-   "reason": "the label lists 8 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
-    "vancomycin"
+    "vancomycin",
+    "gelatin"
    ]
   },
   {
@@ -591,18 +538,6 @@
    "matched": [
     "bupropion",
     "silicon-dioxide"
-   ]
-  },
-  {
-   "slug": "zomig",
-   "name": "Zomig",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "2438c223-605b-4885-afc3-a6794f190f89",
-   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "citric-acid",
-    "water"
    ]
   },
   {
@@ -720,18 +655,6 @@
    ]
   },
   {
-   "slug": "supergoop-unseen-sunscreen-spf-50",
-   "name": "Supergoop Unseen Sunscreen SPF 50",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "21b3491f-7b02-9bc5-e063-6294a90a0dc3",
-   "reason": "the label lists 22 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "silicon-dioxide",
-    "tocopherol"
-   ]
-  },
-  {
    "slug": "arm-and-hammer-baking-soda",
    "name": "Arm & Hammer Baking Soda",
    "kind": "household",
@@ -757,8 +680,10 @@
    "kind": "household",
    "source": "dailymed",
    "item": "709ad74e-d95d-409d-bd7a-185411fc4bac",
-   "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
-   "matched": []
+   "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "magnesium-sulfate"
+   ]
   },
   {
    "slug": "gentian-violet",
@@ -800,7 +725,7 @@
  "label_ingredients_not_in_catalog": [
   {
    "name": "TITANIUM DIOXIDE",
-   "labels": 151
+   "labels": 150
   },
   {
    "name": "MICROCRYSTALLINE CELLULOSE",
@@ -835,24 +760,12 @@
    "labels": 48
   },
   {
-   "name": "POLYSORBATE 80",
-   "labels": 46
-  },
-  {
-   "name": "GELATIN, UNSPECIFIED",
-   "labels": 45
-  },
-  {
    "name": "POVIDONE, UNSPECIFIED",
    "labels": 45
   },
   {
    "name": "FD&C BLUE NO. 2",
    "labels": 36
-  },
-  {
-   "name": "XANTHAN GUM",
-   "labels": 33
   },
   {
    "name": "DIMETHICONE",
@@ -881,10 +794,6 @@
   {
    "name": "SODIUM STARCH GLYCOLATE TYPE A POTATO",
    "labels": 24
-  },
-  {
-   "name": "CARBOXYMETHYLCELLULOSE SODIUM, UNSPECIFIED",
-   "labels": 23
   },
   {
    "name": "POLYETHYLENE GLYCOL 400",
@@ -916,10 +825,6 @@
   },
   {
    "name": "PHENOXYETHANOL",
-   "labels": 17
-  },
-  {
-   "name": "SHELLAC",
    "labels": 17
   },
   {
@@ -956,10 +861,6 @@
   },
   {
    "name": "PETROLATUM",
-   "labels": 14
-  },
-  {
-   "name": "SODIUM CITRATE",
    "labels": 14
   },
   {
@@ -1035,8 +936,32 @@
    "labels": 9
   },
   {
-   "name": "MALTODEXTRIN",
+   "name": "OCTOCRYLENE",
    "labels": 9
+  },
+  {
+   "name": "POLYETHYLENE GLYCOL 8000",
+   "labels": 9
+  },
+  {
+   "name": "CETOSTEARYL ALCOHOL",
+   "labels": 8
+  },
+  {
+   "name": "COPOVIDONE K25-31",
+   "labels": 8
+  },
+  {
+   "name": "D&C RED NO. 30",
+   "labels": 8
+  },
+  {
+   "name": "DIBASIC CALCIUM PHOSPHATE DIHYDRATE",
+   "labels": 8
+  },
+  {
+   "name": "SODIUM STEARYL FUMARATE",
+   "labels": 8
   }
  ]
 }
