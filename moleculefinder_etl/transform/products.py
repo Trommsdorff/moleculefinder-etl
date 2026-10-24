@@ -47,6 +47,14 @@ Fetching happens in the fetch stage (``warm``), into ``data/raw_cache``, so the 
 with the snapshot (``moleculefinder_etl/inputs.py``) and the Mac and GitHub build identically;
 compiling (``compile_products``) reads only the cache and the records.
 
+THE LABEL'S OTHER INGREDIENTS (Trust run 2, 2026-10-24). A DailyMed product's ``not_in_catalog``
+is the list of its label ingredients that are not MoleculeFinder molecules, each
+``{"name": <the label's name>, "role": "active" | "inactive"}``, in label order, actives first,
+one entry per name (it was a bare count). The page shows them as plain unlinked text under "Also
+on the label". This is display, not matching: the names link to nothing, and the gate still counts
+only molecules matched by code. ``actives_not_in_catalog`` (the actives' names alone) stays as it
+was; the page's unmatched-active sentence reads it.
+
 Product names are used as names only: no logos, no packaging, no claim beyond the ingredient
 list. Every value here is from the source (``from_source``).
 """
@@ -473,6 +481,17 @@ def _dailymed_molecules(spl: dict, by_unii: dict[str, str],
     return list(found.values()), unmatched
 
 
+def _not_in_catalog(unmatched: list[str], unmatched_actives: list[str], mols: list[dict]) -> list[dict]:
+    """The label's ingredients that are not MoleculeFinder molecules, as the label names them: label
+    order, actives first, one entry per name (Trust run 2, 2026-10-24). Shown on the page as plain
+    unlinked text, never matched to anything; a name a listed molecule already carries is left out.
+    The actives here are exactly ``actives_not_in_catalog``."""
+    shown = {m["listed_as"] for m in mols}
+    actives = set(unmatched_actives)
+    return [{"name": n, "role": "active" if n in actives else "inactive"}
+            for n in unmatched if n not in shown]
+
+
 def _world_molecules(world: dict) -> list[dict]:
     captions = {j["slug"]: j.get("caption") for j in (world.get("journey") or [])}
     out = []
@@ -699,7 +718,7 @@ def compile_products(records: list[dict], seed: list[dict] | None = None, *,
         if len(sources) > 1:
             entry["also"] = sources[1:]
         if p["source"] == "dailymed":
-            entry["not_in_catalog"] = len(unmatched)
+            entry["not_in_catalog"] = _not_in_catalog(unmatched, unmatched_actives, mols)
             entry["actives_not_in_catalog"] = list(dict.fromkeys(unmatched_actives))
         products.append(entry)
 

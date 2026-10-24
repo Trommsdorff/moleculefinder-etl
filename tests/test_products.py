@@ -235,7 +235,8 @@ def test_a_label_matches_by_unii_then_moiety_actives_first_with_purposes():
         ("magnesium-stearate", "inactive", "unii"), ("allura-red-ac", "inactive", "unii")]
     assert mols[0]["purpose"] == "Pain reliever/fever reducer"
     assert "purpose" not in mols[2]
-    assert passed[0]["listed"] == 5 and passed[0]["not_in_catalog"] == 1
+    assert passed[0]["listed"] == 5
+    assert passed[0]["not_in_catalog"] == [{"name": "MICROCRYSTALLINE CELLULOSE", "role": "inactive"}]
     assert passed[0]["actives_not_in_catalog"] == []
     assert passed[0]["source"]["url"].endswith(SETID)
     assert report["label_ingredients_not_in_catalog"] == [{"name": "MICROCRYSTALLINE CELLULOSE", "labels": 1}]
@@ -254,6 +255,37 @@ def test_an_animal_label_fails_the_gate_and_an_unmatched_active_is_named():
            "active_lines": [], "purpose_lines": [], "purpose_rows": []}
     passed, _ = _compile([_p("x", "medicine", "dailymed", SETID)], {SETID: spl})
     assert passed[0]["actives_not_in_catalog"] == ["MENTHOL, UNSPECIFIED FORM"]
+    assert passed[0]["not_in_catalog"] == [{"name": "MENTHOL, UNSPECIFIED FORM", "role": "active"}]
+
+
+def test_the_label_names_its_other_ingredients_in_order_actives_first_once_each():
+    """Trust run 2: the page names what the label lists that MoleculeFinder does not hold, as the
+    label names it. Label order, actives first, one entry per name; a name a listed molecule already
+    carries is left out; the actives are exactly actives_not_in_catalog. No other field moves."""
+    spl = {"doc_type": "HUMAN PRESCRIPTION DRUG LABEL",
+           "ingredients": [{"role": "inactive", "name": "TALC", "unii": "7SEV7J4R1U", "moiety": []},
+                           {"role": "active", "name": "TIRZEPATIDE", "unii": "OYN3CCI6QE", "moiety": []},
+                           {"role": "inactive", "name": "WATER", "unii": "059QF0KO0R", "moiety": []},
+                           {"role": "inactive", "name": "TALC", "unii": "7SEV7J4R1U", "moiety": []},
+                           {"role": "inactive", "name": "CAFFEINE", "unii": "3G6A5W338E", "moiety": []},
+                           {"role": "inactive", "name": "MAGNESIUM STEARATE", "unii": "70097M6I30", "moiety": []},
+                           {"role": "inactive", "name": "WATER", "unii": "NOTWATER00", "moiety": []},
+                           {"role": "inactive", "name": "SODIUM CHLORIDE", "unii": "451W47IQ8X", "moiety": []}],
+           "active_lines": [], "purpose_lines": [], "purpose_rows": []}
+    passed, _ = _compile([_p("x", "medicine", "dailymed", SETID)], {SETID: spl})
+    p = passed[0]
+    assert p["not_in_catalog"] == [{"name": "TIRZEPATIDE", "role": "active"},
+                                   {"name": "TALC", "role": "inactive"},
+                                   {"name": "SODIUM CHLORIDE", "role": "inactive"}]
+    assert [n["name"] for n in p["not_in_catalog"] if n["role"] == "active"] == p["actives_not_in_catalog"]
+    assert not {n["name"] for n in p["not_in_catalog"]} & {m["listed_as"] for m in p["molecules"]}
+    assert p["listed"] == 8
+    assert [m["slug"] for m in p["molecules"]] == ["water", "caffeine", "magnesium-stearate"]
+
+
+def test_a_product_that_is_not_a_label_carries_no_not_in_catalog():
+    passed, _ = _compile([_p("morning-coffee", "drink", "world", "morning-coffee")])
+    assert passed and "not_in_catalog" not in passed[0] and "actives_not_in_catalog" not in passed[0]
 
 
 def test_an_active_listed_again_as_inactive_stays_active_once():
