@@ -23,8 +23,11 @@ def _caffeine():
                     summary="a central nervous system stimulant", pageviews=49284)
     f = fetched(CAFFEINE_PROPS, synonyms=["caffeine", "Guaranine", "1,3,7-Trimethylxanthine"],
                 curated=_curated("caffeine"),
+                # The pin (192, rat, oral) must be a row a displayable source reports.
                 toxicity=[{"endpoint": "LD50", "species": "mouse", "route": "oral",
-                           "value_num": 127.0, "unit": "mg/kg", "confidence": FROM_SOURCE}],
+                           "value_num": 127.0, "unit": "mg/kg", "confidence": FROM_SOURCE, "sources": ["hsdb"]},
+                          {"endpoint": "LD50", "species": "rat", "route": "oral",
+                           "value_num": 192.0, "unit": "mg/kg", "confidence": FROM_SOURCE, "sources": ["hsdb"]}],
                 ghs={"signal_word": "Danger", "pictograms": ["GHS06"], "h_statements": ["H302"],
                      "confidence": FROM_SOURCE})
     return assemble.assemble_record(row, f, set())
@@ -59,7 +62,7 @@ def test_dose_poison_prefers_curated_ld50():
     dp = _hooks_by_type(rec)["dose_poison"]
     assert dp["confidence"] == INFERRED                 # rodent → human extrapolation
     assert dp["params"]["ld50_mg_per_kg"] == 192 and dp["params"]["species"] == "rat"
-    assert rec["ld50_mg_per_kg"] == 192                 # curated value wins over the parsed 127
+    assert rec["ld50_mg_per_kg"] == 192                 # curated choice wins over the lower 127 (mouse)
     assert rec["toxicity"][0]["value_num"] == 192       # prepended as the representative row
 
 
@@ -137,7 +140,9 @@ def test_curated_type_tags_and_direct_scoville():
     cap = assemble.assemble_record(
         canon_row(1548943, "Capsaicin"),
         fetched({"CID": 1548943, "SMILES": "CCO", "MolecularWeight": "305.41"},
-                curated=_curated("capsaicin")), set())
+                curated=_curated("capsaicin"),
+                toxicity=[{"endpoint": "LD50", "species": "mouse", "route": "oral", "value_num": 47.2,
+                           "unit": "mg/kg", "confidence": FROM_SOURCE, "sources": ["hsdb"]}]), set())
     assert cap["scoville_shu"] == 16000000
 
 
@@ -187,12 +192,15 @@ def test_extract_cas_rejects_a_same_shaped_non_cas():
     assert assemble._extract_cas([]) is None
 
 
-def test_cas_lands_on_the_record():
+def test_cas_is_found_but_withheld_by_the_source_licence_rule():
+    # CAS Registry Numbers are CAS's (registry "cas_registry", restricted: publishing them needs
+    # a CAS licence), so the record carries none, and none leaks into the synonym line either.
+    assert assemble._extract_cas(["caffeine", "58-08-2", "Theine"]) == "58-08-2"
     caf = assemble.assemble_record(
         canon_row(2519, "Caffeine"),
         fetched(CAFFEINE_PROPS, synonyms=["caffeine", "58-08-2", "Theine"]), set())
-    assert caf["cas"] == "58-08-2"
-    assert "58-08-2" not in caf["synonyms"]                  # not shown as a display synonym
+    assert caf["cas"] is None
+    assert "58-08-2" not in caf["synonyms"] and "58-08-2" not in caf["display_synonyms"]
 
 
 def test_filter4_demotes_orphans():

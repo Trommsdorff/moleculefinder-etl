@@ -18,7 +18,8 @@ import yaml
 from .confidence import label_for
 from . import names, slugs, categories, hooks, structures, similarity, families, buckets, toxicity
 from ..config import SEEDS_DIR
-from ..sources.registry import assert_not_blocked
+from ..sources import registry
+from ..sources.registry import LicenceRuleError, assert_not_blocked
 from ..sources.wikidata import is_placeholder
 
 log = logging.getLogger("mfetl")
@@ -382,6 +383,18 @@ def _merge_curated(rec: dict, curated: dict) -> None:
                "route": _route(dp.get("route", "oral")), "value_num": dp["ld50_mg_per_kg"],
                "unit": "mg/kg", "confidence": label_for("ld50_raw")}
         key = (row["species"], row["route"], row["value_num"])
+        # The source-licence rule (2026-10-23): a hand-pinned LD50 is a choice among reported
+        # values, not a value of its own, so it must be one a displayable source reports with
+        # the same species and route (parse_ld50 already kept only those). A pin that traces
+        # to nothing stops the build rather than ship an unsourced number.
+        traced = next((t for t in rec["toxicity"]
+                       if (t["species"], t["route"], t["value_num"]) == key), None)
+        if traced is None:
+            raise LicenceRuleError(
+                f"{rec.get('slug')}: the curated dose_poison pin {row['value_num']} mg/kg "
+                f"({row['species']}, {row['route']}) is not reported by any source that may be "
+                f"displayed; fix the pin in sources/curated/ or remove it")
+        row["sources"] = list(traced.get("sources") or [])
         rec["toxicity"] = [row] + [t for t in rec["toxicity"]
                                    if (t["species"], t["route"], t["value_num"]) != key]
         # A curated dose_poison overlay is hand-decided, so it wins outright over the
@@ -792,15 +805,17 @@ def attach_derived_categories(records: list[dict]) -> None:
                              "confidence": label_for("functional_group"), "source": _src("pubchem")})
 
         ghs = rec.get("ghs") or {}
+        # The hazard hubs are read off the GHS classification, so they cite its sources.
+        ghs_src = "+".join(ghs.get("sources") or []) or "pubchem"
         for pic in ghs.get("pictograms") or []:
             hub = GHS_HUBS.get(pic)
             if hub and ("poison", hub[0]) not in have:
                 cats.append({"slug": hub[0], "name": hub[1], "kind": "poison",
-                             "confidence": label_for("ld50_raw"), "source": _src("pubchem")})
+                             "confidence": label_for("ld50_raw"), "source": ghs_src})
         word = SIGNAL_WORD_HUBS.get(ghs.get("signal_word") or "")
         if word and ("poison", word[0]) not in have:
             cats.append({"slug": word[0], "name": word[1], "kind": "poison",
-                         "confidence": label_for("ld50_raw"), "source": _src("pubchem")})
+                         "confidence": label_for("ld50_raw"), "source": ghs_src})
 
         mw = rec.get("molecular_weight")
         if isinstance(mw, (int, float)):
@@ -977,7 +992,9 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "molecular_weight": _to_float(props.get("MolecularWeight")),
         "canonical_smiles": can, "isomeric_smiles": iso,
         "inchi": props.get("InChI"), "inchikey": props.get("InChIKey"),
-        "cas": _extract_cas(syns),
+        # A CAS Registry Number is CAS's, not PubChem's: shown only if its source may be
+        # displayed (the source-licence rule; registry "cas_registry" is restricted).
+        "cas": _extract_cas(syns) if registry.may_display("cas_registry") else None,
         "synonyms": _clean_synonyms(syns, title),
         # The line under the H1 (see display_synonyms) and the title's parenthetical, which
         # attach_title_synonyms fills in once the description exists.

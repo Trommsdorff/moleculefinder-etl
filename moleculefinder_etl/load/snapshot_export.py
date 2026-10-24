@@ -5,7 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 from ..config import SNAPSHOTS
-from ..transform import roam_layout, relationships
+from ..sources import registry
+from ..transform import licence_gate, roam_layout, relationships
 from . import snapshot_guard
 
 # The snapshot's own date, for the "Data refreshed" line on every molecule page (feedback
@@ -22,6 +23,9 @@ META = "meta.json"
 FEATURED = "featured.json"
 # What's in it (growth plan run C1): the products that passed the gate, for /whats-in.
 PRODUCTS = "products.json"
+# The source registry with each source's licence class and attribution (2026-10-23), so the site
+# names a value's source and prints the attribution its class asks for from one definition.
+SOURCES = "sources.json"
 
 
 def _prune(directory: Path, keep: set[str]) -> None:
@@ -83,6 +87,9 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     removed, like featured.json.
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
+    # The source-licence rule: nothing is written if any value cites a source that is not in
+    # the registry or may not be displayed (transform/licence_gate.py).
+    licence_gate.enforce(molecules, products, comparisons)
     mol_dir = SNAPSHOTS / "molecules"
     lb_dir = SNAPSHOTS / "leaderboards"
     outputs: dict[Path, str] = {}
@@ -104,6 +111,7 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     # straight from the molecule files by the page; only the prose needs curating, so only
     # the prose is exported. Which pairs get a page is the web's lib/compare-pairs.ts.
     outputs[SNAPSHOTS / "comparisons.json"] = json.dumps(comparisons or {}, ensure_ascii=False)
+    outputs[SNAPSHOTS / SOURCES] = json.dumps({"sources": registry.public_registry()}, ensure_ascii=False)
 
     lb_index = []
     for slug, board in leaderboards.items():

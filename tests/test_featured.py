@@ -30,7 +30,8 @@ def _rec(i: int, **over) -> dict:
         "cid": 1000 + i, "slug": f"m{i}", "title": f"Molecule {i}",
         "molecular_formula": f"C{i}H{2 * i}", "inchikey": f"SKELETON{i:06d}-UHFFFAOYSA-N",
         "structure_svg": "<svg/>", "hand_model": False, "macromolecule": False,
-        "why_it_matters": {"text": f"Why molecule {i} matters to an ordinary reader."},
+        "why_it_matters": {"text": f"Why molecule {i} matters to an ordinary reader.",
+                           "source": "MoleculeFinder curated"},
     }
     return {**base, **over}
 

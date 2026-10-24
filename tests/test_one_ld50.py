@@ -17,7 +17,7 @@ from tests.fixtures import canon_row, fetched, CAFFEINE_PROPS
 
 def _row(value, route="oral", species="rat"):
     return {"endpoint": "LD50", "species": species, "route": route, "value_num": value,
-            "unit": "mg/kg", "confidence": "from_source"}
+            "unit": "mg/kg", "confidence": "from_source", "sources": ["hsdb"]}
 
 
 def _key(row):
@@ -103,8 +103,10 @@ def test_the_panel_the_hook_and_the_record_read_one_row():
 
 def test_a_curated_overlay_still_pins_the_value():
     curated = yaml.safe_load((CURATED_DIR / "caffeine.yaml").read_text())
-    rec = _assemble("Caffeine", 2519, [_row(127.0, species="mouse"), _row(105.0, "iv")],
-                    CAFFEINE_PROPS, curated)
+    # The pin is a choice among reported rows (the source-licence rule): 192 is reported, and
+    # the rule alone would have chosen the lower rat row, 150.
+    rec = _assemble("Caffeine", 2519, [_row(150.0), _row(192.0), _row(127.0, species="mouse"),
+                                       _row(105.0, "iv")], CAFFEINE_PROPS, curated)
     assert _key(rec["toxicity"][0]) == (192, "oral", "rat") and rec["ld50_mg_per_kg"] == 192
     assert _dose_hook(rec)["params"]["ld50_mg_per_kg"] == 192
 

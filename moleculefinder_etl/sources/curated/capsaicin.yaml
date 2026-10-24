@@ -5,7 +5,7 @@ types:
   - pungent
 capsaicinoid_ppm: 1000000       # pure compound; SHU ~= ppm * 16 = 16,000,000
 hooks:
-  dose_poison: { ld50_mg_per_kg: 47.2, species: rat, route: oral, source: "PubChem" }
+  dose_poison: { ld50_mg_per_kg: 47.2, species: mouse, route: oral, source: hsdb }   # HSDB "LD50 Mouse oral 47200 ug/kg"; no source reports it in the rat (fixed 2026-10-23)
 smell_card:
   experience: "the burn of chili peppers"
   detection: "binds the TRPV1 heat receptor"

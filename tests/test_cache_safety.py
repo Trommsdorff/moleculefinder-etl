@@ -26,6 +26,7 @@ from moleculefinder_etl import freshness
 from moleculefinder_etl.load import snapshot_export, snapshot_guard
 from moleculefinder_etl.load.snapshot_guard import SnapshotRegression
 from moleculefinder_etl.sources import cache
+from tests.fixtures import sourced
 
 DAY = 86400
 
@@ -87,7 +88,7 @@ def test_a_corrupt_entry_is_a_miss_not_a_crash(tmp_path):
 # ── The 2026-09-08 regression, replayed ─────────────────────────────────────
 def _shipped() -> list[dict]:
     """The four records as they were correct in the snapshot before the bad run."""
-    return [
+    return [sourced(r) for r in [
         {"cid": 5950, "slug": "alanine", "title": "Alanine", "wikidata_qid": "Q218642",
          "summary": "alpha-amino acid used in the biosynthesis of proteins",
          "ld50_mg_per_kg": None, "molecular_formula": "C3H7NO2", "synonyms": []},
@@ -100,7 +101,7 @@ def _shipped() -> list[dict]:
         {"cid": 4594, "slug": "omeprazole", "title": "Omeprazole", "wikidata_qid": "Q422210",
          "summary": "medication used in the treatment of gastroesophageal reflux disease",
          "ld50_mg_per_kg": 4000.0, "molecular_formula": "C17H19N3O3S", "synonyms": []},
-    ]
+    ]]
 
 
 def _regressed(*, placeholder: bool = True) -> list[dict]:
@@ -239,7 +240,7 @@ def test_filling_a_null_is_not_a_regression(tmp_path, monkeypatch):
     recs = {r["slug"]: dict(r) for r in _shipped()}
     recs["alanine"]["ld50_mg_per_kg"] = 4800.0          # gained a value
     recs["taurine"]["summary"] = "an organic compound found in bile"   # improved
-    snapshot_export.export(list(recs.values()), {})
+    snapshot_export.export([sourced(r) for r in recs.values()], {})
     assert (tmp_path / "molecules" / "alanine.json").exists()
 
 
@@ -259,9 +260,9 @@ def test_a_new_molecule_regresses_nothing(tmp_path, monkeypatch):
     monkeypatch.setattr(snapshot_export, "SNAPSHOTS", tmp_path)
     _plant_prior(tmp_path)
     monkeypatch.setattr(freshness, "load", lambda path=None: {})
-    new = _shipped() + [{"cid": 999, "slug": "novelene", "title": "Novelene",
-                         "wikidata_qid": None, "summary": "chemical compound",
-                         "ld50_mg_per_kg": None, "molecular_formula": "C1", "synonyms": []}]
+    new = _shipped() + [sourced({"cid": 999, "slug": "novelene", "title": "Novelene",
+                                 "wikidata_qid": None, "summary": "chemical compound",
+                                 "ld50_mg_per_kg": None, "molecular_formula": "C1", "synonyms": []})]
     snapshot_export.export(new, {})
     assert (tmp_path / "molecules" / "novelene.json").exists()
 

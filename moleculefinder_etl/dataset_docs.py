@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .dataset import KAGGLE_ID, LICENSE_ID, SITE, TABLES, TITLE, Build
+from .dataset import LICENSE_ID, SITE, TABLES, TITLE, Build
 
 CC0_TEXT = (Path(__file__).with_name("dataset_cc0.txt")).read_text(encoding="utf-8")
 CREATOR = "MoleculeFinder (137 Finder LLC)"
@@ -35,6 +35,26 @@ TABLE_BLURB = {
     "world_molecules": "which molecules each world holds",
     "licences": "the FDA marketing record for each approved medicine (Drugs@FDA)",
 }
+
+
+def _doi_url(doi: str) -> str:
+    return f"https://doi.org/{doi}"
+
+
+def _version_doi(b: Build) -> str | None:
+    """This version's own DOI, once it is published (a new version's is minted at upload)."""
+    return b.published["versions"].get(b.version)
+
+
+def _kaggle_url(b: Build) -> str:
+    return f"https://www.kaggle.com/datasets/{b.published['kaggle']}"
+
+
+def citation(b: Build) -> str:
+    """The one citation line (README, and the site's Sources & methodology page says the same)."""
+    doi = _version_doi(b) or b.published["concept_doi"]
+    return (f"{CREATOR} ({b.refreshed[:4]}). *{TITLE}* (Version {b.version}) [Data set]. Zenodo. "
+            f"{_doi_url(doi)}")
 
 
 def description(b: Build, counts: dict[str, int]) -> str:
@@ -112,19 +132,24 @@ def readme(b: Build, counts: dict[str, int]) -> str:
         "",
         f"- **GHS hazard classification** (signal word, pictograms, H-statements; on {w['ghs_molecules']:,} molecules on the",
         f"  site) and the {len(w['ghs_hubs'])} hazard categories built from it ({', '.join(w['ghs_hubs'])}). PubChem",
-        "  aggregates it mostly from the European Chemicals Agency's C&L Inventory, whose legal notice permits",
-        "  reuse with the source acknowledged, and from Japan's NITE, Safe Work Australia and EUR-Lex, each",
-        "  with its own terms.",
-        f"- **{len(w['ld50'])} LD50 values** that no US government source reports in PubChem's record (their",
-        "  only sources are, for example, T3DB (non-commercial terms), Haz-Map (all rights reserved),",
-        "  StatPearls (CC BY-NC), the ILO-WHO cards (CC BY) or EFSA (source acknowledged)). Those rows keep",
-        "  the molecule and leave the four LD50 columns empty. Every LD50 that is kept names its sources.",
+        "  aggregates it from the European Chemicals Agency's C&L Inventory and EUR-Lex (reuse with the source",
+        "  acknowledged) and Safe Work Australia (CC BY 4.0); the site shows it with that attribution, which a",
+        "  CC0 release cannot carry. Japan's NITE classifications are used nowhere (NITE reserves publication).",
+        *(([f"- **{len(w['ld50'])} LD50 values** that no US government source reports in PubChem's record (their",
+            "  only sources are, for example, T3DB (non-commercial terms), Haz-Map (all rights reserved),",
+            "  StatPearls (CC BY-NC), the ILO-WHO cards (CC BY) or EFSA (source acknowledged)). Those rows keep",
+            "  the molecule and leave the four LD50 columns empty. Every LD50 that is kept names its sources."])
+          if w["ld50"] else
+          ["- **LD50 values from sources that are not US government works.** None is withheld: since",
+           "  2026-10-23 MoleculeFinder shows an LD50 only from a source whose terms allow it, and every LD50",
+           "  on the site is a US government value, so the dataset's LD50 columns match the site's. Every",
+           "  LD50 kept names its sources."]),
         f"- **{len(w['licences'])} licence records** from the MHRA (Open Government Licence, attribution), the",
         "  European Medicines Agency (reproduction with the source acknowledged) and national registers",
         "  (Italy's AIFA, Latvia's medicines agency). Drugs@FDA records are kept.",
-        f"- **CAS Registry Numbers** ({w['cas_numbers']:,} on the site). The CAS Registry is maintained by the",
-        "  American Chemical Society, whose terms govern redistributing its numbers in bulk. Each row",
-        "  carries the PubChem CID, InChIKey and Wikidata QID instead.",
+        "- **CAS Registry Numbers.** The CAS Registry is maintained by the American Chemical Society, which",
+        "  requires a licence to publish its numbers; since 2026-10-23 neither the site nor the dataset",
+        "  carries them. Each row carries the PubChem CID, InChIKey and Wikidata QID instead.",
         "- **PubChem synonyms.** Depositors supply them under their own terms; the dataset's names come from",
         "  Wikidata (`other_names`) and MoleculeFinder's curated brand list.",
         "- **Serving sizes**, a dosing figure, which MoleculeFinder keeps out of anything it publishes as data.",
@@ -142,9 +167,13 @@ def readme(b: Build, counts: dict[str, int]) -> str:
         "",
         "## Citation",
         "",
-        f"{CREATOR} ({b.refreshed[:4]}). *{TITLE}* (Version {b.version}) [Data set]. {SITE}",
+        citation(b),
         "",
-        "The Zenodo DOI is added on the site's Sources & methodology page once it is minted.",
+        f"- Every version (always the latest): {_doi_url(b.published['concept_doi'])}",
+        *[f"- Version {v}: {_doi_url(d)}" for v, d in sorted(b.published["versions"].items())],
+        f"- Zenodo: {b.published['zenodo_record']}",
+        f"- Kaggle: {_kaggle_url(b)}",
+        f"- Website: {SITE}/about/methodology",
         "",
         "## Rebuilding",
         "",
@@ -172,6 +201,17 @@ def cff(b: Build) -> str:
         f'date-released: "{b.refreshed}"',
         f"license: {LICENSE_ID}",
         f'url: "{SITE}"',
+        f'doi: "{_version_doi(b) or b.published["concept_doi"]}"',
+        f'repository: "{b.published["zenodo_record"]}"',
+        "identifiers:",
+        "  - type: doi",
+        f'    value: "{b.published["concept_doi"]}"',
+        '    description: "Every version (Zenodo concept DOI, always the latest)"',
+        *[line for v, d in sorted(b.published["versions"].items()) for line in (
+            "  - type: doi", f'    value: "{d}"', f'    description: "Version {v}"')],
+        "  - type: url",
+        f'    value: "{_kaggle_url(b)}"',
+        '    description: "Kaggle copy"',
         "keywords:",
         *[f"  - {k}" for k in KEYWORDS],
         "",
@@ -204,9 +244,10 @@ def datapackage(b: Build, counts: dict[str, int]) -> dict[str, Any]:
 def kaggle(b: Build, counts: dict[str, int]) -> dict[str, Any]:
     return {
         "title": "MoleculeFinder: Molecules in Everyday Products",
-        "id": KAGGLE_ID,
+        "id": b.published["kaggle"],
         "subtitle": f"{counts['molecules']} molecules, {counts['products']} foods, drinks and products, CC0",
-        "description": description(b, counts) + "\n\nColumn dictionary and provenance: README.md. " + f"Website: {SITE}",
+        "description": description(b, counts) + "\n\nColumn dictionary and provenance: README.md. "
+                       + f"Website: {SITE}. Cite: {_doi_url(b.published['concept_doi'])}",
         "licenses": [{"name": "CC0-1.0"}],
         "keywords": KAGGLE_KEYWORDS,
         "resources": [
@@ -232,7 +273,18 @@ def zenodo(b: Build, counts: dict[str, int]) -> dict[str, Any]:
         "license": "cc-zero",
         "keywords": KEYWORDS,
         "language": "eng",
-        "related_identifiers": [{"identifier": SITE, "relation": "isDocumentedBy", "resource_type": "other"}],
+        "related_identifiers": [
+            {"identifier": SITE, "relation": "isDocumentedBy", "resource_type": "other"},
+            {"identifier": _kaggle_url(b), "relation": "isIdenticalTo", "resource_type": "dataset"},
+            # A version not yet published names the latest one it follows; Zenodo mints its own DOI
+            # under the same concept DOI when it is uploaded with "New version".
+            *[{"identifier": d, "relation": "isNewVersionOf", "resource_type": "dataset", "scheme": "doi"}
+              for v, d in sorted(b.published["versions"].items())[-1:] if b.version not in b.published["versions"]],
+        ],
+        # Zenodo deposit fields only: `doi` is set for a version already published (its own DOI);
+        # the concept DOI travels in `notes`, which the form shows as "Additional notes".
+        **({"doi": _version_doi(b)} if _version_doi(b) else {}),
+        "notes": f"Cite all versions: {_doi_url(b.published['concept_doi'])}. Kaggle copy: {_kaggle_url(b)}.",
     }
 
 
