@@ -775,8 +775,12 @@ values: commits `4e73e8f` (code), `2b32acf` (data and dataset 2026.10.1), `54914
   the old `KAGGLE_ID` was wrong) and goes into README.md (citation and links), CITATION.cff (`doi`, `identifiers`),
   zenodo.json (`doi` for a published version, `isNewVersionOf` otherwise, the concept DOI in `notes`) and the Kaggle
   metadata. **`mfetl dataset` refuses (exit 1, nothing written) when any of those fields is empty** (`Unpublished`).
-  After uploading a new version, add its DOI under `versions`. Committed package: **2026.10.1**, not uploaded; it
-  differs from the published 2026.10 only by the 10 LD50s that now have a US government value (and the texts).
+  **Since 2026-10-24 (branch `dataset-doi-2026-10`, `ba23f1c`): the citation is the concept DOI alone, with "This
+  version <v>, <its DOI>" beside it (README, CITATION.cff `doi`, zenodo.json `notes`).** Versions are listed oldest
+  first; the last is the latest and `zenodo_record` must be its page. **A new version's DOI is recorded by `mfetl
+  dataset --version V --doi D`** (never by hand); it refuses a non-Zenodo or reused DOI, a version already recorded
+  with another, or `--doi` without `--version`. Then add the same line to the web's `lib/dataset.ts`. Version
+  **2026.10.1** = 10.5281/zenodo.23620892 (uploaded 2026-10-24, Kaggle Version 2), recorded that way.
 - Checks: 724 ETL tests (677), ruff 129 = main's 120 + 9 C408 in the registry's established `dict(...)` style.
   `.github`, snapshot_guard.py, news.py, inputs.py, cache.py, pipeline.py: git diff empty.
 
