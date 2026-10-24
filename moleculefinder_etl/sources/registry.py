@@ -181,6 +181,14 @@ BLOCKED: frozenset[str] = frozenset({
     "openfoodfacts",                                          # ODbL share-alike (Garrett, 2026-10-18)
 })
 
+# The short name a chip or a list uses ("LD50: HSDB via PubChem"); the full name otherwise.
+SHORT_NAMES: dict[str, str] = {
+    "ema": "EMA", "mhra": "MHRA", "hsdb": "HSDB", "t3db": "T3DB", "echa": "ECHA",
+    "eu_clp": "EU CLP Regulation", "hcis": "Safe Work Australia", "nite": "NITE",
+    "cas_registry": "CAS Registry", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
+    "niosh": "NIOSH", "atsdr": "ATSDR", "fda_ltkb": "FDA LTKB", "lactmed": "LactMed",
+}
+
 # PUG-View SourceName -> registry key.
 PUGVIEW_NAMES: dict[str, str] = {n: k for k, s in SOURCES.items() for n in s.get("pugview_names", ())}
 
@@ -234,7 +242,8 @@ def public_registry() -> list[dict]:
         s = SOURCES[k]
         cls = s["licence_class"]
         display, attrib, meaning = LICENCE_CLASSES[cls]
-        out.append({"key": k, "name": s["name"], "license": s["license"], "licence_class": cls,
+        out.append({"key": k, "name": s["name"], "short": SHORT_NAMES.get(k, s["name"]),
+                    "license": s["license"], "licence_class": cls,
                     "licence_meaning": meaning, "may_display": display,
                     "attribution_required": attrib, "attribution": s.get("attribution"),
                     "license_url": s.get("license_url"), "homepage": s.get("homepage")})
