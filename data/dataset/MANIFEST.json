@@ -1,9 +1,9 @@
 {
  "title": "MoleculeFinder: the molecules in everyday foods, drinks and products",
- "version": "2026.10",
+ "version": "2026.10.1",
  "license": "CC0-1.0",
  "snapshot_refreshed": "2026-10-21",
- "snapshot_sha256": "e04a867f99eae38678a9961288d454f7c9a91e87f7f16a4607bd8775840fcbd1",
+ "snapshot_sha256": "04292ece37895ca54b430e64708562b04ff17e5600ccfc6fb6f2a9db78549a2b",
  "inputs_fingerprint": "17122735c9f9516757ef6bbf57bd2e2dc93e2b3778cbc463497dace8e9813656",
  "rows": {
   "molecules": 915,
@@ -18,36 +18,36 @@
   "licences": 296
  },
  "withheld": {
-  "ld50": 41,
-  "ghs_molecules": 650,
+  "ld50": 0,
+  "ghs_molecules": 645,
   "ghs_hubs": 10,
   "licences": 29,
-  "cas_numbers": 842
+  "cas_numbers": 0
  },
  "files": {
   "CITATION.cff": {
-   "bytes": 827,
-   "sha256": "8f1b1039bbb91345347f1d7ab17256ce9f24506188c5f7205e606f1a35a6e48c"
+   "bytes": 1281,
+   "sha256": "369dbc6c468191b28937eee73581e0e59e24b95341f8895065263fd546a789c4"
   },
   "LICENSE.txt": {
    "bytes": 7048,
    "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
   },
   "README.md": {
-   "bytes": 15832,
-   "sha256": "61759503634ba005fe907b8a35fa1dafe0f7521864bf38fa7cb9d9a387d81dec"
+   "bytes": 16173,
+   "sha256": "d5c3ec3a3ba09ed7c744565c6407b2febf4cae75f818e2b8f68e9b579c95d145"
   },
   "categories.csv": {
    "bytes": 5730,
    "sha256": "14fee905cd564fbf1958ab5a930194424bfa32f6b92ca53c3c06950012adf940"
   },
   "datapackage.json": {
-   "bytes": 22941,
-   "sha256": "6669a2c4e715cf0a5f8864737d519c8355e55b338d1cf75a5fb0a8f39d58bbfb"
+   "bytes": 22943,
+   "sha256": "430739a385c6df7ec68352d8565eaaf8f3a3147a7cb745689d4226e279c1c98c"
   },
   "dataset-metadata.json": {
-   "bytes": 17830,
-   "sha256": "c507a3b58d6c66dd6a2dca9199fca41c9edc782dcaa9cd9ffee442a45bd8da36"
+   "bytes": 17908,
+   "sha256": "a45caa23a9ed218086dfd21d9d40c9bc0b307086729f1c4dcab27438fdb4ecb9"
   },
   "licences.csv": {
    "bytes": 55074,
@@ -58,12 +58,12 @@
    "sha256": "967ad58bfb3be02688a2f81ed7e4336bf1f803e9306e45eb6a801c7a17d3e1e0"
   },
   "moleculefinder.json": {
-   "bytes": 3211268,
-   "sha256": "338fb4ce91ee01217c172c1c0d138ddd32744ce56bb1b6660c7dbb615fac5765"
+   "bytes": 3211676,
+   "sha256": "fff58bdd6689160ec6bb9fc0f33b51bb3382c5df9d4fe73987df63d190912284"
   },
   "molecules.csv": {
-   "bytes": 728731,
-   "sha256": "a565c2bd9b7a7bdb525d0300d7f4abcef88e5c1a8f3ea63ff63922cc7fa26145"
+   "bytes": 729237,
+   "sha256": "e7631b3570567e7a20165c81c7f81df9de2ec57ecbcd7d47a2db61aee6d346a0"
   },
   "product_molecules.csv": {
    "bytes": 136216,
@@ -90,8 +90,8 @@
    "sha256": "e303c1dcaf19aba4bf098e5f143c1eebf7a48a9496fb80afe3f091ace0d8d836"
   },
   "zenodo.json": {
-   "bytes": 1678,
-   "sha256": "4aaf8b306c8a22e811d4c3108aa06fef79dd56227d1dc8fc7512edb31972d939"
+   "bytes": 2204,
+   "sha256": "785f3062cc05bea54a64d7631e3c0000afd5e9bf2bffd583eb721209ab641937"
   }
  }
 }
