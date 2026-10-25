@@ -753,6 +753,22 @@ code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
   rebuild products.json with the count, and the web would show no names until the next deploy). Nothing deploys from
   this repo.
 
+## The forms ruling (2026-10-25). BUILT on `forms-2026-10` (`94a4122` code, `81bbb59` data), waiting for deploy
+Garrett, 2026-10-25: "yes on linking cellulose, starch, and lecithin and other chemically identical materials". This
+answers the open question at the end of trust run 3. Thirteen codes join `unii_aliases.yaml` `aliases`, under a comment
+quoting the ruling: microcrystalline cellulose (OP1R32D61U, and the 101 and 102 grades) and powdered cellulose ->
+cellulose; corn, potato, rice starch -> starch; soybean lecithin -> lecithin; sorbitol solution (the FDA's specified
+substance) -> sorbitol; dibasic calcium phosphate dihydrate, disodium phosphate dihydrate and heptahydrate, sodium
+carbonate monohydrate -> their salts. **How they were found:** every `not_in_catalog` code whose FDA display name (or
+label name) is a catalog molecule's title or Wikidata name plus only form, grade, source, purity or hydration words; then
+a looser pass listing every label name containing a molecule's name, read by hand. **Left out on purpose** (chemically
+altered, a different chemical): croscarmellose sodium, hydroxypropyl cellulose (all grades), low-substituted HPC,
+cellulose acetate, sodium starch glycolate, aluminum starch octenylsuccinate, alpha-tocopherol acetate, sucrose stearate,
+titanium dioxide (not titanium), "sodium phosphate" unspecified (mono, di or tri). `tests/test_unii_index.py` pins both
+sides. Pinned build: 255 rows gained on 182 pages, 0 lost; 424 product pages (413; 11 new); 18 molecule files by
+`products` alone; `unii_index.json` 1,131 codes. 756 tests, ruff 131. **A new form found later is one more line here,
+under the same rule; a chemically altered material never is.** Deploy: ETL `main` first, then web `main`, before Monday.
+
 ## Trust run 3 (2026-10-24): the label join reads the FDA's own UNII table. DEPLOYED 2026-10-24 (ETL `b7b034d`, web `9f8bc4a`)
 **DEPLOYED 2026-10-24 about 23:30 UTC on Garrett's word**, with trust runs 1 and 2 and web `indexnow-dataset-2026-10`.
 ETL `main` f4fac9f -> `b7b034d` (with `5e5c379`; deploys nothing, no workflow ran); web `main` 45808d9 -> `9f8bc4a`,
