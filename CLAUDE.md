@@ -78,8 +78,8 @@ fixes acronym labels (nsaid → NSAID). 42 offline tests pass; ruff clean. **Pus
 `../MoleculeFinder-Color-System-Brief.md`. `transform/structures.py` now renders CPK-colored SVGs
 (**verified recipe:** `updateAtomPalette` with **carbon = key 6** + `singleColourBonds` +
 `setSymbolColour(#bdd6e6)` + `clearBackground=False` → uniform light skeleton, colored heteroatom
-labels, transparent bg; since trust run 6, 2026-10-25, the palette covers every element, see that
-section). `transform/families.py` maps type-slug → family key (the web mirrors it in
+labels, transparent bg; since trust run 6, 2026-10-25, the palette covers every element, and since trust
+run 7 every colour outside the ten is tuned into the ten's OKLCH band by one rule; see those sections). `transform/families.py` maps type-slug → family key (the web mirrors it in
 `lib/families.ts`); `assemble.py` bakes `family` per molecule + `neighbor_family` per edge.
 `transform/roam_layout.py` bakes a deterministic family-clustered constellation → `roam.json`
 (emitted by `snapshot_export`). Regenerate all of it with `mfetl transform && mfetl export`.
@@ -817,6 +817,69 @@ for an element outside it. Branch `rdkit-cpk-2026-10`: code `35d4457`, data `5ed
 - **Pinned build** (`mfetl sync-inputs` 17122735c9f95167, then `mfetl all`, all three keys blanked), exit 0: **896
   molecule files change, `structure_svg_key` on all 896, `structure_svg` on exactly 160** (all 66 and all 94); no other
   field, no other file (meta.json, products, boards, seed files identical). Version not embedded in the SVG itself.
+
+## Trust run 7 (2026-10-25): every colour outside the ten tuned into the ten's band, by one rule. BUILT, NOT YET DEPLOYED
+**Garrett's ruling:** trust run 6's Jmol colours were never tuned for the navy panel the way the brief's ten were (raw
+CPK "vibrates on dark", `../MoleculeFinder-Color-System-Brief.md` §2): calcium neon green, magnesium and strontium the
+same, potassium a dark purple. Tune them the way the ten were tuned, by ONE rule, not by eye, so every element present
+or future gets the same treatment and the drawings read as one system. Branch `cpk-tune-2026-10`: code `232924f`, data
+`ee3e49d`.
+- **The band, in OKLCH** (Ottosson's OKLab in polar form: L from 0 black to 1 white, C the distance from grey, h the
+  hue). The ten measured: C #bdd6e6 L .863 C .035; N #6fb1ff .749 .132; O #ff7a72 .733 .164; S #f2d06b .867 .126; P
+  #8fd982 .816 .139; F #7fe0c0 .838 .104; Cl #7fd98a .809 .140; Br #d98a6a .708 .107; I #c79af0 .759 .129; H #dbe9f2
+  .926 .019. **Band = the minimum and maximum over all ten on each axis: L 0.708 (bromine) to 0.926 (hydrogen), C 0.019
+  (hydrogen) to 0.164 (oxygen)**; hue is not banded (the ten span the wheel). OKLCH because its L and C track what the
+  eye sees evenly across hues (HSL calls #00ff00 and #0000ff equally light). Carbon and hydrogen count: they are the
+  brief's tuned neutrals, and without them the chroma floor would be 0.104 and every grey metal (silver, platinum,
+  mercury) would be forced into a colour. `BAND_L`/`BAND_C` are computed from `BRIEF_HEX`; the comment at the table
+  states the measurements and a test keeps it true.
+- **The rule, `structures.tuned`, applied to Jmol's own colour** (`JMOL_HEX`, verbatim; re-compared entry by entry with
+  Jmol's published `jmol_constants.js` this run, all 99 match; trust run 6's 15 HSL lightenings are not the starting
+  point): (1) a colour already inside the band and at 3:1 is kept exactly; (2) its OKLCH hue is kept, and a grey (R = G
+  = B) takes carbon's, 235.9; (3) L and C are clamped into the band; (4) a point outside sRGB has its chroma lowered to
+  the gamut's edge, same L and hue (U, Np, Pu, Am: C 0.152 to 0.157); (5) L is raised to 3:1 if needed (a no-op today:
+  the lowest result is 5.77:1); (6) the nearest 8-bit colour (OKLab distance) still inside the band and at 3:1 (hue
+  within 1.2 degrees where C is 0.03 or more, astatine the most; up to 4.7 on the near greys held at the floor, lead).
+  `CPK_HEX` = the ten + `tuned(JMOL_HEX)`. **The fallback follows the rule: white comes out #dbe9f2, hydrogen's own
+  colour** (the band's lightest, least coloured corner, in carbon's hue); no catalog molecule uses it. **79 of 99 Jmol
+  colours move, 20 are kept.**
+- **Before and after**, every colour that moved: Jmol's colour (trust run 6's live value where it differed) -> the
+  tuned colour (OKLCH L and C before -> after; the number of catalog drawings that show the element, if any): He #d9ffff -> #caefef (L .973->.926, C .039->.038; 1); Li #cc80ff -> #c787f3 (L .729->.729, C .190->.164; 2); Be #c2ff00 -> #ccf979 (L .924->.924, C .233->.163; 1); Na #ab5cf2 -> #ba83f1 (L .636->.708, C .219->.164; 36); Mg #8aff00 -> #adf481 (L .895->.895, C .260->.163; 11); K #8f40d4 (live #9041d4) -> #b884f2 (L .549->.709, C .217->.163; 13); Ca #3dff00 -> #95ef87 (L .872->.871, C .287->.163; 12); Sc #e6e6e6 -> #dae9f2 (L .925->.925, C .000->.020; 1); Ti #bfc2c7 -> #bbc2cf (L .813->.813, C .008->.020; 1); V #a6a6ab -> #a5a5b3 (L .727->.726, C .007->.020; 1); Cr #8a99c7 -> #909fce (L .688->.708, C .070->.071; 2); Mn #9c7ac7 -> #b18edd (L .642->.709, C .117->.118; 2); Fe #e06633 -> #f37948 (L .652->.709, C .166->.163; 3); Ni #50d050 -> #6acb69 (L .760->.760, C .203->.163; 1); Cu #c88033 -> #d88e43 (L .662->.708, C .127->.127; 2); Zn #7d80b0 -> #999cce (L .616->.708, C .072->.073; 3); Ga #c28f8f -> #c59292 (L .699->.709, C .062->.062; 1); Ge #668f8f -> #81aaaa (L .620->.708, C .045->.044; 1); As #bd80e3 -> #c083e6 (L .699->.709, C .153->.153; 1); Se #ffa100 -> #fca323 (L .786->.786, C .172->.163; 2); Rb #702eb0 (live #8c46cf) -> #b585f4 (L .464->.708, C .194->.163); Sr #00ff00 -> #90ee88 (L .866->.867, C .295->.164; 1); Y #94ffff -> #8ffcfc (L .936->.926, C .099->.101; 1); Tc #3b9e9e -> #52b3b3 (L .642->.709, C .091->.091; 1); Ru #248f8f -> #50b3b3 (L .593->.708, C .092->.092); Rh #0a7d8c -> #52b1c0 (L .541->.709, C .092->.092; 1); Pd #006985 (live #007493) -> #5cadcb (L .484->.708, C .091->.090; 1); Ag #c0c0c0 -> #b5c3cc (L .808->.809, C .000->.020; 1); In #a67573 -> #c59290 (L .612->.708, C .062->.062; 1); Sn #668080 -> #8ca7a7 (L .580->.708, C .030->.030; 1); Sb #9e63b5 -> #c285da (L .596->.709, C .136->.136; 1); Te #d47a00 -> #e38822 (L .664->.709, C .153->.153; 1); Xe #429eb0 -> #55b0c2 (L .652->.709, C .090->.090; 1); Cs #57178f (live #923adf) -> #b585f4 (L .382->.708, C .179->.163; 1); Ba #00c900 -> #61bf5c (L .724->.724, C .246->.163; 1); Ce #ffffc7 -> #eaebb4 (L .986->.926, C .072->.071); Pr #d9ffc7 -> #cef4bc (L .959->.926, C .083->.084); Nd #c7ffc7 -> #bff8c0 (L .947->.926, C .094->.095; 1); Pm #a3ffc7 -> #a3fec6 (L .927->.925, C .117->.117); Gd #45ffc7 -> #4affc8 (L .896->.897, C .166->.164); Tb #30ffc7 -> #45fec9 (L .892->.894, C .172->.163); Dy #1fffc7 -> #43fdc8 (L .891->.891, C .175->.164); Ho #00ff9c -> #6bf7aa (L .880->.879, C .211->.164); Er #00e675 -> #62de8a (L .810->.809, C .215->.163); Tm #00d452 -> #5ecc71 (L .758->.759, C .223->.163); Yb #00bf38 -> #54bb5d (L .700->.709, C .218->.163); Lu #00ab24 -> #59ba5a (L .644->.708, C .208->.162); W #2194d6 -> #3fabee (L .637->.709, C .138->.138; 2); Re #267dab -> #58abdb (L .560->.709, C .107->.107); Os #266696 (live #296fa3) -> #68a8dc (L .493->.709, C .100->.101; 1); Ir #175487 (live #1e6eb0) -> #6ca6df (L .435->.708, C .104->.104; 1); Au #ffd123 -> #fdd23b (L .876->.877, C .173->.163; 1); Tl #a6544d -> #dd857d (L .544->.708, C .109->.110; 1); Pb #575961 (live #686a72) -> #9ea0ae (L .465->.709, C .013->.020; 1); Bi #9e4fb5 -> #ca7de2 (L .566->.708, C .169->.163; 2); Po #ab5c00 -> #de8a43 (L .556->.708, C .133->.134; 1); At #754f45 (live #8d5f53) -> #c0968a (L .467->.709, C .054->.054; 1); Rn #428296 -> #6bacc1 (L .572->.709, C .072->.073; 1); Fr #420066 (live #a200fa) -> #ba85ea (L .298->.708, C .153->.152; 1); Ra #007d00 -> #5cba57 (L .511->.709, C .174->.163; 1); Pa #00a1ff -> #31a8ff (L .687->.708, C .176->.163; 1); U #008fff -> #50a4ff (L .647->.708, C .194->.157; 1); Np #0080ff -> #5ba2ff (L .615->.708, C .211->.155); Pu #006bff -> #66a0ff (L .573->.709, C .235->.152; 1); Am #545cf2 -> #8597ff (L .560->.708, C .221->.153; 1); Cm #785ce3 -> #9f8dff (L .575->.709, C .196->.163); Bk #8a4fe3 -> #ad88f9 (L .573->.709, C .213->.163); Cf #a136d4 -> #c380ea (L .561->.709, C .233->.163; 1); Es #b31fd4 -> #cb7de1 (L .570->.709, C .258->.162); Fm #b31fba (live #b51fbc) -> #d479d7 (L .553->.708, C .239->.164); Md #b30da6 (live #be0eb1) -> #da77cd (L .533->.708, C .234->.162); No #bd0d87 (live #c80e8f) -> #e772b6 (L .534->.708, C .221->.164); Lr #c70066 (live #d0006a) -> #f0709b (L .537->.708, C .217->.163); Rf #cc0059 (live #d2005b) -> #f3708f (L .542->.709, C .217->.163); Db #d1004f (live #d40050) -> #f47086 (L .549->.708, C .219->.163); Sg #d90045 -> #f5707e (L .562->.708, C .225->.163); Bh #e00038 -> #f67174 (L .573->.708, C .230->.164); Hs #e6002e -> #f6726f (L .583->.709, C .236->.163); Mt #eb0026 -> #f6726b (L .592->.708, C .240->.164).
+- **Kept** (already inside the band at 3:1): B #ffb5b5, Ne #b3e3f5, Al #bfa6a6, Si #f0c8a0, Ar #80d1e3, Co #f090a0, Kr #5cb8d1, Zr #94e0e0, Nb #73c2c9, Mo #54b5b5, Cd #ffd98f, La #70d4ff, Sm #8fffc7, Eu #61ffc7, Hf #4dc2ff, Ta #4da6ff, Pt #d0d0e0, Hg #b8b8d0, Ac #70abfa, Th #00baff.
+- **Repaint, not redraw** (trust run 6's path, extended). `RECIPE_VERSION` 2026-10-25.2. `RECOLOURABLE` is now a dict,
+  recipe -> (the palette it drew with, its colour for an unlisted element): 2026-09-07.1 (the ten, black) and
+  2026-10-25.1 (the ten + Jmol + the 15 lightened, white). `_paint` replaces in an atom's tags exactly the colours a
+  recolourable recipe drew that element in, plus black (radical dots), and nothing else. **Found while checking:**
+  RDKit's close-contact flag, a pure red #FF0000 box round an atom the layout put too close to another, is classed with
+  the atom (`class='atom-N'`, `fill:none`); 14 shipped drawings carry one (calcitonin, cholecystokinin, ghrelin,
+  glucagon, huperzine A, insulin, inulin, ivermectin, leptin, liraglutide, semaglutide, tesamorelin, tirzepatide,
+  vasoactive intestinal peptide). A first cut that repainted every colour in an atom's tags turned those boxes carbon;
+  the byte-identical check on the ten-only drawings caught it before commit. The flag is now left as drawn (a test pins
+  it). rdkit 2026.09.1 lays huperzine A out without the contact, so the box comes from the older layout. Proven on all
+  896: a 2026-10-25.1 drawing made here, repainted, equals a fresh 2026-10-25.2 draw made here, byte for byte (896
+  equal, 0 differ).
+- **Pinned build** (`mfetl sync-inputs` 17122735c9f95167, then `mfetl all`, all three keys blanked), exit 0: **896
+  molecule files change, `structure_svg_key` on all 896, `structure_svg` on 127**, by colour only (every one with its
+  colours stripped is the drawing that shipped); no other field and no other file. **The 742 drawings that use only the
+  ten are byte-identical** (trust run 6's 736 plus its 6 radicals), caffeine among them. The 127 by element: Na 36, K 13,
+  Ca 12, Mg 11, Zn 3, Fe 3, then one or two each. 27 drawings outside the ten keep their bytes (aluminium, silicon,
+  boron, cobalt and the B12 family, the noble gases, mercury, cisplatin...: their colours were already in the band).
+- **Tests**, `tests/test_structure_palette.py` rewritten (155): OKLCH against CSS Color 4's worked red; the module's
+  contrast is WCAG's; the band equals the ten's extremes and the comment's numbers are true; the ten kept; the source
+  table is Jmol's; every colour 0 to 118 inside the band and at 3:1; each Jmol colour is the rule's (kept where it was
+  inside, each axis kept or clamped to its edge within one 8-bit step, chroma lower only where sRGB ends, hue kept); the
+  fallback follows the rule; the palette's fingerprint is pinned to the recipe version (change the palette without a
+  bump and it fails); each label carries its table colour, from both older recipes' shipped drawings
+  (`tests/fixtures/structures-2026-09-07.1/` and `-2026-10-25.1/`, eight molecules each, magnesium and gold added);
+  repaint equals a fresh draw for both recipes; caffeine byte-identical; geometry kept; the close-contact flag
+  untouched; and the snapshot sweep: every atom label and dot in every drawing in its table colour, 14 flagged
+  drawings, every key current. **911 passed, 1 skipped** (792 before); ruff 131, unchanged; the new code clean.
+- **What the rule costs (measured; not hand-adjusted, per the brief).** Clamping puts many of Jmol's darker colours
+  on the band's floor, so colours Jmol told apart by lightness now meet. OKLab distances (about 0.02 is a just-
+  noticeable difference): Rb and Cs identical (#b585f4; Rb is not in the catalog); **Na #ba83f1 and K #b884f2 0.004**,
+  and they meet in one drawing, potassium sodium tartrate; K and I 0.062 (potassium iodide; 0.226 before), K and Mn
+  0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
+  phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text.
 
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
