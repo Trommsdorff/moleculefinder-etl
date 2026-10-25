@@ -112,3 +112,20 @@ def test_the_hand_list_is_in_the_index_and_each_code_names_its_molecule():
         assert index.get(u, {}).get("slug") == slug, (u, slug, index.get(u))
         assert index[u]["how"] in ("alias", *products.DIRECT_HOWS), (u, index[u])
         assert index[u]["name"], (u, "no FDA display name")
+
+
+def test_garretts_forms_ruling_links_the_same_substance_and_never_an_altered_one():
+    """Garrett, 2026-10-25: "yes on linking cellulose, starch, and lecithin and other chemically identical
+    materials". A physical form, grade, plant source or hydration state reaches the molecule; a chemically
+    altered material (an ester, a salt of a derivative, a cross-linked or substituted polymer) never does."""
+    index = _index()
+    same = {"OP1R32D61U": "cellulose", "SMD1X3XO9M": "cellulose", "O8232NY3SJ": "starch", "8I089SAH3T": "starch",
+            "1DI56QDM62": "lecithin", "8KW3E207O2": "sorbitol", "70WT22SF4B": "disodium-phosphate",
+            "O7TSZ97GEP": "dicalcium-phosphate"}
+    for code, slug in same.items():
+        assert index.get(code, {}).get("slug") == slug, (code, index.get(code))
+    altered = {"M28OL1HH48": "CROSCARMELLOSE SODIUM", "RFW2ET671P": "HYDROXYPROPYL CELLULOSE",
+               "5856J3G2A2": "SODIUM STARCH GLYCOLATE", "9E8X80D2L0": "ALPHA-TOCOPHEROL ACETATE",
+               "15FIX9V2JP": "TITANIUM DIOXIDE", "3J2P07GVB6": "CELLULOSE ACETATE"}
+    for code, name in altered.items():
+        assert code not in index, (code, name, index.get(code))

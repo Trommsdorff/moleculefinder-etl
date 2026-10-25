@@ -70,3 +70,22 @@ aliases:
                                  # sodium tetraborate, CID 10219853. Found by the web's name sweep (trust run 3).
   K679OBS311: carboxymethyl-cellulose  # CARBOXYMETHYLCELLULOSE SODIUM, UNSPECIFIED ("cellulose gum" on labels; no PubChem CID):
                                  # the sodium salt of the polymer; the record is carboxymethylcellulose, CID 24748
+  # Garrett's ruling (2026-10-25): "yes on linking cellulose, starch, and lecithin and other chemically
+  # identical materials". The same substance in another physical form, grade, plant source or hydration
+  # state, never a chemically altered one (croscarmellose, hydroxypropyl cellulose, sodium starch
+  # glycolate, tocopherol acetate and titanium dioxide stay unlinked). Found by listing every label name
+  # that is a catalog molecule's name plus only form, grade, source or hydration words, each checked
+  # against its FDA record by hand; matched by these codes, never by the name.
+  OP1R32D61U: cellulose          # MICROCRYSTALLINE CELLULOSE (113 labels): cellulose, purified and ground fine
+  7T9FYH5QMK: cellulose          # MICROCRYSTALLINE CELLULOSE 101 (a particle-size grade)
+  PNR0YF693Y: cellulose          # MICROCRYSTALLINE CELLULOSE 102 (a particle-size grade)
+  SMD1X3XO9M: cellulose          # POWDERED CELLULOSE
+  O8232NY3SJ: starch             # STARCH, CORN (77 labels)
+  8I089SAH3T: starch             # STARCH, POTATO
+  4DGK8B7I3S: starch             # STARCH, RICE
+  1DI56QDM62: lecithin           # SOYBEAN LECITHIN (lecithin from soybeans)
+  8KW3E207O2: sorbitol           # SORBITOL SOLUTION (the FDA's defined form of sorbitol in water)
+  O7TSZ97GEP: dicalcium-phosphate  # DIBASIC CALCIUM PHOSPHATE DIHYDRATE (the hydrate of the record's salt)
+  94255I6E2T: disodium-phosphate # SODIUM PHOSPHATE, DIBASIC, DIHYDRATE
+  70WT22SF4B: disodium-phosphate # SODIUM PHOSPHATE, DIBASIC, HEPTAHYDRATE (Mounjaro)
+  2A1Q1Q3557: sodium-carbonate   # SODIUM CARBONATE MONOHYDRATE
