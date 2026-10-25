@@ -753,7 +753,9 @@ code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
   rebuild products.json with the count, and the web would show no names until the next deploy). Nothing deploys from
   this repo.
 
-## The forms ruling (2026-10-25). BUILT on `forms-2026-10` (`94a4122` code, `81bbb59` data), waiting for deploy
+## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
+**DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
+checks (company CLAUDE.md). Monday 2026-10-26's weekly run is the first on this code.
 Garrett, 2026-10-25: "yes on linking cellulose, starch, and lecithin and other chemically identical materials". This
 answers the open question at the end of trust run 3. Thirteen codes join `unii_aliases.yaml` `aliases`, under a comment
 quoting the ruling: microcrystalline cellulose (OP1R32D61U, and the 101 and 102 grades) and powdered cellulose ->
