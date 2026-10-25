@@ -894,7 +894,7 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   noticeable difference): Rb and Cs identical (#b585f4; Rb is not in the catalog); **Na #ba83f1 and K #b884f2 0.004**,
   and they meet in one drawing, potassium sodium tartrate; K and I 0.062 (potassium iodide; 0.226 before), K and Mn
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
-  phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text.
+  phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
