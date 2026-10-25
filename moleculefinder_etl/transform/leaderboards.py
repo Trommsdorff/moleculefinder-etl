@@ -22,7 +22,11 @@ BOARDS: dict[str, dict] = {
         # (ORAL_ONLY, below), and says so on every row instead of asking the reader to
         # trust the header.
         "columns": ["route", "species"],
+        # Trust run 4 (2026-10-25, the agreed trust list's item 4): the framing sentence leads, so the
+        # page, its meta description and a search snippet all say first what this ranking is not.
         "description": (
+            "A ranking of pure substances by one animal measurement, not of how dangerous "
+            "any food, drink, medicine or product is to a person. "
             "Ranked by the lowest reported oral LD50, preferring the rat and then the "
             "mouse so the numbers compare like with like. Every row names its route and "
             "species. A molecule measured only by injection is not listed here, because "
