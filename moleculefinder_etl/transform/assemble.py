@@ -906,7 +906,8 @@ def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
     catalog whose depiction goes through a numerical minimiser (``structures`` docstring has
     the measurements). Re-rendering every week therefore rewrote 53 files on any run that
     happened on the other platform, for no change a reader could see. A record whose SMILES
-    and recipe version are unchanged now keeps the exact SVG it shipped with.
+    and recipe version are unchanged now keeps the exact SVG it shipped with; one whose recipe
+    changed only in colour keeps its layout and takes the new colours.
     """
     if not smiles:
         return {"structure_svg": None, "structure_svg_key": None}
@@ -917,11 +918,22 @@ def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
         # fall back to comparing the SMILES they were drawn from. Without it the very run
         # that introduces the key would redraw all 769 structures on whatever platform it
         # happened to run on, which is the churn this exists to stop.
-        unchanged = (prior.get("structure_svg_key") == key
-                     or (prior.get("structure_svg_key") is None
-                         and prior.get("isomeric_smiles") == smiles))
-        if unchanged:
+        # Repaint path (trust run 6, 2026-10-25): a drawing from an earlier recipe that differs
+        # from this one only in colour (``structures.RECOLOURABLE``) is repainted, not redrawn.
+        # rdkit 2026.09.1 lays out 406 of the 896 shipped drawings differently from the release
+        # that drew them, so a redraw would have mirrored or rearranged them for a colour fix.
+        # ``recolour`` touches only black atom labels and dots, and matches a fresh draw byte
+        # for byte wherever the layout agrees (tests/test_structure_palette.py). A drawing from
+        # before the key is from an older recipe still, so the adoption path repaints too.
+        prior_key = prior.get("structure_svg_key")
+        if prior_key == key:
             return {"structure_svg": prior["structure_svg"], "structure_svg_key": key}
+        older = ((prior_key is None and prior.get("isomeric_smiles") == smiles)
+                 or prior_key in {structures.svg_key(smiles, recipe=v)
+                                  for v in structures.RECOLOURABLE})
+        if older:
+            return {"structure_svg": structures.recolour(prior["structure_svg"], smiles),
+                    "structure_svg_key": key}
     return {"structure_svg": structures.svg_for(smiles), "structure_svg_key": key}
 
 
