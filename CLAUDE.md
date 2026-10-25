@@ -78,7 +78,8 @@ fixes acronym labels (nsaid → NSAID). 42 offline tests pass; ruff clean. **Pus
 `../MoleculeFinder-Color-System-Brief.md`. `transform/structures.py` now renders CPK-colored SVGs
 (**verified recipe:** `updateAtomPalette` with **carbon = key 6** + `singleColourBonds` +
 `setSymbolColour(#bdd6e6)` + `clearBackground=False` → uniform light skeleton, colored heteroatom
-labels, transparent bg). `transform/families.py` maps type-slug → family key (the web mirrors it in
+labels, transparent bg; since trust run 6, 2026-10-25, the palette covers every element, see that
+section). `transform/families.py` maps type-slug → family key (the web mirrors it in
 `lib/families.ts`); `assemble.py` bakes `family` per molecule + `neighbor_family` per edge.
 `transform/roam_layout.py` bakes a deterministic family-clustered constellation → `roam.json`
 (emitted by `snapshot_export`). Regenerate all of it with `mfetl transform && mfetl export`.
@@ -765,6 +766,57 @@ The agreed trust list's item 4 (item 3, the home news block, is web only; compan
 ranking of pure substances by one animal measurement, not of how dangerous any food, drink, medicine or product is to a
 person." Pinned build (keys blanked): exactly `leaderboards/deadliest.json` and `leaderboards/index.json` change; 756
 tests; ruff 131. Deploy: ETL `main` first, then web `main`, before Monday 2026-10-26.
+
+## Trust run 6 (2026-10-25): every atom in every drawing has its CPK colour. DEPLOYED 2026-10-25 (`5eda549`)
+**DEPLOYED 2026-10-25 about 21:04 UTC on Garrett's word**: ETL `main` e400a54 -> `5eda549` first (with the notes
+commits `7e558e1`, `d621886`; deploys nothing, no workflow ran), then web `main` -> `03c1ab2`, GitHub deployment
+`7319142561` Production success. IndexNow 169 changed (160 /m, 7 /vs, /, /classroom), 169 accepted, audit exact; live
+checks and Lighthouse in the company CLAUDE.md, "Trust run 6". **Monday 2026-10-26's weekly run is the first on this
+code:** every key is current, so it carries all 896 drawings forward on Linux (the snapshot sweep test fails the run if
+a drawing ships black or a key is stale); a NEW molecule is drawn fresh with the full palette. Its Supabase load also
+carries the new SVGs into the `molecule` table (this Mac's build skipped the load, keys blanked).
+**The finding** (trust run 5): `structures.CPK_HEX` listed ten elements and RDKit drew every other atom label black,
+nearly invisible on the navy panel: 160 of 896 drawings, 66 entirely black (the element pages, `/m/aluminium` a faint
+"Al"), 94 in part (88 with a black label, calcium carbonate's Ca, acesulfame potassium's K, the dyes' Na; and 6 whose
+only black was RDKit's **radical electron dots**: carbon, fluorine, nitric oxide, phosphorus, sulfur, PMMA). 67
+elements outside the ten occur in the catalog (Na 36 molecules, K 13, Ca 12, Mg 11...). **Garrett's ruling:** the full
+standard CPK table, so each element's colour keeps meaning something (Color-as-Information), one light fallback only
+for an element outside it. Branch `rdkit-cpk-2026-10`: code `35d4457`, data `5eda549`.
+- **`CPK_HEX`**: the ten brief hues kept exactly (the 736 drawings that use only them do not change), plus Jmol's CPK
+  colour for every other element 1 to 109 (parsed from `jmol.sourceforge.net/jscolors/jmol_constants.js`, Jmol 12.1.15
+  rev 14469, not typed from memory). **Contrast** (WCAG, graphical objects, 3:1 on `PANEL_HEX` #0e2233, the lightest
+  surface a drawing sits on; the stage is #09161e): 15 Jmol colours fall short and are lightened by HSL lightness only,
+  the minimum to reach 3:1, hue within 0.3 degrees and saturation kept, each noted beside its entry: K #8f40d4 -> #9041d4
+  (2.97 -> 3.01), Rb #702eb0 -> #8c46cf (2.09 -> 3.00), Pd #006985 -> #007493 (2.59 -> 3.03), Cs #57178f -> #923adf
+  (1.49 -> 3.01), Os #266696 -> #296fa3 (2.64 -> 3.01), Ir #175487 -> #1e6eb0 (2.05 -> 3.02), Pb #575961 -> #686a72
+  (2.32 -> 3.01; the plain lightness search rounded to a hue 3 degrees off on this near grey, so the nearest hex at hue
+  228.0 was taken), At #754f45 -> #8d5f53 (2.29 -> 3.01), Fr #420066 -> #a200fa (1.10 -> 3.02), Fm #b31fba -> #b51fbc
+  (2.95 -> 3.00), Md #b30da6 -> #be0eb1 (2.72 -> 3.00), No #bd0d87 -> #c80e8f (2.76 -> 3.02), Lr #c70066 -> #d0006a
+  (2.79 -> 3.00), Rf #cc0059 -> #d2005b (2.87 -> 3.00), Db #d1004f -> #d40050 (2.95 -> 3.02). Iodine is one of the kept
+  ten (#c79af0, 7.19:1), so it needed nothing. In the catalog the adjusted ones are K, Cs, Fr, Ir, Os, Pb, Pd, At.
+- **`FALLBACK_HEX` #ffffff** for 110 to 118 (past Jmol's table) and a dummy atom: RDKit palette keys -1 (default black)
+  and 0 (near black). No catalog molecule uses it today.
+- **Radical dots:** RDKit draws them black whatever the options say (checked every colour option it has). `svg_for` now
+  ends with `_paint`: any black left on an atom (`class='atom-N'`, never a bond) takes that atom's colour.
+- **`RECIPE_VERSION` 2026-10-25.1, and a repaint instead of a redraw.** rdkit on this Mac is now **2026.09.1**, and it
+  lays out **406 of the 896 shipped drawings differently** from the release that drew them (benzene mirrored top to
+  bottom; caffeine happens to match). A literal redraw would have flipped or rearranged about 400 structures for a
+  colour fix. So `assemble._carried_svg` repaints a drawing whose key is a `structures.RECOLOURABLE` recipe's
+  (2026-09-07.1) with `structures.recolour` (black atom elements only), and stores the new key. **Proven on all 896:**
+  repainting a 2026-09-07.1 drawing made here equals a fresh 2026-10-25.1 draw made here, byte for byte (896 equal, 0
+  differ). A palette-only change in future: add the outgoing version to `RECOLOURABLE`. A layout change (draw options,
+  canvas): bump without it, and expect every drawing to redraw on whatever machine runs it.
+- `tests/test_structure_palette.py` (36): the ten kept, every element 0 to 118 at 3:1 or more, each lightened entry
+  needed it and kept its hue, the comments name exactly the lightened Jmol colours; aluminium, calcium carbonate,
+  acesulfame potassium, potassium iodide, caffeine and nitric oxide carried from their SHIPPED drawings
+  (`tests/fixtures/structures-2026-09-07.1/`) and drawn fresh: no black, each element in its table colour; repaint
+  equals a fresh draw; caffeine byte-identical with only its key moved; a repainted drawing keeps every coordinate; and
+  a sweep of the committed snapshot (no black, every atom colour 3:1 or more, every key current, so the Linux weekly run
+  carries the drawings forward instead of redrawing them). **792 passed, 1 skipped** (756 before); ruff 131 (unchanged;
+  the new files clean).
+- **Pinned build** (`mfetl sync-inputs` 17122735c9f95167, then `mfetl all`, all three keys blanked), exit 0: **896
+  molecule files change, `structure_svg_key` on all 896, `structure_svg` on exactly 160** (all 66 and all 94); no other
+  field, no other file (meta.json, products, boards, seed files identical). Version not embedded in the SVG itself.
 
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
