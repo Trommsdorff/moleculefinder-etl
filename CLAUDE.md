@@ -818,7 +818,22 @@ for an element outside it. Branch `rdkit-cpk-2026-10`: code `35d4457`, data `5ed
   molecule files change, `structure_svg_key` on all 896, `structure_svg` on exactly 160** (all 66 and all 94); no other
   field, no other file (meta.json, products, boards, seed files identical). Version not embedded in the SVG itself.
 
-## Trust run 7 (2026-10-25): every colour outside the ten tuned into the ten's band, by one rule. BUILT, NOT YET DEPLOYED
+## Trust run 7 (2026-10-25): every colour outside the ten tuned into the ten's band, by one rule. DEPLOYED 2026-10-25 (`ee3e49d`)
+**DEPLOYED 2026-10-25 about 22:15 UTC on Garrett's word** (his brief carried the deploy step). No other branch was
+waiting in either repo. ETL `main` 5eda549 -> `16dc5ae` (with the waiting notes commit `c8a6cb2`; deploys nothing, no
+workflow ran), pushed 22:15:19; web `main` 03c1ab2 -> `e1c4994` (with `dc4e556`), pushed 22:15:25, GitHub deployment
+`7319980098` Production success. Clear of the news cron (the 18:50 slot had run at 21:16, the next is 00:50) and of
+Monday's 06:00 weekly run. **IndexNow** run 40239435718: 1,697 -> 1,697, 0 new, 136 changed, 0 removed, 136 submitted
+and 136 accepted, audit exact, `indexnow-last` -> `e1c4994` (the 127 /m pages, `/`, `/classroom`, 7 /vs, as the dry
+run said). **Live** (headless Brave): `/m/calcium-carbonate`, `/m/magnesium`, `/m/acesulfame-potassium`,
+`/m/potassium-iodide`, `/m/gold`, `/m/caffeine` 200, 0 console errors, 0 failed requests; the drawings carry Ca
+#95EF87, Mg #ADF481, K #B884F2, Au #FDD23B; caffeine all 28 paths of its shipped drawing verbatim;
+`/embed/calcium-carbonate.svg` 200 image/svg+xml with Ca #95EF87; `/classroom`'s sodium fluoride (Na #BA83F1) and
+potassium nitrate (K #B884F2) cards load; sitemap 1,697. **Live Lighthouse** (mobile, median of 3, headless Brave):
+`/m/caffeine` perf 99, SEO 100, LCP 2.00 s, CLS 0, 382 KB; `/m/calcium-carbonate` 99, 100, 2.13 s, 0, 374 KB; observed
+first paint 0.43 to 0.47 s. **Next:** Monday 2026-10-26's weekly run is the first on this code: every key is current,
+so it carries all 896 drawings forward on Linux and loads the new SVGs into Supabase; a new molecule is drawn fresh in
+the tuned palette.
 **Garrett's ruling:** trust run 6's Jmol colours were never tuned for the navy panel the way the brief's ten were (raw
 CPK "vibrates on dark", `../MoleculeFinder-Color-System-Brief.md` §2): calcium neon green, magnesium and strontium the
 same, potassium a dark purple. Tune them the way the ten were tuned, by ONE rule, not by eye, so every element present
