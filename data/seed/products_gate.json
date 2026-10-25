@@ -1,11 +1,11 @@
 {
  "seeded": 475,
- "passed": 413,
- "failed": 62,
+ "passed": 424,
+ "failed": 51,
  "by_kind": {
   "food": 35,
   "drink": 14,
-  "medicine": 287,
+  "medicine": 298,
   "cosmetic": 60,
   "household": 12,
   "chemistry": 1,
@@ -19,7 +19,7 @@
  "matched_by_rule": {
   "parent": 127,
   "skeleton": 32,
-  "alias": 116
+  "alias": 351
  },
  "unii_index": {
   "fda_table": "UNII_Records_4Aug2026.txt",
@@ -74,18 +74,6 @@
    "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
    "matched": [
     "paclitaxel"
-   ]
-  },
-  {
-   "slug": "aleve",
-   "name": "Aleve",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "00ef5b30-71d0-4cb4-84a3-48c67d1cea2a",
-   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "naproxen",
-    "magnesium-stearate"
    ]
   },
   {
@@ -161,9 +149,10 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "4ab12da7-5731-4e06-bf1c-bc3f2e711f12",
-   "reason": "the label lists 4 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 4 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
-    "misoprostol"
+    "misoprostol",
+    "cellulose"
    ]
   },
   {
@@ -186,18 +175,6 @@
    "item": "ed16d0f4-74e7-4fa3-989d-c6840a5d3e71",
    "reason": "the label lists 1 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
    "matched": []
-  },
-  {
-   "slug": "effexor-xr",
-   "name": "Effexor XR",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "c848a5d8-ba94-4c84-80e3-0bf35fb8e32e",
-   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "venlafaxine",
-    "gelatin"
-   ]
   },
   {
    "slug": "emsam",
@@ -235,18 +212,6 @@
    ]
   },
   {
-   "slug": "gocovri",
-   "name": "Gocovri",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "2bee0631-0028-1314-e063-6394a90aaaed",
-   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "amantadine",
-    "magnesium-stearate"
-   ]
-  },
-  {
    "slug": "inbrija",
    "name": "Inbrija",
    "kind": "medicine",
@@ -259,18 +224,6 @@
    ]
   },
   {
-   "slug": "januvia",
-   "name": "Januvia",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "f85a48d0-0407-4c50-b0fa-7673a160bf01",
-   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "dicalcium-phosphate",
-    "magnesium-stearate"
-   ]
-  },
-  {
    "slug": "jardiance",
    "name": "Jardiance",
    "kind": "medicine",
@@ -279,18 +232,6 @@
    "reason": "the label lists 1 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
    "matched": [
     "empagliflozin"
-   ]
-  },
-  {
-   "slug": "journavx",
-   "name": "Journavx",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "f0976da4-1d20-4517-945c-b60ed2f41c12",
-   "reason": "the label lists 10 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "suzetrigine",
-    "magnesium-stearate"
    ]
   },
   {
@@ -312,30 +253,6 @@
    "matched": [
     "levothyroxine",
     "sodium-bicarbonate"
-   ]
-  },
-  {
-   "slug": "lotrimin-af",
-   "name": "Lotrimin AF",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "163996c6-af54-21ac-e063-6394a90ac05c",
-   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "miconazole",
-    "magnesium-stearate"
-   ]
-  },
-  {
-   "slug": "mucinex-fast-max-cold-and-flu",
-   "name": "Mucinex Fast-Max Cold and Flu",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "31ac6883-ffcd-39de-e063-6294a90a52dd",
-   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "acetaminophen",
-    "dextromethorphan"
    ]
   },
   {
@@ -375,9 +292,10 @@
    "kind": "medicine",
    "source": "dailymed",
    "item": "40fde50a-3cc0-4286-9b33-8f3912254c33",
-   "reason": "the label lists 5 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
-    "phenylephrine"
+    "phenylephrine",
+    "starch"
    ]
   },
   {
@@ -401,18 +319,6 @@
    "matched": [
     "methylene-blue",
     "water"
-   ]
-  },
-  {
-   "slug": "pyridium",
-   "name": "Pyridium",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "165d01d4-a9f7-2293-e054-00144ff8d46c",
-   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "phenazopyridine",
-    "magnesium-stearate"
    ]
   },
   {
@@ -449,18 +355,6 @@
    ]
   },
   {
-   "slug": "tenormin",
-   "name": "Tenormin",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "6e850b1e-28a4-4ff8-8ed7-bb0b29faa28a",
-   "reason": "the label lists 5 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "atenolol",
-    "magnesium-stearate"
-   ]
-  },
-  {
    "slug": "tinactin",
    "name": "Tinactin",
    "kind": "medicine",
@@ -481,30 +375,6 @@
    "reason": "the label lists 7 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
    "matched": [
     "scopolamine"
-   ]
-  },
-  {
-   "slug": "tylenol-8-hr-arthritis-pain",
-   "name": "Tylenol 8 HR Arthritis Pain",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "3af22fc8-e4e0-4863-8696-6bc1257047cb",
-   "reason": "the label lists 11 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "acetaminophen",
-    "magnesium-stearate"
-   ]
-  },
-  {
-   "slug": "tylenol-regular-strength",
-   "name": "Tylenol Regular Strength",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "1622f694-4d63-4c56-8737-fae31f0ecfb7",
-   "reason": "the label lists 4 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "acetaminophen",
-    "magnesium-stearate"
    ]
   },
   {
@@ -728,16 +598,8 @@
    "labels": 150
   },
   {
-   "name": "MICROCRYSTALLINE CELLULOSE",
-   "labels": 122
-  },
-  {
    "name": "HYPROMELLOSE, UNSPECIFIED",
    "labels": 97
-  },
-  {
-   "name": "STARCH, CORN",
-   "labels": 80
   },
   {
    "name": "POLYETHYLENE GLYCOL, UNSPECIFIED",
@@ -932,10 +794,6 @@
    "labels": 9
   },
   {
-   "name": "LECITHIN, SOYBEAN",
-   "labels": 9
-  },
-  {
    "name": "OCTOCRYLENE",
    "labels": 9
   },
@@ -956,12 +814,24 @@
    "labels": 8
   },
   {
-   "name": "DIBASIC CALCIUM PHOSPHATE DIHYDRATE",
+   "name": "SODIUM STEARYL FUMARATE",
    "labels": 8
   },
   {
-   "name": "SODIUM STEARYL FUMARATE",
+   "name": "SORBITAN",
    "labels": 8
+  },
+  {
+   "name": "CANDELILLA WAX",
+   "labels": 7
+  },
+  {
+   "name": "CARBOMER HOMOPOLYMER TYPE C (ALLYL PENTAERYTHRITOL CROSSLINKED)",
+   "labels": 7
+  },
+  {
+   "name": "CASTOR OIL",
+   "labels": 7
   }
  ]
 }
