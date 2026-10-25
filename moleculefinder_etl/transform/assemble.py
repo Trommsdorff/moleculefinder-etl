@@ -922,8 +922,9 @@ def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
         # from this one only in colour (``structures.RECOLOURABLE``) is repainted, not redrawn.
         # rdkit 2026.09.1 lays out 406 of the 896 shipped drawings differently from the release
         # that drew them, so a redraw would have mirrored or rearranged them for a colour fix.
-        # ``recolour`` touches only black atom labels and dots, and matches a fresh draw byte
-        # for byte wherever the layout agrees (tests/test_structure_palette.py). A drawing from
+        # ``recolour`` touches only the colours of atom labels and dots (trust run 7, 2026-10-25,
+        # repaints the untuned ones as well as the black), and matches a fresh draw byte for
+        # byte wherever the layout agrees (tests/test_structure_palette.py). A drawing from
         # before the key is from an older recipe still, so the adoption path repaints too.
         prior_key = prior.get("structure_svg_key")
         if prior_key == key:

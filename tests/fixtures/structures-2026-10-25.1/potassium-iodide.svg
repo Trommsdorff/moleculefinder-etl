@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<svg version='1.1' baseProfile='full'
+              xmlns='http://www.w3.org/2000/svg'
+                      xmlns:rdkit='http://www.rdkit.org/xml'
+                      xmlns:xlink='http://www.w3.org/1999/xlink'
+                  xml:space='preserve'
+width='400px' height='300px' viewBox='0 0 400 300'>
+<!-- END OF HEADER -->
+<path class='atom-0' d='M 58.3 135.9
+L 62.1 135.9
+L 62.1 164.2
+L 58.3 164.2
+L 58.3 135.9
+M 74.0 135.9
+L 79.2 135.9
+L 68.0 148.8
+L 80.1 164.2
+L 75.1 164.2
+L 63.0 148.9
+L 74.0 135.9
+' fill='#9041D4'/>
+<path class='atom-0' d='M 82.4 141.0
+L 87.4 141.0
+L 87.4 135.7
+L 89.6 135.7
+L 89.6 141.0
+L 94.8 141.0
+L 94.8 142.9
+L 89.6 142.9
+L 89.6 148.2
+L 87.4 148.2
+L 87.4 142.9
+L 82.4 142.9
+L 82.4 141.0
+' fill='#9041D4'/>
+<path class='atom-1' d='M 323.7 135.8
+L 327.5 135.8
+L 327.5 164.3
+L 323.7 164.3
+L 323.7 135.8
+' fill='#C79AF0'/>
+<path class='atom-1' d='M 332.0 140.6
+L 341.7 140.6
+L 341.7 142.7
+L 332.0 142.7
+L 332.0 140.6
+' fill='#C79AF0'/>
+</svg>
