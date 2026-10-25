@@ -753,7 +753,12 @@ code `4a6e478`, data `e33f26e`, plus this notes commit. Never pushed.
   rebuild products.json with the count, and the web would show no names until the next deploy). Nothing deploys from
   this repo.
 
-## Trust run 4 (2026-10-25): the Deadliest board says first what it is not. BUILT on `trust4-2026-10`, waiting for deploy
+## Trust run 4 (2026-10-25): the Deadliest board says first what it is not. DEPLOYED 2026-10-25 (`e400a54`)
+**DEPLOYED about 17:20 UTC on Garrett's word**: ETL `main` fcb4aa9 -> `e400a54` first (with `80f52e3`; deploys nothing),
+then web `main` -> `619508b`; IndexNow 0 new, 3 changed, 3 accepted, audit exact; the sentence verbatim live on
+`/best/deadliest` and `/best` (company CLAUDE.md "Trust run 4"). Monday 2026-10-26's weekly run is the first on this
+code. Note: the page's meta description puts the web's leader line ("Colchicine leads the Deadliest board at ...")
+before this sentence (web `lib/seo.ts`), so a search snippet may cut it; raised with Garrett.
 The agreed trust list's item 4 (item 3, the home news block, is web only; company CLAUDE.md "Trust run 4"). Commits
 `fad4696` (code), `3a1bb49` (data). `transform/leaderboards.py`: the deadliest board's description now leads with "A
 ranking of pure substances by one animal measurement, not of how dangerous any food, drink, medicine or product is to a
