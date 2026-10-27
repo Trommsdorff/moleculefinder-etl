@@ -18,6 +18,9 @@ jobs:
       # actions/checkout gets the sha that TRIGGERED the workflow, which is the state
       # before this run refreshed anything.
       snapshot_sha:      ${{ steps.commit.outputs.snapshot_sha }}
+      # How many Wikidata changes this run held back (trust run 8, transform/wikidata_age.py),
+      # for the all-clear and alarm summaries. "unknown" when the run failed before the seed stage.
+      wikidata_held:     ${{ steps.held.outputs.count }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -33,6 +36,22 @@ jobs:
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GITHUB_SHA:           ${{ github.sha }}
+      # A CHANGED Wikidata value ships only once it is 7 days old (trust run 8). The seed stage
+      # writes every held change to data/seed/wikidata_held.json (committed below) and to this
+      # run's summary, one line each; this counts them for the downstream jobs' summaries.
+      - name: Count held Wikidata changes
+        id: held
+        if: always()
+        run: |
+          # The file is committed, so last week's copy is on disk from the checkout: count it only
+          # if this run's seed stage rewrote it (newer than a file the checkout wrote).
+          if [ -n "$(find data/seed/wikidata_held.json -newer pyproject.toml 2>/dev/null)" ]; then
+            count=$(jq length data/seed/wikidata_held.json)
+          else
+            count=unknown
+          fi
+          echo "count=${count}" >> "$GITHUB_OUTPUT"
+          echo "Wikidata changes held this run: ${count}"
       - name: commit snapshot
         id: commit
         run: |
@@ -414,6 +433,11 @@ jobs:
               echo "::warning::could not close refresh-failure issue #$n; close it by hand"
             fi
           done
+      - name: Summary
+        env:
+          HELD: ${{ needs.run.outputs.wikidata_held }}
+        run: |
+          echo "All clear. Wikidata changes held this run (shipped once 7 days old): ${HELD:-unknown}. Each is listed in the run job's summary and in data/seed/wikidata_held.json." >> "$GITHUB_STEP_SUMMARY"
 
   # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
   # A separate job, not `if: failure()` on a step: a step-level guard cannot run
@@ -436,11 +460,13 @@ jobs:
           # a failure failed itself. GH_REPO supplies the context instead.
           GH_REPO: ${{ github.repository }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          HELD: ${{ needs.run.outputs.wikidata_held }}
         run: |
+          echo "Run failed. Wikidata changes held this run: ${HELD:-unknown}." >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
           existing=$(gh issue list --label refresh-failure --state open \
                        --limit 1 --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "Failed again: $RUN"
+            gh issue comment "$existing" --body "Failed again: $RUN (Wikidata changes held: ${HELD:-unknown})"
             exit 0
           fi
           gh label create refresh-failure --color B60205 \
@@ -453,5 +479,11 @@ jobs:
 
           moleculefinder.com is still serving its last good build — the DATA is
           frozen, the site is not down.
+
+          Wikidata changes held this run (they ship once 7 days old): ${HELD:-unknown}.
+
+          If the data PR's check failed: re-running a failed check on the data PR
+          reuses the old merge and cannot pick up a fix on main; close and reopen
+          the PR to get a fresh check.
 
           Close this issue once a run goes green again."

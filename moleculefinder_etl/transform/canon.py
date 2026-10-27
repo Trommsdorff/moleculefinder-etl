@@ -30,6 +30,7 @@ from ..config import (SEED_DIR, CANON_TARGET, RAW_CACHE, CURATED_DIR, SEEDS_DIR,
                       WIKIDATA_CACHE_TTL_DAYS)
 from ..sources import wikidata, pageviews, pubchem, cache
 from .. import freshness
+from . import wikidata_age
 
 log = logging.getLogger("mfetl")
 
@@ -310,19 +311,28 @@ def _scope_b_rows() -> list[dict]:
     return out
 
 
-def build_scope_b_canon() -> "list[dict]":
+def build_scope_b_canon(held: list | None = None,
+                        shipped: dict[int, dict] | None = None) -> "list[dict]":
     """The Scope B everyday-core canon: exactly the molecules in scope_b_core.csv, each
     stamped with its Scope B bucket/family and ranked by the CSV's Wikipedia pageviews.
 
     No notability net — this is a curated everyday core, not a demand-ranked slice of the
     119M-compound universe, so the target/notability machinery of `build_canon` is bypassed.
     CC0 Wikidata descriptions + QIDs are filled for the real CIDs (cached; synthetic CIDs
-    have no PubChem/Wikidata row and are skipped)."""
+    have no PubChem/Wikidata row and are skipped).
+
+    A changed Wikidata value ships only once it is ``wikidata_age.AGE_DAYS`` old (trust run 8);
+    until then the value in ``shipped`` (default: the committed canon.parquet, read before it is
+    overwritten) stands, and each held field is appended to ``held`` for the run's report."""
     canon = _scope_b_rows()
     if not canon:
         raise SystemExit(f"missing {SCOPE_B_CSV.name}; cannot build the Scope B canon")
 
     desc = _descriptions_cached([r["cid"] for r in canon if r["cid"] > 0])
+    desc, holds = wikidata_age.age_entries(
+        desc, wikidata_age.read_shipped() if shipped is None else shipped)
+    if held is not None:
+        held.extend(holds)
     for r in canon:
         _apply_wikidata(r, desc.get(r["cid"]))
 

@@ -25,6 +25,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products
+from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
 from . import freshness, inputs
@@ -68,7 +69,9 @@ def stage_seed(settings: Settings) -> list[dict]:
     # the --target cap are bypassed. Falls back to the open notability build if the CSV is absent.
     if canon_stage.SCOPE_B_CSV.exists():
         log.info("stage 0: canon = Scope B everyday core (%s)", canon_stage.SCOPE_B_CSV.name)
-        rows = canon_stage.build_scope_b_canon()
+        held: list[dict] = []
+        rows = canon_stage.build_scope_b_canon(held=held)
+        _report_held(held)
     else:
         log.info("stage 0: canon selection (target=%d)", settings.canon_target)
         rows = canon_stage.build_canon(settings.canon_target)
@@ -78,6 +81,32 @@ def stage_seed(settings: Settings) -> list[dict]:
     log.info("  canon: %d molecules (%d marquee, %d canon, %d hand-model)",
              len(rows), marquee, len(rows) - marquee, hand)
     return rows
+
+
+def _report_held(held: list[dict]) -> None:
+    """Wikidata changes held back this run (trust run 8, ``transform/wikidata_age.py``): one line
+    each in the log, in the committed ``data/seed/wikidata_held.json``, and on GitHub Actions as a
+    notice and a line of the run's summary, so a held change is visible rather than silent. The
+    workflow reads the file's length into the summaries of the all-clear and alarm jobs."""
+    if held:
+        slugs = {cid: rec.get("slug") for cid, rec in _prior_snapshot().items()}
+        for h in held:
+            h["slug"] = slugs.get(h["cid"])
+    wikidata_age.write_held(held)
+    log.info("  wikidata: %d change(s) held until %d days old", len(held), wikidata_age.AGE_DAYS)
+    lines = [wikidata_age.report_line(h) for h in held]
+    for line in lines:
+        log.info("  held: %s", line)
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        for line in lines:
+            print(f"::notice title=Wikidata change held::{line}", flush=True)
+        summary = os.getenv("GITHUB_STEP_SUMMARY")
+        if summary:
+            with open(summary, "a", encoding="utf-8") as f:
+                f.write(f"### Wikidata changes held ({len(held)})\n\n"
+                        f"A changed Wikidata value ships once it is {wikidata_age.AGE_DAYS} days old.\n\n")
+                f.writelines(f"- {line}\n" for line in lines)
+                f.write("\n")
 
 
 # ── Stage 1: fetch ───────────────────────────────────────────────────────────

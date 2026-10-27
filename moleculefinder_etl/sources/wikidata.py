@@ -4,6 +4,7 @@ We only take CC0 fields (labels, descriptions, external IDs). Never Wikipedia
 article prose (CC BY-SA).
 """
 from __future__ import annotations
+import json
 import requests
 from ..config import WDQS_ENDPOINT, USER_AGENT
 
@@ -189,6 +190,83 @@ def parts_for_qids(qids: list[str]) -> dict[str, dict]:
                 row[prop] = vals
             out[qid] = row
     return out
+
+
+# Edit ages (trust run 8, 2026-10-26; transform/wikidata_age.py). A changed value ships only once
+# it has stood on Wikidata for 7 days, which takes two reads per changed item and none per molecule:
+# when the item was last edited (``entity_info``, 50 items a request) and the item as it stood at
+# the cutoff (``entity_as_of``, one request per item, its revision content as of that instant).
+
+
+def entity_info(qids: list[str]) -> dict[str, dict]:
+    """Return {qid: {"modified": <UTC stamp>, "lastrevid": <int>}} for the given items. An id
+    Wikidata reports missing is left out; a redirect is reported under the id asked for."""
+    ids = sorted({q for q in qids if q}, key=lambda q: (_qid_sort_key(q), q))
+    out: dict[str, dict] = {}
+    for i in range(0, len(ids), NAMES_BATCH):
+        r = requests.get(
+            WIKIDATA_API,
+            params={"action": "wbgetentities", "ids": "|".join(ids[i:i + NAMES_BATCH]),
+                    "props": "info", "format": "json"},
+            headers={"User-Agent": USER_AGENT},
+            timeout=60,
+        )
+        r.raise_for_status()
+        body = r.json()
+        if "error" in body:
+            err = body["error"]
+            raise RuntimeError(f"wbgetentities {err.get('code')}: {err.get('info')}")
+        for qid, entity in (body.get("entities") or {}).items():
+            if "missing" in entity:
+                continue
+            # A redirected id comes back under its target, carrying {"from": <asked>, "to": ...}.
+            asked = ((entity.get("redirects") or {}).get("from")) or qid
+            out[asked] = {"modified": entity.get("modified"), "lastrevid": entity.get("lastrevid")}
+    return out
+
+
+def _en(block, many: bool = False):
+    """An entity's English label or description (``many``: its alias values, in order). Wikibase
+    serialises an empty map as ``[]`` in revision content, so both shapes are read."""
+    entry = block.get("en") if isinstance(block, dict) else None
+    if many:
+        return [a["value"] for a in (entry or []) if isinstance(a, dict) and a.get("value")]
+    return entry.get("value") if isinstance(entry, dict) else None
+
+
+def entity_as_of(qid: str, when: str) -> dict | None:
+    """The item as it stood at ``when`` (a UTC stamp): {"revid", "timestamp", "desc", "label",
+    "aliases", "p662"}, read from the newest revision at or before that instant. ``p662`` is the
+    item's PubChem CIDs then (non-deprecated), so a CID that moved to another item can be aged too.
+    None when the item has no revision that old (created since) or does not exist."""
+    r = requests.get(
+        WIKIDATA_API,
+        params={"action": "query", "prop": "revisions", "titles": qid, "rvlimit": 1,
+                "rvstart": when, "rvdir": "older", "rvprop": "ids|timestamp|content",
+                "rvslots": "main", "format": "json", "formatversion": 2},
+        headers={"User-Agent": USER_AGENT},
+        timeout=60,
+    )
+    r.raise_for_status()
+    body = r.json()
+    if "error" in body:
+        err = body["error"]
+        raise RuntimeError(f"revisions {err.get('code')}: {err.get('info')}")
+    pages = (body.get("query") or {}).get("pages") or []
+    revs = (pages[0].get("revisions") if pages and not pages[0].get("missing") else None) or []
+    if not revs:
+        return None
+    rev = revs[0]
+    entity = json.loads(((rev.get("slots") or {}).get("main") or {}).get("content") or "{}")
+    claims = entity.get("claims") if isinstance(entity.get("claims"), dict) else {}
+    p662 = []
+    for st in claims.get("P662") or []:
+        value = ((st.get("mainsnak") or {}).get("datavalue") or {}).get("value")
+        if st.get("rank") != "deprecated" and isinstance(value, str) and value not in p662:
+            p662.append(value)
+    return {"revid": rev.get("revid"), "timestamp": rev.get("timestamp"),
+            "desc": _en(entity.get("descriptions")), "label": _en(entity.get("labels")),
+            "aliases": _en(entity.get("aliases"), many=True), "p662": p662}
 
 
 PLACEHOLDER_DESCRIPTION = "chemical compound"
