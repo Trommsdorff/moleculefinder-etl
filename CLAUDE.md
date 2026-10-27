@@ -896,6 +896,72 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Trust run 8 (2026-10-26): a Wikidata edit ages 7 days before it ships. DEPLOYED 2026-10-27 (`3ab6178`)
+**DEPLOYED 2026-10-27 about 01:25 UTC on Garrett's word** (his brief carried the deploy step). No other branch was
+waiting in either repo. ETL `main` 2931e21 -> `3ab6178` (with the waiting notes commits `9522123`, `8bf0cf6`, rebased
+onto Monday's refresh; deploys nothing, no workflow fired on the push). Web not pushed: its sync changed nothing.
+**The incident** (company CLAUDE.md "Weekly loop, 2026-10-26"): an anonymous edit (revision 2560697164, 2026-10-25
+13:37:28 UTC, a temporary account) set propane's (Q131189) English label to "priest"; Monday's run read it live and
+would have titled the page "Propane (Priest)". Garrett held propane by hand on web PR #12, but Monday's refresh
+(`2931e21`) had already committed "priest" HERE, in `canon.parquet` and `propane.json`.
+**Garrett's ruling:** not a blacklist of names. A CHANGE to a Wikidata text field the site shows ships only once the
+Wikidata revision that introduced it is at least 7 days old; until then the shipped value stands (the spirit of the
+2026-09-28 placeholder carry). A brand-new molecule takes the current value; an edit reverted before it ages never ships.
+- **The fields:** the English description, label and aliases, all read by `descriptions_for_cids` (they feed `summary`,
+  `title_synonym`, `display_synonyms`, `wikidata_names`). Nothing else the ETL reads from Wikidata is text: product
+  parts (`parts_for_qids`) are P527/P186 statements, and the notability query is unused while the Scope B CSV exists.
+- **Per field, not per item (chosen over the `modified` stamp).** `modified` alone would hold every field of any item
+  edited for any reason (propane's previous edit was a statement). `transform/wikidata_age.py` instead reads, for each
+  item whose values differ from the shipped ones, the item AS IT STOOD AT THE CUTOFF (now minus 7 days):
+  `wikidata.entity_as_of`, the revisions API with `rvstart=<cutoff>&rvdir=older&rvlimit=1`, one request per changed item
+  (about 134 KB for propane), plus one batched `wbgetentities props=info` request per 50 items for the modified dates the
+  report prints. A field ships when the item already carried that value at the cutoff, else the shipped value stands.
+  A CID moving to another item (or losing its item) is aged by the item's P662 at the cutoff the same way, and holds
+  the whole shipped entry until settled. An alias list ages as one field (order matters on the page).
+- **"Shipped"** = the committed `data/seed/canon.parquet`, read by `build_scope_b_canon` before the seed stage
+  overwrites it (it holds each CID's raw QID, description, label and aliases; the records carry only filtered names).
+  A held value is written back into the new parquet, so next week compares against it again.
+- **Reproducible:** the answers go in `raw_cache/wikidata/ageing.json` (an `entries` map, hashed per entry by the inputs
+  manifest). The weekly run asks afresh every run (`AGEING_TTL_DAYS` 0, the cutoff moves); a pinned build reuses the
+  artifact's answers and asks only for an item it lacks. A failed read fails the run (`WikidataQueryError`);
+  `MFETL_ALLOW_STALE_WIKIDATA=1` holds every change instead.
+- **Visible, not silent:** one log line per held field (`held: <slug>: <field> held, shipped ..., Wikidata now ...,
+  item <qid> modified <date>`; an alias line says only what was added or removed), a GitHub notice and a step-summary
+  section, and `data/seed/wikidata_held.json` (committed; `[]` when nothing is held). `etl.yml`: a `Count held
+  Wikidata changes` step (`if: always()`; counts the file only if this run rewrote it) feeds the `wikidata_held` job
+  output into the all-clear job's new `Summary` step and the alarm's summary, issue body and "Failed again" comment.
+- **The alarm issue's new sentence:** "If the data PR's check failed: re-running a failed check on the data PR reuses
+  the old merge and cannot pick up a fix on main; close and reopen the PR to get a fresh check."
+- **Tests:** `tests/test_wikidata_age.py` (22): a fresh edit held (and exactly one info and one revision request), an
+  8-day-old edit ships, a reverted edit changes nothing and asks nothing, a new molecule takes the current value, each
+  field ages on its own, an item newer than the cutoff holds, the item swap held and settled, a CID losing its item,
+  the placeholder (an aged edit to "chemical compound" still keeps the shipped summary through `_carried_summary`; a
+  fresh one is held first), a failed read fails the run, the override holds, a pinned build reuses the answers, the
+  cache is an entries map, the canon build end to end on a real parquet, the report and committed file, and both reads
+  on Wikidata's own response shapes. Mutation-checked: with the hold disabled 10 fail. **933 passed, 1 skipped** (911);
+  ruff 131, findings identical to main's.
+- **Data** (`3ab6178`): propane's label restored to "propane" in `canon.parquet` (the baseline), then `mfetl
+  sync-inputs` (38c753fb02ec9b09) and a pinned `mfetl all`, all three keys blanked, exit 0, 0 PubChem POSTs: exactly
+  `canon.parquet` (propane's label), `propane.json` (byte for byte the live web copy: no "priest" in `title_synonym`,
+  `display_synonyms` or `wikidata_names`) and the new `wikidata_held.json`; meta.json and every other file unchanged.
+  A second pinned build reused the cached answer and was identical. **Held this week: propane's label only.**
+  Had the rule run on Monday it would also have held three changes that shipped: sucrose's new alias "sugar" (Q4027534,
+  modified 2026-10-20 19:56, the live "Sucrose (Sugar)" title), naringin's aliases lower-cased (Q418469, 2026-10-26
+  10:42) and two long ketoconazole aliases (Q407883, 2026-10-20 07:45, not displayed). They are live and now the
+  baseline; the rule does not unship them.
+- **The dispatch** (run 40432469793, 01:25 to 01:27 UTC, on `3ab6178`), all green: `run` read 1 item as of
+  2026-10-20T01:25:52Z, held propane (notice and summary), 0 PubChem POSTs, Supabase load 915 molecules, and committed
+  `a60b4b4` "etl: refresh 2026-10-27" changing `data/seed/inputs.json` ONLY (artifact `inputs-b32ee345a19c9b16`, 5,960
+  files, now with `ageing.json`): CI rebuilt the parquet, propane and the held file byte for byte as the Mac did.
+  `sync-web` "web repo snapshot already identical, no PR needed"; `all-clear` ran, nothing to close; `alarm` skipped.
+  A pinned build here now needs `mfetl sync-inputs` again (b32ee345a19c9b16).
+- **The rule's limit, for Garrett:** the vandal edit turns 7 days old at 2026-11-01 13:37 UTC, so the 2026-11-02 run
+  WILL ship "priest" unless the label is reverted on Wikidata first (the same edit also set Commons category P373 to
+  "Priest"). The rule buys a week for a person to see the held line and revert; it does not decide what is vandalism.
+- **Housekeeping, port 4173:** a leftover `node` static server from an earlier TheFiscalFinder session (PID 2556,
+  `serve-out.mjs` serving `thefiscalfinder/tff-dist-wt/out`) was listening at the start; stopped, port confirmed free.
+  This session's builds started no servers; none left at the end.
+
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
 checks (company CLAUDE.md). Monday 2026-10-26's weekly run is the first on this code.
