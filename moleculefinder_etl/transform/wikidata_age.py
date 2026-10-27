@@ -221,8 +221,16 @@ def report_line(h: dict) -> str:
     """One held change, as the log, the run summary and the notice print it."""
     def show(v):
         return json.dumps(v, ensure_ascii=False)
-    return (f"{h.get('slug') or h['cid']}: {h['field']} held, shipped {show(h['shipped'])}, "
-            f"Wikidata now {show(h['held'])}, item {h['qid']} modified {h.get('modified') or 'unknown'}")
+    if h["field"] == "aliases":
+        # An alias list runs to a dozen IUPAC names; the line says only what moved.
+        old, new = h["shipped"] or [], h["held"] or []
+        change = (f"added {show([a for a in new if a not in old])}, "
+                  f"removed {show([a for a in old if a not in new])}"
+                  + ("" if set(old) != set(new) else ", reordered"))
+    else:
+        change = f"shipped {show(h['shipped'])}, Wikidata now {show(h['held'])}"
+    return (f"{h.get('slug') or h['cid']}: {h['field']} held, {change}, "
+            f"item {h['qid']} modified {h.get('modified') or 'unknown'}")
 
 
 def write_held(held: list[dict], path: Path | None = None) -> Path:

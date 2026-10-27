@@ -253,6 +253,17 @@ def test_held_values_are_reported_one_line_each_and_committed(wd, tmp_path, monk
     assert json.loads((tmp_path / "wikidata_held.json").read_text()) == []
 
 
+def test_an_alias_line_says_only_what_moved():
+    # Sucrose on 2026-10-26: Wikidata gained the alias "sugar" (the title became "Sucrose (Sugar)").
+    h = {"slug": "sucrose", "cid": 5988, "qid": "Q4027534", "field": "aliases",
+         "shipped": ["saccharose", "D-Sucrose"], "held": ["saccharose", "D-Sucrose", "sugar"],
+         "modified": "2026-10-20T19:56:29Z"}
+    assert wikidata_age.report_line(h) == ('sucrose: aliases held, added ["sugar"], removed [], '
+                                           'item Q4027534 modified 2026-10-20T19:56:29Z')
+    h = {**h, "held": ["D-Sucrose", "saccharose"]}
+    assert "added [], removed [], reordered" in wikidata_age.report_line(h)
+
+
 # ── the two reads, on Wikidata's own response shapes ────────────────────────
 class _Resp:
     def __init__(self, body):
