@@ -1171,6 +1171,27 @@ baking soda, caustic soda, Oxycontin, estrogen, dex, acetate).
   sucrose/glucose page is possible, not asked for); "na2co3 vs nahco3", "sodium carbonate vs bicarbonate": the sodium
   bicarbonate/sodium carbonate page; the 26 Tylenol and Advil "chemical formula / structure / name" queries (position
   60 to 85) are molecule-page lookups, out of scope. Product vs product: no such query exists in the export.
+- **Garrett's rulings, 2026-10-28 (after the deploy):** (1) no Tylenol Regular Strength pair: Extra Strength is what
+  people search, and a second Tylenol page against the same Advil would be a near duplicate. (2) **Plain Sudafed added
+  to the seed so Mucinex vs Sudafed can build, with the next ETL run rather than its own deploy.** Done on `main`,
+  NOT pushed: `a565528` seed + `d101edc` data. `products.yaml` gains `sudafed-sinus-congestion` ("Sudafed Sinus
+  Congestion", Kenvue's own label, pseudoephedrine hydrochloride alone, set id `c05d7e27-6821-468f-b27d-9c0b02a07b0f`;
+  not the 12 Hour label or a repackager's); it passes the gate with seven catalog molecules (pseudoephedrine 30 mg,
+  silicon dioxide, Allura Red AC, aluminium oxide, sunset yellow FCF, magnesium stearate, cellulose; nine label names
+  unmatched). `product_pairs.yaml` gains mucinex/sudafed-sinus-congestion, answer line 144 characters: "Mucinex's active
+  ingredient is guaifenesin and Sudafed Sinus Congestion's is pseudoephedrine; both labels list cellulose and magnesium
+  stearate." Pinned build (keys blanked) three times, byte-identical: 425 products (424), 11 of 11 comparisons, seven
+  molecule files change by `products` alone, the gate report and the queue move by the one label; one DailyMed fetch,
+  0 PubChem POSTs; 998 tests, ruff 130. Checked in the web repo against this snapshot (synced, built, then restored to
+  its committed copy, nothing committed there): verify-snapshot OK, 259 tests passed with the build, 1,712 pages and
+  sitemap URLs (1,710); `/whats-in/mucinex-vs-sudafed-sinus-congestion` titled "What's in Mucinex vs Sudafed Sinus
+  Congestion? · MoleculeFinder" (the "Ingredients compared" form would pass 65), the line as description, three FAQs,
+  the labels-not-effects line, both product links, no advice word; "Compare with" on both product pages; in the
+  `/whats-in` group and the sitemap. **It ships when ETL `main` is next pushed:** Monday's weekly run then fetches the
+  label itself and opens the web data PR (2 new URLs, 1,710 -> 1,712). (3) Strengths stay on the product pages: label
+  data from the source, and the two page kinds must agree. (4) No "corn starch" or "agar agar" in titles: the answer
+  lines carry them; a name seed for titles would be name-matching by the back door. (5) The nicotinamide/niacin title
+  stands. (6) The three extra overlay fixes need nothing more. (7) The measurement plan is agreed.
 
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
