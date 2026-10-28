@@ -41,7 +41,9 @@ BOARDS: dict[str, dict] = {
         "unit": "× sugar",
         "value_label": "Sweetness",
         "confidence": "from_source",
-        "description": "Ranked by sweetness relative to table sugar (sucrose = 1×).",
+        # SEO run 1 (2026-10-28): the board answers "sweetest molecule" first. rank() puts the
+        # leader's sentence (LEADS) before this text, so the answer moves with the data.
+        "description": "Table sugar is 1, and every value names its source.",
     },
     "spiciest": {
         "title": "Spiciest",
@@ -135,6 +137,17 @@ BOARDS: dict[str, dict] = {
 # whose every key is written into the board file.
 ORAL_ONLY = frozenset({"deadliest", "safest"})
 
+# Boards whose every entry names the source of its value, read from this record field.
+SOURCE_FIELDS = {"sweetest": "relative_sweetness_source"}
+
+# Boards whose description opens with the answer a searcher asked for, built from the leader.
+# "Estimated": a sweetness is a tasting panel's figure, and the leader's source says "estimated".
+LEADS = {"sweetest": "{title} is the sweetest molecule in MoleculeFinder, an estimated {value} times sweeter than sugar."}
+
+
+def _fmt(v: float) -> str:
+    return f"{v:,.0f}" if float(v).is_integer() else f"{v:,}"
+
 
 def rank(board: str, molecules: list[dict]) -> dict:
     """Return a self-describing board: its metadata plus ranked, enriched entries."""
@@ -156,7 +169,14 @@ def rank(board: str, molecules: list[dict]) -> dict:
             "formula": m.get("molecular_formula"),
             "value_num": m[key],
             **{c: m.get(f"ld50_{c}") for c in extra},
+            # The registry key of the source that reports the value (SEO run 1: every Sweetest
+            # entry names one). Kept out of BOARDS for the same reason as ORAL_ONLY.
+            **({"source": m.get(SOURCE_FIELDS[board])} if board in SOURCE_FIELDS else {}),
         }
         for i, m in enumerate(have)
     ]
-    return {"slug": board, **meta, "entries": entries}
+    out = {"slug": board, **meta, "entries": entries}
+    if board in LEADS and entries:
+        lead = LEADS[board].format(title=entries[0]["title"], value=_fmt(entries[0]["value_num"]))
+        out["description"] = f"{lead} {meta['description']}"
+    return out

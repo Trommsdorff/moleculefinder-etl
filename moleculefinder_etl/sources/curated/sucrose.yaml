@@ -5,7 +5,6 @@ slug: sucrose
 tier: marquee
 types:
   - sugar
-relative_sweetness: 1
 foods:
   - { category: tabletop-sweetener }
   - { category: table-sugar }

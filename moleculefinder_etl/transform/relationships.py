@@ -32,7 +32,8 @@ import re
 import yaml
 
 from ..config import SEEDS_DIR
-from .confidence import FROM_SOURCE, COMPUTED, INFERRED
+from ..sources import registry
+from .confidence import FROM_SOURCE, COMPUTED, INFERRED, label_for
 
 log = logging.getLogger("mfetl")
 
@@ -43,6 +44,7 @@ BRANDS_YAML = SEEDS_DIR / "brands.yaml"
 APPROVALS_YAML = SEEDS_DIR / "approvals.yaml"
 LICENCES_YAML = SEEDS_DIR / "licences.yaml"
 ODOR_THRESHOLDS_YAML = SEEDS_DIR / "odor_thresholds.yaml"
+SWEETNESS_YAML = SEEDS_DIR / "sweetness.yaml"
 OTC_ALLOWLIST_YAML = SEEDS_DIR / "otc_allowlist.yaml"
 FOOD_HUBS_YAML = SEEDS_DIR / "food_hubs.yaml"
 COMPARISONS_YAML = SEEDS_DIR / "comparisons.yaml"
@@ -72,17 +74,26 @@ def load_why_it_matters() -> dict[str, str]:
 
 
 # ── Comparisons (/vs/<pair>, build plan phase 5) ──────────────────────────────
-def load_comparisons() -> dict[str, str]:
-    """Read comparisons.yaml -> {"slug-a/slug-b": written comparison}.
+def load_comparisons() -> dict[str, dict[str, str]]:
+    """Read comparisons.yaml -> {"slug-a/slug-b": {"answer": ..., "text": ...}}.
 
     The prose only. Which pairs get a page is the web's curated list
     (``lib/compare-pairs.ts``); the two are held together by the web build, which
     fails when a listed pair has no text here or a text here is not listed there.
+    ``answer`` is the pair's one-sentence difference (SEO run 1, 2026-10-28): the page's
+    meta description, its first line of prose and the FAQ's answer to "What is the
+    difference". A pair written as a bare string has no answer, which fails the compile.
     """
     if not COMPARISONS_YAML.exists():
         return {}
     data = yaml.safe_load(COMPARISONS_YAML.read_text()) or {}
-    return {str(k).strip(): " ".join(str(v).split()) for k, v in data.items() if v and str(v).strip()}
+    out: dict[str, dict[str, str]] = {}
+    for k, v in data.items():
+        if not v:
+            continue
+        entry = v if isinstance(v, dict) else {"text": v}
+        out[str(k).strip()] = {f: " ".join(str(entry.get(f) or "").split()) for f in ("answer", "text")}
+    return out
 
 
 def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
@@ -92,7 +103,8 @@ def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
     reason: a typo must fail the build, not ship a page comparing a molecule with
     nothing. Both slugs must exist, a pair may not be written twice in either
     direction, and the text must obey the house rules it is written under (no
-    em-dash, no dosing, no "which should I take").
+    em-dash, no dosing, no "which should I take"). Every pair carries its answer line,
+    held to its own rules (``_answer_errors``).
     """
     curated = load_comparisons()
     if not curated:
@@ -101,7 +113,8 @@ def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
     errors: list[str] = []
     seen: dict[frozenset[str], str] = {}
     out: dict[str, dict] = {}
-    for key, text in sorted(curated.items()):
+    for key, entry in sorted(curated.items()):
+        text, answer = entry.get("text") or "", entry.get("answer") or ""
         parts = key.split("/")
         if len(parts) != 2 or not all(parts):
             errors.append(f"{key}: not a 'slug-a/slug-b' pair")
@@ -120,8 +133,9 @@ def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
             continue
         seen[unordered] = key
         errors.extend(f"{key}: {e}" for e in _comparison_prose_errors(text))
+        errors.extend(f"{key}: {e}" for e in _answer_errors(answer, by_slug[a], by_slug[b]))
         out[f"{a}-vs-{b}"] = {
-            "pair": key, "a": a, "b": b, "text": text,
+            "pair": key, "a": a, "b": b, "answer": answer, "text": text,
             "confidence": FROM_SOURCE, "source": "MoleculeFinder curated",
         }
     if errors:
@@ -159,6 +173,38 @@ def _comparison_prose_errors(text: str) -> list[str]:
     for pat in _ADVICE_PATTERNS:
         if re.search(pat, text, re.I):
             errors.append(f"reads as advice or dosing: /{pat}/")
+    return errors
+
+
+# The answer line (SEO run 1, 2026-10-28). A searcher typing "lactose vs galactose" asked what the
+# difference is; the line says it in one sentence that fits a search snippet. The web's own test
+# holds every line to the same words (lib/products.test.ts ADVICE), so the two cannot disagree.
+ANSWER_MAX = 160          # under 160 characters
+_ANSWER_ADVICE = re.compile(
+    r"\b(safe|safer|unsafe|should|recommend|take \d|dose|dosing|consult|per day)\b", re.IGNORECASE)
+
+
+def _name_key(s: str) -> str:
+    """A title as it reads inside a sentence: "β-Carotene" is written "beta-carotene"."""
+    return s.lower().replace("\u03b2-", "beta-").replace("\u03b1-", "alpha-")
+
+
+def _answer_errors(answer: str, a: dict, b: dict) -> list[str]:
+    if not answer:
+        return ["no answer line: one sentence under 160 characters that states the difference"]
+    errors = []
+    if len(answer) >= ANSWER_MAX:
+        errors.append(f"answer line is {len(answer)} characters, the rule is under {ANSWER_MAX}")
+    if "\u2014" in answer or "\u2013" in answer:
+        errors.append("em-dash or en-dash in the answer line (house rule)")
+    if len(re.split(r"(?<=[.!?])\s+", answer.strip())) != 1 or not answer.endswith("."):
+        errors.append("the answer line is one sentence ending in a full stop")
+    for m in (a, b):
+        title = m.get("title") or m["slug"].replace("-", " ")
+        if _name_key(title) not in _name_key(answer):
+            errors.append(f"the answer line does not name {title}")
+    if _ANSWER_ADVICE.search(answer) or any(re.search(p, answer, re.IGNORECASE) for p in _ADVICE_PATTERNS):
+        errors.append("the answer line reads as advice or dosing")
     return errors
 
 
@@ -508,6 +554,78 @@ USE_GROUPS: dict[str, tuple[str, str]] = {
     "topical_and_skin":        ("skin-and-topical", "Skin and topical"),
     "antiseptics":             ("antiseptic", "Antiseptic"),
 }
+
+
+# ── Sweetness (SEO run 1, 2026-10-28) ─────────────────────────────────────────
+# Every relative sweetness the site shows comes from sources/seeds/sweetness.yaml, each value with
+# a named source that may be displayed (the source-licence rule) and the source's own words. The
+# curated overlays carried eight bare "commonly cited" figures until this run; none may carry one
+# now (tests/test_sweetness.py), so a value has one home and one citation.
+_SWEETNESS_FIELDS = ("value", "source", "cite", "says")
+# Where the sweetness hook sits among a record's hooks: where assemble used to put it, before these.
+_HOOKS_AFTER_SWEETNESS = ("smell_card", "structure", "similar")
+
+
+def load_sweetness() -> dict[str, dict]:
+    """Read sweetness.yaml -> {slug: {value, source, cite, says}}."""
+    if not SWEETNESS_YAML.exists():
+        return {}
+    data = yaml.safe_load(SWEETNESS_YAML.read_text()) or {}
+    return {str(k): dict(v or {}) for k, v in data.items()}
+
+
+def _set_sweetness(rec: dict, value: float, source: str) -> None:
+    rec["relative_sweetness"] = value
+    rec["relative_sweetness_source"] = source
+    prop = {"key": "relative_sweetness", "value_num": value, "value_text": None, "unit": "x sugar",
+            "confidence": label_for("relative_sweetness"), "source": source}
+    props = rec.setdefault("properties", [])
+    at = next((i for i, p in enumerate(props) if p.get("key") == "relative_sweetness"), None)
+    if at is None:
+        props.append(prop)
+    else:
+        props[at] = prop
+    hooks = rec.setdefault("hooks", [])
+    hook = {"type": "sweetness", "enabled": True, "confidence": FROM_SOURCE, "params": {"x_sugar": value}}
+    hooks[:] = [h for h in hooks if h.get("type") != "sweetness"]
+    at = next((i for i, h in enumerate(hooks) if h.get("type") in _HOOKS_AFTER_SWEETNESS), len(hooks))
+    hooks.insert(at, hook)
+    if isinstance(rec.get("curated"), dict):           # the Supabase row's curated block
+        rec["curated"]["relative_sweetness"] = value
+
+
+def attach_sweetness(molecules: list[dict]) -> None:
+    """Attach ``relative_sweetness`` (sucrose = 1) and ``relative_sweetness_source`` (a registry key)
+    from sweetness.yaml, with the property row and the sweetness hook the molecule page reads. Fails
+    the build on an unknown slug, a missing or unknown field, a value that is not a positive number,
+    a source that may not be displayed, or sucrose at anything but 1."""
+    data = load_sweetness()
+    by_slug = {m["slug"]: m for m in molecules}
+    errors = []
+    for slug, entry in sorted(data.items()):
+        rec = by_slug.get(slug)
+        if rec is None:
+            errors.append(f"{slug}: unknown slug")
+            continue
+        extra = sorted(set(entry) - set(_SWEETNESS_FIELDS))
+        missing = [k for k in _SWEETNESS_FIELDS if entry.get(k) in (None, "")]
+        if extra or missing:
+            errors.append(f"{slug}: unknown field(s) {extra}, missing {missing}")
+            continue
+        value = entry["value"]
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
+            errors.append(f"{slug}: value {value!r} is not a positive number")
+            continue
+        if slug == "sucrose" and value != 1:
+            errors.append("sucrose: the reference point of the scale is 1 by definition")
+            continue
+        if not registry.may_display(entry["source"]):
+            errors.append(f"{slug}: source {entry['source']!r} is not a registered source that may be displayed")
+            continue
+        _set_sweetness(rec, value, entry["source"])
+    if errors:
+        raise SystemExit("sweetness compile failed:\n  " + "\n  ".join(errors))
+    log.info("  sweetness: %d molecule(s), each with a named source", len(data))
 
 
 def _name_key(name: str) -> str:

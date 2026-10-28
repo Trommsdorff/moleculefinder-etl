@@ -3,7 +3,6 @@
 cid: 5780
 slug: sorbitol
 tier: marquee
-relative_sweetness: 0.6         # ~0.6x sucrose (commonly cited)
 types:
   - sugar-alcohol
   - sweetener

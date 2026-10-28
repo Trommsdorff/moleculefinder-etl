@@ -75,6 +75,8 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
         yield f"{slug}.descriptors", "pubchem"
     for p in m.get("properties") or []:
         yield f"{slug}.properties.{p.get('key')}", _key(p.get("source"))
+    if m.get("relative_sweetness") is not None:
+        yield f"{slug}.relative_sweetness", _key(m.get("relative_sweetness_source"))
     for c in m.get("categories") or []:
         for s in str(c.get("source") or "").split("+") if c.get("source") else [None]:
             yield f"{slug}.categories.{c.get('slug')}", _key(s)
@@ -106,15 +108,15 @@ _MGKG = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*mg/kg")
 
 
 def comparison_problems(comparisons: dict[str, dict] | None, molecules: list[dict]) -> list[str]:
-    """Every mg/kg figure the curated /vs prose quotes must be a toxicity row a displayable
-    source reports for one of the pair (2026-10-23: five comparisons quoted T3DB's figures).
+    """Every mg/kg figure the curated /vs prose or answer line quotes must be a toxicity row a
+    displayable source reports for one of the pair (2026-10-23: five comparisons quoted T3DB's figures).
     The rows on a record have already passed the rule, so membership is the whole test."""
     by_slug = {m.get("slug"): m for m in molecules}
     out = []
     for key, c in (comparisons or {}).items():
         reported = {float(t["value_num"]) for s in (c.get("a"), c.get("b"))
                     for t in (by_slug.get(s) or {}).get("toxicity") or [] if t.get("sources")}
-        for fig in _MGKG.findall(c.get("text") or ""):
+        for fig in _MGKG.findall(f"{c.get('answer') or ''} {c.get('text') or ''}"):
             if float(fig.replace(",", "")) not in reported:
                 out.append(f"comparison {key}: quotes {fig} mg/kg, which no displayable source reports "
                            f"for {c.get('a')} or {c.get('b')} (sources/seeds/comparisons.yaml)")

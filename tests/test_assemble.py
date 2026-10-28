@@ -118,7 +118,11 @@ def test_leaderboard_keys_present():
     asp = assemble.assemble_record(canon_row(134601, "Aspartame"),
                                    fetched({"CID": 134601, "SMILES": "CC(Cc1ccccc1)C(=O)O",
                                             "MolecularWeight": "294.30"}, curated=_curated("aspartame")), set())
-    assert asp["relative_sweetness"] == 200
+    # Sweetness is not an overlay field since SEO run 1: relationships.attach_sweetness reads it,
+    # with its named source, from sweetness.yaml (tests/test_sweetness.py).
+    assert asp["relative_sweetness"] is None
+    assert not any(p["key"] == "relative_sweetness" for p in asp["properties"])
+    assert not any(h["type"] == "sweetness" for h in asp["hooks"])
 
 
 def test_curated_type_tags_and_direct_scoville():

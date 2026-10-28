@@ -299,6 +299,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     relationships.attach_licences(kept)
     # Odor detection thresholds for the "Most pungent" (stinkiest) leaderboard.
     relationships.attach_odor_thresholds(kept)
+    # Relative sweetness, every value with a named source (sweetness.yaml, SEO run 1). Before the
+    # descriptions, which read it.
+    relationships.attach_sweetness(kept)
     # kind:"use" hubs from the hand-maintained OTC allowlist (what a medicine is taken
     # FOR), the one grouping a person browsing a pharmacy shelf actually thinks in.
     relationships.attach_otc_uses(kept)

@@ -91,6 +91,56 @@ SOURCES: dict[str, dict] = {
                      homepage="https://precision.fda.gov/uniisearch",
                      commercial_ok=True, attribution_required=False),
 
+    # ── Relative sweetness (SEO run 1, 2026-10-28; sources/seeds/sweetness.yaml). Each figure is
+    # hand-transcribed, cited and quoted in the seed; these are the publishers it cites.
+    "fda":      {"name": "US Food and Drug Administration (FDA)", "license": "US Government Public Domain",
+                 "licence_class": "public_domain",
+                 "license_url": "https://www.fda.gov/about-fda/about-website/website-policies",
+                 "homepage": "https://www.fda.gov/food/food-additives-petitions/aspartame-and-other-sweeteners-food",
+                 "commercial_ok": True, "attribution_required": False},
+    "mesh":     {"name": "Medical Subject Headings (MeSH), US National Library of Medicine",
+                 "license": "US Government Public Domain", "licence_class": "public_domain",
+                 "license_url": "https://www.nlm.nih.gov/web_policies.html",
+                 "homepage": "https://meshb.nlm.nih.gov/record/ui?ui=C012043",
+                 "commercial_ok": True, "attribution_required": False},
+    # The EFSA Journal is published under CC BY-ND 4.0: verbatim reuse, commercial included, with
+    # attribution. A single figure quoted as published is that, so the class is "acknowledged".
+    "efsa":     {"name": "EFSA Journal (European Food Safety Authority)",
+                 "license": "CC BY-ND 4.0 (verbatim reuse with attribution)", "licence_class": "acknowledged",
+                 "attribution": ("Source: EFSA Panel on Food Additives and Flavourings, \"Safety of use of Monk "
+                                 "fruit extract as a food additive in different food categories\", EFSA Journal "
+                                 "17 (2019) e05921, CC BY-ND 4.0."),
+                 "license_url": "https://creativecommons.org/licenses/by-nd/4.0/",
+                 "homepage": "https://doi.org/10.2903/j.efsa.2019.5921",
+                 "commercial_ok": True, "attribution_required": True},
+    # Open-access articles under CC BY 4.0 (the licence statement read on each article's PMC page).
+    **{key: {"name": name, "license": "CC BY 4.0", "licence_class": "cc_by",
+             "attribution": f"Source: {cite}, CC BY 4.0.",
+             "license_url": "https://creativecommons.org/licenses/by/4.0/", "homepage": f"https://doi.org/{doi}",
+             "commercial_ok": True, "attribution_required": True}
+       for key, name, cite, doi in (
+           ("dragomir_2025", "Dragomir et al., Foods 2025",
+            ("N. Dragomir et al., \"Beyond Sugar: A Holistic Review of Sweeteners and Their Role in Modern "
+             "Nutrition\", Foods 14 (2025) 3182"), "10.3390/foods14183182"),
+           ("weber_2025", "Weber et al., J. Agric. Food Chem. 2025",
+            ("N. Weber et al., \"Comparison of Two L-Arabinose Isomerases for Multienzymatic Conversion of "
+             "Lactose in Skim Milk Permeate at Neutral and Acidic pH\", J. Agric. Food Chem. 73 (2025) 15889"),
+            "10.1021/acs.jafc.5c04545"),
+           ("saraiva_2020", "Saraiva et al., IJERPH 2020",
+            ("A. Saraiva et al., \"Natural Sweeteners: The Relevance of Food Naturalness for Consumers, Food "
+             "Security Aspects, Sustainability and Health Impacts\", Int. J. Environ. Res. Public Health 17 "
+             "(2020) 6285"), "10.3390/ijerph17176285"),
+           ("gourineni_2018", "Gourineni et al., Nutrients 2018",
+            ("V. Gourineni et al., \"Gastrointestinal Tolerance and Glycemic Response of Isomaltooligosaccharides "
+             "in Healthy Adults\", Nutrients 10 (2018) 301"), "10.3390/nu10030301"),
+           ("vajdovich_2025", "Vajdovich et al., Foods 2025",
+            ("D. K. Vajdovich et al., \"Pseudocereal-Based Functional Beverages: Main Properties and Nutritional "
+             "Evaluation with an Emphasis on Amino Acid Content: A Review\", Foods 14 (2025) 2080"),
+            "10.3390/foods14122080"),
+           ("dermesonlouoglou_2026", "Dermesonlouoglou et al., Foods 2026",
+            ("E. Dermesonlouoglou et al., \"Osmotic Dehydration with Alternative Humectants for the Production "
+             "of Ultrachilled Cherry Tomatoes\", Foods 15 (2026) 2569"), "10.3390/foods15142569"),
+       )},
     # ── The sources behind PubChem's annotations (2026-10-23). PubChem's own computed data is
     # public domain, but a PUG-View annotation (an LD50, a GHS classification) is a depositor's
     # content under the depositor's terms, so each depositor is its own source here.
@@ -196,6 +246,9 @@ SHORT_NAMES: dict[str, str] = {
     "eu_clp": "EU CLP Regulation", "hcis": "Safe Work Australia", "nite": "NITE",
     "cas_registry": "CAS Registry", "fda_unii": "FDA UNII", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
     "niosh": "NIOSH", "atsdr": "ATSDR", "fda_ltkb": "FDA LTKB", "lactmed": "LactMed",
+    "fda": "FDA", "mesh": "MeSH", "efsa": "EFSA", "dragomir_2025": "Dragomir et al. 2025",
+    "weber_2025": "Weber et al. 2025", "saraiva_2020": "Saraiva et al. 2020", "gourineni_2018": "Gourineni et al. 2018",
+    "vajdovich_2025": "Vajdovich et al. 2025", "dermesonlouoglou_2026": "Dermesonlouoglou et al. 2026",
 }
 
 # PUG-View SourceName -> registry key.

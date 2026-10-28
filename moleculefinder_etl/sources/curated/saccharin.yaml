@@ -3,7 +3,6 @@
 cid: 5143
 slug: saccharin
 tier: marquee
-relative_sweetness: 300         # ~300x sucrose (commonly cited)
 types:
   - sweetener
 foods:
@@ -12,5 +11,5 @@ foods:
 editorial: |
   Saccharin was the first artificial sweetener, discovered by accident in 1879
   by a chemist who noticed his dinner tasted sweet after a day in the lab. Around
-  three hundred times sweeter than sugar, it carried a cancer warning for decades
+  four hundred times sweeter than sugar, it carried a cancer warning for decades
   before the science walked that back.

@@ -3,7 +3,6 @@
 cid: 6912
 slug: xylitol
 tier: marquee
-relative_sweetness: 1.0         # ~1x sucrose (commonly cited)
 types:
   - sugar-alcohol
   - sweetener

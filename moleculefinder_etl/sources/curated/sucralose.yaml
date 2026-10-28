@@ -1,9 +1,8 @@
-# Hand-authored marquee overlay. Sucralose is the sweetest of the everyday
-# tabletop sweeteners, so it tops the "sweetest" leaderboard.
+# Hand-authored marquee overlay. Sucralose is the sweetest of the everyday tabletop
+# sweeteners. Its sweetness, with its source, is in sources/seeds/sweetness.yaml (SEO run 1).
 cid: 71485
 slug: sucralose
 tier: marquee
-relative_sweetness: 600         # ~600x sucrose (commonly cited)
 types:
   - sweetener
 foods:

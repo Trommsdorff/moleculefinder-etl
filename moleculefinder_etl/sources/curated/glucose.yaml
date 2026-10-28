@@ -3,7 +3,6 @@
 cid: 5793
 slug: glucose
 tier: marquee
-relative_sweetness: 0.75        # ~0.75x sucrose (commonly cited)
 types:
   - sugar
 foods:

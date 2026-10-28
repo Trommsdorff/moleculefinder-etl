@@ -36,11 +36,10 @@ def hooks_for(mol: dict) -> list[dict]:
     # Hand-crafted interactive: BAC (ethanol only)
     if mol.get("cid") == ETHANOL_CID:
         out.append(_hook("bac", "computed", {}))
-    # Curated-computed: scoville / sweetness
+    # Curated-computed: scoville
     if "capsaicinoid_ppm" in curated:
         out.append(_hook("scoville", "computed", {"ppm": curated["capsaicinoid_ppm"]}))
-    if "relative_sweetness" in curated:
-        out.append(_hook("sweetness", "from_source", {"x_sugar": curated["relative_sweetness"]}))
+    # The sweetness hook is attached with its value by relationships.attach_sweetness (sweetness.yaml).
     # Hand-crafted: smell card
     if "smell_card" in curated and curated["smell_card"]:
         out.append(_hook("smell_card", "from_source", curated["smell_card"]))

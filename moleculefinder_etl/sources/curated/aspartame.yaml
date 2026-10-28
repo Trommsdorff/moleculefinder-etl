@@ -1,11 +1,10 @@
-# Hand-authored marquee overlay. Aspartame is ~200x as sweet as sucrose, so it
-# tops the "sweetest" leaderboard against sucrose's 1x anchor.
+# Hand-authored marquee overlay. Aspartame is ~200x as sweet as sucrose. Its sweetness, with
+# its source, is in sources/seeds/sweetness.yaml (SEO run 1); no overlay carries one.
 cid: 134601
 slug: aspartame
 tier: marquee
 types:
   - sweetener
-relative_sweetness: 200
 foods:
   - { category: tabletop-sweetener }
   - { category: diet-soda }

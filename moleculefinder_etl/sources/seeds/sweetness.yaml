@@ -1,0 +1,165 @@
+# Relative sweetness, sucrose = 1 (SEO run 1, 2026-10-28). The ONE home of every sweetness the
+# site shows: the Sweetest board, the molecule page's Sweetness row and hook, the /vs table and FAQ.
+# Compiled by relationships.attach_sweetness, which fails the build on an unknown slug, a missing
+# field, a value that is not a positive number, sucrose at anything but 1, or a source the registry
+# (sources/registry.py) does not allow to be displayed (the source-licence rule).
+#
+#   value   the figure the page shows, relative to sucrose = 1
+#   source  the registry key of the publisher; a CC BY source carries its attribution line there
+#   cite    where in the source the figure is (page, table, record)
+#   says    the source's own words, read on 2026-10-28: verbatim, except that an en dash is
+#           written as a hyphen and "≈" as "approximately" (the house rule on dashes)
+#
+# THE CONVENTION. Until this run eight molecules carried a bare "commonly cited" figure in their
+# curated overlays, with no source and no stated rule. The one of them that matches a published
+# range, stevioside's 200 against the FDA's "200 to 400 times" for steviol glycosides, is that
+# range's LOW end, so this file keeps that and states the rest:
+#   1. A single figure beats a range, from any allowed source.
+#   2. A US government source (FDA, NLM's HSDB and MeSH) first, then the EU's EFSA, then an
+#      open-access CC BY article.
+#   3. Where the chosen source gives only a range, its LOW end.
+#   4. A percentage becomes its fraction (60 percent -> 0.6); "about one-sixth" -> 0.17.
+# Applying it moved three of the eight: saccharin 300 -> 400 (the FDA's own table), stevioside
+# 200 -> 300 (MeSH's single figure beats the FDA's class-wide range), glucose 0.75 -> 0.74 (HSDB).
+#
+# NOT HERE, because no allowed source gives a figure: ribose (PubChem, HSDB, EFSA's 2018 D-ribose
+# opinion and open-access articles searched), inositol, deoxyribose, dihydroxyacetone, glucosamine
+# and N-acetylglucosamine. The catalog's polysaccharides (starch's amylose and amylopectin,
+# glycogen, chitin, chitosan, inulin, carboxymethyl cellulose, acemannan) are not sweet and have no
+# value to give.
+
+# ── High-intensity sweeteners ────────────────────────────────────────────────
+lugduname:
+  value: 220000
+  source: dragomir_2025
+  cite: "Foods 14 (2025) 3182, Table 2 (Artificial sweeteners potency, sucrose = 1.0)"
+  says: "Lugduname 220,000. Text: a sweetening power estimated to be between 220,000 and 300,000 times sweeter than sugar"
+sucralose:
+  value: 600
+  source: fda
+  cite: "FDA, Aspartame and Other Sweeteners in Food (fda.gov)"
+  says: "Sucralose is about 600 times sweeter than table sugar."
+saccharin:
+  value: 400
+  source: fda
+  cite: "FDA, Aspartame and Other Sweeteners in Food, Text Version of Safe Levels of Sweeteners"
+  says: "Saccharin 45 (sweetness intensity at 400 times sucrose)"
+rebaudioside-a:
+  value: 300
+  source: fda
+  cite: "FDA, Aspartame and Other Sweeteners in Food, Text Version of Safe Levels of Sweeteners"
+  says: "Rebaudioside A 27 (sweetness intensity at 300 times sucrose)"
+stevioside:
+  value: 300
+  source: mesh
+  cite: "MeSH Supplementary Concept C012043, Stevioside, scope note"
+  says: "Kaurene glucoside from leaves of Stevia rebaudiana; 300 times as sweet as sugar"
+mogroside-v:
+  value: 250
+  source: efsa
+  cite: "EFSA Journal 17 (2019) e05921, Safety of use of Monk fruit extract as a food additive"
+  says: "mogroside V (CAS 88901-36-4), which is around 250 times as sweet as sucrose"
+aspartame:
+  value: 200
+  source: fda
+  cite: "FDA, Aspartame and Other Sweeteners in Food (fda.gov)"
+  says: "It contains calories, but consumers will likely use less than they would of table sugar because it is about 200 times sweeter."
+acesulfame-potassium:
+  value: 200
+  source: fda
+  cite: "FDA, Aspartame and Other Sweeteners in Food (fda.gov)"
+  says: "It is about 200 times sweeter than table sugar and is often combined with other sweeteners."
+glycyrrhizin:
+  value: 33
+  source: hsdb
+  cite: "HSDB via PubChem CID 14982, Experimental Properties, Taste"
+  says: "The sweetness potency of glycyrrhizin is about 33X (10% sucrose solution sweetness equivalence)."
+cyclamate:
+  value: 30
+  source: fda
+  cite: "21 CFR 189.135(a), FDA's regulation on cyclamic acid and its salts (eCFR); range, low end"
+  says: "Cyclamates are synthetic chemicals having a sweet taste 30 to 40 times that of sucrose"
+
+# ── Sugars ───────────────────────────────────────────────────────────────────
+fructose:
+  value: 1.73
+  source: weber_2025
+  cite: "J. Agric. Food Chem. 73 (2025) 15889, introduction (relative sweetness, sucrose = 100)"
+  says: "d-fructose (RS = 173)"
+sucrose:
+  value: 1
+  source: hsdb
+  cite: "The scale's reference point by definition: HSDB's sweetener table reads % relative sweetness vs. sucrose"
+  says: "% Relative Sweetness vs. Sucrose (normal sugar)"
+glucose:
+  value: 0.74
+  source: hsdb
+  cite: "HSDB via PubChem CID 5793, Experimental Properties (alpha-glucose monohydrate)"
+  says: "0.74 times as sweet as sucrose"
+allulose:
+  value: 0.7
+  source: fda
+  cite: "FDA, The Declaration of Allulose and Calories from Allulose on Nutrition and Supplement Facts Labels, guidance (2020), reporting public comments"
+  says: "According to the comments, allulose is approximately 70 percent as sweet as sucrose"
+trehalose:
+  value: 0.43
+  source: saraiva_2020
+  cite: "Int. J. Environ. Res. Public Health 17 (2020) 6285, section on trehalose"
+  says: "it has a relative sweetness power of 0.43"
+galactose:
+  value: 0.32
+  source: weber_2025
+  cite: "J. Agric. Food Chem. 73 (2025) 15889, introduction (relative sweetness, sucrose = 100)"
+  says: "d-galactose (RS = 32)"
+maltose:
+  value: 0.3
+  source: gourineni_2018
+  cite: "Nutrients 10 (2018) 301, introduction; range, low end"
+  says: "maltose (about 30-35% as sweet as sucrose)"
+lactose:
+  value: 0.17
+  source: hsdb
+  cite: "HSDB record 7962, (+)-Lactose, General Manufacturing Information"
+  says: "Compared to sucrose, lactose has about one-sixth the sweetening strength."
+lactulose:
+  value: 0.48
+  source: vajdovich_2025
+  cite: "Foods 14 (2025) 2080; range, low end"
+  says: "The sweetness of lactulose is 48-62% of that of sucrose, with no aftertaste."
+
+# ── Sugar alcohols ───────────────────────────────────────────────────────────
+xylitol:
+  value: 1.0
+  source: hsdb
+  cite: "HSDB via PubChem, table of percent relative sweetness and caloric values (from Health Canada), on the erythritol, maltitol and isomalt records"
+  says: "Xylitol: 100 (% Relative Sweetness vs. Sucrose)"
+maltitol:
+  value: 0.65
+  source: hsdb
+  cite: "HSDB via PubChem CID 493591, General Manufacturing Information"
+  says: "The relative sweetness of maltitol is generally given as 0.65, although values up to 0.9 are encountered in chocolates."
+sorbitol:
+  value: 0.6
+  source: hsdb
+  cite: "HSDB via PubChem CID 5780, Experimental Properties, Taste"
+  says: "Sweet taste, approx 60% as sweet as sugar (wt/wt)"
+erythritol:
+  value: 0.6
+  source: hsdb
+  cite: "HSDB via PubChem CID 222285, Experimental Properties, Taste; range, low end"
+  says: "Compared to sucrose, it exhibits a sweetness of 60-70% depending on the food system"
+glycerol:
+  value: 0.6
+  source: dermesonlouoglou_2026
+  cite: "Foods 15 (2026) 2569; range, low end"
+  says: "Glycerol itself possesses an inherent mild sweetness (relative sweetness approximately 60-75% of sucrose)"
+mannitol:
+  value: 0.5
+  source: hsdb
+  cite: "HSDB via PubChem, table of percent relative sweetness and caloric values (from Health Canada); range, low end"
+  says: "Mannitol: 50 - 70 (% Relative Sweetness vs. Sucrose)"
+isomalt:
+  value: 0.45
+  source: hsdb
+  cite: "HSDB via PubChem CID 3034828, Experimental Properties, Taste"
+  says: "Pure sweet taste (sweetening power =0.45 relative to sucrose in about a 10% solution)"

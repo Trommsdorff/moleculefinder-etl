@@ -414,11 +414,8 @@ def _merge_curated(rec: dict, curated: dict) -> None:
         rec["scoville_shu"] = curated["scoville_shu"]
         rec["properties"].append(_prop("scoville_shu", rec["scoville_shu"], "SHU", "scoville", "curated"))
 
-    if curated.get("relative_sweetness") is not None:
-        rs = curated["relative_sweetness"]
-        cur["relative_sweetness"] = rs
-        rec["relative_sweetness"] = rs
-        rec["properties"].append(_prop("relative_sweetness", rs, "x sugar", "relative_sweetness", "curated"))
+    # Relative sweetness is not an overlay field: relationships.attach_sweetness reads it, with its
+    # named source, from sources/seeds/sweetness.yaml (SEO run 1, 2026-10-28).
 
     if curated.get("smell_card"):
         cur["smell_card"] = curated["smell_card"]
