@@ -833,5 +833,10 @@
    "name": "CASTOR OIL",
    "labels": 7
   }
- ]
+ ],
+ "product_pairs": {
+  "seeded": 10,
+  "built": 10,
+  "skipped": []
+ }
 }
