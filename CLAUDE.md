@@ -962,7 +962,13 @@ Wikidata revision that introduced it is at least 7 days old; until then the ship
   `serve-out.mjs` serving `thefiscalfinder/tff-dist-wt/out`) was listening at the start; stopped, port confirmed free.
   This session's builds started no servers; none left at the end.
 
-## SEO run 1 (2026-10-28): answer the question the searcher typed. Built on `seo-answers-2026-10` (`49c5d95` code, `87fa6aa` data)
+## SEO run 1 (2026-10-28): answer the question the searcher typed. DEPLOYED 2026-10-28 (ETL `c3f68e3`, web `fbd7d2f`)
+**DEPLOYED 2026-10-28 about 13:33 UTC on Garrett's word** (his brief carried the deploy step). No other branch was
+waiting in either repo. ETL `main` a60b4b4 -> `c3f68e3` (`49c5d95` code, `87fa6aa` data, `c3f68e3` notes, on top of the
+waiting notes commit `43a8820`; deploys nothing, no workflow ran), pushed 13:32:41; then web `main` c213d56 -> `fbd7d2f`,
+GitHub deployment `7386809976` Production success; no news run was in progress. IndexNow run 40697621678: 219 changed,
+219 accepted, audit exact. Live checks and Lighthouse: company CLAUDE.md "SEO run 1". **Monday 2026-11-02's weekly run is
+the first on this code;** a web fix must be pushed before it (web CLAUDE.md "SEO run 1"). Built as:
 From the Search Console export `../gsc-2026-10-27/` (SUMMARY.md): the 108 /vs pages with data are the engine (3,585 of
 10,400 impressions, position 21.5, 11 of 28 clicks), and 23 pages sit on Google's first page with no clicks
 (`/best/sweetest` 315 impressions at 10.2, `/vs/lactose-vs-galactose` 245 at 6.7). Molecule pages were out of scope
