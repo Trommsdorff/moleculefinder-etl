@@ -98,6 +98,11 @@ log = logging.getLogger("mfetl")
 
 PRODUCTS_YAML = SEEDS_DIR / "products.yaml"
 MIN_MOLECULES = 3
+# Product comparisons (SEO run 2, 2026-10-28): /whats-in/<a>-vs-<b>, two labels' ingredient lists
+# side by side. The seed names the pairs; the web computes the shared and unshared lists from the
+# two product records. The answer line is MoleculeFinder's, written from the labels' facts.
+PAIRS_YAML = SEEDS_DIR / "product_pairs.yaml"
+PAIR_SOURCE = "MoleculeFinder curated, from the labels on DailyMed"
 # The page's kinds, in the order the /whats-in index lists them. "moment" holds the worlds
 # that are an experience, not a thing you buy (the smell after rain, falling asleep, a workout).
 # "chemistry" (Run C2) holds class pages: a class of everyday chemicals (PFAS), not a product.
@@ -606,6 +611,9 @@ def _dailymed_molecules(spl: dict, by_unii: dict[str, tuple[str, str]],
     are not MoleculeFinder molecules. One entry per molecule; active wins over inactive. Each
     entry carries the code it was matched on (``unii``: the ingredient's own, or its moiety's)."""
     purpose = dailymed.purposes(spl)
+    # The strength the label states for an active ("200 mg"), and what for ("tablet"), SEO run 2.
+    strength = dailymed.strengths(spl)
+    per = dailymed.strength_per(spl)
     found: dict[str, dict] = {}
     unmatched: list[str] = []
     for role in ("active", "inactive"):
@@ -622,6 +630,10 @@ def _dailymed_molecules(spl: dict, by_unii: dict[str, tuple[str, str]],
             entry = {"slug": slug, "role": role, "listed_as": ing["name"], "match": via, "unii": code}
             if role == "active" and purpose.get(ing["name"]):
                 entry["purpose"] = purpose[ing["name"]]
+            if role == "active" and strength.get(ing["name"]):
+                entry["strength"] = strength[ing["name"]]
+                if per:
+                    entry["strength_per"] = per
             found[slug] = entry
     return list(found.values()), unmatched
 
@@ -971,3 +983,115 @@ def attach_products(records: list[dict], products: list[dict]) -> None:
     for r in records:
         if "products" in r:
             r["products"].sort(key=lambda x: (KINDS.index(x["kind"]), x["name"].lower(), x["slug"]))
+
+
+# ── product comparisons (SEO run 2, 2026-10-28) ───────────────────────────────
+def load_pairs(path: Path | None = None) -> list[dict]:
+    """Read and validate product_pairs.yaml -> [{"a", "b", "answer"}]. Every problem is named at
+    once, like every other seed. Which products exist is products.yaml; which pairs is this."""
+    path = path or PAIRS_YAML
+    if not path.exists():
+        return []
+    data = yaml.safe_load(path.read_text()) or {}
+    rows = data.get("pairs") or []
+    errors: list[str] = []
+    seen: dict[frozenset, str] = {}
+    out: list[dict] = []
+    for i, row in enumerate(rows):
+        where = f"pairs[{i}]"
+        if not isinstance(row, dict):
+            errors.append(f"{where}: not a mapping")
+            continue
+        a, b, answer = row.get("a"), row.get("b"), row.get("answer")
+        where = f"{where} {a or '?'}/{b or '?'}"
+        unknown = sorted(set(row) - {"a", "b", "answer"})
+        if unknown:
+            errors.append(f"{where}: unknown field(s) {', '.join(unknown)}")
+        if not all(isinstance(s, str) and _SLUG.match(s) for s in (a, b)):
+            errors.append(f"{where}: a and b are product slugs")
+            continue
+        if a == b:
+            errors.append(f"{where}: a product cannot be compared with itself")
+            continue
+        key = frozenset((a, b))
+        if key in seen:
+            errors.append(f"{where}: same pair as {seen[key]}, one page per pair")
+            continue
+        seen[key] = f"{a}/{b}"
+        if not isinstance(answer, str) or not answer.strip():
+            errors.append(f"{where}: no answer line")
+            continue
+        out.append({"a": a, "b": b, "answer": " ".join(answer.split())})
+    if errors:
+        raise ProductSeedError("product_pairs.yaml:\n  " + "\n  ".join(errors))
+    return out
+
+
+def pair_slug(a: str, b: str) -> str:
+    """The URL segment under /whats-in/: "advil-vs-tylenol-extra-strength"."""
+    return f"{a}-vs-{b}"
+
+
+def _pair_answer_errors(answer: str, a_name: str, b_name: str) -> list[str]:
+    """The /vs answer-line rules (relationships._answer_errors), with the two PRODUCT names in place
+    of the molecule titles: under 160 characters, one sentence ending in a full stop, no dash, no
+    advice or dosing word, and no bare strength (a "200 mg" in a sentence reads as a dose; the
+    page's active rows carry the strengths with the label's own wording)."""
+    from . import relationships
+    errors = []
+    if len(answer) >= relationships.ANSWER_MAX:
+        errors.append(f"answer line is {len(answer)} characters, the rule is under {relationships.ANSWER_MAX}")
+    if any(d in answer for d in _DASHES):
+        errors.append("em-dash or en-dash in the answer line (house rule)")
+    if len(re.split(r"(?<=[.!?])\s+", answer.strip())) != 1 or not answer.endswith("."):
+        errors.append("the answer line is one sentence ending in a full stop")
+    for name in (a_name, b_name):
+        if name.lower() not in answer.lower():
+            errors.append(f"the answer line does not name {name}")
+    if relationships._ANSWER_ADVICE.search(answer) or any(
+            re.search(p, answer, re.IGNORECASE) for p in relationships._ADVICE_PATTERNS):
+        errors.append("the answer line reads as advice or dosing")
+    return errors
+
+
+def compile_pairs(pairs: list[dict], passed: list[dict], seed: list[dict]) -> tuple[list[dict], list[dict]]:
+    """(the product comparisons to export, the pairs skipped with a reason).
+
+    A pair names two seeded DailyMed labels (a food's curated list has no inactive ingredients to
+    compare). A pair naming a product that is not seeded, not a label, whose URL would be a
+    product's own slug, or whose answer line breaks its rules stops the build. A pair whose product
+    passed the seed but not the gate this run is SKIPPED, not failed: a withdrawn label drops its
+    product page the same way, and the comparison goes with it (reported, like the gate's failures).
+    """
+    seeded = {p["slug"]: p for p in seed}
+    built = {p["slug"] for p in passed}
+    errors: list[str] = []
+    out: list[dict] = []
+    skipped: list[dict] = []
+    for pr in pairs:
+        a, b = pr["a"], pr["b"]
+        where = f"{a}/{b}"
+        missing = [s for s in (a, b) if s not in seeded]
+        if missing:
+            errors.append(f"{where}: not in products.yaml: {', '.join(missing)}")
+            continue
+        not_labels = [s for s in (a, b) if seeded[s]["source"] != "dailymed"]
+        if not_labels:
+            errors.append(f"{where}: a label comparison needs two DailyMed labels; {', '.join(not_labels)} is not one")
+            continue
+        slug = pair_slug(a, b)
+        if slug in seeded:
+            errors.append(f"{where}: its URL {slug} is a product's own slug")
+            continue
+        errors.extend(f"{where}: {e}" for e in _pair_answer_errors(pr["answer"], seeded[a]["name"], seeded[b]["name"]))
+        gone = [s for s in (a, b) if s not in built]
+        if gone:
+            skipped.append({"pair": where, "reason": f"{', '.join(gone)} did not pass the gate this run"})
+            continue
+        out.append({"slug": slug, "a": a, "b": b, "answer": pr["answer"],
+                    "confidence": FROM_SOURCE, "source": PAIR_SOURCE})
+    if errors:
+        raise ProductSeedError("product_pairs.yaml:\n  " + "\n  ".join(errors))
+    for s in skipped:
+        log.warning("  product pair %s skipped: %s", s["pair"], s["reason"])
+    return out, skipped

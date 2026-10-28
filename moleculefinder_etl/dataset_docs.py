@@ -165,6 +165,10 @@ def readme(b: Build, counts: dict[str, int]) -> str:
         f"- **{len(w['licences'])} licence records** from the MHRA (Open Government Licence, attribution), the",
         "  European Medicines Agency (reproduction with the source acknowledged) and national registers",
         "  (Italy's AIFA, Latvia's medicines agency). Drugs@FDA records are kept.",
+        *([f"- **{len(w['sweetness'])} relative sweetness values** whose source asks for attribution (open-access",
+           "  CC BY articles, the EFSA Journal). The site shows each with its credit; here the cell is blank, and",
+           "  the values kept come from the FDA, HSDB and MeSH (public domain)."]
+          if w.get("sweetness") else []),
         "- **CAS Registry Numbers.** The CAS Registry is maintained by the American Chemical Society, which",
         "  requires a licence to publish its numbers; since 2026-10-23 neither the site nor the dataset",
         "  carries them. Each row carries the PubChem CID, InChIKey and Wikidata QID instead.",

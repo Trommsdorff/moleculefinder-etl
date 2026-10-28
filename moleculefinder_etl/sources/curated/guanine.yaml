@@ -1,5 +1,6 @@
-# Hand-authored type overlay: guanine.
-cid: 135398634
+# Hand-authored type overlay: guanine. Keyed to CID 135398634 until SEO run 2 (2026-10-28), while
+# the catalog's guanine is 764, so it applied to nothing.
+cid: 764
 slug: guanine
 types:
   - nucleobase

@@ -1,8 +1,9 @@
 # Hand-authored marquee overlay. Fructose is the sweetest of the common sugars.
-# NOTE (SEO run 1, 2026-10-28): this overlay has never applied. Overlays join by CID and the
-# catalog's fructose is CID 5984, not 2723872, so its types, foods and editorial below are not on
-# the site. Its sweetness now lives in sources/seeds/sweetness.yaml, joined by slug.
-cid: 2723872
+# Overlays join by CID. This one carried 2723872 (a stereo-unspecified PubChem record) from the
+# day it was written, while the catalog's fructose is 5984, so it never applied; fixed in SEO run 2
+# (2026-10-28). tests/test_curated_overlays.py now holds every overlay's CID to the catalog. Its
+# sweetness lives in sources/seeds/sweetness.yaml, joined by slug.
+cid: 5984
 slug: fructose
 tier: marquee
 types:

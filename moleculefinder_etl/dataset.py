@@ -130,6 +130,26 @@ PUBLIC_DOMAIN_TOX_SOURCES = frozenset(
     name for s in registry.SOURCES.values() if s["licence_class"] in ("public_domain", "cc0")
     for name in s.get("pugview_names", ()))
 
+# The licence classes a CC0 release can carry (SEO run 2, 2026-10-28; Garrett's ruling of
+# 2026-10-28 that credit-required sweetness values stay out of the dataset, now in code): public
+# domain, CC0, MoleculeFinder's own curation (released CC0 here) and computed outputs. A record
+# field that names its own source (`<field>_source`, a registry key) is copied only when that
+# source's class is one of these; the site shows the value with its attribution, the dataset
+# leaves the cell blank. Fails closed: no source, or an unknown one, is not in a dataset class.
+DATASET_CLASSES = frozenset({"public_domain", "cc0", "own", "computed"})
+# column -> the record field naming the source of that value.
+SOURCED_FIELDS = {"relative_sweetness": "relative_sweetness_source"}
+
+
+def in_dataset_class(source_key: str | None) -> bool:
+    return registry.licence_class(source_key) in DATASET_CLASSES
+
+
+def withheld_fields(m: dict) -> list[str]:
+    """The sourced fields of a record whose value the dataset leaves blank for its source's terms."""
+    return [col for col, src in SOURCED_FIELDS.items()
+            if m.get(col) is not None and not in_dataset_class(m.get(src))]
+
 # Category kinds left out: `poison` hubs are built from the GHS classification.
 EXCLUDED_CATEGORY_KINDS = frozenset({"poison"})
 # Licence records kept: the FDA's (Drugs@FDA, a US government work).
@@ -172,7 +192,7 @@ MOLECULE_COLUMNS: list[tuple[str, str, str, str]] = [
     ("ld50_route", "string", "Route of that LD50 (oral, dermal, inhalation, iv, other).", "US government sources via PubChem"),
     ("ld50_sources", "string", "The US government sources reporting that LD50, separated by ' | '.", "PubChem PUG-View references"),
     ("half_life_hours", "number", "Elimination half-life in people, hours (8 molecules).", "MoleculeFinder curated"),
-    ("relative_sweetness", "number", "Sweetness relative to sucrose = 1.", "MoleculeFinder curated"),
+    ("relative_sweetness", "number", "Sweetness relative to sucrose = 1, from a public-domain source named on the molecule's page (the FDA, HSDB, MeSH). Blank where the site's value comes from a source that asks for attribution.", "FDA, HSDB, MeSH via MoleculeFinder's sweetness seed"),
     ("scoville_shu", "number", "Pungency of the pure compound, Scoville heat units.", "MoleculeFinder curated"),
     ("odor_threshold_ng_m3", "number", "Odor detection threshold, ng per cubic metre of air.", "MoleculeFinder curated"),
     ("pageviews_monthly", "integer", "English Wikipedia page views per month, the demand signal MoleculeFinder ranks by.", "Wikimedia Pageviews (CC0)"),
@@ -378,7 +398,9 @@ def molecule_row(m: dict, tox_sources: list[str]) -> dict[str, Any]:
         "ld50_route": m.get("ld50_route") if has_ld50 else None,
         "ld50_sources": _join(tox_sources) if has_ld50 else None,
         "half_life_hours": m.get("half_life_hours"),
-        "relative_sweetness": m.get("relative_sweetness"),
+        # Only from a source in a dataset class (DATASET_CLASSES); the eight CC BY and EFSA values
+        # the site shows with their credit are left blank here.
+        "relative_sweetness": None if "relative_sweetness" in withheld_fields(m) else m.get("relative_sweetness"),
         "scoville_shu": m.get("scoville_shu"),
         "odor_threshold_ng_m3": m.get("odor_threshold"),
         "pageviews_monthly": m.get("pageviews_monthly"),
@@ -501,6 +523,8 @@ def build(snapshot: dict[str, Any], *, version: str, inputs: str | None,
         "ghs_hubs": sorted(excluded_hubs),
         "licences": withheld_lic,
         "cas_numbers": sum(1 for m in mols if m.get("cas")),
+        # Sourced fields whose source is outside the dataset's classes (SEO run 2): by molecule.
+        "sweetness": [m["slug"] for m in mols if "relative_sweetness" in withheld_fields(m)],
     }
     return Build(tables, version, snapshot.get("refreshed") or "", snapshot["sha"], inputs, withheld)
 
@@ -575,7 +599,8 @@ def write(b: Build, out: Path = OUT) -> dict[str, Any]:
         "snapshot_sha256": b.snapshot_sha, "inputs_fingerprint": b.inputs, "rows": counts,
         "withheld": {"ld50": len(b.withheld["ld50"]), "ghs_molecules": b.withheld["ghs_molecules"],
                      "ghs_hubs": len(b.withheld["ghs_hubs"]), "licences": len(b.withheld["licences"]),
-                     "cas_numbers": b.withheld["cas_numbers"]},
+                     "cas_numbers": b.withheld["cas_numbers"],
+                     "sweetness": len(b.withheld.get("sweetness", []))},
         "files": {},
     }
     for name, text in sorted(files.items()):

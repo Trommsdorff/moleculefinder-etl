@@ -25,6 +25,16 @@
 # sentence ending in a full stop, both molecules named by their page titles, no advice or
 # dosing words (the web's lib/copy-rules.ts ADVICE plus the patterns above), no dash.
 # Written from the pair's own text: an answer line states nothing the paragraph does not.
+#
+# THE SEARCHER'S WORDS (SEO run 2, 2026-10-28). Search Console shows people typing the brand or
+# the common name ("hydroxyzine vs benadryl", "nicotinic acid vs niacinamide"). Where a page
+# already covers the pair, its answer line uses those words, and an optional `names` map gives
+# the title a parenthetical for one or both molecules ("Hydroxyzine vs Diphenhydramine
+# (Benadryl)"), under the molecule page's own rule: the name must be a curated brand, a Wikidata
+# name, a synonym, the ETL's title synonym or the slug of that molecule, it must appear in the
+# answer line (the page's own words), and it drops when the title would pass 65 characters
+# (relationships._names_errors; the web's lib/titles.ts::pairTitle). A searcher's name the record
+# does not carry ("corn starch", "agar agar") goes in the answer line only.
 
 # ── Stimulants and the xanthines ───────────────────────────────────────────────
 caffeine/theobromine:
@@ -180,7 +190,8 @@ morphine/fentanyl:
     measured in units a kitchen scale cannot see.
 
 tramadol/oxycodone:
-  answer: "Oxycodone is a straightforward opioid close to morphine, while tramadol binds the opioid receptor weakly and also blocks serotonin and norepinephrine reuptake."
+  answer: "Oxycodone, sold as Oxycontin, is a plain opioid close to morphine; tramadol binds the opioid receptor weakly and also acts on serotonin and norepinephrine."
+  names: { oxycodone: Oxycontin }
   text: >
     Both are opioids and both are prescription painkillers, but tramadol is the odder molecule
     of the two. It binds the mu-opioid receptor weakly and also blocks the reuptake of
@@ -373,7 +384,7 @@ ethanol/methanol:
     are hazardous.
 
 ethanol/isopropyl-alcohol:
-  answer: "Ethanol and isopropyl alcohol both disinfect, but only ethanol is a drink, because the body turns isopropyl alcohol into acetone instead of acetic acid."
+  answer: "Ethanol and isopropyl alcohol, or isopropanol, both disinfect, but only ethanol is a drink: the body turns isopropyl alcohol into acetone, not acetic acid."
   text: >
     Isopropyl alcohol has one more carbon and branches, C3H8O against C2H6O, and the body
     oxidises it to acetone rather than to acetic acid, which is why swallowing it causes a
@@ -384,7 +395,7 @@ ethanol/isopropyl-alcohol:
     electronics. The reported oral LD50 for isopropyl alcohol is 4797 mg/kg in dogs.
 
 acetone/isopropyl-alcohol:
-  answer: "Acetone is isopropyl alcohol with two hydrogens removed, one oxidation step apart, and acetone is by far the more aggressive solvent of the two."
+  answer: "Acetone is rubbing alcohol, isopropyl alcohol, with two hydrogens removed, one oxidation step apart, and acetone is by far the harsher solvent of the two."
   text: >
     That oxidation step is exactly what the liver does to isopropyl alcohol. That is why
     acetone shows up on the breath after isopropyl alcohol exposure, and also why the body
@@ -407,7 +418,7 @@ acetone/ethyl-acetate:
     hazard class.
 
 hydrogen-peroxide/isopropyl-alcohol:
-  answer: "Hydrogen peroxide kills microbes by oxidising them and breaks down into water and oxygen, while isopropyl alcohol denatures proteins and evaporates."
+  answer: "Hydrogen peroxide kills microbes by oxidising them and breaks down to water and oxygen; isopropyl alcohol, rubbing alcohol, denatures proteins and evaporates."
   text: >
     Both sit in the same first-aid cabinet and they kill microbes by different mechanisms.
     Hydrogen peroxide is an oxidiser: it breaks down into water and oxygen, and the fizzing on
@@ -476,6 +487,20 @@ sodium-bicarbonate/sodium-carbonate:
     into washing soda, releasing carbon dioxide and water, which is the same reaction that
     raises a cake. In baking, the carbon dioxide is the point; in cleaning, the alkalinity is.
 
+# SEO run 2 (2026-10-28): "calcium carbonate vs baking soda" in Search Console with no page.
+calcium-carbonate/sodium-bicarbonate:
+  answer: "Calcium carbonate is chalk, neutralising acid slowly and leaving calcium behind, while sodium bicarbonate is baking soda, neutralising it fast with a fizz."
+  text: >
+    Both are mild alkalis that neutralise stomach acid, and both appear on antacid labels, but
+    they are different kinds of substance. Calcium carbonate, CaCO3 at 100.09, is chalk,
+    limestone and eggshell: insoluble in water, it reacts only as acid reaches it, so it works
+    slowly and leaves calcium behind, which is why it doubles as a calcium supplement. Sodium
+    bicarbonate, NaHCO3 at 84.007, is baking soda: it dissolves readily, neutralises acid at once
+    and releases carbon dioxide as it does, the fizz of an effervescent tablet and the lift in a
+    cake. That reaction also means baking soda carries sodium, which calcium carbonate does not.
+    Neither carries a GHS hazard label, and their reported oral LD50 values in rats are close,
+    6450 mg/kg for calcium carbonate and 4220 mg/kg for sodium bicarbonate.
+
 sodium-hydroxide/sodium-bicarbonate:
   answer: "Sodium bicarbonate is a weak alkali mild enough to eat, while sodium hydroxide is caustic soda, strong enough to dissolve fat and hair and corrosive to skin."
   text: >
@@ -514,6 +539,7 @@ acetic-acid/citric-acid:
 
 citric-acid/ascorbic-acid:
   answer: "Vitamin C is ascorbic acid, a vitamin humans must get from food, while citric acid is not a vitamin at all and the body makes it constantly."
+  names: { ascorbic-acid: Ascorbic acid }
   text: >
     These two are often confused because both are sour, both come from citrus, and both are
     used as preservatives. Ascorbic acid is vitamin C, which humans cannot make and must eat;
@@ -537,7 +563,7 @@ gelatin/pectin:
     effectively set for good.
 
 agar/gelatin:
-  answer: "Agar is a seaweed polysaccharide that sets firmer and melts only near 85 degrees Celsius, while gelatin is an animal protein that melts near body temperature."
+  answer: "Agar, or agar agar, is a seaweed polysaccharide that sets firm and melts only near 85 degrees Celsius; gelatin is an animal protein that melts near body heat."
   text: >
     Agar is the plant answer to gelatin and it does not behave the same way. Agar is a
     polysaccharide from red seaweed; gelatin is hydrolysed animal collagen, a protein. Agar
@@ -562,7 +588,7 @@ xanthan-gum/guar-gum:
     weakness.
 
 maltodextrin/starch:
-  answer: "Maltodextrin is starch cut down into short glucose chains, so it dissolves instantly and tastes faintly sweet where starch tastes of nothing."
+  answer: "Maltodextrin is starch, usually corn starch, cut into short glucose chains, so it dissolves instantly and tastes faintly sweet where starch tastes of nothing."
   text: >
     This pair is a material and its own fragment. Starch is long chains of glucose, either
     straight amylose or branched amylopectin, and it needs digestion before the body can use
@@ -574,7 +600,7 @@ maltodextrin/starch:
     industrial product.
 
 starch/cellulose:
-  answer: "Starch and cellulose are both glucose chains, but starch's alpha bonds can be digested and cellulose's beta bonds cannot, so cellulose is fibre."
+  answer: "Starch and cellulose are both glucose chains, but a starch chain's alpha bonds digest and a cellulose chain's beta bonds do not, so cellulose is fibre."
   text: >
     Neither contains anything but glucose. Starch links its glucose units with alpha bonds,
     which human amylase can cut, so starch is food. Cellulose links them with beta bonds,
@@ -778,7 +804,8 @@ urea/uric-acid:
     skincare as a humectant, which uric acid does not.
 
 nicotinamide/niacin:
-  answer: "Both are vitamin B3, but nicotinic acid carries an acid group that causes the skin flush, while nicotinamide carries an amide instead and does not."
+  answer: "Niacin is nicotinic acid, whose acid group causes the skin flush, while niacinamide is nicotinamide, the amide form of vitamin B3, which does not flush."
+  names: { nicotinamide: Niacinamide, niacin: Niacin }
   text: >
     Both end up as the same coenzyme, NAD, but they behave very differently on the way there.
     Niacin is nicotinic acid, carrying a carboxylic acid group, and at high intakes it causes
@@ -981,6 +1008,7 @@ levocetirizine/cetirizine:
 
 hydroxyzine/diphenhydramine:
   answer: "Hydroxyzine and diphenhydramine, sold as Benadryl, both cause drowsiness, but hydroxyzine lasts longer, is prescription only and also treats anxiety."
+  names: { diphenhydramine: Benadryl }
   text: >
     Both are first generation antihistamines that cross into the brain, and they are used for
     noticeably different things. Diphenhydramine is an over-the-counter allergy medicine and
@@ -1168,6 +1196,21 @@ zolpidem/temazepam:
     mediates sedation specifically, which is why it does comparatively little for anxiety.
     Zolpidem also acts and clears faster, with a half-life near 2.5 hours against temazepam's
     8 to 10. Both are controlled substances in the US.
+
+# SEO run 2 (2026-10-28): "temazepam vs zopiclone" in Search Console with no page of its own.
+temazepam/zopiclone:
+  answer: "Temazepam is a benzodiazepine that also eases anxiety and relaxes muscle; zopiclone is a z-drug that targets sleep more narrowly and leaves a metallic taste."
+  text: >
+    Both are prescription sleep medicines that act on the GABA-A receptor, and neither carries an
+    LD50 in this catalog. Temazepam is a true benzodiazepine, C16H13ClN2O2 at 300.74, sold as
+    Restoril in the United States, and it binds across the receptor's subtypes, so it brings the
+    anxiety-easing and muscle-relaxing effects of the class along with the sedation. Zopiclone,
+    C17H17ClN6O3 at 388.8 and sold as Zimovane in the UK, is a cyclopyrrolone, one of the
+    z-drugs, which favour the subtype behind sedation and do less for anxiety. Zopiclone is
+    cleared faster, with a half-life near 5 hours against temazepam's 8 to 10, and it is secreted
+    into saliva, which is the bitter metallic taste people report the next morning. Zopiclone has
+    never been approved in the United States, where its single active form, eszopiclone, is sold
+    instead.
 
 methylphenidate/amphetamine:
   answer: "Methylphenidate blocks dopamine reuptake, while amphetamine also pushes stored dopamine out of the neuron, which is why amphetamine tends to act more strongly."
@@ -1389,6 +1432,21 @@ gabapentin/pregabalin:
     171.24 and is a controlled substance in the US and the UK where gabapentin's status
     varies.
 
+# SEO run 2 (2026-10-28): "gaba vs gabapentin" in Search Console with no page of its own.
+gamma-aminobutyric-acid/gabapentin:
+  answer: "Gabapentin is GABA with a cyclohexane ring built onto its middle carbon, which lets it reach the brain, though it never acts on the GABA receptor itself."
+  text: >
+    GABA is the brain's main inhibitory neurotransmitter, a small amino acid of C4H9NO2 at
+    103.12 that the body makes itself. Gabapentin, C9H17NO2 at 171.24, was designed as GABA with
+    a cyclohexane ring attached to its middle carbon, the idea being a version that could cross
+    from the blood into the brain, which GABA swallowed as a supplement does poorly. The ring
+    worked for that, but the molecule turned out not to act on GABA receptors at all: it binds
+    the alpha-2-delta subunit of voltage-gated calcium channels instead, reducing the release of
+    excitatory neurotransmitters, which is how it treats seizures and nerve pain. GABA is sold as
+    a supplement, gabapentin as a prescription medicine, Neurontin, approved by the FDA in 1993.
+    The name is the only thing the two share in practice: one is the messenger, the other a
+    medicine named after it.
+
 prednisone/dexamethasone:
   answer: "Dexamethasone is several times more potent than prednisone, lasts far longer and needs no liver activation, while prednisone holds more sodium and water."
   text: >
@@ -1439,7 +1497,7 @@ palmitic-acid/stearic-acid:
     which is unusual for two molecules so nearly identical.
 
 butane/propane:
-  answer: "Butane has one more carbon than propane and boils near freezing, so propane stays a usable gas in cold weather and butane does not."
+  answer: "Butane, C4H10, has one more carbon than propane, C3H8, and boils near freezing, so propane stays a usable gas in cold weather and butane does not."
   text: >
     Both are alkanes sold as bottled fuel. Propane boils at about minus 42 degrees Celsius and
     butane at about minus 1, which means propane stays a usable gas in cold weather and butane

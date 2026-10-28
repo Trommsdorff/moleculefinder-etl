@@ -42,6 +42,9 @@ DEFERRED = SEED_DIR / "deferred.json"
 # that failed, and why).
 PRODUCTS_STAGED = SEED_DIR / "products.json"
 PRODUCTS_GATE = SEED_DIR / "products_gate.json"
+# Product comparisons (SEO run 2): the pairs whose two products both passed the gate, staged by
+# transform for export the same way, so the two files always come from one run.
+PRODUCT_PAIRS_STAGED = SEED_DIR / "product_pairs.json"
 NEXT_TRANCHE_QUEUE = SEED_DIR / "next_tranche_queue.csv"
 # Trust run 3: every UNII that reaches a molecule, and how (committed; tests/test_unii_index.py
 # holds products.json to it in both directions).
@@ -343,12 +346,19 @@ def stage_transform(settings: Settings) -> list[dict]:
         products.write_queue(report.pop("next_tranche_queue"), NEXT_TRANCHE_QUEUE)
         # The UNII index, every code that reaches a molecule and how, is its own committed file.
         products.write_unii_index(report.pop("unii_index_entries"), UNII_INDEX, products.fda_unii.cached())
+        # Product comparisons (SEO run 2): built from the products that passed, skipped otherwise.
+        pairs_seed = products.load_pairs()
+        pairs, skipped = products.compile_pairs(pairs_seed, passed, seed)
+        PRODUCT_PAIRS_STAGED.write_text(json.dumps(pairs, ensure_ascii=False))
+        report["product_pairs"] = {"seeded": len(pairs_seed), "built": len(pairs), "skipped": skipped}
         PRODUCTS_GATE.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n")
-        log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s)",
+        log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s); "
+                 "%d of %d product comparisons built",
                  report["passed"], report["seeded"], products.MIN_MOLECULES,
-                 report["by_kind"], report["failed"], PRODUCTS_GATE.name)
+                 report["by_kind"], report["failed"], PRODUCTS_GATE.name, len(pairs), len(pairs_seed))
     else:
         PRODUCTS_STAGED.unlink(missing_ok=True)
+        PRODUCT_PAIRS_STAGED.unlink(missing_ok=True)
 
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],
@@ -431,9 +441,12 @@ def stage_export(settings: Settings) -> Path:
     if staged is None and any(m.get("products") for m in molecules):
         raise SystemExit(f"molecules.json lists products but there is no {PRODUCTS_STAGED.name}; "
                          f"run `mfetl transform` again")
+    # The product comparisons staged beside them (SEO run 2); none without products.
+    pairs = (json.loads(PRODUCT_PAIRS_STAGED.read_text())
+             if staged is not None and PRODUCT_PAIRS_STAGED.exists() else None)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
-                                  products=staged)
+                                  products=staged, product_pairs=pairs)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)

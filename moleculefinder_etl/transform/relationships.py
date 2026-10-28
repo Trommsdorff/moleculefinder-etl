@@ -83,16 +83,21 @@ def load_comparisons() -> dict[str, dict[str, str]]:
     ``answer`` is the pair's one-sentence difference (SEO run 1, 2026-10-28): the page's
     meta description, its first line of prose and the FAQ's answer to "What is the
     difference". A pair written as a bare string has no answer, which fails the compile.
+    ``names`` (SEO run 2, optional) maps a molecule slug to the name the title carries in a
+    parenthetical for it ("Benadryl"), held to ``_names_errors``.
     """
     if not COMPARISONS_YAML.exists():
         return {}
     data = yaml.safe_load(COMPARISONS_YAML.read_text()) or {}
-    out: dict[str, dict[str, str]] = {}
+    out: dict[str, dict] = {}
     for k, v in data.items():
         if not v:
             continue
         entry = v if isinstance(v, dict) else {"text": v}
         out[str(k).strip()] = {f: " ".join(str(entry.get(f) or "").split()) for f in ("answer", "text")}
+        names = entry.get("names") if isinstance(entry, dict) else None
+        if names:
+            out[str(k).strip()]["names"] = {str(s): " ".join(str(n).split()) for s, n in dict(names).items()}
     return out
 
 
@@ -134,10 +139,14 @@ def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
         seen[unordered] = key
         errors.extend(f"{key}: {e}" for e in _comparison_prose_errors(text))
         errors.extend(f"{key}: {e}" for e in _answer_errors(answer, by_slug[a], by_slug[b]))
+        names = entry.get("names") or {}
+        errors.extend(f"{key}: {e}" for e in _names_errors(names, answer, by_slug[a], by_slug[b]))
         out[f"{a}-vs-{b}"] = {
             "pair": key, "a": a, "b": b, "answer": answer, "text": text,
             "confidence": FROM_SOURCE, "source": "MoleculeFinder curated",
         }
+        if names:
+            out[f"{a}-vs-{b}"]["names"] = names
     if errors:
         raise SystemExit("comparisons compile failed:\n  " + "\n  ".join(errors))
     log.info("  comparisons: %d pair(s) compiled", len(out))
@@ -205,6 +214,39 @@ def _answer_errors(answer: str, a: dict, b: dict) -> list[str]:
             errors.append(f"the answer line does not name {title}")
     if _ANSWER_ADVICE.search(answer) or any(re.search(p, answer, re.IGNORECASE) for p in _ADVICE_PATTERNS):
         errors.append("the answer line reads as advice or dosing")
+    return errors
+
+
+# The searcher's words in the title (SEO run 2, 2026-10-28). A /vs title may carry a parenthetical
+# for a molecule ("Diphenhydramine (Benadryl)") under the molecule page's own rule for its
+# parenthetical: a name the record carries, which the page's own text (here, the answer line) uses.
+def _record_names(m: dict) -> set[str]:
+    """Every name a record answers to, as it reads in a sentence: the title, the slug's words, the
+    ETL's title synonym, the curated brands, the Wikidata names and the synonym lines."""
+    names = [m.get("title") or "", m.get("slug", "").replace("-", " "), m.get("title_synonym") or "",
+             *(m.get("brands") or []), *(m.get("wikidata_names") or []),
+             *(m.get("display_synonyms") or []), *(m.get("synonyms") or [])]
+    return {_name_key(n) for n in names if n}
+
+
+def _names_errors(names: dict, answer: str, a: dict, b: dict) -> list[str]:
+    errors = []
+    for slug, name in (names or {}).items():
+        m = a if slug == a.get("slug") else b if slug == b.get("slug") else None
+        if m is None:
+            errors.append(f"names: {slug} is not one of the pair")
+            continue
+        if not isinstance(name, str) or not name.strip():
+            errors.append(f"names: no name for {slug}")
+            continue
+        if "—" in name or "–" in name:
+            errors.append(f"names: em-dash or en-dash in {name!r} (house rule)")
+        if _name_key(name) == _name_key(m.get("title") or ""):
+            errors.append(f"names: {name!r} is {slug}'s title itself")
+        elif _name_key(name) not in _record_names(m):
+            errors.append(f"names: {name!r} is not a brand, Wikidata name, synonym, title synonym or the slug of {slug}")
+        if _name_key(name) not in _name_key(answer):
+            errors.append(f"names: the answer line does not use {name!r} (the page's own words must)")
     return errors
 
 

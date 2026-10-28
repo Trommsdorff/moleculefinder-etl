@@ -1,0 +1,54 @@
+# Product comparisons for /whats-in/<a>-vs-<b> (SEO run 2, 2026-10-28).
+#
+# Each pair names two products from products.yaml, both DailyMed labels, by slug. The page compares
+# the two labels' INGREDIENT LISTS and nothing else: each label's active ingredient with the
+# strength the label states, the inactive ingredients the two share, the ones each has alone, the
+# molecules linked as on the product pages. It makes no claim about which works better, is safer
+# or should be taken (the product-page rule), and says in one line that it compares labels, not
+# effects. A pair is built only when both products passed the gate this run; one whose label was
+# withdrawn drops the pair with its page, logged in data/seed/products_gate.json.
+#
+# `answer` is the one sentence a searcher typing "advil vs tylenol" wants, written from label
+# facts only: under 160 characters, one sentence ending in a full stop, both product names as
+# products.yaml spells them, no advice or dosing word (relationships._ADVICE_PATTERNS and the
+# web's ADVICE pattern), no bare strength (a "200 mg" in a sentence reads as a dose; the page's
+# active rows carry the strengths), no dash. Enforced by transform/products._pair_answer_errors.
+#
+# Why these: the searcher's "Tylenol" is Tylenol Extra Strength (the catalog has no plain
+# Tylenol; Regular Strength is the other label), "Benadryl" is Benadryl Allergy, "Prilosec" is
+# Prilosec OTC, "Nexium" is Nexium 24HR (the OTC label beside Prilosec OTC's), "Pepcid" is Pepcid
+# Complete, "Rolaids" is Rolaids Advanced Soft Chews, and the two toothpastes the catalog holds
+# that share sodium fluoride are Sensodyne and Colgate Cavity Protection. Mucinex vs Sudafed is
+# not here: the catalog's two Sudafed labels are combination products (PE Head Congestion + Pain,
+# Sinus Congestion + Cold Severe), not the plain decongestant a searcher means by Sudafed.
+pairs:
+  - a: advil
+    b: tylenol-extra-strength
+    answer: "Advil's active ingredient is ibuprofen and Tylenol Extra Strength's is acetaminophen; both labels list cellulose, starch and shellac as inactive ingredients."
+  - a: advil
+    b: motrin-ib
+    answer: "Advil and Motrin IB both list ibuprofen as their only active ingredient; the labels share only gelatin and water among the inactive ingredients."
+  - a: advil
+    b: aleve
+    answer: "Advil's active ingredient is ibuprofen and Aleve's is naproxen sodium; cellulose is the one inactive ingredient both labels list."
+  - a: tylenol-extra-strength
+    b: aleve
+    answer: "Tylenol Extra Strength's active ingredient is acetaminophen and Aleve's is naproxen sodium; both labels list cellulose and magnesium stearate."
+  - a: zyrtec
+    b: claritin
+    answer: "Zyrtec's active ingredient is cetirizine and Claritin's is loratadine; both labels list lactose, starch and magnesium stearate as inactive ingredients."
+  - a: benadryl-allergy
+    b: zyrtec
+    answer: "Benadryl Allergy's active ingredient is diphenhydramine and Zyrtec's is cetirizine; the two labels share no inactive ingredient at all."
+  - a: prilosec-otc
+    b: nexium-24hr
+    answer: "Prilosec OTC's active ingredient is omeprazole and Nexium 24HR's is esomeprazole; the two labels share most of their inactive ingredients."
+  - a: pepcid-complete
+    b: prilosec-otc
+    answer: "Pepcid Complete lists famotidine with two antacids, calcium carbonate and magnesium hydroxide; Prilosec OTC lists omeprazole alone as its active ingredient."
+  - a: tums
+    b: rolaids-advanced-soft-chews
+    answer: "Tums lists calcium carbonate as its only active ingredient, while Rolaids Advanced Soft Chews add magnesium hydroxide; both labels list sucrose and starch."
+  - a: sensodyne
+    b: colgate-cavity-protection
+    answer: "Sensodyne's active ingredients are potassium nitrate and sodium fluoride; Colgate Cavity Protection lists sodium fluoride alone; both list sorbitol."

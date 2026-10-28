@@ -23,6 +23,8 @@ META = "meta.json"
 FEATURED = "featured.json"
 # What's in it (growth plan run C1): the products that passed the gate, for /whats-in.
 PRODUCTS = "products.json"
+# Product comparisons (SEO run 2): the pairs for /whats-in/<a>-vs-<b>, built from products.json.
+PRODUCT_PAIRS = "product_pairs.json"
 # The source registry with each source's licence class and attribution (2026-10-23), so the site
 # names a value's source and prints the attribution its class asks for from one definition.
 SOURCES = "sources.json"
@@ -55,7 +57,7 @@ def _prior_refreshed(path: Path) -> str | None:
 def export(molecules: list[dict], leaderboards: dict[str, dict],
            comparisons: dict[str, dict] | None = None, *,
            featured: Callable[[str], dict] | None = None, today: str | None = None,
-           products: list[dict] | None = None) -> Path:
+           products: list[dict] | None = None, product_pairs: list[dict] | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files + meta.json.
 
     Each leaderboard file is a self-describing board (metadata + enriched
@@ -84,7 +86,8 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
 
     ``products`` (``transform/products.compile_products``) becomes products.json, the /whats-in
     pages; None means there is no product seed, and a products.json left from an earlier run is
-    removed, like featured.json.
+    removed, like featured.json. ``product_pairs`` (``products.compile_pairs``) becomes
+    product_pairs.json, the /whats-in/<a>-vs-<b> pages, on the same terms.
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
     # The source-licence rule: nothing is written if any value cites a source that is not in
@@ -136,12 +139,17 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     products_path = SNAPSHOTS / PRODUCTS
     if products is not None:
         outputs[products_path] = json.dumps({"products": products}, ensure_ascii=False)
+    pairs_path = SNAPSHOTS / PRODUCT_PAIRS
+    if product_pairs is not None:
+        outputs[pairs_path] = json.dumps({"pairs": product_pairs}, ensure_ascii=False)
 
     stale = [f for d in (mol_dir, lb_dir) if d.is_dir() for f in d.glob("*.json") if f not in outputs]
     if featured is None and featured_path.exists():
         stale.append(featured_path)
     if products is None and products_path.exists():
         stale.append(products_path)
+    if product_pairs is None and pairs_path.exists():
+        stale.append(pairs_path)
     changed = bool(stale) or any(_read_text(path) != text for path, text in outputs.items())
     meta_path = SNAPSHOTS / META
     refreshed = _prior_refreshed(meta_path)
@@ -159,4 +167,6 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
         featured_path.unlink()
     if products is None and products_path.exists():
         products_path.unlink()
+    if product_pairs is None and pairs_path.exists():
+        pairs_path.unlink()
     return SNAPSHOTS

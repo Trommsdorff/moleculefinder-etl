@@ -1,0 +1,8 @@
+# Hand-authored type overlay: tocopherol (vitamin E). Was alpha-tocopherol.yaml keyed to CID 14985,
+# which is not a catalog molecule, so it applied to nothing from 2026-07 to SEO run 2 (2026-10-28);
+# the catalog's vitamin E is tocopherol, CID 14986. tests/test_curated_overlays.py holds every
+# overlay's CID to the catalog.
+cid: 14986
+slug: tocopherol
+types:
+  - vitamin

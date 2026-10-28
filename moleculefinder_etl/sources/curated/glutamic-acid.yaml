@@ -1,5 +1,6 @@
-# Hand-authored type overlay: glutamic-acid.
-cid: 33032
+# Hand-authored type overlay: glutamic-acid. Keyed to CID 33032 (L-glutamic acid's record) until SEO
+# run 2 (2026-10-28), while the catalog's glutamic acid is 611, so it applied to nothing.
+cid: 611
 slug: glutamic-acid
 types:
   - amino-acid

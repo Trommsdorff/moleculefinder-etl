@@ -125,6 +125,10 @@ def test_no_ghs_hub_survives_and_the_readme_names_every_exclusion():
     for phrase in ["GHS hazard classification", "LD50 values", "licence records", "CAS Registry Numbers",
                    "PubChem synonyms", "Serving sizes", "CC0 1.0"]:
         assert phrase in readme, phrase
+    # A package built since SEO run 2 counts the sweetness values it withholds and says so.
+    manifest = json.loads((PKG / "MANIFEST.json").read_text())
+    if manifest["withheld"].get("sweetness"):
+        assert "relative sweetness values" in readme
     assert "chemical database" not in readme.lower()
     assert "Creative Commons Legal Code" in (PKG / "LICENSE.txt").read_text()
     for name in ["datapackage.json", "dataset-metadata.json", "zenodo.json"]:
@@ -203,6 +207,40 @@ def test_an_ld50_only_t3db_reports_is_withheld_and_counted():
     assert rows["alpha"]["ld50_sources"] == "Hazardous Substances Data Bank (HSDB)"
     assert rows["beta"]["ld50_mg_per_kg"] is None and rows["beta"]["ld50_sources"] is None
     assert build.withheld["ld50"] == ["beta"]
+
+
+def test_a_sweetness_from_an_attribution_source_is_withheld_and_counted():
+    """Garrett's ruling (2026-10-28): the credit-required sweetness values (six CC BY articles, EFSA)
+    stay out of the CC0 dataset. The FDA's, HSDB's and MeSH's are public domain and stay in; a value
+    with no source, or an unknown one, fails closed."""
+    fda = _mol("fda-sweet", relative_sweetness=600, relative_sweetness_source="fda")
+    hsdb = _mol("hsdb-sweet", relative_sweetness=0.74, relative_sweetness_source="hsdb")
+    cc_by = _mol("cc-by-sweet", relative_sweetness=220000, relative_sweetness_source="dragomir_2025")
+    efsa = _mol("efsa-sweet", relative_sweetness=250, relative_sweetness_source="efsa")
+    bare = _mol("unsourced-sweet", relative_sweetness=1)
+    unknown = _mol("unknown-sweet", relative_sweetness=2, relative_sweetness_source="nobody")
+    build = dataset.build(_snap([fda, hsdb, cc_by, efsa, bare, unknown]), version="2026.10", inputs=None,
+                          tox=lambda cid: None)
+    rows = {r["slug"]: r["relative_sweetness"] for r in build.tables["molecules"]}
+    assert rows == {"fda-sweet": 600, "hsdb-sweet": 0.74, "cc-by-sweet": None, "efsa-sweet": None,
+                    "unsourced-sweet": None, "unknown-sweet": None}
+    assert build.withheld["sweetness"] == ["cc-by-sweet", "efsa-sweet", "unsourced-sweet", "unknown-sweet"]
+    assert dataset.in_dataset_class("fda") and dataset.in_dataset_class("curated")
+    assert not dataset.in_dataset_class("efsa") and not dataset.in_dataset_class(None)
+
+
+def test_the_committed_snapshots_credit_required_sweetness_values_would_be_withheld():
+    """The eight Garrett named: lugduname, fructose, galactose, trehalose, maltose, lactulose,
+    glycerol (CC BY) and mogroside V (EFSA)."""
+    from moleculefinder_etl.config import SNAPSHOTS
+    files = sorted((SNAPSHOTS / "molecules").glob("*.json")) if SNAPSHOTS.exists() else []
+    if not files:
+        pytest.skip("no snapshot exported yet")
+    mols = [json.loads(f.read_text()) for f in files]
+    withheld = sorted(m["slug"] for m in mols if dataset.withheld_fields(m))
+    assert withheld == ["fructose", "galactose", "glycerol", "lactulose", "lugduname", "maltose", "mogroside-v", "trehalose"]
+    kept = [m for m in mols if m.get("relative_sweetness") is not None and not dataset.withheld_fields(m)]
+    assert len(kept) == 18 and all(dataset.in_dataset_class(m["relative_sweetness_source"]) for m in kept)
 
 
 def test_cas_ghs_synonyms_and_hazard_hubs_never_reach_a_row():

@@ -110,16 +110,64 @@ def test_a_good_answer_passes_and_a_greek_title_reads_as_written():
 
 
 def test_every_shipped_pair_has_its_own_answer_line():
-    """Every shipped pair has its own line: two pages answering with one sentence would compete."""
+    """Every shipped pair has its own line: two pages answering with one sentence would compete.
+    Compiled against the full molecule files (a title parenthetical, SEO run 2, is checked against
+    the record's brands and Wikidata names, which index.json does not carry)."""
     import json
 
     from moleculefinder_etl.config import SNAPSHOTS
-    index = SNAPSHOTS / "index.json"
-    if not index.exists():
+    files = sorted((SNAPSHOTS / "molecules").glob("*.json")) if SNAPSHOTS.exists() else []
+    if not files:
         pytest.skip("no snapshot exported yet")
-    out = rel.build_comparisons(json.loads(index.read_text()))
+    out = rel.build_comparisons([json.loads(f.read_text()) for f in files])
     answers = [c["answer"] for c in out.values()]
     assert all(answers) and len(set(answers)) == len(answers)
+    # SEO run 2: the pairs whose titles carry the searcher's brand or common name.
+    named = {k: c["names"] for k, c in out.items() if c.get("names")}
+    assert named["hydroxyzine-vs-diphenhydramine"] == {"diphenhydramine": "Benadryl"}
+    assert named["nicotinamide-vs-niacin"] == {"nicotinamide": "Niacinamide", "niacin": "Niacin"}
+    assert named["tramadol-vs-oxycodone"] == {"oxycodone": "Oxycontin"}
+    assert named["citric-acid-vs-ascorbic-acid"] == {"ascorbic-acid": "Ascorbic acid"}
+    assert len(named) == 4
+
+
+# ── the title's parenthetical (SEO run 2, 2026-10-28) ─────────────────────────
+_HYD = {"slug": "hydroxyzine", "title": "Hydroxyzine", "brands": None, "wikidata_names": []}
+_DPH = {"slug": "diphenhydramine", "title": "Diphenhydramine", "brands": ["Benadryl", "ZzzQuil"],
+        "wikidata_names": ["benzhydramine"], "display_synonyms": ["Dimedrolum"], "title_synonym": None}
+_LINE = "Hydroxyzine and diphenhydramine, sold as Benadryl, both cause drowsiness, but hydroxyzine lasts longer."
+
+
+def test_a_name_passes_when_the_record_carries_it_and_the_answer_line_uses_it():
+    assert rel._names_errors({"diphenhydramine": "Benadryl"}, _LINE, _HYD, _DPH) == []
+    # The slug's own words count as a name the record carries ("ascorbic acid" for /m/ascorbic-acid).
+    vit_c = {"slug": "ascorbic-acid", "title": "Vitamin C"}
+    assert rel._names_errors({"ascorbic-acid": "Ascorbic acid"}, "Vitamin C is ascorbic acid.", vit_c, _HYD) == []
+
+
+@pytest.mark.parametrize("names, line, phrase", [
+    ({"cetirizine": "Zyrtec"}, _LINE, "not one of the pair"),
+    ({"diphenhydramine": "Nytol"}, _LINE, "not a brand, Wikidata name, synonym"),
+    ({"diphenhydramine": "ZzzQuil"}, _LINE, "the answer line does not use"),
+    ({"diphenhydramine": "Diphenhydramine"}, _LINE, "title itself"),
+    ({"diphenhydramine": ""}, _LINE, "no name"),
+    ({"diphenhydramine": "Bena–dryl"}, _LINE, "em-dash or en-dash"),
+])
+def test_a_name_the_rule_refuses(names, line, phrase):
+    errors = rel._names_errors(names, line, _HYD, _DPH)
+    assert any(phrase in e for e in errors), f"{phrase!r} not caught in {errors}"
+
+
+def test_names_reach_the_compiled_pair_and_a_bad_one_fails_the_build(monkeypatch):
+    seed = {"hydroxyzine/diphenhydramine": {"answer": _LINE, "text": _OK, "names": {"diphenhydramine": "Benadryl"}}}
+    monkeypatch.setattr(rel, "load_comparisons", lambda: seed)
+    out = rel.build_comparisons([_HYD, _DPH])
+    assert out["hydroxyzine-vs-diphenhydramine"]["names"] == {"diphenhydramine": "Benadryl"}
+    seed["hydroxyzine/diphenhydramine"]["names"] = {"diphenhydramine": "Nytol"}
+    with pytest.raises(SystemExit, match="Nytol"):
+        rel.build_comparisons([_HYD, _DPH])
+    del seed["hydroxyzine/diphenhydramine"]["names"]
+    assert "names" not in rel.build_comparisons([_HYD, _DPH])["hydroxyzine-vs-diphenhydramine"]
 
 
 def test_an_ld50_in_mg_per_kg_is_not_mistaken_for_a_dose():
@@ -133,9 +181,10 @@ def test_the_shipped_file_compiles_and_every_pair_is_real():
     import json
 
     from moleculefinder_etl.config import SNAPSHOTS
-    index = SNAPSHOTS / "index.json"
-    if not index.exists():
+    files = sorted((SNAPSHOTS / "molecules").glob("*.json")) if SNAPSHOTS.exists() else []
+    if not files:
         pytest.skip("no snapshot exported yet")
-    molecules = json.loads(index.read_text())
+    # The full records: a title parenthetical (SEO run 2) is checked against brands and Wikidata names.
+    molecules = [json.loads(f.read_text()) for f in files]
     out = rel.build_comparisons(molecules)
     assert len(out) >= 100, f"only {len(out)} comparisons compiled"

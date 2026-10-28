@@ -252,6 +252,65 @@ def purposes(spl: dict) -> dict[str, str]:
     return out
 
 
+# ── strengths (SEO run 2, 2026-10-28) ─────────────────────────────────────────
+# The strength an OTC label states for each active ingredient ("Ibuprofen 200 mg (NSAID)*"), read
+# off the same active-ingredient lines and table rows ``purposes`` reads, never computed. The
+# product comparison pages show it beside the active; a product page's active row carries it too.
+_QTY = re.compile(r"\d[\d,]*(?:\.\d+)?\s*(?:%|(?:mg|mcg|g|iu|units?)\b)", re.IGNORECASE)
+_PER = re.compile(r"\((?:in|per) each ([^)]+)\)", re.IGNORECASE)
+
+
+def strength_text(line: str) -> str | None:
+    """The strength a line states, from its first quantity: "200 mg" from "Ibuprofen 200 mg
+    (NSAID)*", "220 mg (naproxen 200 mg)" from Aleve's line, "0.24% (0.15% w/v fluoride ion)" from
+    a toothpaste's. A parenthetical right after the quantity is kept only when it carries a
+    quantity itself; "(NSAID)" is not a strength. None for a line with no quantity."""
+    m = _QTY.search(line)
+    if not m:
+        return None
+    text = m.group(0)
+    rest = line[m.end():].lstrip()
+    if rest.startswith("("):
+        close = rest.find(")")
+        if close > 0 and _QTY.search(rest[:close]):
+            text += " " + rest[:close + 1]
+    return " ".join(text.split())
+
+
+def _active_lines(spl: dict) -> list[str]:
+    """The label's active-ingredient lines less headers and footnotes, as ``purposes`` reads them."""
+    return [l for l in spl.get("active_lines", [])
+            if not _HEADER.match(l.strip(" :")) and not l.lstrip().startswith(("*", "†"))]
+
+
+def strengths(spl: dict) -> dict[str, str]:
+    """{active ingredient name: the strength its line states}, paired the way ``purposes`` pairs
+    them: a table row's first cell, else an active-ingredient line, naming the ingredient by its
+    full name or first word. An active whose line states no quantity gets none."""
+    actives = [i["name"] for i in spl.get("ingredients", []) if i["role"] == "active"]
+    lines = [row[0] for row in spl.get("purpose_rows", []) if row] + _active_lines(spl)
+    out: dict[str, str] = {}
+    for name in actives:
+        for line in lines:
+            if any(k in line.lower() for k in _keys(name)):
+                text = strength_text(line)
+                if text:
+                    out[name] = text
+                    break
+    return out
+
+
+def strength_per(spl: dict) -> str | None:
+    """What the strengths are stated for, from the section header "(in each tablet)": "tablet",
+    "caplet", "chewable tablet", "5 mL". None when the label gives no such header."""
+    lines = spl.get("active_lines", []) + [r[0] for r in spl.get("purpose_rows", []) if r] + spl.get("purpose_lines", [])
+    for line in lines:
+        m = _PER.search(line)
+        if m:
+            return " ".join(m.group(1).split())
+    return None
+
+
 # ── network ───────────────────────────────────────────────────────────────────
 def fetch(setid: str) -> dict | None:
     """One label, parsed. None when DailyMed has no such set id (404: the label was withdrawn or
