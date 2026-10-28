@@ -15,6 +15,7 @@ data/seed/molecules.json
 data/seed/deferred.json
 data/seed/freshness.json
 data/seed/products.json
+data/seed/product_pairs.json
 
 # `mfetl licences` downloads (deleted at the end of the run)
 data/regulators/
