@@ -1035,6 +1035,143 @@ From the Search Console export `../gsc-2026-10-27/` (SUMMARY.md): the 108 /vs pa
   deploy:** fix fructose's CID in `sources/curated/fructose.yaml` (2723872 -> the catalog's 5984); it will add fructose's
   curated types, foods and editorial, so expect hub and world pages to move in that run's snapshot.
 
+## SEO run 2 (2026-10-28): comparisons where search shows demand, the first product-vs-product pages, three fixes. DEPLOYED 2026-10-28 (ETL `0d9d4ce`, web `a8fa6f3`)
+**DEPLOYED 2026-10-28 about 18:00 UTC on Garrett's word** (his brief carried the deploy step). No other branch was
+waiting in either repo. ETL `main` c3f68e3 -> `0d9d4ce` (`c56e3d5` code, `0d9d4ce` data, on top of the waiting notes
+commits `c7b0cf1` and `346b45d`; deploys nothing, no workflow ran), pushed 17:59:34 UTC; then web `main` a907bbc ->
+`a8fa6f3` (`4587f13` sync, `a8fa6f3` code, with the waiting notes commit `43ca941`), pushed 17:59:36, clear of the news
+cron (the day's runs had fired 30 to 90 minutes late; the 18:50 slot had not started). GitHub deployment
+`7393336754` Production success (18:00:50 UTC); IndexNow run 40741116281: 1,697 -> 1,710, 13 new, 206 changed, 0
+removed, 219 submitted and 219 accepted, audit exact, `indexnow-last` -> `a8fa6f3`. Live checks (33 of 33) and live
+Lighthouse: company CLAUDE.md "SEO run 2". Branch `seo-compare-2026-10`. **Monday 2026-11-02's weekly
+run is the first on this code:** it compiles the 10 product pairs and the strengths from the cached labels (no new
+fetch), and a label whose product drops out of the gate drops its pair with a logged reason, never a failure.
+**Part 1, the molecule comparisons (`sources/seeds/comparisons.yaml`, `transform/relationships.py`).** Every
+comparison-shaped query in the Search Console export (`../gsc-2026-10-27/Queries.csv`, 288 of the 1,000 rows) was
+split and each side resolved to a catalog molecule by title, slug, Wikidata name, synonym, curated brand or a hand
+alias; the full list is at the end of this section. 70 queries' pairs already had a page (the brief's three
+"starting" pairs among them: hydroxyzine/diphenhydramine, nicotinamide/niacin and ethanol/isopropyl-alcohol were
+all live). **Three new pairs**, the only ones with no page whose two sides are both catalog molecules:
+`temazepam/zopiclone` (4 impressions at 60.2), `gamma-aminobutyric-acid/gabapentin` (2 at 70.0),
+`calcium-carbonate/sodium-bicarbonate` (2 at 70.5, "calcium carbonate vs baking soda"), each written from the records
+(the two LD50s quoted, 6450 and 4220 mg/kg, are HSDB rows, so the licence gate's mg/kg check passes). **The
+searcher's words on existing pages:** nine answer lines rewritten so the line, the description and the FAQ answer
+carry the words people type (corn starch; "a starch chain's", "a cellulose chain's"; "or isopropanol"; rubbing alcohol
+on the two isopropyl alcohol pages; "or agar agar"; C4H10 and C3H8 on butane/propane; Oxycontin; niacin and
+niacinamide). **The title parenthetical, a new optional `names` map per pair** ({slug: name}): the title carries the
+name in a parenthetical under the molecule page's own rule, enforced by `relationships._names_errors`: the name must
+be one the record carries (a curated brand, a Wikidata name, a synonym line entry, the ETL's title synonym, or the
+slug's own words), must not be the title itself, must appear in the answer line (the page's own words), no dash; it
+is exported in comparisons.json as `names` and the web's `pairTitle` drops it when the phrase would pass 65. Set on
+four pairs: `hydroxyzine/diphenhydramine` {diphenhydramine: Benadryl} ("hydroxyzine vs benadryl", 27 impressions at
+9.7, the biggest Cohort B query), `tramadol/oxycodone` {oxycodone: Oxycontin}, `citric-acid/ascorbic-acid`
+{ascorbic-acid: Ascorbic acid} (the page title is Vitamin C), `nicotinamide/niacin` {nicotinamide: Niacinamide,
+niacin: Niacin} (the title had neither common name; "nicotinamide vs niacinamide", 9 impressions, is the same
+molecule, and the line now says so). Not set where the question form would have been lost for a name already in the
+title (rubbing alcohol on the hydrogen peroxide page), and impossible under the rule for "corn starch" and "agar agar"
+(names the starch and agar records do not carry): those two are in the answer lines only. `build_comparisons` and
+`test_comparisons.py`'s shipped-file tests now compile against the full molecule files, not index.json (a brand is
+only in the full record).
+**Part 2, product comparisons (`sources/seeds/product_pairs.yaml`, `products.load_pairs`, `products.compile_pairs`,
+`dailymed.strengths`).** A pair names two seeded DailyMed labels by slug with a one-sentence `answer` written from
+label facts (`_pair_answer_errors`: under 160, one sentence, both product names as products.yaml spells them, no dash,
+the /vs advice patterns, which also refuse a bare "200 mg" in a line, so strengths live on the page's rows, not in the
+lines). `compile_pairs` runs after `compile_products`: a pair naming an unseeded product, a non-label, a URL that is a
+product's own slug, or a bad line stops the build; a pair whose product passed the seed but not the gate this run is
+SKIPPED with its reason (in `products_gate.json` under `product_pairs`, and a warning), exactly as a withdrawn label
+drops its own page. Exported as `data/snapshots/product_pairs.json` (`{"pairs": [{slug, a, b, answer, confidence,
+source}]}`, `snapshot_export.export(product_pairs=...)`, removed when None); the web computes the shared and unshared
+lists from the two product records. **The strength:** `dailymed.strength_text` reads the first quantity on an
+active-ingredient line or table-row cell ("200 mg"; a parenthetical kept only when it carries a quantity itself,
+"220 mg (naproxen 200 mg)", "0.24% (0.15% w/v fluoride ion)", never "(NSAID)"), `strengths` pairs it to the active
+by the same name keys `purposes` uses, `strength_per` reads "(in each tablet)" from the section header; both land on
+the active's entry as `strength` and `strength_per`. Read from the cached labels (`active_lines`, `purpose_rows`), so
+the pinned build needed no fetch and the cache prefix is unchanged. 207 of 392 actives carry a strength, 56 of them
+with what for. **The ten pairs** (the brief's list; "Tylenol" is Tylenol Extra Strength, the catalog has no plain
+Tylenol; "Benadryl" Benadryl Allergy; "Prilosec" Prilosec OTC; "Nexium" Nexium 24HR; "Pepcid" Pepcid Complete;
+"Rolaids" Rolaids Advanced Soft Chews; the two toothpastes sharing sodium fluoride are Sensodyne and Colgate Cavity
+Protection): advil/tylenol-extra-strength, advil/motrin-ib, advil/aleve, tylenol-extra-strength/aleve,
+zyrtec/claritin, benadryl-allergy/zyrtec, prilosec-otc/nexium-24hr, pepcid-complete/prilosec-otc,
+tums/rolaids-advanced-soft-chews, sensodyne/colgate-cavity-protection. **Skipped: Mucinex vs Sudafed**, because the
+catalog's two Sudafed labels are combination products (PE Head Congestion + Pain with ibuprofen and phenylephrine;
+Sinus Congestion + Cold Severe with pseudoephedrine and acetaminophen), not the plain decongestant a searcher means;
+one plain Sudafed set id in products.yaml would make the pair possible. No other pair: Queries.csv holds no
+product-vs-product query at all.
+**Part 3, the three fixes.** (a) `sources/curated/fructose.yaml` carried CID 2723872 against the catalog's 5984 since
+it was written, so its `sugar` type, its foods and its editorial never applied; re-keyed, and the new
+`tests/test_curated_overlays.py` holds EVERY overlay's CID and slug to the snapshot, which found three more of the
+same bug: `glutamic-acid.yaml` (33032 -> 611), `guanine.yaml` (135398634 -> 764) and `alpha-tocopherol.yaml` (14985,
+a molecule the catalog does not hold; re-keyed and renamed to `tocopherol.yaml`, CID 14986, the catalog's vitamin E).
+Fructose was already in the fruit and honey hubs through food_hubs.yaml, and `sugar` is already its family, so the
+visible gain is its editorial; the other three gain their family (amino, nucleobase, vitamin), which moves their roam
+nodes and the `neighbor_family` on 24 neighbours' edges. Nothing else was keyed on 2723872 (grep of seeds, tests and
+data). (b) **The dataset gate** (`dataset.py`): `DATASET_CLASSES` = public_domain, cc0, own, computed; `SOURCED_FIELDS`
+maps a column to the record field naming its source (`relative_sweetness` -> `relative_sweetness_source`);
+`withheld_fields(m)` lists what a record's row leaves blank (no source or an unknown one fails closed); the row, the
+manifest's `withheld.sweetness` count and a README bullet follow it. On the committed snapshot exactly the eight
+Garrett named are withheld (lugduname, fructose, galactose, trehalose, maltose, lactulose, glycerol: CC BY; mogroside
+V: EFSA) and 18 kept, pinned by `test_dataset.py`. No new dataset version was built (2026.10.1 stays published; the
+next `mfetl dataset` applies the gate). (c) The phone rows are web only.
+**Checks:** 998 tests (957; 41 new across `test_product_pairs.py`, `test_curated_overlays.py`, `test_comparisons.py`,
+`test_dataset.py`), ruff 130 (= main). `mfetl sync-inputs` (b32ee345a19c9b16) then `mfetl all` with all three keys
+blanked: exit 0 in 6 s, 0 PubChem POSTs, propane's label still held, 147 comparisons compiled, 10 of 10 pairs built;
+run twice, the snapshot diff byte-identical. **The snapshot changes exactly:** `comparisons.json` (144 -> 147, `names`
+on 4, 9 answer lines), `product_pairs.json` (new, 10), `products.json` (146 entries, by `strength` and `strength_per`
+on their active entries alone), 28 molecule files (fructose: `content_blocks` and the `curated` source; glutamic acid,
+guanine, tocopherol: `family` and the source; 24 neighbours: one edge's `neighbor_family` each), `roam.json` (those
+three nodes and two edges), `products_gate.json` (the pairs report). meta.json unchanged (pinned); index, boards,
+worlds, featured and sources untouched.
+**Measurement note (first check 2026-11-24, with SEO run 1).** The 13 new pages (10 product comparisons, 3 /vs) are
+their own cohort with no baseline: on 2026-11-24 pull 2026-10-28 to 2026-11-23 per page (clicks, impressions,
+position) and read them beside SEO run 1's /vs cohort and the /m seasonal control. The 13 existing /vs pages whose
+title or line changed today (the four with `names`, the nine rewritten lines, less the overlap: acetone/isopropyl
+alcohol, agar/gelatin, butane/propane, citric acid/ascorbic acid, ethanol/isopropyl alcohol, hydrogen
+peroxide/isopropyl alcohol, hydroxyzine/diphenhydramine, maltodextrin/starch, nicotinamide/niacin, starch/cellulose,
+tramadol/oxycodone, plus glucose/fructose and sucrose/fructose, which moved only because fructose's record did) sit
+inside SEO run 1's cohort already; note them when reading it.
+
+### The queries considered (SEO run 2; impressions in brackets, position after; the aggregate is per pair)
+Comparison-shaped queries in Queries.csv ("A vs B", "A or B", "difference between A and B", "is A the same as B",
+"A and B difference"), each side resolved to a catalog molecule by title, slug, Wikidata name, synonym, curated brand
+or a hand alias (Benadryl, isopropyl/IPA/isopropanol/rubbing alcohol, nicotinic acid, niacin, corn starch, agar agar,
+baking soda, caustic soda, Oxycontin, estrogen, dex, acetate).
+- **Existing page, nothing to change (the searcher's words already in the title or line):** acetone/ethyl acetate (72
+  at 9.8; "acetate" alone is ethyl acetate), lactose/galactose (32 at 6.4), ethanol/methanol (27), sucralose/aspartame
+  (26), sumatriptan/naratriptan (23), famotidine/omeprazole (23), sodium hydroxide/sodium bicarbonate (21 at 8.3, the
+  only /vs query with a click; "caustic soda" already in the line), amitriptyline/nortriptyline (16), gelatin/pectin
+  (13), urea/uric acid (13), menthol/camphor (12), glucose/glycogen (11), diazepam/lorazepam (11), nicotine/caffeine
+  (10, 1 click), benzene/toluene (10), creatine/creatinine (9), glucose/fructose (9), serotonin/dopamine (8),
+  sertraline/fluoxetine (8), acetaminophen/aspirin (8), formaldehyde/acetaldehyde (7), limonene/linalool (6),
+  xylitol/erythritol (6), codeine/tramadol (6), caffeine/theobromine (5), taurine/caffeine (5), sucrose/fructose (5),
+  gabapentin/pregabalin (5), naloxone/naltrexone (5), prednisone/dexamethasone (5; "dex"), hydrogen peroxide/sodium
+  hypochlorite (4), collagen/keratin (4), hydrochlorothiazide/furosemide (4), bupropion/sertraline (4),
+  levocetirizine/cetirizine (3), oleic/linoleic acid (3), quetiapine/olanzapine (3), zolpidem/temazepam (3),
+  methylphenidate/amphetamine (3), lisinopril/losartan (3), melatonin/serotonin (3), losartan/valsartan (3),
+  cortisol/epinephrine (2; the title is Adrenaline), adenosine/caffeine (2), atorvastatin/rosuvastatin (2),
+  lisdexamfetamine/dextroamphetamine (2), palmitic/stearic acid (2), ethylene glycol/propylene glycol (2),
+  leptin/ghrelin (2), clonazepam/alprazolam (1), glycerol/propylene glycol (1), diphenhydramine/cetirizine (1),
+  doxycycline/azithromycin (1), estradiol/testosterone (1; "estrogen").
+- **Existing page, the searcher's words added to the answer line:** butane/propane (62 at 35.1: "propane vs butane
+  chemical formula" 13, "formula" 10, "chemical structure" 6), ethanol/isopropyl alcohol (45 at 32.4: "isopropyl" 7,
+  "ipa" 2, "isopropanol" 2), starch/cellulose (38 at 10.1: "chain of starch vs chain of cellulose" 17), maltodextrin/
+  starch (37 at 51.1: "maltodextrin vs corn starch" 19 + 14), agar/gelatin (34 at 41.8: "agar agar" in eight queries,
+  12), hydrogen peroxide/isopropyl alcohol (17 at 16.4: "rubbing alcohol" 2), acetone/isopropyl alcohol (12 at 27.7:
+  "rubbing alcohol" 1, "ipa" 1, "isopropyl" 1).
+- **Existing page, the brand or common name in the title parenthetical (`names`):** hydroxyzine/diphenhydramine (42
+  at 12.4: "benadryl" in six queries, 38), tramadol/oxycodone (40 at 28.8: "oxycontin" 3, "oxy" 2), citric
+  acid/ascorbic acid (22 at 26.7: "ascorbic acid" in six queries, 11), nicotinamide/niacin (12 at 78.9: "nicotinic
+  acid vs niacinamide" 9, "nicotinamide vs niacin" 3; plus "nicotinamide vs niacinamide" 9, the same molecule).
+- **New pages:** temazepam/zopiclone (4 at 60.2), GABA/gabapentin (2 at 70.0), calcium carbonate/sodium bicarbonate
+  (2 at 70.5).
+- **Not made, with the reason:** "nicotinamide vs niacinamide" (9) and "isopropanol vs isopropyl" (3) compare a
+  molecule with itself; "butene vs butane" (1), "8-chlorotheophylline vs caffeine" (1): not catalog molecules;
+  "acetaldehyde vs aldehyde", "phenyl vs toluene": a class, not a molecule; "acetone vs alcohol" (3 queries, 3):
+  "alcohol" is ambiguous, and the acetone/isopropyl alcohol page now says rubbing alcohol; "glycerol vs glycogen" (1):
+  no comparison a reader would want; "sucrose vs glucose vs fructose" (1): three-way, two of its pairs exist (a
+  sucrose/glucose page is possible, not asked for); "na2co3 vs nahco3", "sodium carbonate vs bicarbonate": the sodium
+  bicarbonate/sodium carbonate page; the 26 Tylenol and Advil "chemical formula / structure / name" queries (position
+  60 to 85) are molecule-page lookups, out of scope. Product vs product: no such query exists in the export.
+
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
 checks (company CLAUDE.md). Monday 2026-10-26's weekly run is the first on this code.
