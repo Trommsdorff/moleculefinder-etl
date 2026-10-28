@@ -962,6 +962,66 @@ Wikidata revision that introduced it is at least 7 days old; until then the ship
   `serve-out.mjs` serving `thefiscalfinder/tff-dist-wt/out`) was listening at the start; stopped, port confirmed free.
   This session's builds started no servers; none left at the end.
 
+## SEO run 1 (2026-10-28): answer the question the searcher typed. Built on `seo-answers-2026-10` (`49c5d95` code, `87fa6aa` data)
+From the Search Console export `../gsc-2026-10-27/` (SUMMARY.md): the 108 /vs pages with data are the engine (3,585 of
+10,400 impressions, position 21.5, 11 of 28 clicks), and 23 pages sit on Google's first page with no clicks
+(`/best/sweetest` 315 impressions at 10.2, `/vs/lactose-vs-galactose` 245 at 6.7). Molecule pages were out of scope
+(their impressions are identifier lookups). Three parts, one deploy; the web half is in the web CLAUDE.md.
+- **Part 1, sweetness with a named source.** The Sweetest board said sucralose leads at 600 because only 8 molecules
+  carried a value, each a bare "commonly cited" figure in its curated overlay, while lugduname's own line said
+  200,000. Now **`sources/seeds/sweetness.yaml` is the one home of every relative sweetness**: 26 molecules, each with
+  `value`, `source` (a registry key that may be displayed), `cite` and `says` (the source's own words, read
+  2026-10-28; an en dash written as a hyphen). `relationships.attach_sweetness` (after the odor thresholds, before the
+  descriptions) sets `relative_sweetness`, the new **`relative_sweetness_source`**, the property row (source = the key)
+  and the sweetness hook where assemble used to put it, and fails the build on an unknown slug, a missing or extra
+  field, a non-positive value, sucrose at anything but 1, or a source that may not be displayed. The assemble and
+  hooks overlay paths are gone, and `tests/test_sweetness.py` fails if any overlay carries `relative_sweetness` again.
+  **The convention, stated in the seed:** the eight had no source and no rule; the one that matches a published range
+  (stevioside's 200 against the FDA's "200 to 400 times" for steviol glycosides) is its low end, so: a single figure
+  beats a range; a US government source (FDA, NLM's HSDB and MeSH) first, then EFSA, then an open-access CC BY
+  article; a range gives its LOW end; a percent its fraction. Three of the eight moved: **saccharin 300 -> 400** (the
+  FDA's own table: "sweetness intensity at 400 times sucrose"), **stevioside 200 -> 300** (MeSH: "300 times as sweet
+  as sugar"), **glucose 0.75 -> 0.74** (HSDB). The board: **lugduname 220,000** (Dragomir et al., Foods 2025, CC BY:
+  Table 2 "Lugduname 220,000", text "between 220,000 and 300,000"), sucralose 600, saccharin 400, rebaudioside A 300
+  (FDA table), stevioside 300, mogroside V 250 (EFSA Journal 2019, CC BY-ND 4.0), aspartame 200, acesulfame potassium
+  200 (both FDA), glycyrrhizin 33 (HSDB), cyclamate 30 (21 CFR 189.135, "30 to 40"), fructose 1.73 and galactose 0.32
+  (Weber et al., J. Agric. Food Chem. 2025, CC BY), sucrose 1, xylitol 1.0, glucose 0.74, allulose 0.7 (FDA's allulose
+  guidance, reporting public comments), maltitol 0.65, sorbitol 0.6, erythritol 0.6 (HSDB "60-70%"), glycerol 0.6
+  (Foods 2026, CC BY, "60-75%"), mannitol 0.5 (HSDB's polyol table, "50 - 70"), lactulose 0.48 (Foods 2025, CC BY),
+  isomalt 0.45, trehalose 0.43 (IJERPH 2020, CC BY), maltose 0.3 (Nutrients 2018, CC BY, "30-35%"), lactose 0.17
+  (HSDB, "about one-sixth"). **Not sourced, left out:** ribose (searched: PubChem, HSDB, EFSA's 2018 opinion, open
+  articles), inositol, deoxyribose, dihydroxyacetone, glucosamine, N-acetylglucosamine; the polysaccharides are not
+  sweet. Tagatose is not in the catalog (FDA GRN 78: 75-92 percent). **Nine sources registered** (`registry.py`):
+  `fda`, `mesh` (public domain), `efsa` ("acknowledged": CC BY-ND allows verbatim reuse with attribution) and six
+  CC BY articles, each with its citation as the attribution line, so `sources.json` gains nine entries.
+  `leaderboards.SOURCE_FIELDS` puts `source` on every Sweetest entry; `LEADS` opens the board's description with the
+  leader's answer, built from the data: "Lugduname is the sweetest molecule in MoleculeFinder, an estimated 220,000
+  times sweeter than sugar. Table sugar is 1, and every value names its source." (152). **Corrected to the sourced
+  value:** why-it-matters lines of saccharin (400), stevioside (300), rebaudioside A (300, was 250), glycyrrhizin (33,
+  was 50), cyclamate (30, was 40), erythritol (60 percent, was 70), lugduname ("an estimated 220,000", was "roughly
+  200,000"); the saccharin and stevioside editorials; five /vs paragraphs (below). A test fails any why-it-matters line
+  or editorial that quotes a different multiple from its value. **Found, not fixed:** `sources/curated/fructose.yaml`
+  has never applied (CID 2723872; the catalog's fructose is 5984), so its types, foods and editorial are not on the
+  site; a comment in it now says so (fixing the CID would add hubs, a separate change).
+- **Part 2, the answer line.** `comparisons.yaml` entries are now `{answer, text}` (header documents it). 144 lines,
+  each written from its pair's own paragraph (no new facts), checked by `relationships._answer_errors`: under 160
+  characters, one sentence ending in a full stop, both page titles named (β written "beta-"), no advice or dosing word
+  (the web's ADVICE pattern plus `_ADVICE_PATTERNS`), no dash. First sentences edited on 83 pairs (one deleted) where they would now
+  repeat the line (one later sentence, betamethasone/dexamethasone). Sweetness figures in the prose follow Part 1:
+  aspartame/saccharin (400), sucralose/stevioside (300), xylitol/erythritol (erythritol 60 percent),
+  erythritol/allulose (allulose is now the SWEETER of the two, 70 against 60; the text said less sweet),
+  stevioside/rebaudioside A (both 300; "slightly sweeter, near 250" became "as sweet, near 300"). The licence gate's
+  mg/kg check reads the answer too.
+- **Checks:** `mfetl sync-inputs` (b32ee345a19c9b16), then `mfetl all` with all three keys blanked, exit 0, twice,
+  byte-identical; 0 PubChem POSTs; propane's label still held. **The snapshot changes exactly:** 26 molecule files
+  (value, source, property, hook; 7 why-it-matters lines and the descriptions built from them; 2 editorials),
+  `comparisons.json`, `leaderboards/sweetest.json` and `index.json`, `sources.json`. meta.json and every other file
+  unchanged. **957 passed, 1 skipped** (933); ruff 130 (131 on main: the touched test file's import order).
+- **Needs Garrett:** lugduname's only allowed source is a 2025 open-access review whose sentence mirrors Wikipedia and
+  cites an unrelated paper; the original (Nofre, Tinti and Glaser, Chem. Senses 1996) is paywalled. No allowed source
+  calls it "the sweetest molecule known", so the board says "in MoleculeFinder". The CC0 dataset (`mfetl dataset`)
+  would now carry CC BY sweetness values: check `dataset.py`'s field rule before the next version.
+
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
 checks (company CLAUDE.md). Monday 2026-10-26's weekly run is the first on this code.
