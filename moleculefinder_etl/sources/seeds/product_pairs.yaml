@@ -18,9 +18,10 @@
 # Tylenol; Regular Strength is the other label), "Benadryl" is Benadryl Allergy, "Prilosec" is
 # Prilosec OTC, "Nexium" is Nexium 24HR (the OTC label beside Prilosec OTC's), "Pepcid" is Pepcid
 # Complete, "Rolaids" is Rolaids Advanced Soft Chews, and the two toothpastes the catalog holds
-# that share sodium fluoride are Sensodyne and Colgate Cavity Protection. Mucinex vs Sudafed is
-# not here: the catalog's two Sudafed labels are combination products (PE Head Congestion + Pain,
-# Sinus Congestion + Cold Severe), not the plain decongestant a searcher means by Sudafed.
+# that share sodium fluoride are Sensodyne and Colgate Cavity Protection. "Sudafed" is Sudafed
+# Sinus Congestion, the plain decongestant (pseudoephedrine alone): the catalog's other two Sudafed
+# labels are combination products (PE Head Congestion + Pain, Sinus Congestion + Cold Severe), so
+# the pair waited until Garrett had the plain label seeded (2026-10-28, for the next ETL run).
 pairs:
   - a: advil
     b: tylenol-extra-strength
@@ -52,3 +53,6 @@ pairs:
   - a: sensodyne
     b: colgate-cavity-protection
     answer: "Sensodyne's active ingredients are potassium nitrate and sodium fluoride; Colgate Cavity Protection lists sodium fluoride alone; both list sorbitol."
+  - a: mucinex
+    b: sudafed-sinus-congestion
+    answer: "Mucinex's active ingredient is guaifenesin and Sudafed Sinus Congestion's is pseudoephedrine; both labels list cellulose and magnesium stearate."

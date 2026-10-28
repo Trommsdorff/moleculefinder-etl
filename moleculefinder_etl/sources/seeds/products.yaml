@@ -347,6 +347,9 @@ products:
   - {slug: stromectol, name: "Stromectol", kind: medicine, dailymed: 681888c9-af79-4b7d-ae80-c3f4f6f1effd}
   - {slug: suboxone, name: "Suboxone", kind: medicine, dailymed: 8a5edcf9-828c-4f97-b671-268ab13a8ecd}
   - {slug: sudafed-pe-head-congestion-plus-pain, name: "Sudafed PE Head Congestion plus Pain", kind: medicine, dailymed: 76513fb2-7323-4f1f-8a10-92f8f603cf97}
+  # Plain Sudafed (pseudoephedrine alone; Garrett, 2026-10-28, so Mucinex vs Sudafed can build): the
+  # brand owner's label, not the 12 Hour one or a repackager's.
+  - {slug: sudafed-sinus-congestion, name: "Sudafed Sinus Congestion", kind: medicine, dailymed: c05d7e27-6821-468f-b27d-9c0b02a07b0f}
   - {slug: sudafed-sinus-congestion-plus-cold-severe, name: "Sudafed Sinus Congestion + Cold Severe", kind: medicine, dailymed: 537e1a0d-820d-c3f7-e063-6294a90a56ea}
   - {slug: sunlenca, name: "Sunlenca", kind: medicine, dailymed: e5652804-29c4-40d7-aeb2-0142ed2a7b5b}
   - {slug: synthroid, name: "Synthroid", kind: medicine, dailymed: 1e11ad30-1041-4520-10b0-8f9d30d30fcc}
