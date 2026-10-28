@@ -955,9 +955,9 @@ Wikidata revision that introduced it is at least 7 days old; until then the ship
   files, now with `ageing.json`): CI rebuilt the parquet, propane and the held file byte for byte as the Mac did.
   `sync-web` "web repo snapshot already identical, no PR needed"; `all-clear` ran, nothing to close; `alarm` skipped.
   A pinned build here now needs `mfetl sync-inputs` again (b32ee345a19c9b16).
-- **The rule's limit, for Garrett:** the vandal edit turns 7 days old at 2026-11-01 13:37 UTC, so the 2026-11-02 run
-  WILL ship "priest" unless the label is reverted on Wikidata first (the same edit also set Commons category P373 to
-  "Priest"). The rule buys a week for a person to see the held line and revert; it does not decide what is vandalism.
+- **Closed 2026-10-28:** the vandal label was undone on Wikidata at 00:59 UTC (Q131189's English label is "propane"
+  again), so the next run sees no change and holds nothing. The rule buys a week for a person to see the held line and
+  revert; it does not decide what is vandalism.
 - **Housekeeping, port 4173:** a leftover `node` static server from an earlier TheFiscalFinder session (PID 2556,
   `serve-out.mjs` serving `thefiscalfinder/tff-dist-wt/out`) was listening at the start; stopped, port confirmed free.
   This session's builds started no servers; none left at the end.
@@ -968,7 +968,7 @@ waiting in either repo. ETL `main` a60b4b4 -> `c3f68e3` (`49c5d95` code, `87fa6a
 waiting notes commit `43a8820`; deploys nothing, no workflow ran), pushed 13:32:41; then web `main` c213d56 -> `fbd7d2f`,
 GitHub deployment `7386809976` Production success; no news run was in progress. IndexNow run 40697621678: 219 changed,
 219 accepted, audit exact. Live checks and Lighthouse: company CLAUDE.md "SEO run 1". **Monday 2026-11-02's weekly run is
-the first on this code;** a web fix must be pushed before it (web CLAUDE.md "SEO run 1"). Built as:
+the first on this code;** the web typecheck fix it needed went out 2026-10-28 about 15:06 UTC (web `a907bbc`). Built as:
 From the Search Console export `../gsc-2026-10-27/` (SUMMARY.md): the 108 /vs pages with data are the engine (3,585 of
 10,400 impressions, position 21.5, 11 of 28 clicks), and 23 pages sit on Google's first page with no clicks
 (`/best/sweetest` 315 impressions at 10.2, `/vs/lactose-vs-galactose` 245 at 6.7). Molecule pages were out of scope
@@ -1023,10 +1023,17 @@ From the Search Console export `../gsc-2026-10-27/` (SUMMARY.md): the 108 /vs pa
   (value, source, property, hook; 7 why-it-matters lines and the descriptions built from them; 2 editorials),
   `comparisons.json`, `leaderboards/sweetest.json` and `index.json`, `sources.json`. meta.json and every other file
   unchanged. **957 passed, 1 skipped** (933); ruff 130 (131 on main: the touched test file's import order).
-- **Needs Garrett:** lugduname's only allowed source is a 2025 open-access review whose sentence mirrors Wikipedia and
-  cites an unrelated paper; the original (Nofre, Tinti and Glaser, Chem. Senses 1996) is paywalled. No allowed source
-  calls it "the sweetest molecule known", so the board says "in MoleculeFinder". The CC0 dataset (`mfetl dataset`)
-  would now carry CC BY sweetness values: check `dataset.py`'s field rule before the next version.
+- **Garrett's rulings, 2026-10-28.** (1) **Lugduname stays as built** (its only allowed source is a 2025 open-access
+  review whose sentence mirrors Wikipedia and cites an unrelated paper; the original, Nofre, Tinti and Glaser, Chem.
+  Senses 1996, is paywalled; no allowed source calls it "the sweetest molecule known", so the board says "in
+  MoleculeFinder"). (2) **Credit-required sweetness values stay out of the CC0 dataset** under its existing licence
+  rule (`dataset.py`'s `public_domain`/`cc0` classes). There are EIGHT: lugduname, fructose, galactose, trehalose,
+  maltose, lactulose, glycerol (`cc_by`) and mogroside V (`efsa`, `acknowledged`). **To do, next ETL run:**
+  `molecule_row` (`dataset.py`, `"relative_sweetness": m.get("relative_sweetness")`) copies the value without checking
+  `relative_sweetness_source`; make it null when that source's class is outside the dataset's, with a test, before any
+  new dataset version (2026.10.1, the published one, predates these values). (3) **To do, next ETL run, not its own
+  deploy:** fix fructose's CID in `sources/curated/fructose.yaml` (2723872 -> the catalog's 5984); it will add fructose's
+  curated types, foods and editorial, so expect hub and world pages to move in that run's snapshot.
 
 ## The forms ruling (2026-10-25). DEPLOYED 2026-10-25 (ETL `fcb4aa9`, web `96b2786`), built as `94a4122` code, `81bbb59` data
 **DEPLOYED about 01:03 UTC on Garrett's word**; IndexNow 11 new, 203 changed, 214 accepted, audit exact; live 19 of 19
