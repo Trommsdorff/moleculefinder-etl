@@ -1,11 +1,11 @@
 {
- "seeded": 475,
- "passed": 424,
+ "seeded": 476,
+ "passed": 425,
  "failed": 51,
  "by_kind": {
   "food": 35,
   "drink": 14,
-  "medicine": 298,
+  "medicine": 299,
   "cosmetic": 60,
   "household": 12,
   "chemistry": 1,
@@ -13,13 +13,13 @@
  },
  "min_molecules": 3,
  "matched_by_code": {
-  "unii": 1861,
-  "moiety": 155
+  "unii": 1866,
+  "moiety": 156
  },
  "matched_by_rule": {
   "parent": 127,
   "skeleton": 32,
-  "alias": 351
+  "alias": 352
  },
  "unii_index": {
   "fda_table": "UNII_Records_4Aug2026.txt",
@@ -595,23 +595,23 @@
  "label_ingredients_not_in_catalog": [
   {
    "name": "TITANIUM DIOXIDE",
-   "labels": 150
+   "labels": 151
   },
   {
    "name": "HYPROMELLOSE, UNSPECIFIED",
-   "labels": 97
+   "labels": 98
   },
   {
    "name": "POLYETHYLENE GLYCOL, UNSPECIFIED",
-   "labels": 68
+   "labels": 69
   },
   {
    "name": "TALC",
-   "labels": 62
+   "labels": 63
   },
   {
    "name": "FERRIC OXIDE RED",
-   "labels": 56
+   "labels": 57
   },
   {
    "name": "FERRIC OXIDE YELLOW",
@@ -634,12 +634,12 @@
    "labels": 32
   },
   {
-   "name": "D&C YELLOW NO. 10",
+   "name": "CARNAUBA WAX",
    "labels": 31
   },
   {
-   "name": "CARNAUBA WAX",
-   "labels": 30
+   "name": "D&C YELLOW NO. 10",
+   "labels": 31
   },
   {
    "name": "FERROSOFERRIC OXIDE",
@@ -702,15 +702,15 @@
    "labels": 16
   },
   {
+   "name": "POLYVINYL ALCOHOL, UNSPECIFIED",
+   "labels": 16
+  },
+  {
    "name": "ALOE VERA LEAF",
    "labels": 15
   },
   {
    "name": "CETYL ALCOHOL",
-   "labels": 15
-  },
-  {
-   "name": "POLYVINYL ALCOHOL, UNSPECIFIED",
    "labels": 15
   },
   {
@@ -835,8 +835,8 @@
   }
  ],
  "product_pairs": {
-  "seeded": 10,
-  "built": 10,
+  "seeded": 11,
+  "built": 11,
   "skipped": []
  }
 }
