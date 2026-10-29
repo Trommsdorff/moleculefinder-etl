@@ -1931,7 +1931,21 @@ Do not raise it again.** No recreational-drug row, ever (Garrett, 2026-10-18).
   122 comparisons, 127 tests, ruff clean, `mfetl all` idempotent.
 - **Deploy order (unchanged): ETL main first (no deploy), then web main (the deploy).**
 
-## The links kit and the Hugging Face dataset card (2026-10-29): BUILT on `links-kit-2026-10`, NOT pushed
+## The links kit and the Hugging Face dataset card (2026-10-29): DEPLOYED 2026-10-29 (ETL `344cc92`, web `0dee735`)
+**DEPLOYED 2026-10-29 about 22:30 UTC on Garrett's word** (his brief carried the deploy step, with his six rulings on
+the kit). No other branch was waiting in either repo (the web's `indexnow-dataset-2026-10` is in `main` by patch).
+ETL `main` 30f7a3f -> `344cc92` (the three branch commits plus the waiting notes commit `a3e481e`; deploys nothing,
+and no workflow ran: the one push-triggered workflow is path-filtered to the migrations), pushed 22:29:50 UTC, clear
+of the news cron (no run in progress; today's 18:50 slot had not fired, the 13:46 run was the last). Then web `main`
+114a01f -> `0dee735` at 22:29:52 (the lessons' CC BY 4.0 sentence on /classroom and in the Terms, the kit with the
+rulings applied, the Sweetest bar chart; its record is in the web CLAUDE.md): GitHub deployment `7425792867`
+Production success 22:31:15 UTC, IndexNow run 40966489282 1,710 -> 1,710, 0 new, 6 changed, 6 accepted, audit exact;
+live `/classroom` and `/legal/terms` carry the sentence, sitemap 1,710. Before the push: 1,016 ETL tests
+passed, 1 skipped (re-run, keys blanked), ruff 130 (= main). **The ruling that touches this repo:** the Hugging Face
+id is `Trommsdorff/moleculefinder-molecules-in-everyday-products`, as the kit's upload line already reads;
+`huggingface:` in `dataset_published.yaml` stays empty until the repo exists (then `mfetl dataset --card` and the
+card re-upload, the one-line follow-up below), so neither the card nor the site links a page that is not there yet.
+What was built:
 Garrett's brief: put the site and its CC0 dataset in the places that catalogue free resources; he submits
 everything himself (nothing was posted, uploaded or opened from here; no Hacker News, no Product Hunt). The kit
 is `moleculefinder-web/docs/outreach/LINKS-KIT-2026-10.md`. **This repo's half is the Hugging Face dataset
