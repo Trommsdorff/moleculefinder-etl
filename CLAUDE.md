@@ -1173,8 +1173,8 @@ baking soda, caustic soda, Oxycontin, estrogen, dex, acetate).
   60 to 85) are molecule-page lookups, out of scope. Product vs product: no such query exists in the export.
 - **Garrett's rulings, 2026-10-28 (after the deploy):** (1) no Tylenol Regular Strength pair: Extra Strength is what
   people search, and a second Tylenol page against the same Advil would be a near duplicate. (2) **Plain Sudafed added
-  to the seed so Mucinex vs Sudafed can build, with the next ETL run rather than its own deploy.** Done on `main`,
-  NOT pushed: `a565528` seed + `d101edc` data. `products.yaml` gains `sudafed-sinus-congestion` ("Sudafed Sinus
+  to the seed so Mucinex vs Sudafed can build, with the next ETL run rather than its own deploy.** Done on `main` as
+  `a565528` seed + `d101edc` data, pushed the next day (below). `products.yaml` gains `sudafed-sinus-congestion` ("Sudafed Sinus
   Congestion", Kenvue's own label, pseudoephedrine hydrochloride alone, set id `c05d7e27-6821-468f-b27d-9c0b02a07b0f`;
   not the 12 Hour label or a repackager's); it passes the gate with seven catalog molecules (pseudoephedrine 30 mg,
   silicon dioxide, Allura Red AC, aluminium oxide, sunset yellow FCF, magnesium stearate, cellulose; nine label names
@@ -1187,8 +1187,17 @@ baking soda, caustic soda, Oxycontin, estrogen, dex, acetate).
   sitemap URLs (1,710); `/whats-in/mucinex-vs-sudafed-sinus-congestion` titled "What's in Mucinex vs Sudafed Sinus
   Congestion? · MoleculeFinder" (the "Ingredients compared" form would pass 65), the line as description, three FAQs,
   the labels-not-effects line, both product links, no advice word; "Compare with" on both product pages; in the
-  `/whats-in` group and the sitemap. **It ships when ETL `main` is next pushed:** Monday's weekly run then fetches the
-  label itself and opens the web data PR (2 new URLs, 1,710 -> 1,712). (3) Strengths stay on the product pages: label
+  `/whats-in` group and the sitemap. **PUSHED 2026-10-29 16:24:06 UTC on Garrett's word:** ETL `main` 0d9d4ce ->
+  `30f7a3f` (five commits: the seed, its data, three notes commits), clear of the news cron (that day's 12:50 slot had
+  run at 13:46; the 18:50 slot had not started) and before Monday 2026-11-02's 06:00 UTC weekly run. **No workflow
+  ran on the push** (checked at 16:24:43: only the scheduled news and watchdog runs are listed; `migrations.yml`, the
+  one push-triggered workflow, is path-filtered to `supabase/migrations/**`). Web `main` a8fa6f3 -> `114a01f` pushed
+  16:24:10 (its two notes commits, a no-change rebuild): GitHub deployment `7417987701` Production success 16:25:15,
+  IndexNow run 40911395506: 1,710 -> 1,710, 0 new, 0 changed, 0 removed, audit exact, `indexnow-last` stays `a8fa6f3`;
+  live sitemap 1,710, `/whats-in/advil-vs-tylenol-extra-strength` and `/vs/hydroxyzine-vs-diphenhydramine` 200, the
+  two Sudafed pages 404 until Monday. **Next: Monday 2026-11-02's weekly run** is the first on this seed: it fetches
+  the label itself (DailyMed, version 7), builds the pair and opens the web data PR (2 new URLs, sitemap 1,710 ->
+  1,712), which `ci / verify` has to pass (verify-snapshot and vitest both passed on this snapshot here). (3) Strengths stay on the product pages: label
   data from the source, and the two page kinds must agree. (4) No "corn starch" or "agar agar" in titles: the answer
   lines carry them; a name seed for titles would be name-matching by the back door. (5) The nicotinamide/niacin title
   stands. (6) The three extra overlay fixes need nothing more. (7) The measurement plan is agreed.
