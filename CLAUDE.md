@@ -1931,6 +1931,42 @@ Do not raise it again.** No recreational-drug row, ever (Garrett, 2026-10-18).
   122 comparisons, 127 tests, ruff clean, `mfetl all` idempotent.
 - **Deploy order (unchanged): ETL main first (no deploy), then web main (the deploy).**
 
+## The links kit and the Hugging Face dataset card (2026-10-29): BUILT on `links-kit-2026-10`, NOT pushed
+Garrett's brief: put the site and its CC0 dataset in the places that catalogue free resources; he submits
+everything himself (nothing was posted, uploaded or opened from here; no Hacker News, no Product Hunt). The kit
+is `moleculefinder-web/docs/outreach/LINKS-KIT-2026-10.md`. **This repo's half is the Hugging Face dataset
+card** (`dataset_docs.huggingface_card`): `mfetl dataset` now also writes `data/dataset/huggingface/README.md`,
+the file the Hub renders as the dataset repo's README.md, with the front matter the Hub reads (`license:
+cc0-1.0`, the Hub's identifier for CC0; `language: en`; `size_categories` from the rows of all ten tables,
+12,604, so `10K<n<100K`; `task_categories` tabular-classification, tabular-regression, other, from the Hub's
+pipeline list; `tags`; one `configs` entry per CSV so the viewer shows each table as a subset) over the same
+sections as the package README: files, the column dictionary with each column's source, the sources and their
+licences, what is left out and why, the notes, the citation as a line and as BibTeX, links to the site,
+`/about/methodology`, Zenodo and Kaggle. The card sits OUTSIDE the manifest: it is not a file of the Zenodo or
+Kaggle record. **`mfetl dataset --card`** (`dataset.write_card`) rewrites the card alone from the committed
+`MANIFEST.json` and the published record, no pinned inputs and no rebuild, which is how the card for the
+published 2026.10.1 was written without touching a package already on Zenodo (every committed CSV, the README
+and the MANIFEST are byte-identical to main). The published record (`dataset_published.yaml`) gains an optional
+`huggingface:` (owner/name, empty allowed, kept ABOVE `versions:` because `record_version` appends at the
+file's end); once set, the card, the README, CITATION.cff and zenodo.json link the Hub copy and the card shows
+`load_dataset(...)`. Refactor: the README's shared sections are helpers (`_files_section`,
+`_column_dictionary`, `_sources_section`, `_exclusions_section`, `_notes_section`, `_citation_links`), and
+`dataset.withheld_counts` is the manifest's `withheld` block; the README text is unchanged while `huggingface`
+is empty. Tests: `tests/test_dataset_card.py` (12: the committed card against its manifest and the published
+record; `write_card` reproducing the committed card byte for byte; the card written with the package and
+alone from the manifest; the Hub link in the card, README, CITATION.cff and zenodo.json once the record names
+it; the size buckets; the id's validation; `--card` refusals), and `test_dataset.py`'s on-disk check counts
+files only. **1,016 tests (998), ruff 130 (= main).** `mfetl dataset` is not in the weekly run, so nothing
+changes for Monday. **Garrett's steps (in the kit):** `brew install hf` (the CLI is not on this Mac: no `hf`,
+no `huggingface-cli`, no `huggingface_hub` in either Python), `hf auth login` as Trommsdorff, then the one
+upload line (the data files from `data/dataset/` minus the package README and the card's folder, then the card
+as README.md). **Follow-up, one line, once the Hub repo exists:** set `huggingface:` in `dataset_published.yaml`,
+run `mfetl dataset --card`, re-upload the card, and add the URL to the web repo's `lib/dataset.ts` so
+`DatasetCitation` (/about/methodology, /classroom) links it; the dataset README picks it up at the next
+`mfetl dataset` build. **Housekeeping:** two files fetched for the kit's research (an awesome list's README.rst,
+the Hub's card template) landed in `~/137/moleculefinder/` by a wrong working directory and were moved to the
+session scratchpad at once; the project folder is as it was.
+
 ## Next
 - **Launched on moleculefinder.com (498 live; 793 built and waiting on the branch above).** The `load_all` slug *reassignment* edge (moving a slug
   from one CID to another when the canon changes) is handled since 2026-09-12:
