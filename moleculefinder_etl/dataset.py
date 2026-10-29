@@ -85,10 +85,16 @@ def published(path: Path = PUBLISHED) -> dict[str, Any]:
         latest_record = _zenodo_record(str(list(versions.values())[-1]))
         if latest_record and p.get("zenodo_record") != latest_record:
             problems.append(f"zenodo_record is not the latest version's record ({latest_record})")
+    # The Hugging Face dataset repo (owner/name) is optional: empty until Garrett creates it (the
+    # links kit, 2026-10-29); once set, the README, CITATION.cff, zenodo.json and the card link it.
+    hf = str(p.get("huggingface") or "").strip()
+    if hf and (hf.count("/") != 1 or hf.startswith("/") or hf.endswith("/")):
+        problems.append("huggingface is not owner/name")
     if problems:
         raise Unpublished(f"{path.name}: " + "; ".join(problems))
     return {"concept_doi": str(p["concept_doi"]), "zenodo_record": p["zenodo_record"],
-            "kaggle": p["kaggle"], "versions": {str(v): str(d) for v, d in versions.items()}}
+            "kaggle": p["kaggle"], "versions": {str(v): str(d) for v, d in versions.items()},
+            "huggingface": hf}
 
 
 def _zenodo_record(doi: str) -> str | None:
@@ -576,6 +582,21 @@ def csv_text(rows: list[dict[str, Any]], columns: list[str]) -> str:
     return buf.getvalue()
 
 
+# The Hugging Face dataset card (links kit, 2026-10-29): written beside the package, outside its
+# manifest, because on the Hub it is the repo's README.md and it is not a file of the Zenodo or
+# Kaggle record. Garrett uploads it himself; nothing here talks to the Hub.
+CARD = "huggingface/README.md"
+
+
+def withheld_counts(w: dict[str, Any]) -> dict[str, int]:
+    """The manifest's `withheld` block: one count per kind. A build holds the lists (the slugs
+    withheld); a card rewritten from a manifest holds the counts already."""
+    n = lambda v: len(v) if isinstance(v, (list, tuple, dict)) else int(v or 0)
+    return {"ld50": n(w.get("ld50", [])), "ghs_molecules": n(w.get("ghs_molecules", 0)),
+            "ghs_hubs": n(w.get("ghs_hubs", [])), "licences": n(w.get("licences", [])),
+            "cas_numbers": n(w.get("cas_numbers", 0)), "sweetness": n(w.get("sweetness", []))}
+
+
 def write(b: Build, out: Path = OUT) -> dict[str, Any]:
     """Write the package into ``out`` (replacing what is there) and return the manifest."""
     tmp = out.with_name(out.name + ".tmp")
@@ -597,10 +618,7 @@ def write(b: Build, out: Path = OUT) -> dict[str, Any]:
     manifest = {
         "title": TITLE, "version": b.version, "license": LICENSE_ID, "snapshot_refreshed": b.refreshed,
         "snapshot_sha256": b.snapshot_sha, "inputs_fingerprint": b.inputs, "rows": counts,
-        "withheld": {"ld50": len(b.withheld["ld50"]), "ghs_molecules": b.withheld["ghs_molecules"],
-                     "ghs_hubs": len(b.withheld["ghs_hubs"]), "licences": len(b.withheld["licences"]),
-                     "cas_numbers": b.withheld["cas_numbers"],
-                     "sweetness": len(b.withheld.get("sweetness", []))},
+        "withheld": withheld_counts(b.withheld),
         "files": {},
     }
     for name, text in sorted(files.items()):
@@ -608,19 +626,53 @@ def write(b: Build, out: Path = OUT) -> dict[str, Any]:
         (tmp / name).write_bytes(data)
         manifest["files"][name] = {"bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
     (tmp / "MANIFEST.json").write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
+    card = tmp / CARD
+    card.parent.mkdir(parents=True, exist_ok=True)
+    card.write_text(dataset_docs.huggingface_card(b, counts), encoding="utf-8")
     if out.exists():
         shutil.rmtree(out)
     tmp.rename(out)
     return manifest
 
 
-def run(version: str | None = None, out: Path = OUT, doi: str | None = None) -> int:
+def write_card(out: Path = OUT) -> Path:
+    """`mfetl dataset --card`: rewrite only the Hugging Face card for the package in ``out``, from
+    its MANIFEST.json and the published record. The card can then follow a new Hugging Face id or
+    a wording change without rebuilding the data, which needs the pinned inputs and would move a
+    package that is already published. Returns the card's path."""
+    from . import dataset_docs
+    manifest_path = out / "MANIFEST.json"
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"{manifest_path} is missing; run `mfetl dataset` first")
+    m = _read(manifest_path)
+    b = Build(tables={}, version=m["version"], refreshed=m["snapshot_refreshed"],
+              snapshot_sha=m["snapshot_sha256"], inputs=m.get("inputs_fingerprint"),
+              withheld=dict(m["withheld"]), published=published())
+    path = out / CARD
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(dataset_docs.huggingface_card(b, dict(m["rows"])), encoding="utf-8")
+    return path
+
+
+def run(version: str | None = None, out: Path = OUT, doi: str | None = None, card: bool = False) -> int:
     """`mfetl dataset`: verify the pinned inputs, build, check the counts, write. Exit code.
 
     `doi` is a new version's own DOI, which Zenodo mints at upload (or reserves before it): given
     with an explicit `version`, it is recorded in the published record once the build checks out,
-    so the package names it as this version's DOI and the site's lib/dataset.ts test can match it."""
+    so the package names it as this version's DOI and the site's lib/dataset.ts test can match it.
+    `card` writes only the Hugging Face card for the package already in ``out`` (`write_card`)."""
     from . import inputs
+    if card:
+        if version or doi:
+            log.error("dataset: --card rewrites the card for the package as built; it takes no --version or --doi; refused")
+            return 1
+        try:
+            path = write_card(out)
+        except (FileNotFoundError, Unpublished) as e:
+            log.error("dataset: %s; refused, nothing written", e)
+            return 1
+        log.info("dataset: wrote %s", path)
+        return 0
     if doi and not version:
         log.error("dataset: --doi needs --version (the version that DOI was minted for); refused, nothing written")
         return 1

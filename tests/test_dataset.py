@@ -40,7 +40,8 @@ pytestmark_built = pytest.mark.skipif(not BUILT, reason="data/dataset not built 
 @pytestmark_built
 def test_the_package_holds_exactly_its_files_and_their_checksums():
     manifest = json.loads((PKG / "MANIFEST.json").read_text())
-    on_disk = {p.name for p in PKG.iterdir() if p.name != ".DS_Store"}   # Finder metadata, gitignored
+    # Files only: huggingface/ holds the Hub's dataset card, outside the manifest (test_dataset_card.py).
+    on_disk = {p.name for p in PKG.iterdir() if p.is_file() and p.name != ".DS_Store"}   # .DS_Store: Finder metadata, gitignored
     assert on_disk == EXPECTED_FILES
     for name, meta in manifest["files"].items():
         data = (PKG / name).read_bytes()

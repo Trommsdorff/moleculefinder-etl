@@ -8,6 +8,11 @@
 concept_doi: 10.5281/zenodo.23605767    # Zenodo's "Cite all versions" DOI: always the latest version
 zenodo_record: https://zenodo.org/records/23620892
 kaggle: trommsdorff/moleculefinder-molecules-in-everyday-products
+# The Hugging Face dataset repo, owner/name, once Garrett creates it (the links kit, 2026-10-29;
+# `docs/outreach/LINKS-KIT-2026-10.md` in the web repo). Empty is allowed. When set, run
+# `mfetl dataset --card` so the card links it, re-upload the card, and add the same URL to the web
+# repo's lib/dataset.ts. Keep this line ABOVE `versions:` (record_version appends to the file's end).
+huggingface:
 versions:                                # each published version's own DOI
   "2026.10": 10.5281/zenodo.23605768
   "2026.10.1": 10.5281/zenodo.23620892

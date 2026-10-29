@@ -30,6 +30,9 @@ def main(argv: list[str] | None = None) -> int:
                    help="dataset: the version to stamp (default: the snapshot's YYYY.MM)")
     p.add_argument("--doi", dest="dataset_doi", default=None,
                    help="dataset: this version's own Zenodo DOI, recorded in dataset_published.yaml (needs --version)")
+    p.add_argument("--card", dest="dataset_card", action="store_true",
+                   help="dataset: write only the Hugging Face dataset card (data/dataset/huggingface/README.md) "
+                        "from the committed package's MANIFEST.json; no rebuild, no pinned inputs needed")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -53,7 +56,7 @@ def main(argv: list[str] | None = None) -> int:
         # The CC0 dataset for Zenodo and Kaggle (run D), rebuilt from the committed snapshot into
         # data/dataset/. Offline; refuses unless data/raw_cache is main's pinned inputs.
         from . import dataset
-        return dataset.run(version=args.dataset_version, doi=args.dataset_doi)
+        return dataset.run(version=args.dataset_version, doi=args.dataset_doi, card=args.dataset_card)
     if args.stage == "migrate":
         # Database migrations over SUPABASE_DB_URL; needs no REST keys.
         from . import migrate
