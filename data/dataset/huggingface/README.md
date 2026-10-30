@@ -91,6 +91,7 @@ DOI to cite, and mirrored on [Kaggle](https://www.kaggle.com/datasets/trommsdorf
 | **Methodology** | https://moleculefinder.com/about/methodology |
 | **Zenodo** | https://zenodo.org/records/23620892 |
 | **Kaggle** | https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products |
+| **Hugging Face** | https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products |
 
 ## Files
 
@@ -114,6 +115,15 @@ separated by ` | `. Every `*_slug` column joins to the `slug` of the table it na
 slug is a page on the site (https://moleculefinder.com/m/caffeine, https://moleculefinder.com/whats-in/coffee).
 
 ## Loading
+
+```python
+from datasets import load_dataset
+
+molecules = load_dataset("Trommsdorff/moleculefinder-molecules-in-everyday-products", "molecules")["train"]
+in_products = load_dataset("Trommsdorff/moleculefinder-molecules-in-everyday-products", "product_molecules")["train"]
+```
+
+Each table is its own subset, named as its CSV file (the `configs` above). Or read the files directly:
 
 ```python
 import pandas as pd
@@ -333,6 +343,7 @@ This version 2026.10.1, https://doi.org/10.5281/zenodo.23620892.
 - Version 2026.10.1: https://doi.org/10.5281/zenodo.23620892
 - Zenodo: https://zenodo.org/records/23620892
 - Kaggle: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products
+- Hugging Face: https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products
 - Website: https://moleculefinder.com/about/methodology
 
 ## Rebuilding
