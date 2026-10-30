@@ -1981,6 +1981,21 @@ run `mfetl dataset --card`, re-upload the card, and add the URL to the web repo'
 the Hub's card template) landed in `~/137/moleculefinder/` by a wrong working directory and were moved to the
 session scratchpad at once; the project folder is as it was.
 
+## The Hugging Face URL (2026-10-30): DEPLOYED 2026-10-30 (ETL `93da291`, web `75089f1`)
+Garrett created the Hub repo on 2026-10-30 (https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products,
+cc0-1.0, 19 files). Branch `hf-url-2026-10`, `93da291`: `huggingface: Trommsdorff/moleculefinder-molecules-in-everyday-products`
+in `dataset_published.yaml`, then `mfetl dataset --card` (keys blanked, exit 0): the card gains the Hugging Face row,
+the `load_dataset(...)` lines under Loading and the link under Citation; nothing else changed (the package README,
+CITATION.cff and zenodo.json carry it at the next `mfetl dataset` build, not before: 2026.10.1 is already on Zenodo).
+1,016 tests passed, 1 skipped; ruff 130 (= main). **The card re-upload** (the kit's second command, `hf upload ...
+huggingface/README.md README.md --repo-type dataset --commit-message "Dataset card"`, `hf` 2.4.0 logged in as
+Trommsdorff): Hub commit `bca1ec7`, README.md only, 19 files before and after; the Hub's README was byte-identical to
+the old committed card before the upload and to the new one after; the rendered page shows the row. Pushed
+`main` 344cc92 -> `93da291` at 22:38:34 UTC on Garrett's word (with the notes commit `6f20607`; no workflow ran),
+before the web. The web half and the three awesome-list pull requests: company CLAUDE.md, "Links kit follow-up".
+**Housekeeping:** an empty, untracked `node_modules/` folder (dated 2026-10-28) sits in this repo's root; left as
+found.
+
 ## Next
 - **Launched on moleculefinder.com (498 live; 793 built and waiting on the branch above).** The `load_all` slug *reassignment* edge (moving a slug
   from one CID to another when the canon changes) is handled since 2026-09-12:
