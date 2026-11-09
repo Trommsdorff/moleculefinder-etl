@@ -1,1 +1,65 @@
-[]
+[
+ {
+  "slug": "methanol",
+  "cid": 887,
+  "qid": "Q14982",
+  "field": "aliases",
+  "shipped": [
+   "methyl alcohol",
+   "wood alcohol",
+   "wood naphtha",
+   "wood spirits",
+   "Columbian spirits",
+   "MeOH",
+   "CH3OH",
+   "wood spirit",
+   "Pyro alcohol",
+   "Methylol",
+   "spirit of wood",
+   "Columbian spirit",
+   "Colonial spirit",
+   "methyl hydrate",
+   "carbinol",
+   "pyroligneous spirit",
+   "pyroxylic spirit",
+   "monohydroxymethane",
+   "hydroxymethane",
+   "methyl hydroxide"
+  ],
+  "held": [
+   "methyl alcohol",
+   "wood alcohol",
+   "wood naphtha",
+   "wood spirits",
+   "Columbian spirits",
+   "wood spirit",
+   "Pyro alcohol",
+   "Methylol",
+   "spirit of wood",
+   "Columbian spirit",
+   "Colonial spirit",
+   "methyl hydrate",
+   "carbinol",
+   "pyroligneous spirit",
+   "pyroxylic spirit",
+   "monohydroxymethane",
+   "hydroxymethane",
+   "methyl hydroxide"
+  ],
+  "modified": "2026-11-03T12:52:44Z"
+ },
+ {
+  "slug": "pethidine",
+  "cid": 4058,
+  "qid": "Q55434",
+  "field": "aliases",
+  "shipped": [
+   "meperidine"
+  ],
+  "held": [
+   "meperidine",
+   "Demerol"
+  ],
+  "modified": "2026-11-09T10:00:27Z"
+ }
+]

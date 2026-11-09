@@ -1,25 +1,25 @@
 {
  "seeded": 476,
- "passed": 425,
- "failed": 51,
+ "passed": 423,
+ "failed": 53,
  "by_kind": {
   "food": 35,
   "drink": 14,
-  "medicine": 299,
-  "cosmetic": 60,
+  "medicine": 298,
+  "cosmetic": 59,
   "household": 12,
   "chemistry": 1,
   "moment": 4
  },
  "min_molecules": 3,
  "matched_by_code": {
-  "unii": 1866,
-  "moiety": 156
+  "unii": 1859,
+  "moiety": 155
  },
  "matched_by_rule": {
-  "parent": 127,
+  "parent": 125,
   "skeleton": 32,
-  "alias": 352
+  "alias": 350
  },
  "unii_index": {
   "fda_table": "UNII_Records_4Aug2026.txt",
@@ -75,6 +75,15 @@
    "matched": [
     "paclitaxel"
    ]
+  },
+  {
+   "slug": "ambien",
+   "name": "Ambien",
+   "kind": "medicine",
+   "source": "dailymed",
+   "item": "c36cadf4-65a4-4466-b409-c82020b42452",
+   "reason": "label not found on DailyMed (withdrawn, archived or not yet fetched)",
+   "matched": []
   },
   {
    "slug": "atrovent-hfa",
@@ -454,6 +463,15 @@
    ]
   },
   {
+   "slug": "blue-lizard-sport-spf-50",
+   "name": "Blue Lizard Sport SPF 50",
+   "kind": "cosmetic",
+   "source": "dailymed",
+   "item": "4955fa1c-789d-4f42-af75-70223310644a",
+   "reason": "label not found on DailyMed (withdrawn, archived or not yet fetched)",
+   "matched": []
+  },
+  {
    "slug": "carmex-lip-balm-spf-30",
    "name": "Carmex Lip Balm SPF 30",
    "kind": "cosmetic",
@@ -595,15 +613,15 @@
  "label_ingredients_not_in_catalog": [
   {
    "name": "TITANIUM DIOXIDE",
-   "labels": 151
+   "labels": 149
   },
   {
    "name": "HYPROMELLOSE, UNSPECIFIED",
-   "labels": 98
+   "labels": 97
   },
   {
    "name": "POLYETHYLENE GLYCOL, UNSPECIFIED",
-   "labels": 69
+   "labels": 68
   },
   {
    "name": "TALC",
@@ -611,7 +629,7 @@
   },
   {
    "name": "FERRIC OXIDE RED",
-   "labels": 57
+   "labels": 56
   },
   {
    "name": "FERRIC OXIDE YELLOW",
@@ -630,15 +648,15 @@
    "labels": 36
   },
   {
-   "name": "DIMETHICONE",
-   "labels": 32
-  },
-  {
    "name": "CARNAUBA WAX",
    "labels": 31
   },
   {
    "name": "D&C YELLOW NO. 10",
+   "labels": 31
+  },
+  {
+   "name": "DIMETHICONE",
    "labels": 31
   },
   {
@@ -678,16 +696,12 @@
    "labels": 20
   },
   {
-   "name": ".ALPHA.-TOCOPHEROL ACETATE",
-   "labels": 17
-  },
-  {
    "name": "HYDRATED SILICA",
    "labels": 17
   },
   {
-   "name": "PHENOXYETHANOL",
-   "labels": 17
+   "name": ".ALPHA.-TOCOPHEROL ACETATE",
+   "labels": 16
   },
   {
    "name": "COCAMIDOPROPYL BETAINE",
@@ -698,7 +712,7 @@
    "labels": 16
   },
   {
-   "name": "MEDIUM-CHAIN TRIGLYCERIDES",
+   "name": "PHENOXYETHANOL",
    "labels": 16
   },
   {
@@ -711,6 +725,10 @@
   },
   {
    "name": "CETYL ALCOHOL",
+   "labels": 15
+  },
+  {
+   "name": "MEDIUM-CHAIN TRIGLYCERIDES",
    "labels": 15
   },
   {
@@ -730,15 +748,7 @@
    "labels": 12
   },
   {
-   "name": "ALKYL (C12-15) BENZOATE",
-   "labels": 11
-  },
-  {
    "name": "AVOBENZONE",
-   "labels": 11
-  },
-  {
-   "name": "CAPRYLYL GLYCOL",
    "labels": 11
   },
   {
@@ -758,8 +768,12 @@
    "labels": 11
   },
   {
-   "name": "YELLOW WAX",
-   "labels": 11
+   "name": "ALKYL (C12-15) BENZOATE",
+   "labels": 10
+  },
+  {
+   "name": "CAPRYLYL GLYCOL",
+   "labels": 10
   },
   {
    "name": "CYCLOMETHICONE 5",
@@ -767,10 +781,6 @@
   },
   {
    "name": "D&C RED NO. 33",
-   "labels": 10
-  },
-  {
-   "name": "OCTISALATE",
    "labels": 10
   },
   {
@@ -782,8 +792,8 @@
    "labels": 10
   },
   {
-   "name": "ETHYLHEXYLGLYCERIN",
-   "labels": 9
+   "name": "YELLOW WAX",
+   "labels": 10
   },
   {
    "name": "HOMOSALATE",
@@ -791,6 +801,10 @@
   },
   {
    "name": "ISOPROPYL MYRISTATE",
+   "labels": 9
+  },
+  {
+   "name": "OCTISALATE",
    "labels": 9
   },
   {
@@ -811,6 +825,10 @@
   },
   {
    "name": "D&C RED NO. 30",
+   "labels": 8
+  },
+  {
+   "name": "ETHYLHEXYLGLYCERIN",
    "labels": 8
   },
   {
