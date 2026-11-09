@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Callable
 from ..config import SNAPSHOTS
 from ..sources import registry
-from ..transform import licence_gate, roam_layout, relationships
+from ..transform import licence_gate, products_hold, roam_layout, relationships
 from . import snapshot_guard
 
 # The snapshot's own date, for the "Data refreshed" line on every molecule page (feedback
@@ -25,6 +25,8 @@ FEATURED = "featured.json"
 PRODUCTS = "products.json"
 # Product comparisons (SEO run 2): the pairs for /whats-in/<a>-vs-<b>, built from products.json.
 PRODUCT_PAIRS = "product_pairs.json"
+# Gate hold (2026-11-09): every /whats-in/ product and pair slug ever published (never shrinks).
+PUBLISHED = products_hold.PUBLISHED
 # The source registry with each source's licence class and attribution (2026-10-23), so the site
 # names a value's source and prints the attribution its class asks for from one definition.
 SOURCES = "sources.json"
@@ -57,7 +59,8 @@ def _prior_refreshed(path: Path) -> str | None:
 def export(molecules: list[dict], leaderboards: dict[str, dict],
            comparisons: dict[str, dict] | None = None, *,
            featured: Callable[[str], dict] | None = None, today: str | None = None,
-           products: list[dict] | None = None, product_pairs: list[dict] | None = None) -> Path:
+           products: list[dict] | None = None, product_pairs: list[dict] | None = None,
+           published: dict[str, list[str]] | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files + meta.json.
 
     Each leaderboard file is a self-describing board (metadata + enriched
@@ -87,7 +90,10 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     ``products`` (``transform/products.compile_products``) becomes products.json, the /whats-in
     pages; None means there is no product seed, and a products.json left from an earlier run is
     removed, like featured.json. ``product_pairs`` (``products.compile_pairs``) becomes
-    product_pairs.json, the /whats-in/<a>-vs-<b> pages, on the same terms.
+    product_pairs.json, the /whats-in/<a>-vs-<b> pages, on the same terms. ``published``
+    (``transform/products_hold.published``, gate hold 2026-11-09) becomes products_published.json,
+    the ledger of every /whats-in/ slug ever published; None leaves any existing ledger as it is
+    (a ledger is never deleted: the web's 410 test reads it).
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
     # The source-licence rule: nothing is written if any value cites a source that is not in
@@ -142,6 +148,9 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     pairs_path = SNAPSHOTS / PRODUCT_PAIRS
     if product_pairs is not None:
         outputs[pairs_path] = json.dumps({"pairs": product_pairs}, ensure_ascii=False)
+
+    if published is not None:
+        outputs[SNAPSHOTS / PUBLISHED] = json.dumps(published, ensure_ascii=False, indent=1) + "\n"
 
     stale = [f for d in (mol_dir, lb_dir) if d.is_dir() for f in d.glob("*.json") if f not in outputs]
     if featured is None and featured_path.exists():

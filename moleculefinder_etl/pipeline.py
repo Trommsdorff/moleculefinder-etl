@@ -18,13 +18,14 @@ from __future__ import annotations
 import json
 import logging
 import os
+from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
 
 from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
-from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products
+from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
 from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
@@ -109,6 +110,39 @@ def _report_held(held: list[dict]) -> None:
                 f.write(f"### Wikidata changes held ({len(held)})\n\n"
                         f"A changed Wikidata value ships once it is {wikidata_age.AGE_DAYS} days old.\n\n")
                 f.writelines(f"- {line}\n" for line in lines)
+                f.write("\n")
+
+
+def _report_products_held(held: list[dict], removed: list[dict]) -> None:
+    """Products held live this run, and products removed from the seed on purpose (gate hold,
+    2026-11-09, ``transform/products_hold.py``): one line each in the log, the held ones in the
+    committed ``data/seed/products_held.json``, and on GitHub Actions a notice and a section of
+    the run's summary, so a page never leaves the site silently. The workflow reads the file's
+    length into the summaries of the all-clear and alarm jobs."""
+    products_hold.write_held(held)
+    log.info("  products: %d live product page(s) held, %d removed from products.yaml",
+             len(held), len(removed))
+    held_lines = [products_hold.report_line(h) for h in held]
+    removed_lines = [products_hold.removed_line(r) for r in removed]
+    for line in held_lines:
+        log.info("  held: %s", line)
+    for line in removed_lines:
+        log.warning("  removed: %s", line)
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        for line in held_lines:
+            print(f"::notice title=Product page held::{line}", flush=True)
+        for line in removed_lines:
+            print(f"::warning title=Product page removed::{line}", flush=True)
+        summary = os.getenv("GITHUB_STEP_SUMMARY")
+        if summary:
+            with open(summary, "a", encoding="utf-8") as f:
+                f.write(f"### Product pages held ({len(held)})\n\n"
+                        "A live /whats-in/ page this run would have dropped keeps its shipped data "
+                        "until a person fixes or removes its row in products.yaml.\n\n")
+                f.writelines(f"- {line}\n" for line in held_lines)
+                if removed_lines:
+                    f.write(f"\n### Product pages removed on purpose ({len(removed)})\n\n")
+                    f.writelines(f"- {line}\n" for line in removed_lines)
                 f.write("\n")
 
 
@@ -340,6 +374,13 @@ def stage_transform(settings: Settings) -> list[dict]:
     seed = products.load_seed()
     if seed:
         passed, report = products.compile_products(kept, seed)
+        # Gate hold (2026-11-09): a product the shipped snapshot has, whose row is still seeded,
+        # keeps its shipped page when this run would drop it; only removing the row removes it.
+        passed, held, removed = products_hold.hold(
+            passed, report, seed, products_hold.read_shipped(), kept,
+            since=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META) or datetime.now(UTC).date().isoformat(),
+            previous=products_hold.read_held(), min_molecules=products.MIN_MOLECULES)
+        _report_products_held(held, removed)
         products.attach_products(kept, passed)
         PRODUCTS_STAGED.write_text(json.dumps(passed, ensure_ascii=False))
         # The next tranche's queue, every label ingredient MF lacks, is its own committed CSV.
@@ -352,10 +393,10 @@ def stage_transform(settings: Settings) -> list[dict]:
         PRODUCT_PAIRS_STAGED.write_text(json.dumps(pairs, ensure_ascii=False))
         report["product_pairs"] = {"seeded": len(pairs_seed), "built": len(pairs), "skipped": skipped}
         PRODUCTS_GATE.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n")
-        log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s); "
-                 "%d of %d product comparisons built",
+        log.info("  products: %d of %d seeded pass the %d-molecule gate %s; %d fail (see %s), %d of them "
+                 "held live; %d of %d product comparisons built",
                  report["passed"], report["seeded"], products.MIN_MOLECULES,
-                 report["by_kind"], report["failed"], PRODUCTS_GATE.name, len(pairs), len(pairs_seed))
+                 report["by_kind"], report["failed"], PRODUCTS_GATE.name, report["held"], len(pairs), len(pairs_seed))
     else:
         PRODUCTS_STAGED.unlink(missing_ok=True)
         PRODUCT_PAIRS_STAGED.unlink(missing_ok=True)
@@ -444,9 +485,12 @@ def stage_export(settings: Settings) -> Path:
     # The product comparisons staged beside them (SEO run 2); none without products.
     pairs = (json.loads(PRODUCT_PAIRS_STAGED.read_text())
              if staged is not None and PRODUCT_PAIRS_STAGED.exists() else None)
+    # The ledger of every /whats-in/ slug ever published (gate hold, 2026-11-09): never shrinks.
+    published = (products_hold.published(products_hold.read_published(), staged, pairs)
+                 if staged is not None else None)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
-                                  products=staged, product_pairs=pairs)
+                                  products=staged, product_pairs=pairs, published=published)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)

@@ -21,6 +21,9 @@ jobs:
       # How many Wikidata changes this run held back (trust run 8, transform/wikidata_age.py),
       # for the all-clear and alarm summaries. "unknown" when the run failed before the seed stage.
       wikidata_held:     ${{ steps.held.outputs.count }}
+      # How many live product pages this run held (gate hold 2026-11-09, transform/products_hold.py),
+      # for the same summaries. "unknown" when the run failed before the transform stage.
+      products_held:     ${{ steps.products_held.outputs.count }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -52,6 +55,20 @@ jobs:
           fi
           echo "count=${count}" >> "$GITHUB_OUTPUT"
           echo "Wikidata changes held this run: ${count}"
+      # A live /whats-in/ page this run would have dropped keeps its shipped data (gate hold,
+      # 2026-11-09). The transform stage writes each one to data/seed/products_held.json (committed
+      # below) and to this run's summary; this counts them for the downstream jobs' summaries.
+      - name: Count held product pages
+        id: products_held
+        if: always()
+        run: |
+          if [ -n "$(find data/seed/products_held.json -newer pyproject.toml 2>/dev/null)" ]; then
+            count=$(jq length data/seed/products_held.json)
+          else
+            count=unknown
+          fi
+          echo "count=${count}" >> "$GITHUB_OUTPUT"
+          echo "Product pages held this run: ${count}"
       - name: commit snapshot
         id: commit
         run: |
@@ -436,8 +453,10 @@ jobs:
       - name: Summary
         env:
           HELD: ${{ needs.run.outputs.wikidata_held }}
+          PRODUCTS_HELD: ${{ needs.run.outputs.products_held }}
         run: |
           echo "All clear. Wikidata changes held this run (shipped once 7 days old): ${HELD:-unknown}. Each is listed in the run job's summary and in data/seed/wikidata_held.json." >> "$GITHUB_STEP_SUMMARY"
+          echo "Product pages held live this run (a person fixes or removes each row in products.yaml): ${PRODUCTS_HELD:-unknown}. Each is listed in the run job's summary and in data/seed/products_held.json." >> "$GITHUB_STEP_SUMMARY"
 
   # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
   # A separate job, not `if: failure()` on a step: a step-level guard cannot run
@@ -461,12 +480,13 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           HELD: ${{ needs.run.outputs.wikidata_held }}
+          PRODUCTS_HELD: ${{ needs.run.outputs.products_held }}
         run: |
-          echo "Run failed. Wikidata changes held this run: ${HELD:-unknown}." >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+          echo "Run failed. Wikidata changes held this run: ${HELD:-unknown}. Product pages held this run: ${PRODUCTS_HELD:-unknown}." >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
           existing=$(gh issue list --label refresh-failure --state open \
                        --limit 1 --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "Failed again: $RUN (Wikidata changes held: ${HELD:-unknown})"
+            gh issue comment "$existing" --body "Failed again: $RUN (Wikidata changes held: ${HELD:-unknown}; product pages held: ${PRODUCTS_HELD:-unknown})"
             exit 0
           fi
           gh label create refresh-failure --color B60205 \
@@ -481,6 +501,7 @@ jobs:
           frozen, the site is not down.
 
           Wikidata changes held this run (they ship once 7 days old): ${HELD:-unknown}.
+          Product pages held live this run (see data/seed/products_held.json): ${PRODUCTS_HELD:-unknown}.
 
           If the data PR's check failed: re-running a failed check on the data PR
           reuses the old merge and cannot pick up a fix on main; close and reopen

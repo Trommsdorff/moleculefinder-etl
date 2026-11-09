@@ -331,6 +331,8 @@ def fetch(setid: str) -> dict | None:
             err = exc
         else:
             if r.status_code == 404:
+                # Named in the log: on 2026-11-09 two live labels went this way with no line saying so.
+                log.warning("dailymed %s: 404, the label is withdrawn, archived or moved to another set id", setid)
                 return None
             if r.status_code == 200:
                 return parse(r.content, setid)
