@@ -896,6 +896,61 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Gate hold (2026-11-09): a live product page is held, never silently dropped. BUILT, NOT DEPLOYED (ETL `24cce3a` code, `688b084` data)
+Branch `gate-hold-2026-11` (from `main` `ed5912d`, the 2026-11-09 refresh); web branch of the same name. Never pushed.
+**The incident.** `/whats-in/ambien` and `/whats-in/blue-lizard-sport-spf-50` (live since 2026-10-22) answered 404
+from the 2026-11-09 deploy: the weekly run (42638720696) re-fetched every label (the products cache lives 6 days)
+and DailyMed answered 404 for both set ids, so `dailymed.fetch` returned None, the cache stored `{"missing": true}`
+(fetched 14:52 and 14:53 UTC) and the gate wrote "label not found on DailyMed" into `products_gate.json` (423 of 476
+pass, 425 the week before). Nothing logged the set ids; the run, web PR #14 and its CI were green.
+- **Ambien:** Sanofi's label (`c36cadf4-...`, version 26, 2025-04-15) was retired; DailyMed's history endpoint still
+  knows it, its SPL is gone. The brand's current label is Cosette Pharmaceuticals' (`747949c5-2c91-4909-8a07-71b6826f8e97`,
+  version 1, 2025-02-07): the same film-coated tablets with the same eleven ingredients. Not a lost ingredient, not a
+  code match, not Wikidata.
+- **Blue Lizard Sport SPF 50:** Crown withdrew the label the page read (`4955fa1c-...`, version 8, 2026-05-01; DailyMed's
+  history lists a version 9 dated 2026-11-02, but the SPL answers 404). It was the octisalate formula (actives
+  octisalate, titanium dioxide, zinc oxide 10%). Crown's current Blue Lizard Sport SPF 50 Sunscreen lotion label is
+  `2f3844d8-0367-aad9-e063-6294a90a1fce` (version 2, 2026-01-12), the mineral formula (zinc oxide, titanium dioxide).
+**The rule (`transform/products_hold.py`, wired in `stage_transform`).** A product the SHIPPED snapshot has
+(`data/snapshots/products.json` read before the export overwrites it), whose row is still in `products.yaml`, and which
+this run would drop for any reason, is HELD: its shipped entry is published again (molecule titles follow the catalog),
+the gate report marks its failure `"held": true` and gains `held`, `held_products`, `removed_products`; one `held:` log
+line per product (the gate's reason, the shipped set id, version and date, what to do), a `::notice` and a "Product pages
+held" section of the run summary on GitHub, and the committed `data/seed/products_held.json` (`[]` when nothing is held;
+`since` keeps the first held date). A product leaves ONLY when its row is removed from `products.yaml`: it is not held,
+it is logged as removed (`::warning`), and the web must list `/whats-in/<slug>` in `lib/gone.ts` (410, noindex, through
+`proxy.ts`, tranche 2's mechanism; the sitemap drops it and IndexNow submits it as removed). A held product whose
+molecules left the catalog and that would fall under 3 refuses the run, naming it. `etl.yml`: a `Count held product
+pages` step (`if: always()`) feeds `products_held` into the all-clear summary and the alarm's summary, issue body and
+"Failed again" comment. `dailymed.fetch` now logs every 404 with its set id.
+**The ledger.** `data/snapshots/products_published.json` lists every product and comparison slug ever published; the
+export writes the union of the previous ledger and this snapshot (never shrinks; never deleted). Seeded from every
+`products.json` and `product_pairs.json` main has carried: 425 products, 11 pairs. It reaches the web with
+`npm run sync-data`, where `lib/gone.test.ts` fails if a ledger slug has neither a page nor a 410.
+**Garrett to confirm: both restored by re-pointing their rows to the current labels** (`products.yaml`, a comment on
+each row). Ambien: the product is exactly what it was, so it is restored; only its source line changes (Cosette, version
+1). Blue Lizard: the product (same maker, name and form) is still on DailyMed, reformulated; the page now reads the
+current label: 8 molecules (zinc oxide 10% active; aluminium oxide, stearic acid, EDTA, water as before; arginine
+gone; gluconic acid, tocopherol, aspartic acid new), 24 names under "Also on the label", titanium dioxide still the
+unmatched active, octisalate gone. The alternative for Blue Lizard is removal: drop the row and add the path to the
+web's `lib/gone.ts`.
+**Checks (keys blanked).** `mfetl sync-inputs` (f69fd345c58bfa08, 5,961 files), then `mfetl all` twice: exit 0, 0
+PubChem POSTs; the first fetched the two new labels and one parent; the two builds byte-identical over `data/seed` and
+`data/snapshots`. Against `main`: 2 product pages back (425, by_kind as on 2026-11-02), every other product entry
+identical, 14 molecule files changed by `products` alone (allura-red-ac, aluminium-oxide, aspartic-acid, cellulose,
+EDTA, gluconic-acid, lactose, magnesium-stearate, polysorbate-80, stearic-acid, tocopherol, water, zinc-oxide,
+zolpidem), the new ledger and `products_held.json` (`[]`); and, as consequences of the two labels, `products_gate.json`
+(425 pass, 51 fail, held 0), `next_tranche_queue.csv` (6 new names, the rest re-ranked by count) and `unii_index.json`
+(+1: copper gluconate -> gluconic acid, by parent). meta.json unchanged (2026-11-09). **`canon.parquet` is rewritten by
+any Mac build with identical rows**: only its writer stamp differs (pyarrow 26.0.0 here, 26.0.1 on the weekly run), so
+it was restored from main; `pip install pyarrow==26.0.1` in the venv would make the Mac byte-exact again. **Replay of
+2026-11-09 through the rule, in memory** (the old set ids, this cache's 404s, the 2026-11-02 snapshot as shipped): 423
+pass, both held, each byte for byte its 2026-11-02 page. 1,035 tests passed, 1 skipped (1,016 + 19 in
+`tests/test_products_hold.py`); ruff 130 (= main).
+**Deploy (Garrett's word): ETL `main` FIRST, then web `main`, clear of the news cron (:50 past 00/06/12/18 UTC) and
+before Monday 2026-11-16's weekly run.** A run on the old ETL would rebuild products.json from the old seed rows without
+the two pages or the ledger, and the web's new test would then (rightly) hold that data PR.
+
 ## Trust run 8 (2026-10-26): a Wikidata edit ages 7 days before it ships. DEPLOYED 2026-10-27 (`3ab6178`)
 **DEPLOYED 2026-10-27 about 01:25 UTC on Garrett's word** (his brief carried the deploy step). No other branch was
 waiting in either repo. ETL `main` 2931e21 -> `3ab6178` (with the waiting notes commits `9522123`, `8bf0cf6`, rebased
