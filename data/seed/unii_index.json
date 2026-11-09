@@ -1,7 +1,7 @@
 {
  "source": "FDA Substance Registration System (UNII_Records_4Aug2026.txt)",
  "how": {"direct": ["cid", "inchikey", "pubchem", "substance"], "by_rule": ["parent", "skeleton", "alias"]},
- "count": 1131,
+ "count": 1132,
  "uniis": {
   "00072J7XWS": {"slug": "germanium", "how": "cid", "name": "GERMANIUM"},
   "008PUV3986": {"slug": "meclizine", "how": "parent", "name": "MECLIZINE MONOHYDROCHLORIDE ANHYDROUS"},
@@ -953,6 +953,7 @@
   "RSB34337V9": {"slug": "safrole", "how": "cid", "name": "SAFROLE"},
   "RU45X2JN0Z": {"slug": "potassium-nitrate", "how": "cid", "name": "POTASSIUM NITRATE"},
   "RV6J6604TK": {"slug": "eucalyptol", "how": "cid", "name": "EUCALYPTOL"},
+  "RV823G6G67": {"slug": "gluconic-acid", "how": "parent", "name": "COPPER GLUCONATE"},
   "RWP5GA015D": {"slug": "potassium", "how": "cid", "name": "POTASSIUM"},
   "S07O44R1ZM": {"slug": "capsaicin", "how": "cid", "name": "CAPSAICIN"},
   "S239O2OOV3": {"slug": "vilazodone", "how": "cid", "name": "VILAZODONE"},

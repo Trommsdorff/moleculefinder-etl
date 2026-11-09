@@ -1,25 +1,25 @@
 {
  "seeded": 476,
- "passed": 423,
- "failed": 53,
+ "passed": 425,
+ "failed": 51,
  "by_kind": {
   "food": 35,
   "drink": 14,
-  "medicine": 298,
-  "cosmetic": 59,
+  "medicine": 299,
+  "cosmetic": 60,
   "household": 12,
   "chemistry": 1,
   "moment": 4
  },
  "min_molecules": 3,
  "matched_by_code": {
-  "unii": 1859,
-  "moiety": 155
+  "unii": 1866,
+  "moiety": 156
  },
  "matched_by_rule": {
-  "parent": 125,
+  "parent": 129,
   "skeleton": 32,
-  "alias": 350
+  "alias": 352
  },
  "unii_index": {
   "fda_table": "UNII_Records_4Aug2026.txt",
@@ -75,15 +75,6 @@
    "matched": [
     "paclitaxel"
    ]
-  },
-  {
-   "slug": "ambien",
-   "name": "Ambien",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "c36cadf4-65a4-4466-b409-c82020b42452",
-   "reason": "label not found on DailyMed (withdrawn, archived or not yet fetched)",
-   "matched": []
   },
   {
    "slug": "atrovent-hfa",
@@ -463,15 +454,6 @@
    ]
   },
   {
-   "slug": "blue-lizard-sport-spf-50",
-   "name": "Blue Lizard Sport SPF 50",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "4955fa1c-789d-4f42-af75-70223310644a",
-   "reason": "label not found on DailyMed (withdrawn, archived or not yet fetched)",
-   "matched": []
-  },
-  {
    "slug": "carmex-lip-balm-spf-30",
    "name": "Carmex Lip Balm SPF 30",
    "kind": "cosmetic",
@@ -613,15 +595,15 @@
  "label_ingredients_not_in_catalog": [
   {
    "name": "TITANIUM DIOXIDE",
-   "labels": 149
+   "labels": 151
   },
   {
    "name": "HYPROMELLOSE, UNSPECIFIED",
-   "labels": 97
+   "labels": 98
   },
   {
    "name": "POLYETHYLENE GLYCOL, UNSPECIFIED",
-   "labels": 68
+   "labels": 69
   },
   {
    "name": "TALC",
@@ -629,7 +611,7 @@
   },
   {
    "name": "FERRIC OXIDE RED",
-   "labels": 56
+   "labels": 57
   },
   {
    "name": "FERRIC OXIDE YELLOW",
@@ -648,15 +630,15 @@
    "labels": 36
   },
   {
+   "name": "DIMETHICONE",
+   "labels": 32
+  },
+  {
    "name": "CARNAUBA WAX",
    "labels": 31
   },
   {
    "name": "D&C YELLOW NO. 10",
-   "labels": 31
-  },
-  {
-   "name": "DIMETHICONE",
    "labels": 31
   },
   {
@@ -696,12 +678,12 @@
    "labels": 20
   },
   {
-   "name": "HYDRATED SILICA",
+   "name": ".ALPHA.-TOCOPHEROL ACETATE",
    "labels": 17
   },
   {
-   "name": ".ALPHA.-TOCOPHEROL ACETATE",
-   "labels": 16
+   "name": "HYDRATED SILICA",
+   "labels": 17
   },
   {
    "name": "COCAMIDOPROPYL BETAINE",
@@ -748,7 +730,15 @@
    "labels": 12
   },
   {
+   "name": "ALKYL (C12-15) BENZOATE",
+   "labels": 11
+  },
+  {
    "name": "AVOBENZONE",
+   "labels": 11
+  },
+  {
+   "name": "CAPRYLYL GLYCOL",
    "labels": 11
   },
   {
@@ -766,14 +756,6 @@
   {
    "name": "POLYETHYLENE GLYCOL 3350",
    "labels": 11
-  },
-  {
-   "name": "ALKYL (C12-15) BENZOATE",
-   "labels": 10
-  },
-  {
-   "name": "CAPRYLYL GLYCOL",
-   "labels": 10
   },
   {
    "name": "CYCLOMETHICONE 5",
@@ -816,6 +798,10 @@
    "labels": 9
   },
   {
+   "name": "CANDELILLA WAX",
+   "labels": 8
+  },
+  {
    "name": "CETOSTEARYL ALCOHOL",
    "labels": 8
   },
@@ -840,10 +826,6 @@
    "labels": 8
   },
   {
-   "name": "CANDELILLA WAX",
-   "labels": 7
-  },
-  {
    "name": "CARBOMER HOMOPOLYMER TYPE C (ALLYL PENTAERYTHRITOL CROSSLINKED)",
    "labels": 7
   },
@@ -852,6 +834,9 @@
    "labels": 7
   }
  ],
+ "held": 0,
+ "held_products": [],
+ "removed_products": [],
  "product_pairs": {
   "seeded": 11,
   "built": 11,

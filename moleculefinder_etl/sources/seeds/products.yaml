@@ -117,7 +117,10 @@ products:
   - {slug: alka-seltzer-plus-cold-day-and-night, name: "Alka-Seltzer Plus Cold Day and Night", kind: medicine, dailymed: 75894849-a0ba-57be-e053-2a91aa0a049a}
   - {slug: allegra-allergy, name: "Allegra Allergy", kind: medicine, dailymed: 81c1dcbb-28b3-4ad5-9f3d-9ccc16ddd173}
   - {slug: allegra-hives-24hr, name: "Allegra Hives 24HR", kind: medicine, dailymed: 490b4c5f-448b-4563-928b-837117b59b9f}
-  - {slug: ambien, name: "Ambien", kind: medicine, dailymed: c36cadf4-65a4-4466-b409-c82020b42452}
+  # Gate hold (2026-11-09): Sanofi's label (c36cadf4-65a4-4466-b409-c82020b42452) was retired when the
+  # brand moved to Cosette Pharmaceuticals; DailyMed answered 404 from 2026-11-09. Cosette's label is
+  # the same film-coated tablets with the same eleven ingredients.
+  - {slug: ambien, name: "Ambien", kind: medicine, dailymed: 747949c5-2c91-4909-8a07-71b6826f8e97}
   - {slug: amidate, name: "Amidate", kind: medicine, dailymed: b7ed5bf8-ba75-44dc-8f81-96b4ad5766be}
   - {slug: amrix, name: "Amrix", kind: medicine, dailymed: 3902123b-1365-ac3c-0934-afff9eeeb1bd}
   - {slug: anafranil, name: "Anafranil", kind: medicine, dailymed: 4074b555-7635-41a9-809d-fae3b3610059}
@@ -437,7 +440,10 @@ products:
   - {slug: banana-boat-kids-clear-sunscreen-spf-65, name: "Banana Boat Kids Clear Sunscreen SPF 65", kind: cosmetic, dailymed: dc7b0d17-d7c8-433f-e053-2995a90a477d}
   - {slug: banana-boat-sport-ultra-lip-balm, name: "Banana Boat Sport Ultra Lip Balm", kind: cosmetic, dailymed: c7a3c03b-7fee-404c-e053-2a95a90a3a97}
   - {slug: blistex, name: "Blistex", kind: cosmetic, dailymed: 38c455d3-7ec9-4493-9c06-b8aa018de7d9}
-  - {slug: blue-lizard-sport-spf-50, name: "Blue Lizard Sport SPF 50", kind: cosmetic, dailymed: 4955fa1c-789d-4f42-af75-70223310644a}
+  # Gate hold (2026-11-09): Crown withdrew the label this page read (4955fa1c-789d-4f42-af75-70223310644a,
+  # the octisalate formula; DailyMed answered 404 from 2026-11-09). This is Crown's current Blue Lizard
+  # Sport SPF 50 Sunscreen lotion label, the mineral formula (zinc oxide and titanium dioxide).
+  - {slug: blue-lizard-sport-spf-50, name: "Blue Lizard Sport SPF 50", kind: cosmetic, dailymed: 2f3844d8-0367-aad9-e063-6294a90a1fce}
   - {slug: burts-bees-extra-white-toothpaste, name: "Burt's Bees Extra White Toothpaste", kind: cosmetic, dailymed: c92524fd-8b93-592d-e053-2a95a90a88c6}
   - {slug: carmex-lip-balm-spf-30, name: "Carmex Lip Balm SPF 30", kind: cosmetic, dailymed: ea66ce2c-4e47-451c-b8f6-1f15a23b5cab}
   - {slug: cerave-hydrating-mineral-sunscreen-spf-30, name: "CeraVe Hydrating Mineral Sunscreen SPF 30", kind: cosmetic, dailymed: 8b298516-70df-47ab-834f-51dcde28a43a}
