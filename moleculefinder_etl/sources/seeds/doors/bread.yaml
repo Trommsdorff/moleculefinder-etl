@@ -1,0 +1,75 @@
+# The bread door (build plan everyday chemistry 2026-11, phase 4). /whats-in/bread, upgraded in place in
+# phase 7. Format: see coffee.yaml and transform/doors.py. Cellulose and maltodextrin are not on our bread
+# list, so their stops carry no presence mark (a stop shows only a mark the seeds hold) and say why.
+slug: bread
+page: {product: bread}
+name: Bread
+card:
+  line: "Starch, the glucose chain you digest, and cellulose, the one you cannot."
+  go: "Explore bread"
+  requires:
+    - says: {ref: {answer: starch-vs-cellulose, pin: "95fde5738ca9"}, words: "alpha bonds digest and a cellulose chain's beta bonds do not"}
+title: "What's inside bread?"
+lede: "Start with starch, the glucose chain your body takes apart, then meet cellulose, the same glucose joined by a bond your enzymes cannot cut, and maltodextrin, starch cut short. End at the crust, where baking makes the smell."
+requires:
+  - says: {ref: {answer: maltodextrin-vs-starch, pin: "c083faaaffdf"}, words: "cut into short glucose chains"}
+  - in_list: {list: fresh-bread, molecule: maltol}
+stops:
+  - heading: "The glucose chain you digest: starch"
+    molecule: starch
+    mark: {list: bread}
+    text: {why: starch, pin: "4058ddfb31f9"}
+    more:
+      - {sentence: starch-vs-cellulose, starts: "Neither contains anything but glucose", pin: "129f102dad58"}
+      - {sentence: starch-vs-cellulose, starts: "Starch links its glucose units", pin: "641d813af4e7"}
+    links: [{molecule: starch}, {product: bread}, {pair: starch-vs-cellulose}]
+  - heading: "The same glucose, a bond you cannot digest: cellulose"
+    molecule: cellulose
+    unmarked: "Not on our bread list: cellulose is here as starch's counterpart, the same glucose joined the other way."
+    text: {why: cellulose, pin: "4617b8be3886"}
+    more:
+      - {sentence: starch-vs-cellulose, starts: "Cellulose links them with beta bonds", pin: "778e08afe602"}
+      - {sentence: starch-vs-cellulose, starts: "Those flat ribbons stack", pin: "02750483a42e"}
+      - {sentence: starch-vs-cellulose, starts: "Cows and termites", pin: "4ab232c52d28"}
+    links: [{molecule: cellulose}, {pair: starch-vs-cellulose}]
+  - heading: "Starch cut short: maltodextrin"
+    molecule: maltodextrin
+    unmarked: "Not on our bread list: maltodextrin is made from starch, and it is here to show what starch becomes when its chains are cut."
+    text: {why: maltodextrin, pin: "809e2e35a4aa"}
+    more:
+      - {sentence: maltodextrin-vs-starch, starts: "Maltodextrin is the same glucose chains", pin: "b185aa49523c"}
+      - {sentence: maltodextrin-vs-starch, starts: "Starch is the storage form", pin: "6f7a925b60fe"}
+    links: [{molecule: maltodextrin}, {pair: maltodextrin-vs-starch}]
+  - heading: "Also in the loaf"
+    nav: "Also in the loaf"
+    items:
+      - {molecule: gluten, mark: {list: bread}, text: {why: gluten, pin: "037e775f945a"}}
+      - {molecule: ethanol, mark: {list: bread}, text: {why: ethanol, pin: "59324529ce54"}}
+      - {molecule: sodium-chloride, mark: {list: bread}, text: {why: sodium-chloride, pin: "d85bd2614b37"}}
+      - {molecule: acrylamide, mark: {list: bread}, text: {why: acrylamide, pin: "f1dbcb93c10c"}}
+      - {molecule: thiamine, mark: {list: bread}, text: {why: thiamine, pin: "5bc349cd3742"}}
+      - {molecule: niacin, mark: {list: bread}, text: {why: niacin, pin: "82defca3973d"}}
+      - {molecule: folic-acid, mark: {list: bread}, text: {why: folic-acid, pin: "b8a81401fa6b"}}
+      - {molecule: iron, mark: {list: bread}, text: {why: iron, pin: "eaa945f22d15"}}
+    links: [{product: bread}]
+  - heading: "The smell of fresh bread: maltol and furaneol"
+    nav: "The smell"
+    items:
+      - {molecule: maltol, mark: {list: fresh-bread}, text: {why: maltol, pin: "aa1e908edbea"}}
+      - {molecule: furaneol, mark: {list: fresh-bread}, text: {why: furaneol, pin: "b316e4787556"}}
+    links: [{molecule: maltol}, {molecule: furaneol}, {product: fresh-bread}]
+    requires:
+      - says: {ref: {why: maltol, pin: "aa1e908edbea"}, words: "fresh bread crust"}
+      - says: {ref: {why: furaneol, pin: "b316e4787556"}, words: "forms as bread bakes"}
+also: []
+where_next:
+  - go: "Explore fresh-baked bread"
+    to: {product: fresh-bread}
+    molecule: hydroxymethylfurfural
+    text: {why: hydroxymethylfurfural, pin: "5788aae48491"}
+    requires:
+      - in_list: {list: fresh-bread, molecule: hydroxymethylfurfural}
+  - go: "Compare starch and cellulose"
+    to: {pair: starch-vs-cellulose}
+    pair_drawing: starch-vs-cellulose
+    text: {answer: starch-vs-cellulose, pin: "95fde5738ca9"}

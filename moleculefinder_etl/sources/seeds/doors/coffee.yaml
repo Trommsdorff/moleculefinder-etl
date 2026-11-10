@@ -1,0 +1,95 @@
+# The coffee door (build plan everyday chemistry 2026-11, phase 4). /whats-in/coffee, upgraded in place in
+# phase 7; the approved mockup is moleculefinder-web/docs/design/mockups/direction-2/door-coffee.html.
+#
+# References, not copies (transform/doors.py): `why` is a molecule's why-it-matters line; `sentence` one
+# sentence of a comparison paragraph, found by its opening words; `answer` a comparison's answer line;
+# `editorial` one sentence of a curated editorial; `amount` a list entry's amount; `mark` the presence
+# mark the named list's own seed holds. Every quoted text is pinned (12 hex of sha256): if the line
+# changes, the build stops until the door is read again. New writing: name, card, title, lede, the
+# stop headings and nav labels, the aside heading, the Where next link text and line.
+slug: coffee
+page: {product: coffee}
+name: Coffee
+card:
+  line: "Follow caffeine from your cup to the sleepiness signal it blocks, then on to chocolate."
+  go: "Explore coffee"
+  requires:
+    - lists: {product: coffee, molecule: caffeine}
+    - says: {ref: {answer: adenosine-vs-caffeine, pin: "1cfa3ee63a78"}, words: "sleepiness signal"}
+    - lists: {product: chocolate, molecule: theobromine}
+title: "What's inside coffee?"
+lede: "Follow caffeine, one of the {count:coffee} molecules on our coffee list, from the cup to your brain, on to chocolate, and out to the other drinks that carry it."
+requires:
+  - in_list: {list: tea, molecule: caffeine}
+  - in_list: {list: energy-drinks, molecule: caffeine}
+  - in_list: {list: soft-drinks, molecule: caffeine}
+stops:
+  - heading: "The molecule behind the lift: caffeine"
+    molecule: caffeine
+    mark: {list: coffee}
+    text: {why: caffeine, pin: "dba65d26cb54"}
+    number: {amount: {list: coffee}}
+    more:
+      - {editorial: caffeine, starts: "Caffeine works by impersonation", pin: "4e8c539b8abf"}
+      - {editorial: caffeine, starts: "Coffee, tea and cocoa plants", pin: "1dc3e0f40ce4"}
+    links: [{molecule: caffeine}, {product: coffee}]
+  - heading: "How it works: caffeine blocks adenosine"
+    molecule: adenosine
+    mark: {list: morning-coffee}
+    text: {why: adenosine, pin: "d48d93eb460d"}
+    more:
+      - {sentence: adenosine-vs-caffeine, starts: "Adenosine is a molecule your body makes", pin: "cb76778cfdd8"}
+      - {sentence: adenosine-vs-caffeine, starts: "Caffeine happens to fit", pin: "f46d1d4fa87e"}
+      - {sentence: adenosine-vs-caffeine, starts: "When the caffeine clears", pin: "d1c37bfbfed9"}
+      - aside:
+          heading: "What caffeine becomes: paraxanthine"
+          molecule: paraxanthine
+          mark: {list: morning-coffee}
+          text: {why: paraxanthine, pin: "e3fc58f4d793"}
+    links: [{molecule: adenosine}, {pair: adenosine-vs-caffeine}, {molecule: paraxanthine}]
+    requires:
+      - says: {ref: {answer: adenosine-vs-caffeine, pin: "1cfa3ee63a78"}, words: "caffeine blocks its receptors"}
+      - says: {ref: {why: paraxanthine, pin: "e3fc58f4d793"}, words: "caffeine turns into"}
+  - heading: "A gentler cousin in chocolate: theobromine"
+    molecule: theobromine
+    mark: {list: chocolate}
+    text: {why: theobromine, pin: "581f490f2552"}
+    number: {amount: {list: chocolate}}
+    more:
+      - {sentence: caffeine-vs-theobromine, starts: "That one group changes", pin: "50e315a46ec3"}
+      - {sentence: caffeine-vs-theobromine, starts: "Theobromine lingers longer", pin: "c3c329708777"}
+      - {sentence: caffeine-vs-theobromine, starts: "Both come from the same plants", pin: "d4b14e73563d"}
+    links: [{molecule: theobromine}, {pair: caffeine-vs-theobromine}, {product: chocolate}]
+    requires:
+      - says: {ref: {why: theobromine, pin: "581f490f2552"}, words: "milder cousin of caffeine"}
+  - heading: "Three more places caffeine turns up"
+    nav: "Other drinks"
+    items:
+      - {molecule: caffeine, mark: {list: tea}, number: {amount: {list: tea}}, companion: theanine, text: {answer: caffeine-vs-theanine, pin: "7399dad51cff"}}
+      - {molecule: caffeine, mark: {list: energy-drinks}, number: {amount: {list: energy-drinks}}, companion: taurine, text: {answer: taurine-vs-caffeine, pin: "a96129da8f1e"}}
+      - {molecule: caffeine, mark: {list: soft-drinks}}
+    links: [{product: tea}, {product: energy-drinks}, {product: soft-drinks}, {pair: caffeine-vs-theanine}, {pair: taurine-vs-caffeine}]
+  - heading: "Also in the cup"
+    nav: "Also in the cup"
+    items:
+      - {molecule: chlorogenic-acid, mark: {list: coffee}, text: {why: chlorogenic-acid, pin: "ce07300a8421"}}
+      - {molecule: caffeic-acid, mark: {list: coffee}, text: {why: caffeic-acid, pin: "8b2a168cf0ad"}}
+      - {molecule: niacin, mark: {list: coffee}, text: {why: niacin, pin: "82defca3973d"}}
+      - {molecule: guaiacol, mark: {list: coffee}, text: {why: guaiacol, pin: "eb44ae5c907c"}}
+      - {molecule: furfural, mark: {list: coffee}, text: {why: furfural, pin: "adcfb1a7d8db"}}
+      - {molecule: theophylline, mark: {list: coffee}, text: {why: theophylline, pin: "e7272bcedaca"}}
+    links: [{product: coffee}, {world: morning-coffee}]
+# The rest of the coffee list, so the upgraded page keeps every molecule it lists today.
+also: [hydroxymethylfurfural, acrylamide, water, potassium, magnesium, acetaldehyde]
+where_next:
+  - go: "Explore chocolate next"
+    to: {product: chocolate}
+    molecule: theobromine
+    text: {why: theobromine, pin: "581f490f2552"}
+  - go: "Compare caffeine and theobromine"
+    to: {pair: caffeine-vs-theobromine}
+    pair_drawing: caffeine-vs-theobromine
+    line: "One methyl group apart: see what that one group changes."
+    requires:
+      - formula_delta: {a: caffeine, b: theobromine, delta: CH2}
+      - says: {ref: {answer: caffeine-vs-theobromine, pin: "efb338bb9b33"}, words: "three methyl groups and theobromine two"}

@@ -1,0 +1,105 @@
+# The sugar and sweeteners door (build plan everyday chemistry 2026-11, phase 4). A NEW group page,
+# /whats-in/sugar-and-sweeteners, seeded dark until phase 7. Format: see coffee.yaml and transform/doors.py.
+# /whats-in/table-sugar answers 410 since phase 2 (sucrose alone, under the gate); the table sugar list
+# lives on as /in/table-sugar, which is the member here. Every sweetness is the sourced value
+# (sweetness.yaml, SEO run 1), each with its source.
+slug: sugar-and-sweeteners
+page: {group: sugar-and-sweeteners, live: false}
+interim: {hub: tabletop-sweetener}
+name: Sugar and sweeteners
+page_title: "What's in sugar and sweeteners: sucrose to sucralose"
+description: "Sucrose sets the sweetness scale at 1. Aspartame, sucralose and stevioside are hundreds of times sweeter; xylitol and erythritol are one carbon apart."
+card:
+  line: "Table sugar, the yardstick, and the sweeteners that match it with a trace."
+  go: "Explore sweeteners"
+  requires:
+    - says: {ref: {editorial: aspartame, starts: "Aspartame is roughly two hundred times", pin: "1d00c90a8174"}, words: "a trace"}
+title: "What's inside sugar and sweeteners?"
+lede: "Sucrose, table sugar, sets the sweetness scale at 1. Follow it to aspartame, sucralose and stevioside, each hundreds of times sweeter, and to xylitol and erythritol, two sugar alcohols one carbon apart."
+requires:
+  - sweetness_at_least: {molecule: aspartame, value: 100}
+  - sweetness_at_least: {molecule: sucralose, value: 100}
+  - sweetness_at_least: {molecule: stevioside, value: 100}
+  - formula_delta: {a: xylitol, b: erythritol, delta: CH2O}
+stops:
+  - heading: "The yardstick: sucrose, table sugar"
+    molecule: sucrose
+    mark: {list: table-sugar}
+    text: {why: sucrose, pin: "f4639bd8936c"}
+    number: {sweetness: sucrose}
+    more:
+      - {editorial: sucrose, starts: "Sucrose, ordinary table sugar", pin: "fa808c9ba5ce"}
+      - {editorial: sucrose, starts: "By definition it sits at 1x", pin: "23a26b10e1f6"}
+      - {sentence: sucrose-vs-fructose, starts: "The bond joining sucrose's two halves", pin: "83ac775e173a"}
+    links: [{molecule: sucrose}, {hub: table-sugar}, {pair: sucrose-vs-fructose}]
+  - heading: "Two hundred times sweeter: aspartame"
+    molecule: aspartame
+    mark: {list: diet-soda}
+    text: {why: aspartame, pin: "af9379a0ab44"}
+    number: {sweetness: aspartame}
+    more:
+      - {editorial: aspartame, starts: "Aspartame is roughly two hundred times", pin: "1d00c90a8174"}
+      - {sentence: sucralose-vs-aspartame, starts: "Aspartame is not a carbohydrate at all", pin: "ec7ec0da038f"}
+    links: [{molecule: aspartame}, {product: diet-soda}, {product: soft-drinks}, {pair: aspartame-vs-saccharin}]
+    requires:
+      - says: {ref: {why: aspartame, pin: "af9379a0ab44"}, words: "about 200 times sweeter than sugar"}
+      - in_list: {list: soft-drinks, molecule: aspartame}
+  - heading: "Sugar with three chlorines: sucralose"
+    molecule: sucralose
+    mark: {list: diet-soda}
+    text: {why: sucralose, pin: "e084bbcb06f4"}
+    number: {sweetness: sucralose}
+    more:
+      - {editorial: sucralose, starts: "Sucralose is roughly six hundred times", pin: "dc96521b9542"}
+      - {sentence: sucralose-vs-aspartame, starts: "Sucralose actually starts as sucrose", pin: "13b7020dfb63"}
+      - {answer: sucralose-vs-aspartame, pin: "846711065687"}
+    links: [{molecule: sucralose}, {product: diet-soda}, {pair: sucralose-vs-aspartame}]
+    requires:
+      - says: {ref: {why: sucralose, pin: "e084bbcb06f4"}, words: "three chlorine atoms"}
+      - formula_delta: {a: sucralose, b: sucrose, delta: Cl3H-3O-3}
+  - heading: "From a leaf: stevioside"
+    molecule: stevioside
+    mark: {list: stevia}
+    text: {why: stevioside, pin: "4368ccfc271d"}
+    number: {sweetness: stevioside}
+    more:
+      - {editorial: stevioside, starts: "Stevioside is the sweet molecule", pin: "e85128e06863"}
+      - {editorial: stevioside, starts: "Because it comes from a leaf", pin: "0b79fac1804c"}
+      - {answer: sucralose-vs-stevioside, pin: "3d3ac6dc730b"}
+      - {answer: stevioside-vs-rebaudioside-a, pin: "67021c257740"}
+    links: [{molecule: stevioside}, {hub: stevia}, {pair: sucralose-vs-stevioside}, {pair: stevioside-vs-rebaudioside-a}]
+  - heading: "One carbon apart: xylitol and erythritol"
+    nav: "Xylitol and erythritol"
+    items:
+      - {molecule: xylitol, mark: {list: sugar-free-gum}, number: {sweetness: xylitol}, text: {why: xylitol, pin: "016e85fa121b"}}
+      - {molecule: erythritol, mark: {list: sugar-free-gum}, number: {sweetness: erythritol}, text: {why: erythritol, pin: "95503205db92"}}
+    more:
+      - {answer: xylitol-vs-erythritol, pin: "2e96626f90c8"}
+      - {sentence: xylitol-vs-erythritol, starts: "Erythritol is absorbed in the small intestine", pin: "4a13f7daeed9"}
+    links: [{molecule: xylitol}, {molecule: erythritol}, {product: sugar-free-gum}, {pair: xylitol-vs-erythritol}]
+    requires:
+      - formula_delta: {a: xylitol, b: erythritol, delta: CH2O}
+# More sweeteners on the member lists, each with the list it comes from.
+also:
+  - {molecule: acesulfame-potassium, list: diet-soda}
+  - {molecule: saccharin, list: diet-soda}
+  - {molecule: rebaudioside-a, list: diet-soda}
+  - {molecule: sorbitol, list: sugar-free-gum}
+  - {molecule: allulose, list: tabletop-sweetener}
+  - {molecule: mogroside-v, list: tabletop-sweetener}
+where_next:
+  - go: "See the Sweetest board"
+    to: {board: sweetest}
+    text: {board: sweetest, pin: "3d216ae355eb"}
+  - go: "Compare sucralose and aspartame"
+    to: {pair: sucralose-vs-aspartame}
+    pair_drawing: sucralose-vs-aspartame
+    text: {answer: sucralose-vs-aspartame, pin: "846711065687"}
+members:
+  - {hub: table-sugar}
+  - {product: diet-soda}
+  - {product: soft-drinks}
+  - {product: sugar-free-gum}
+  - {hub: stevia}
+  - {hub: tabletop-sweetener}
+  - {board: sweetest}

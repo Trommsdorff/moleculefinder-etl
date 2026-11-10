@@ -1,0 +1,98 @@
+# What it does (build plan everyday chemistry 2026-11, phase 4; rendered on the molecule page in phase 8,
+# section 3). For a molecule with a curated mechanism: the sentences, each one sentence of a comparison
+# paragraph found by its opening words and pinned to its text (12 hex of sha256, as the door seeds), and
+# the name of a hand-made illustration, or none. A molecule with no entry has no "What it does" section.
+# First entries: the molecules on the six door chains that have a mechanism sentence in our comparison
+# notes. Not here, for want of one: paraxanthine, dextromethorphan, doxylamine, stevioside (its sentence
+# speaks of "both"), limonene (its sentence overreaches: "the whole of citrus peel oil"), ammonia,
+# sodium carbonate, maltol, furaneol. Illustrations are web assets (transform/doors.ILLUSTRATIONS).
+caffeine:
+  sentences:
+    - {pair: adenosine-vs-caffeine, starts: "Adenosine is a molecule your body makes", pin: "cb76778cfdd8"}
+    - {pair: adenosine-vs-caffeine, starts: "Caffeine happens to fit", pin: "f46d1d4fa87e"}
+    - {pair: adenosine-vs-caffeine, starts: "Nothing is added by the coffee", pin: "519166f10d40"}
+  illustration: receptor-block
+adenosine:
+  sentences:
+    - {pair: adenosine-vs-caffeine, starts: "Adenosine is a molecule your body makes", pin: "cb76778cfdd8"}
+    - {pair: adenosine-vs-caffeine, starts: "Caffeine happens to fit", pin: "f46d1d4fa87e"}
+    - {pair: adenosine-vs-caffeine, starts: "When the caffeine clears", pin: "d1c37bfbfed9"}
+  illustration: receptor-block
+theobromine:
+  sentences:
+    - {pair: caffeine-vs-theobromine, starts: "That one group changes", pin: "50e315a46ec3"}
+    - {pair: caffeine-vs-theobromine, starts: "Theobromine lingers longer", pin: "c3c329708777"}
+  illustration: null
+acetaminophen:
+  sentences:
+    - {pair: acetaminophen-vs-ibuprofen, starts: "Acetaminophen, called paracetamol", pin: "87744e29f736"}
+  illustration: null
+ibuprofen:
+  sentences:
+    - {pair: acetaminophen-vs-ibuprofen, starts: "Ibuprofen is an NSAID", pin: "aa73eeba1936"}
+  illustration: null
+menthol:
+  sentences:
+    - {pair: menthol-vs-camphor, starts: "Menthol activates TRPM8", pin: "5bdc082f21ae"}
+  illustration: null
+camphor:
+  sentences:
+    - {pair: menthol-vs-camphor, starts: "Camphor is less selective", pin: "73b3035c50bc"}
+  illustration: null
+starch:
+  sentences:
+    - {pair: starch-vs-cellulose, starts: "Starch links its glucose units", pin: "641d813af4e7"}
+  illustration: null
+cellulose:
+  sentences:
+    - {pair: starch-vs-cellulose, starts: "Starch links its glucose units", pin: "641d813af4e7"}
+    - {pair: starch-vs-cellulose, starts: "Cellulose links them with beta bonds", pin: "778e08afe602"}
+  illustration: null
+maltodextrin:
+  sentences:
+    - {pair: maltodextrin-vs-starch, starts: "Maltodextrin is the same glucose chains", pin: "b185aa49523c"}
+  illustration: null
+sucrose:
+  sentences:
+    - {pair: sucrose-vs-fructose, starts: "The bond joining sucrose's two halves", pin: "83ac775e173a"}
+  illustration: null
+aspartame:
+  sentences:
+    - {pair: sucralose-vs-aspartame, starts: "Aspartame is not a carbohydrate at all", pin: "ec7ec0da038f"}
+  illustration: null
+sucralose:
+  sentences:
+    - {pair: sucralose-vs-aspartame, starts: "Sucralose actually starts as sucrose", pin: "13b7020dfb63"}
+  illustration: null
+xylitol:
+  sentences:
+    - {pair: xylitol-vs-erythritol, starts: "Erythritol is absorbed in the small intestine", pin: "4a13f7daeed9"}
+  illustration: null
+erythritol:
+  sentences:
+    - {pair: xylitol-vs-erythritol, starts: "Erythritol is absorbed in the small intestine", pin: "4a13f7daeed9"}
+  illustration: null
+sodium-hypochlorite:
+  sentences:
+    - {pair: hydrogen-peroxide-vs-sodium-hypochlorite, starts: "Sodium hypochlorite releases hypochlorous acid", pin: "739923666b56"}
+  illustration: null
+hydrogen-peroxide:
+  sentences:
+    - {pair: hydrogen-peroxide-vs-sodium-hypochlorite, starts: "Hydrogen peroxide decomposes", pin: "027ec939ee4e"}
+  illustration: null
+sodium-bicarbonate:
+  sentences:
+    - {pair: sodium-bicarbonate-vs-sodium-carbonate, starts: "Heating baking soda in an oven", pin: "169e4936b332"}
+  illustration: null
+sodium-hydroxide:
+  sentences:
+    - {pair: sodium-hydroxide-vs-sodium-bicarbonate, starts: "Sodium hydroxide is caustic soda", pin: "aafdf841c76b"}
+  illustration: null
+citric-acid:
+  sentences:
+    - {pair: citric-acid-vs-ascorbic-acid, starts: "Citric acid preserves by lowering pH", pin: "1860a0bf16d6"}
+  illustration: null
+ascorbic-acid:
+  sentences:
+    - {pair: citric-acid-vs-ascorbic-acid, starts: "Citric acid preserves by lowering pH", pin: "1860a0bf16d6"}
+  illustration: null

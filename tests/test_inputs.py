@@ -125,7 +125,7 @@ def test_a_pinned_export_refuses_before_it_writes_anything(tmp_path, monkeypatch
     monkeypatch.setattr(inputs, "RAW_CACHE", mac)
     monkeypatch.setattr(inputs, "INPUTS_FILE", inputs_file)
     monkeypatch.setattr(pipeline, "MOLECULES", molecules)
-    monkeypatch.setattr(pipeline, "_preflight", lambda m, guard=True: ({}, {}, None))
+    monkeypatch.setattr(pipeline, "_preflight", lambda m, guard=True: ({}, {}, None, None))
     wrote = []
     monkeypatch.setattr(snapshot_export, "export", lambda *a, **k: wrote.append(1))
     with pytest.raises(inputs.InputsMismatch):

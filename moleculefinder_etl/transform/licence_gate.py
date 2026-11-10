@@ -32,6 +32,9 @@ IMPLIED: tuple[tuple[str, str], ...] = (
     ("structure_svg", "rdkit"), ("edges", "rdkit"),
     ("brands", "curated"), ("odor_threshold", "curated"), ("trails", "curated"),
     ("content_blocks", "curated"),
+    # The molecule page's "What it does" (phase 4, 2026-11): sentences quoted from the curated
+    # comparison notes, by reference (transform/doors.py).
+    ("what_it_does", "curated"),
 )
 
 # A licence record's register (lib/registers.ts on the web) -> registry key. A record with no

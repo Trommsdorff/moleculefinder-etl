@@ -1,0 +1,83 @@
+# The household cleaners door (build plan everyday chemistry 2026-11, phase 4). A NEW group page,
+# /whats-in/household-cleaners, seeded dark until phase 7. We hold no cleaning-product labels, so it
+# gathers the curated household cleaners list behind /in/household-cleaner. Format: see coffee.yaml.
+slug: household-cleaners
+page: {group: household-cleaners, live: false}
+interim: {hub: household-cleaner}
+name: Household cleaners
+page_title: "What's in household cleaners: ammonia, bleach, peroxide, sodas"
+description: "What ammonia, bleach and hydrogen peroxide each do when they clean, and how baking soda, washing soda and caustic soda differ in how strongly alkaline each is."
+card:
+  line: "Ammonia, bleach and hydrogen peroxide: what each one cleans."
+  go: "Explore cleaners"
+  requires:
+    - says: {ref: {answer: ammonia-vs-sodium-hypochlorite, pin: "58be3f88f33f"}, words: "Ammonia cleans glass and grease"}
+    - says: {ref: {why: sodium-hypochlorite, pin: "f34c7dba2b09"}, words: "destroys the pigments in a stain"}
+    - says: {ref: {sentence: hydrogen-peroxide-vs-sodium-hypochlorite, starts: "Hydrogen peroxide decomposes", pin: "027ec939ee4e"}, words: "used on fabric and hair"}
+title: "What's inside household cleaners?"
+lede: "Follow ammonia, bleach and hydrogen peroxide to what each one does when it cleans, then meet three sodas, from the baking soda that lifts a cake to the caustic soda in drain cleaner."
+requires:
+  - says: {ref: {why: sodium-bicarbonate, pin: "c6b77c71ec90"}, words: "lifts a cake"}
+  - says: {ref: {why: sodium-hydroxide, pin: "ca0765422578"}, words: "drain cleaner"}
+stops:
+  - heading: "For glass and grease: ammonia"
+    molecule: ammonia
+    mark: {list: household-cleaner}
+    text: {why: ammonia, pin: "1bc15c6b40df"}
+    more:
+      - {sentence: ammonia-vs-sodium-hypochlorite, starts: "Ammonia is the far smaller molecule", pin: "dbdccb9fd1a0"}
+    links: [{molecule: ammonia}, {hub: household-cleaner}, {pair: ammonia-vs-sodium-hypochlorite}]
+    requires:
+      - says: {ref: {answer: ammonia-vs-sodium-hypochlorite, pin: "58be3f88f33f"}, words: "Ammonia cleans glass and grease"}
+  - heading: "What bleach is: sodium hypochlorite"
+    nav: "Bleach"
+    molecule: sodium-hypochlorite
+    mark: {list: household-cleaner}
+    text: {why: sodium-hypochlorite, pin: "f34c7dba2b09"}
+    more:
+      - {sentence: hydrogen-peroxide-vs-sodium-hypochlorite, starts: "Sodium hypochlorite releases hypochlorous acid", pin: "739923666b56"}
+      - {answer: ammonia-vs-sodium-hypochlorite, pin: "58be3f88f33f"}
+    links: [{molecule: sodium-hypochlorite}, {pair: ammonia-vs-sodium-hypochlorite}, {pair: hydrogen-peroxide-vs-sodium-hypochlorite}]
+  - heading: "Water and oxygen, nothing else: hydrogen peroxide"
+    molecule: hydrogen-peroxide
+    mark: {list: household-cleaner}
+    text: {why: hydrogen-peroxide, pin: "f99fcfb82dfd"}
+    more:
+      - {sentence: hydrogen-peroxide-vs-sodium-hypochlorite, starts: "Hydrogen peroxide decomposes", pin: "027ec939ee4e"}
+      - {answer: hydrogen-peroxide-vs-sodium-hypochlorite, pin: "b153722a9c35"}
+    links: [{molecule: hydrogen-peroxide}, {pair: hydrogen-peroxide-vs-sodium-hypochlorite}]
+  - heading: "Three sodas: baking, washing and caustic"
+    nav: "Three sodas"
+    items:
+      - {molecule: sodium-bicarbonate, mark: {list: household-cleaner}, text: {why: sodium-bicarbonate, pin: "c6b77c71ec90"}}
+      - {molecule: sodium-carbonate, mark: {list: household-cleaner}, text: {why: sodium-carbonate, pin: "2fec51758fa9"}}
+      - {molecule: sodium-hydroxide, mark: {list: household-cleaner}, text: {why: sodium-hydroxide, pin: "ca0765422578"}}
+    more:
+      - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "Baking soda and washing soda are the same two elements", pin: "61a4b9278b13"}
+      - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "Heating baking soda in an oven", pin: "169e4936b332"}
+      - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "In baking, the carbon dioxide is the point", pin: "5a828e3aafc9"}
+      - {sentence: sodium-hydroxide-vs-sodium-bicarbonate, starts: "Sodium hydroxide is caustic soda", pin: "aafdf841c76b"}
+    links: [{pair: sodium-bicarbonate-vs-sodium-carbonate}, {pair: sodium-hydroxide-vs-sodium-bicarbonate}, {hub: household-cleaner}]
+    requires:
+      - says: {ref: {sentence: sodium-hydroxide-vs-sodium-bicarbonate, starts: "Both are alkaline and they sit at opposite ends", pin: "c4ad62faba8a"}, words: "opposite ends of that scale"}
+also:
+  - {molecule: acetic-acid, list: household-cleaner}
+  - {molecule: borax, list: household-cleaner}
+  - {molecule: citric-acid, list: household-cleaner}
+  - {molecule: ethylenediaminetetraacetic-acid, list: household-cleaner}
+  - {molecule: sodium-lauryl-sulfate, list: household-cleaner}
+  - {molecule: triclosan, list: household-cleaner}
+where_next:
+  - go: "Compare baking soda and washing soda"
+    to: {pair: sodium-bicarbonate-vs-sodium-carbonate}
+    pair_drawing: sodium-bicarbonate-vs-sodium-carbonate
+    text: {answer: sodium-bicarbonate-vs-sodium-carbonate, pin: "a3f61a616d10"}
+  - go: "Explore citrus next"
+    to: {product: citrus}
+    molecule: citric-acid
+    text: {why: citric-acid, pin: "08a2525ab9b4"}
+    requires:
+      - in_list: {list: household-cleaner, molecule: citric-acid}
+      - in_list: {list: citrus, molecule: citric-acid}
+members:
+  - {hub: household-cleaner}

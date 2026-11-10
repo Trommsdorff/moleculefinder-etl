@@ -453,7 +453,7 @@ def test_export_refuses_records_listing_products_without_the_staged_products(tmp
     molecules.write_text(json.dumps([{"cid": 1, "slug": "a", "products": [{"slug": "p"}]}]))
     monkeypatch.setattr(pipeline, "MOLECULES", molecules)
     monkeypatch.setattr(pipeline, "PRODUCTS_STAGED", tmp_path / "missing.json")
-    monkeypatch.setattr(pipeline, "_preflight", lambda m, guard=True: ({}, {}, None))
+    monkeypatch.setattr(pipeline, "_preflight", lambda m, guard=True: ({}, {}, None, None))
     monkeypatch.setattr(snapshot_export, "export", lambda *a, **k: pytest.fail("exported"))
     with pytest.raises(SystemExit, match="lists products"):
         pipeline.stage_export(None)

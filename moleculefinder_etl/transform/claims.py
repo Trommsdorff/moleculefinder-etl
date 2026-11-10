@@ -17,8 +17,9 @@ of ``stage_transform``, and in pytest) until someone writes down why it stands. 
 a check in ``DATA_CHECKS``, which the export preflight runs against the built catalog
 (``check_data_claims``): if the data stops showing the claim, the run refuses.
 
-The lines covered: every why-it-matters line, every editorial paragraph, every comparison paragraph
-and every comparison answer line. Answer lines are never edited by the sweep (they are the /vs pages'
+The lines covered: every why-it-matters line, every editorial paragraph, every comparison paragraph,
+every comparison answer line and every door seed's new writing (phase 4: titles, ledes, card lines,
+stop headings; kind ``door``). Answer lines are never edited by the sweep (they are the /vs pages'
 descriptions); an answer line that overreaches is held with basis ``held`` and listed for Garrett.
 
 The web repo's ``lib/copy-rules.ts`` carries the same word list (``CLAIM_WORDS``) for strings written
@@ -56,7 +57,7 @@ BASES = {
     "held": "a comparison answer line, never edited by the sweep; listed for Garrett",
 }
 
-KINDS = ("why_it_matters", "editorial", "comparison", "answer")
+KINDS = ("why_it_matters", "editorial", "comparison", "answer", "door")
 
 
 class ClaimError(SystemExit):
@@ -91,6 +92,10 @@ def corpus(seeds: Path = SEEDS_DIR, curated: Path = CURATED_DIR) -> list[tuple[s
         out.append(("comparison", str(pair), normalise(v.get("text"))))
         if v.get("answer"):
             out.append(("answer", str(pair), normalise(v["answer"])))
+    # The doors' new writing (phase 4, 2026-11): titles, ledes, card lines, stop headings. A claim word
+    # there needs an entry under `door:` like any other curated line.
+    from .doors import DOORS_DIR, door_strings, load_seeds
+    out += [("door", key, text) for key, text in door_strings(load_seeds(seeds / DOORS_DIR.name))]
     return out
 
 

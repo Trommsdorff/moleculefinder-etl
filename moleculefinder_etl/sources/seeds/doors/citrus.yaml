@@ -1,0 +1,63 @@
+# The citrus door (build plan everyday chemistry 2026-11, phase 4; ruling h). /whats-in/citrus, upgraded in
+# place in phase 7 (the page combines our curated citrus list with the Citrus world). Format: see coffee.yaml.
+slug: citrus
+page: {product: citrus}
+name: Citrus
+card:
+  line: "Vitamin C, citric acid, which is not a vitamin at all, and limonene, the scent in the peel."
+  go: "Explore citrus"
+  requires:
+    - says: {ref: {answer: citric-acid-vs-ascorbic-acid, pin: "461f99e17243"}, words: "citric acid is not a vitamin at all"}
+    - says: {ref: {why: limonene, pin: "414892c07e9f"}, words: "citrus scent locked in orange and lemon peel"}
+title: "What's inside citrus?"
+lede: "Start with vitamin C, then meet citric acid, the sourness of the same fruit and not a vitamin at all, and end in the peel, where limonene carries the scent."
+requires:
+  - says: {ref: {why: citric-acid, pin: "08a2525ab9b4"}, words: "sourness of lemons, limes, and oranges"}
+stops:
+  - heading: "A vitamin your body cannot make: vitamin C"
+    molecule: ascorbic-acid
+    mark: {list: citrus}
+    text: {why: ascorbic-acid, pin: "5179c958b7c9"}
+    more:
+      - {sentence: citric-acid-vs-ascorbic-acid, starts: "Ascorbic acid is vitamin C", pin: "9bd7d99a6435"}
+    links: [{molecule: ascorbic-acid}, {pair: citric-acid-vs-ascorbic-acid}]
+    requires:
+      - says: {ref: {why: ascorbic-acid, pin: "5179c958b7c9"}, words: "your body cannot make on its own"}
+  - heading: "Sour, and not a vitamin at all: citric acid"
+    molecule: citric-acid
+    mark: {list: citrus}
+    text: {why: citric-acid, pin: "08a2525ab9b4"}
+    more:
+      - {sentence: citric-acid-vs-ascorbic-acid, starts: "Citric acid preserves by lowering pH", pin: "1860a0bf16d6"}
+      - {answer: citric-acid-vs-ascorbic-acid, pin: "461f99e17243"}
+      - {answer: acetic-acid-vs-citric-acid, pin: "44018020079c"}
+    links: [{molecule: citric-acid}, {pair: citric-acid-vs-ascorbic-acid}, {pair: acetic-acid-vs-citric-acid}]
+  - heading: "The scent in the peel: limonene"
+    molecule: limonene
+    mark: {list: citrus}
+    text: {why: limonene, pin: "414892c07e9f"}
+    more:
+      - {answer: limonene-vs-linalool, pin: "fe1ce01f3991"}
+    links: [{molecule: limonene}, {pair: limonene-vs-linalool}]
+  - heading: "Also in the fruit"
+    nav: "Also in the fruit"
+    items:
+      - {molecule: linalool, mark: {list: citrus}, text: {why: linalool, pin: "98e03aaadfa0"}}
+      - {molecule: hesperidin, mark: {list: citrus}, text: {why: hesperidin, pin: "f14b81d1f3c9"}}
+      - {molecule: pectin, mark: {list: citrus}, text: {why: pectin, pin: "8fccb67bc485"}}
+      - {molecule: sucrose, mark: {list: citrus}, text: {why: sucrose, pin: "f4639bd8936c"}}
+      - {molecule: citral, mark: {list: citrus}, text: {why: citral, pin: "4a38cd39f802"}}
+      - {molecule: naringin, mark: {list: citrus}, text: {why: naringin, pin: "d432e95c4962"}}
+    links: [{product: citrus}, {world: citrus}]
+also: []
+where_next:
+  - go: "Compare citric acid and vitamin C"
+    to: {pair: citric-acid-vs-ascorbic-acid}
+    pair_drawing: citric-acid-vs-ascorbic-acid
+    text: {answer: citric-acid-vs-ascorbic-acid, pin: "461f99e17243"}
+  - go: "Explore fruit next"
+    to: {product: fruit}
+    molecule: ethylene
+    text: {why: ethylene, pin: "2a88f9436f2c"}
+    requires:
+      - in_list: {list: fruit, molecule: ethylene}

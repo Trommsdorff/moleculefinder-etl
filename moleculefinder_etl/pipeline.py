@@ -26,7 +26,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
-from .transform import presence, claims
+from .transform import presence, claims, doors
 from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
@@ -359,6 +359,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     # Curated plain-language "why it matters" (follow-up #1): shown in the world SELECTED panel
     # instead of PubChem's generic description. Fails the build on an unknown curated slug.
     relationships.attach_why_it_matters(kept)
+    # "What it does" (everyday chemistry phase 4, 2026-11): curated mechanism sentences, each a pinned
+    # reference to a comparison paragraph (what_it_does.yaml). No page renders it until phase 8.
+    log.info("  what it does: %d molecules", doors.attach_what_it_does(kept, relationships.load_comparisons()))
     # Curated commercial/brand names (Advil, Benadryl...) for the "Also sold as" line + search.
     relationships.attach_brands(kept)
     # Licence basis for medicines admitted under a ruling (approvals.yaml, 2026-10-18).
@@ -452,7 +455,7 @@ def stage_transform(settings: Settings) -> list[dict]:
 
 
 # ── Export preflight: every refusal, before anything is written anywhere ─────
-def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict, object]:
+def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict, object, dict]:
     """Run every check that can refuse this snapshot, and write nothing.
 
     The load used to run before the export, and the export is where the snapshot guard
@@ -477,9 +480,15 @@ def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict
     comparisons = relationships.build_comparisons(molecules)
     # Molecule of the week, validated against the same catalog; a bad seed stops the run here.
     queue = featured.compile_queue(molecules)
+    # The six doors (everyday chemistry phase 4): every reference resolves and every `requires:`
+    # holds against this catalog, its comparisons, its boards and the product pages the transform
+    # staged, or the run stops here, naming the door and the fact, before the load and the export.
+    staged = json.loads(PRODUCTS_STAGED.read_text()) if PRODUCTS_STAGED.exists() else None
+    pairs = json.loads(PRODUCT_PAIRS_STAGED.read_text()) if PRODUCT_PAIRS_STAGED.exists() else None
+    door_data = doors.compile_doors(molecules, comparisons, boards, staged, pairs)
     if guard:
         snapshot_guard.check(molecules, SNAPSHOTS)
-    return boards, comparisons, queue
+    return boards, comparisons, queue, door_data
 
 
 # ── Stage 3: load ────────────────────────────────────────────────────────────
@@ -511,7 +520,7 @@ def stage_load(settings: Settings) -> None:
 def stage_export(settings: Settings) -> Path:
     _require(MOLECULES, "transform")
     molecules = json.loads(MOLECULES.read_text())
-    boards, comparisons, queue = _preflight(molecules, guard=False)
+    boards, comparisons, queue, door_data = _preflight(molecules, guard=False)
     # A pinned build exports only from the inputs main was built from, and keeps its date.
     inputs.before_export()
     # The featured builder runs inside export, for the date meta.json gets.
@@ -531,11 +540,15 @@ def stage_export(settings: Settings) -> Path:
                  if staged is not None else None)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
-                                  products=staged, product_pairs=pairs, published=published)
+                                  products=staged, product_pairs=pairs, published=published,
+                                  doors=door_data)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)
     log.info("  boards: %s", non_empty)
+    if door_data and door_data.get("doors"):
+        log.info("  doors: %s", ", ".join(f"{d['slug']} ({len(d['stops'])} stops, {'live' if d['live'] else 'dark'})"
+                                          for d in door_data["doors"]))
     _log_featured()
     return path
 

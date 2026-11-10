@@ -1,0 +1,100 @@
+# The medicine cabinet door (build plan everyday chemistry 2026-11, phase 4; rulings a and h). A NEW group
+# page, /whats-in/medicine-cabinet, seeded dark until phase 7. Format: see coffee.yaml and transform/doors.py.
+# This door shows what each label states (its active ingredients, their purpose and strength, read from
+# DailyMed) and how each molecule works, never how much to take: acetaminophen's overdose sentence and the
+# ibuprofen editorial's redosing sentence are not used. `labels` rows are the label's own words.
+slug: medicine-cabinet
+page: {group: medicine-cabinet, live: false}
+interim: {hub: pain-and-fever}
+name: The medicine cabinet
+page_title: "What's in the medicine cabinet: Tylenol, Advil, NyQuil, Vicks"
+description: "The active ingredients on Tylenol, Advil, NyQuil and Vicks VapoRub, as each label states them, and how acetaminophen, ibuprofen and menthol work."
+card:
+  line: "Tylenol, Advil, NyQuil and Vicks, starting with acetaminophen, the pain reliever Tylenol and NyQuil share."
+  go: "Explore the medicine cabinet"
+  requires:
+    - lists: {product: tylenol-extra-strength, molecule: acetaminophen, role: active, purpose_has: "pain reliever"}
+    - lists: {product: vicks-nyquil-intense-flu-liquicaps, molecule: acetaminophen, role: active, purpose_has: "pain reliever"}
+    - lists: {product: advil, molecule: ibuprofen, role: active}
+    - lists: {product: vicks-vaporub, molecule: menthol, role: active}
+title: "What's inside the medicine cabinet?"
+lede: "Read the labels on Tylenol, Advil, NyQuil and Vicks VapoRub, and meet the molecule behind each active ingredient they list, with the strength each label states."
+stops:
+  - heading: "The pain reliever Tylenol and NyQuil share: acetaminophen"
+    molecule: acetaminophen
+    mark: {list: tylenol-extra-strength}
+    text: {why: acetaminophen, pin: "684e0c27d9b5"}
+    labels:
+      - {label: tylenol-extra-strength, molecule: acetaminophen}
+      - {label: vicks-nyquil-intense-flu-liquicaps, molecule: acetaminophen}
+    more:
+      - {editorial: acetaminophen, starts: "Acetaminophen, sold as Tylenol", pin: "7137e2a4775b"}
+      - {sentence: acetaminophen-vs-ibuprofen, starts: "Acetaminophen, called paracetamol", pin: "87744e29f736"}
+    links: [{molecule: acetaminophen}, {product: tylenol-extra-strength}, {product: vicks-nyquil-intense-flu-liquicaps}, {pair: acetaminophen-vs-ibuprofen}]
+  - heading: "Advil's ibuprofen, which eases inflammation too"
+    molecule: ibuprofen
+    mark: {list: advil}
+    text: {why: ibuprofen, pin: "7d2376208890"}
+    labels:
+      - {label: advil, molecule: ibuprofen}
+    more:
+      - {sentence: acetaminophen-vs-ibuprofen, starts: "Ibuprofen is an NSAID", pin: "aa73eeba1936"}
+      - {editorial: ibuprofen, starts: "Ibuprofen is the everyday anti-inflammatory", pin: "810aedd2109a"}
+    links: [{molecule: ibuprofen}, {product: advil}, {product: aleve}, {pair: ibuprofen-vs-naproxen}]
+    requires:
+      - says: {ref: {answer: acetaminophen-vs-ibuprofen, pin: "57c94c8e4205"}, words: "eases inflammation as well as pain"}
+  - heading: "The DM on the box: dextromethorphan"
+    molecule: dextromethorphan
+    mark: {list: vicks-nyquil-intense-flu-liquicaps}
+    text: {why: dextromethorphan, pin: "84df64fab450"}
+    labels:
+      - {label: vicks-nyquil-intense-flu-liquicaps, molecule: dextromethorphan}
+      - {label: vicks-dayquil-severe-cold-and-flu, molecule: dextromethorphan}
+    links: [{molecule: dextromethorphan}, {product: vicks-nyquil-intense-flu-liquicaps}, {product: vicks-dayquil-severe-cold-and-flu}]
+    requires:
+      - says: {ref: {why: dextromethorphan, pin: "84df64fab450"}, words: "marked DM"}
+  - heading: "In NyQuil, not in DayQuil: doxylamine"
+    molecule: doxylamine
+    mark: {list: vicks-nyquil-intense-flu-liquicaps}
+    text: {why: doxylamine, pin: "3539ba1edd5c"}
+    labels:
+      - {label: vicks-nyquil-intense-flu-liquicaps, molecule: doxylamine}
+      - {label: unisom-sleeptabs, molecule: doxylamine}
+    links: [{molecule: doxylamine}, {product: vicks-nyquil-intense-flu-liquicaps}, {product: unisom-sleeptabs}]
+    requires:
+      - lists: {product: vicks-nyquil-intense-flu-liquicaps, molecule: doxylamine, role: active}
+      - not_lists: {product: vicks-dayquil-severe-cold-and-flu, molecule: doxylamine}
+  - heading: "The cool and the warm in Vicks VapoRub: menthol and camphor"
+    nav: "Menthol and camphor"
+    items:
+      - {molecule: menthol, mark: {list: vicks-vaporub}, text: {why: menthol, pin: "61e07b5ed6da"}}
+      - {molecule: camphor, mark: {list: vicks-vaporub}, text: {why: camphor, pin: "e67b01133fb1"}}
+    labels:
+      - {label: vicks-vaporub, molecule: camphor}
+      - {label: vicks-vaporub, molecule: menthol}
+    more:
+      - {sentence: menthol-vs-camphor, starts: "Menthol activates TRPM8", pin: "5bdc082f21ae"}
+      - {sentence: menthol-vs-camphor, starts: "Camphor is less selective", pin: "73b3035c50bc"}
+    links: [{molecule: menthol}, {molecule: camphor}, {product: vicks-vaporub}, {pair: menthol-vs-camphor}]
+# The other actives the member labels list, each with the label it comes from.
+also:
+  - {molecule: naproxen, list: aleve}
+  - {molecule: phenylephrine, list: vicks-dayquil-severe-cold-and-flu}
+  - {molecule: guaifenesin, list: vicks-dayquil-severe-cold-and-flu}
+where_next:
+  - go: "Compare Advil and Tylenol"
+    to: {product_pair: advil-vs-tylenol-extra-strength}
+    text: {product_pair: advil-vs-tylenol-extra-strength, pin: "416833e4c058"}
+  - go: "Compare acetaminophen and ibuprofen"
+    to: {pair: acetaminophen-vs-ibuprofen}
+    text: {answer: acetaminophen-vs-ibuprofen, pin: "57c94c8e4205"}
+# The label pages and lists this group gathers; each gains "Part of The medicine cabinet" in phase 7.
+members:
+  - {product: tylenol-extra-strength}
+  - {product: vicks-nyquil-intense-flu-liquicaps}
+  - {product: vicks-dayquil-severe-cold-and-flu}
+  - {product: unisom-sleeptabs}
+  - {product: advil}
+  - {product: aleve}
+  - {product: vicks-vaporub}
+  - {product_pair: advil-vs-tylenol-extra-strength}

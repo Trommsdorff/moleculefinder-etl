@@ -21,7 +21,7 @@ from moleculefinder_etl import pipeline
 from moleculefinder_etl.config import Settings
 from moleculefinder_etl.load import snapshot_export, snapshot_guard, supabase_loader
 from moleculefinder_etl.load.snapshot_guard import SnapshotRegression
-from moleculefinder_etl.transform import featured, relationships
+from moleculefinder_etl.transform import doors, featured, relationships
 from tests.test_summary_carry import SHIPPED, _live, _plant, _record
 
 CREDS = Settings("https://project.supabase.co", "sb_secret_test")
@@ -65,6 +65,7 @@ def run(tmp_path, monkeypatch):
         monkeypatch.setattr(pipeline, stage, lambda settings: None)
     monkeypatch.setattr(relationships, "build_comparisons", lambda molecules: {})
     monkeypatch.setattr(featured, "compile_queue", lambda molecules: None)
+    monkeypatch.setattr(doors, "compile_doors", lambda *a, **k: {"doors": []})
     db = Database()
     monkeypatch.setattr(supabase_loader, "get_client", db.client)
 

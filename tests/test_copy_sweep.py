@@ -51,7 +51,8 @@ def test_every_curated_line_with_a_claim_word_has_its_basis():
 def test_the_corpus_is_every_line_the_rule_covers():
     c = _corpus()
     kinds = {k for k, _ in c}
-    assert kinds == {"why_it_matters", "editorial", "comparison", "answer"}
+    # "door" since phase 4 (2026-11): the door seeds' new writing.
+    assert kinds == {"why_it_matters", "editorial", "comparison", "answer", "door"}
     assert sum(1 for k, _ in c if k == "why_it_matters") == len(yaml.safe_load((SEEDS / "why_it_matters.yaml").read_text()))
     assert sum(1 for k, _ in c if k == "comparison") == sum(1 for k, _ in c if k == "answer") == \
         len(yaml.safe_load((SEEDS / "comparisons.yaml").read_text()))
