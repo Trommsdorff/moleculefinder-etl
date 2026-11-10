@@ -258,4 +258,30 @@ what_it_does_note: >-
   (its corrected sentence says what it is used for, not what it does), sodium carbonate, maltol, furaneol.
 
 checks:
-  - PENDING
+  - >-
+    Every reference resolves and every requires holds (the compiler, in the export preflight, before the Supabase
+    load); the four fixed lines are re-pinned where a door quotes them (the three sodas stop, vitamin C's stop and its
+    requires) and ammonia's new sentence is quoted by reference.
+  - >-
+    The build stops when one fails (proved in the build session on the real mfetl all, and in tests for each kind of
+    requires); new tests hold the ruled bread chain, the dog note (one sentence, house rules, length) and the four
+    fixes as the doors quote them.
+  - >-
+    No dash, no advice or dosing word, no completeness phrase and no LD50 in any of the 281 strings doors.json
+    carries (the compiler, and an independent scan). Limonene's "most" has its claims_allowed.yaml entry; no other
+    edited line or door string carries a claim word.
+  - >-
+    ETL: 1,125 passed, 1 skipped (1,119 + 6); ruff 130 (= main). Pinned build (inputs f69fd345c58bfa08, keys
+    blanked) twice, byte-identical, 0 PubChem POSTs. Against the approved build the snapshot changes exactly:
+    doors.json, three comparison paragraphs (text only; no answer line), vitamin C's why-it-matters line and
+    description, what_it_does on ammonia (22 molecules), and the line where the Citrus world quotes vitamin C.
+  - >-
+    Web, as CI runs it (keys blanked): verify-snapshot OK, typecheck clean, npm test 257 passed and 21 skipped with no
+    build; build 3,091 pages, 278 passed on the build; sitemap 1,711; the three group pages absent from the sitemap
+    and the search index.
+  - >-
+    Against a build of main (one saved copy of the news feed for both): what a reader sees changes on /m/ascorbic-acid
+    (its line and description; title unchanged), the five food pages that quote its line (/whats-in/citrus, fruit,
+    chili-peppers, romaine-lettuce, bullens-pilsnerkorv), the Citrus world's panel (/roam/citrus), its embed card,
+    and the three /vs paragraphs (sodium-bicarbonate-vs-sodium-carbonate, limonene-vs-linalool,
+    ammonia-vs-sodium-hypochlorite), their titles, descriptions and answers unchanged. Nothing else.
