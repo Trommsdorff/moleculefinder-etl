@@ -5,7 +5,10 @@ when (a) our own data shows it and the build asserts it, or (b) it is a standard
 chemistry, biology or history (the first benzodiazepine, the only metal liquid at room temperature),
 or (c) the word ranks nothing ("only about two hours", "the first half of the cycle"). A claim about
 how common something is, what people do, or a health outcome is rewritten to what our data supports,
-or loses the word.
+or loses the word. A finding of a US government agency counts under (b), basis ``history``, when the
+line names the agency as its source (Garrett, 2026-11-10): "the FDA called it the first new class of
+pain medicine in over 20 years" (suzetrigine), "the US EPA ranks it second only to smoking as a cause
+of lung cancer" (radon). The same finding with no agency named is a health-outcome claim and is not.
 
 Every curated line that keeps such a word has an entry in ``sources/seeds/claims_allowed.yaml`` with
 its basis, pinned to the exact text of the line by a short hash. So a NEW line carrying a word, or an
@@ -48,7 +51,7 @@ COMPLETENESS = ("every molecule in", "all the molecules in", "the molecules in i
 BASES = {
     "data": "our own data shows it, and the build asserts it",
     "science": "a standard fact of chemistry, biology or pharmacology",
-    "history": "a standard, datable fact of history, regulation or discovery",
+    "history": "a standard, datable fact of history, regulation or discovery, or a US government agency's finding the line attributes to it by name",
     "ordinary": "the word ranks nothing (\"only about\", \"the first half\", \"first-line\")",
     "held": "a comparison answer line, never edited by the sweep; listed for Garrett",
 }

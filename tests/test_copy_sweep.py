@@ -98,7 +98,8 @@ def test_a_line_without_a_claim_word_needs_no_entry():
 def test_answer_lines_are_held_only_with_a_reason():
     allowed = claims.load_allowed()
     held = sorted(key for (k, key), e in allowed.items() if e["basis"] == "held")
-    assert held == ["hydrochlorothiazide/furosemide", "meloxicam/ibuprofen"]
+    # Garrett, 2026-11-10: furosemide's line is fixed (no claim word now); meloxicam's stays as it is.
+    assert held == ["meloxicam/ibuprofen"]
     assert all(k == "answer" for (k, _), e in allowed.items() if e["basis"] == "held")
 
 
@@ -144,10 +145,37 @@ def test_the_overreaching_lines_are_gone():
         ("comparison", "sertraline/fluoxetine"): ["first SSRI to reach the market"],
         ("why_it_matters", "fructose"): ["most of high-fructose"],
         ("why_it_matters", "celecoxib"): ["only the COX-2"],
+        # Garrett's review of 2026-11-10.
+        ("why_it_matters", "doxorubicin"): ["that bacterium's ring system"],
+        ("why_it_matters", "acrylonitrile-butadiene-styrene"): ["matte"],
+        ("why_it_matters", "acetaldehyde"): ["a large part of a hangover"],
+        ("editorial", "nicotine"): ["fastest-clearing"],
+        ("comparison", "formaldehyde/acetaldehyde"): ["much of a hangover"],
+        ("answer", "formaldehyde/acetaldehyde"): ["much of a hangover"],
+        ("answer", "hydrochlorothiazide/furosemide"): ["where most sodium is reabsorbed"],
     }
     for key, phrases in gone.items():
         for phrase in phrases:
             assert phrase not in c[key], (key, phrase)
+
+
+def test_garretts_review_fixes_2026_11_10():
+    c = _corpus()
+    assert c[("why_it_matters", "doxorubicin")].endswith(
+        "Its deep red colour comes from the four fused rings at the molecule's core.")
+    radon = c[("why_it_matters", "radon")]
+    assert "densest gaseous element" in radon and "The US EPA ranks it second only to smoking" in radon
+    assert claims.load_allowed()[("why_it_matters", "radon")]["basis"] == "history"
+    assert "it clears fast: its half-life is only about two hours" in c[("editorial", "nicotine")]
+    assert "the tough, glossy plastic of LEGO bricks" in c[("why_it_matters", "acrylonitrile-butadiene-styrene")]
+    assert c[("answer", "hydrochlorothiazide/furosemide")] == (
+        "Furosemide is a strong loop diuretic acting in the loop of Henle, while hydrochlorothiazide acts "
+        "further along the kidney tubule and is gentler.")
+    # Every curated line that ties acetaldehyde to a hangover says "long blamed for part of" it.
+    for (kind, key), text in c.items():
+        for sentence in text.split(". "):
+            if "hangover" in sentence and ("acetaldehyde" in key or "cetaldehyde" in sentence):
+                assert "long blamed for part of a hangover" in sentence, (kind, key, sentence)
 
 
 def test_the_caffeine_editorial_keeps_adenosine_and_the_three_plants():

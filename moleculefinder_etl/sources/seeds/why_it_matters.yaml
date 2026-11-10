@@ -87,7 +87,7 @@ epinephrine: "Adrenaline, the surge that readies your body for a burst of action
 carnitine: "A shuttle molecule that carries fat into the part of the cell that burns it for energy."
 
 # ── Roaming targets (affects / becomes, not world members) ─────────────────────
-acetaldehyde: "What alcohol first turns into as the body breaks it down, and a large part of a hangover."
+acetaldehyde: "What alcohol first turns into as the body breaks it down, and long blamed for part of a hangover."
 dopamine: "A brain messenger tied to motivation and reward, the feeling of wanting and anticipation."
 cortisol: "The body's main stress hormone, and part of the natural rhythm that helps you wake in the morning."
 
@@ -688,7 +688,7 @@ carbon-monoxide: "The colourless, odourless gas from incomplete burning that a d
 sodium-thiopental: "A barbiturate once standard for starting anaesthesia, now largely displaced by propofol."
 methane: "Natural gas: one carbon, four hydrogens, the simplest organic molecule there is. Cows and wetlands make it too, and it is a potent greenhouse gas."
 celecoxib: "A non-steroidal anti-inflammatory sold as Celebrex. Its sulfonamide group fits a side pocket that the COX-2 enzyme has and COX-1 lacks, so it favours COX-2."
-radon: "A radioactive noble gas that seeps from soil into basements. Denser than any other gaseous element, it gathers in low, closed rooms. Element 86."
+radon: "A radioactive noble gas that seeps from soil into basements and, as the densest gaseous element, gathers in low rooms. The US EPA ranks it second only to smoking as a cause of lung cancer. Element 86."
 osmium: "The densest naturally occurring element, twice as heavy as lead by volume, used in fountain pen nibs and electrical contacts. Element 76."
 clopidogrel: "An antiplatelet medicine sold as Plavix, used after a heart attack or stent to keep platelets from clumping."
 pentobarbital: "A barbiturate once used for sedation and seizures, now mostly a veterinary anaesthetic and euthanasia agent."
@@ -808,7 +808,7 @@ technetium: "The lightest element with no stable form at all, made in reactors. 
 fluvoxamine: "An SSRI antidepressant used mainly for OCD. In the United States, unlike the other SSRIs, it is approved for OCD and not for depression."
 dicycloverine: "An antispasmodic that relaxes gut muscle, used for irritable bowel syndrome. It is known as dicyclomine in the United States."
 dichloromethane: "Methylene chloride, the solvent in old paint strippers and the one that used to decaffeinate coffee. It boils at 40 Celsius, near body temperature."
-acrylonitrile-butadiene-styrene: "ABS: the tough, matte plastic of LEGO bricks, keyboard keys and a common 3D printer filament. Three monomers give it hardness, toughness and gloss."
+acrylonitrile-butadiene-styrene: "ABS: the tough, glossy plastic of LEGO bricks, keyboard keys and a common 3D printer filament. Three monomers give it hardness, toughness and gloss."
 valproate: "An anticonvulsant used for epilepsy, bipolar disorder and migraine prevention. It carries strict restrictions in pregnancy."
 silicon-carbide: "Carborundum: harder than almost anything but diamond, the grit on wet-and-dry paper and the ceramic in brake discs and body armour."
 tianeptine: "An atypical antidepressant prescribed in France and parts of Asia, and sold in the United States as an unregulated supplement nicknamed gas station heroin."
@@ -900,7 +900,7 @@ tamoxifen: "A breast cancer medicine sold as Nolvadex since the 1970s. It blocks
 remdesivir: "An antiviral sold as Veklury, the first medicine approved in the United States for COVID-19, in 2020. It mimics an RNA building block and stalls the virus."
 nifedipine: "A calcium channel blocker sold as Adalat and Procardia, used for high blood pressure and angina. It widens blood vessels by keeping calcium out of their muscle."
 cortisone: "The first steroid medicine, whose effect on rheumatoid arthritis won a 1950 Nobel Prize. The body makes it from cortisol and turns it back into cortisol to use it."
-doxorubicin: "A cancer medicine sold as Adriamycin, named after the Adriatic Sea, near which the soil bacterium that makes it was found. Its deep red colour comes from that bacterium's ring system."
+doxorubicin: "A cancer medicine sold as Adriamycin, named after the Adriatic Sea, near which the soil bacterium that makes it was found. Its deep red colour comes from the four fused rings at the molecule's core."
 armodafinil: "A wakefulness medicine sold as Nuvigil, used for narcolepsy and shift work sleep disorder. It is the longer-lasting R mirror image of modafinil."
 candesartan: "A blood pressure medicine sold as Atacand, one of the sartans. It blocks the receptor for angiotensin II, a hormone that tightens blood vessels."
 midodrine: "A medicine sold as ProAmatine and Bramox that raises low blood pressure on standing. The body converts it into desglymidodrine, which tightens blood vessels."

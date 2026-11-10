@@ -2,8 +2,9 @@
 
 Reads the sweep record (scripts/copy_sweep_2026_11.yaml), main's seeds (the text before, from git), the seeds
 as they are now, sources/seeds/claims_allowed.yaml and the snapshot, and writes one self-contained HTML page:
-the lines that need Garrett first, then every rewrite before and after with its basis, then the roster
-removals and the pages each moves, then (collapsed) every line that keeps a claim word and its basis.
+Garrett's rulings of 2026-11-10 with the final text first, then every rewrite before and after with its basis,
+then the roster removals and the pages each moves, then (collapsed) every line that keeps a claim word and its
+basis. It refuses to write when the record's text and the seeds disagree.
 Run from the ETL root after any change to the record or the seeds:
     ./.venv/bin/python3 scripts/copy_sweep_review.py [out.html]
 The default output is the web repo's docs/design/copy-sweep-review-2026-11.html.
@@ -26,6 +27,8 @@ SNAP = ROOT / "data" / "snapshots"
 REC = yaml.safe_load((ROOT / "scripts" / "copy_sweep_2026_11.yaml").read_text())
 SEEDS = "moleculefinder_etl/sources/seeds"
 BASE = "main"
+# The branch as Garrett reviewed it (before his five line fixes of 2026-11-10).
+REVIEWED = "c889f21"
 
 
 def _git(path: str) -> str:
@@ -42,6 +45,18 @@ for p in (SNAP / "molecules").glob("*.json"):
 ALLOWED = claims.load_allowed()
 CORPUS = {(k, key): t for k, key, t in claims.corpus()}
 esc = html.escape
+
+# The record must say exactly what the seeds say, or the page would show text that will not ship.
+_mismatch = [s for s, e in REC["why_it_matters"].items() if claims.normalise(e["new"]) != CORPUS[("why_it_matters", s)]]
+_mismatch += [s for s, e in REC["editorial"].items() if claims.normalise(e["new"]) != CORPUS[("editorial", s)]]
+_mismatch += [e["pair"] for e in REC["comparison"] if claims.normalise(e["new"]) not in CORPUS[("comparison", e["pair"])]]
+_mismatch += [e["pair"] for e in REC["answer"] if claims.normalise(e["new"]) != CORPUS[("answer", e["pair"])]]
+assert not _mismatch, f"the record and the seeds disagree: {_mismatch}"
+
+
+def reviewed_wim(slug):
+    return claims.normalise(yaml.safe_load(subprocess.run(
+        ["git", "show", f"{REVIEWED}:{SEEDS}/why_it_matters.yaml"], cwd=ROOT, capture_output=True, text=True, check=True).stdout)[slug])
 
 
 def old_editorial(slug):
@@ -76,7 +91,7 @@ old_ed_hits = sum(bool(claims.words_in(old_editorial(key) if key in REC["editori
                   for (k, key), text in CORPUS.items() if k == "editorial")
 examined = len(old_lines) + EDITORIAL_COUNT
 hits_before = sum(1 for _, _, t in old_lines if claims.words_in(t)) + old_ed_hits
-n_wim, n_ed, n_cmp = len(REC["why_it_matters"]), len(REC["editorial"]), len(REC["comparison"])
+n_wim, n_ed, n_cmp, n_ans = len(REC["why_it_matters"]), len(REC["editorial"]), len(REC["comparison"]), len(REC["answer"])
 n_pairs = len({c["pair"] for c in REC["comparison"]})
 kept = len(ALLOWED)
 held = sorted(key for (k, key), e in ALLOWED.items() if e["basis"] == "held")
@@ -151,7 +166,7 @@ details>div{padding:0 16px 14px;overflow-x:auto}
 }
 </style></head><body>
 <header class="site-head"><div class="wrap site-head__in"><span class="brand__word">molecule<b>finder</b> · review</span>
-<nav class="site-nav"><a href="#garrett">Needs Garrett</a><a href="#rewrites">Rewrites</a><a href="#removals">Removals</a><a href="#kept">Kept, with basis</a></nav></div></header>
+<nav class="site-nav"><a href="#garrett">Your rulings</a><a href="#rewrites">Rewrites</a><a href="#removals">Removals</a><a href="#kept">Kept, with basis</a></nav></div></header>
 <main class="wrap">
 """)
 A(f"""<section class="hero"><h1>Copy sweep: no line claims more than we can show</h1>
@@ -159,74 +174,81 @@ A(f"""<section class="hero"><h1>Copy sweep: no line claims more than we can show
 "always". A line keeps the word when our own data shows it (and the build checks it), when it is a standard, datable fact of
 chemistry or history, or when the word ranks nothing. A claim about how common something is, what people do, or a health
 outcome is rewritten, and a rewrite has to stay as interesting as the line it replaces: a specific, true fact, not a list of
-where the molecule turns up. Build plan everyday chemistry, phase 2, with your amendment of 2026-11-10. Nothing here is live:
-it deploys after the 2026-11-24 Search Console read is saved, and only with your approval.</p>
+where the molecule turns up. Build plan everyday chemistry, phase 2, with your amendment of 2026-11-10. <b>Approved by you on
+2026-11-10 with the rulings in section 1, which this page now shows applied; it deploys on your word.</b></p>
 <div class="stats">
 <div class="stat"><b>{examined:,}</b><span>lines examined</span></div>
 <div class="stat"><b>{hits_before}</b><span>carried a claim word</span></div>
-<div class="stat"><b>{n_wim + n_ed + n_cmp}</b><span>rewrites</span></div>
+<div class="stat"><b>{n_wim + n_ed + n_cmp + n_ans}</b><span>rewrites</span></div>
 <div class="stat"><b>{kept}</b><span>keep a word, with basis</span></div>
-<div class="stat"><b>{len(held)}</b><span>answer lines held for you</span></div>
+<div class="stat"><b>{n_ans}</b><span>answer lines changed, by your ruling</span></div>
 </div>
 <p class="note">Examined: {len(OLD_WIM)} why-it-matters lines, {EDITORIAL_COUNT} editorials, {len(OLD_CMP)} comparison paragraphs and
-their {len(OLD_CMP)} answer lines. Rewritten: {n_wim} why-it-matters lines, {n_ed} editorials and {n_cmp} sentences in {n_pairs}
-comparison paragraphs. Kept: {by_basis.get('science', 0)} as standard science, {by_basis.get('history', 0)} as datable history,
-{by_basis.get('ordinary', 0)} where the word ranks nothing, {by_basis.get('data', 0)} on our own data (checked by the build every
-run), {by_basis.get('held', 0)} answer lines held. Unchanged by design: every /vs title, description, answer line, H1 and FAQ
-string, every molecule page title, the molecule of the week's title and description (checked page by page against a build of
-main: 0 differences).</p>
+their {len(OLD_CMP)} answer lines. Rewritten: {n_wim} why-it-matters lines, {n_ed} editorials, {n_cmp} sentences in {n_pairs}
+comparison paragraphs and {n_ans} answer lines. Kept: {by_basis.get('science', 0)} as standard science, {by_basis.get('history', 0)}
+as datable history (an agency's finding named in the line counts here), {by_basis.get('ordinary', 0)} where the word ranks nothing,
+{by_basis.get('data', 0)} on our own data (checked by the build every run), {by_basis.get('held', 0)} answer line held as it is, by
+your ruling. Unchanged by design: every /vs title, H1 and FAQ question, every other /vs description and answer line, every
+molecule page title, the molecule of the week's title and description (checked page by page against a build of main: the only
+differences are the two answer lines you ruled on, on their own two pages).</p>
 </section>""")
 
-# ── 1. Needs Garrett ─────────────────────────────────────────────────────────
-A('<section class="sec" id="garrett"><h2>1. Needs you</h2><p>Each with my recommendation. The branch is built with the recommended answer, so approving the page ships it.</p>')
+# ── 1. Garrett's rulings, 2026-11-10 ─────────────────────────────────────────
+A('<section class="sec" id="garrett"><h2>1. Your rulings, 2026-11-10, applied</h2><p>You approved this page with the rulings '
+  'below. Each shows the text that ships.</p>')
 ed = REC["editorial"]["caffeine"]
-A(f'<div class="card"><h3>Caffeine\'s editorial <small>/m/caffeine, the paragraph under the facts</small></h3>'
-  f'<span class="lbl">Today</span><p class="before">{hl(old_editorial("caffeine"))}</p>'
-  f'<span class="lbl">Why it goes</span><p class="fails">{esc(ed["fails"])}</p>')
-for i, c in enumerate(ed["candidates"], 1):
-    cls = "cand cand--pick" if c.get("pick") else ("cand cand--plan" if c.get("plan") else "cand")
-    name = "The plan's proposal" if c.get("plan") else f"Candidate {'A' if i == 1 else 'B'}"
-    tag = '<span class="tag tag--pick">my pick, on the branch</span>' if c.get("pick") else ""
-    A(f'<div class="{cls}"><span class="lbl">{name}{tag}</span><p class="after">{hl(c["text"])}</p><p class="basis">{esc(c["why"])}</p></div>')
-A(f'<span class="lbl">Basis for A</span><p class="basis">{esc(ed["basis"])}</p>'
-  '<p class="rec">Recommend A: it keeps the adenosine idea, and "each evolved its own way of making it" is the kind of fact a reader repeats. B is the safe fallback, every clause from our own records.</p></div>')
+pick = next(c for c in ed["candidates"] if c.get("pick"))
+A(f'<div class="card"><h3>Caffeine\'s editorial: candidate A <small>/m/caffeine, the paragraph under the facts</small></h3>'
+  f'<span class="lbl">Before</span><p class="before">{hl(old_editorial("caffeine"))}</p>'
+  f'<span class="lbl">Ships</span><p class="after">{hl(pick["text"])}</p>'
+  f'<span class="lbl">Basis</span><p class="basis">{esc(ed["basis"])}</p></div>')
 
-A("""<div class="card"><h3>Table sugar falls under the three-molecule gate</h3>
-<p>Your ruling takes glucose and fructose off the Table sugar list, which is right: they are not in the sugar. That leaves sucrose
-alone, and a product page needs three molecules, so the gate-hold rule would have kept shipping the old list. On the branch:
-<b>/whats-in/table-sugar is retired with a 410</b> (its row removed from products.yaml, the path in lib/gone.ts), and the
-classroom's sugar lesson now links /in/table-sugar, which keeps answering with sucrose alone. Search Console shows no impressions
-for /whats-in/table-sugar (5 for /in/table-sugar, kept). The sitemap goes 1,712 to 1,711.</p>
-<p class="rec">Recommend the 410. The other way: let a list that is one substance by nature pass with one molecule, and keep the page
-as "Table sugar: sucrose". It is honest but thin, and the gate exists to stop thin pages; the sugar door in phase 4 will be the page
-that explains table sugar.</p></div>""")
+A("""<div class="card"><h3>Table sugar: the 410 stands</h3>
+<p>Glucose and fructose are off the Table sugar list, which leaves sucrose alone, under the three-molecule gate. <b>/whats-in/table-sugar
+answers 410</b> (its row removed from products.yaml, the path in lib/gone.ts); <b>/in/table-sugar stays</b>, with sucrose alone, and the
+classroom's sugar lesson links it. The sitemap goes 1,712 to 1,711.</p></div>""")
 
-A("""<div class="card"><h3>Glutamate, not MSG, on Cheese, Soy sauce and Mushrooms</h3>
-<p>A product page names each molecule by its own page title, so the only way to make the row say glutamate, not MSG, without new
-page code was to point the three rows at the molecule that is actually there. On the branch they list <b>Glutamic acid</b> (free
-glutamate is its ion) with the note <b>"free glutamate, the taste of MSG"</b>, which shows on /m/glutamic-acid's Where you'll find it
-and in each product page's source line. The presence marks are unchanged (aged, natural, fermentation). Monosodium glutamate keeps
-Processed snacks, where the maker adds it.</p>
-<p class="rec">Recommend accepting this. If you want the row itself to read "Glutamate", that is a display name on the list entry
-and a small change to the product page, best done with the door pages in phase 7.</p></div>""")
+A("""<div class="card"><h3>Glutamate on Cheese, Soy sauce and Mushrooms: accepted as built</h3>
+<p>The three lists name <b>Glutamic acid</b> with the note <b>"free glutamate, the taste of MSG"</b>, in place of monosodium glutamate. The
+presence marks are unchanged. Monosodium glutamate keeps Processed snacks, where the maker adds it.</p></div>""")
 
-A('<div class="card"><h3>Two comparison answer lines overreach <small>not edited: each is its page\'s description</small></h3>')
-for pair, rec in (("hydrochlorothiazide/furosemide",
-                   "Recommend fixing it in this phase's deploy, after the 2026-11-24 read is saved: it is wrong, and one page's description changing does little to the redesign comparison. Suggested: \"Furosemide is a strong loop diuretic acting in the loop of Henle, while hydrochlorothiazide acts further along the kidney tubule and is gentler.\""),
-                  ("meloxicam/ibuprofen",
-                   "Recommend leaving it until the redesign's own read: it is very likely true, it just says more than the registers we hold. Its paragraph now names the United States and the United Kingdom.")):
-    A(f'<span class="lbl">{vlink(pair)}</span><p class="before" style="text-decoration:none">{hl(OLD_CMP[pair]["answer"])}</p>'
-      f'<p class="fails">{esc(ALLOWED[("answer", pair)]["why"])}</p><p class="rec">{esc(rec)}</p>')
-A('</div>')
+A('<div class="card"><h3>Comparison answer lines <small>each is its page\'s description</small></h3>')
+ANSWER_RULINGS = {
+    "hydrochlorothiazide/furosemide": "Your ruling: fixed now, to your wording. The one /vs description you allowed to change.",
+    "formaldehyde/acetaldehyde": "Your choice in the deploy session (asked because it collides with the furosemide ruling): brought into line with the acetaldehyde ruling, so two /vs descriptions change. Trimmed to stay under 160 characters.",
+}
+for e in REC["answer"]:
+    A(f'<span class="lbl">{vlink(e["pair"])}</span><p class="before">{hl(OLD_CMP[e["pair"]]["answer"])}</p>'
+      f'<p class="after">{hl(e["new"])}</p><p class="rec">{esc(ANSWER_RULINGS[e["pair"]])}</p>')
+A(f'<span class="lbl">{vlink("meloxicam/ibuprofen")}</span><p class="after">{hl(OLD_CMP["meloxicam/ibuprofen"]["answer"])}</p>'
+  '<p class="rec">Your ruling: it stays as it is.</p></div>')
 
-A("""<div class="card"><h3>Closest calls among the rewrites</h3>
-<p>I judged every rewrite at least as good as the line it replaces. These three are the plainest; if any reads flat to you, I will
-write another rather than ship it.</p><ul>""")
-for slug in ("sertraline", "hydrochlorothiazide", "testosterone-cypionate"):
-    A(f'<li>{mlink(slug)}: <span class="after">{esc(REC["why_it_matters"][slug]["new"])}</span></li>')
-A("</ul></div>")
+FIXES = (
+    ("doxorubicin", "The colour comes from the molecule's own ring system, not the bacterium's."),
+    ("radon", "Keep the density fact and restore the health fact, with its source named. Your 214-character wording trimmed to 200 (the description limit), facts kept: \"where, as the densest of the gaseous elements, it gathers\" became \"and, as the densest gaseous element, gathers\"."),
+    ("acrylonitrile-butadiene-styrene", "LEGO bricks are glossy, not matte, and the line already said gloss."),
+    ("acetaldehyde", "\"A large part of a hangover\" overstates disputed science."),
+)
+A('<div class="card"><h3>Five line fixes from your review</h3>')
+for slug, why in FIXES:
+    A(f'<span class="lbl">{mlink(slug)}</span><p class="before">{hl(reviewed_wim(slug))}</p>'
+      f'<p class="after">{hl(REC["why_it_matters"][slug]["new"])}</p><p class="rec">{esc(why)}</p>')
+A(f'<span class="lbl">{mlink("nicotine")}, editorial</span><p class="before">{hl(old_editorial("nicotine"))}</p>'
+  f'<p class="after">{hl(REC["editorial"]["nicotine"]["new"])}</p>'
+  '<p class="rec">"One of the fastest-clearing drugs people use" is a ranking our data cannot show; it now says plainly that it clears fast.</p>')
+A('<p>Radon keeps "only" ("second only to smoking") as an attributed finding of a US government agency, which the rule now says in '
+  'its own text, as with suzetrigine\'s FDA line.</p></div>')
 
-A("""<div class="card"><h3>Found while checking, and fixed</h3><ul>
+A('<div class="card"><h3>Every acetaldehyde hangover line, brought into line</h3><p>Each now says <b>"long blamed for part of a '
+  'hangover"</b>; a test fails if any curated line ties acetaldehyde to a hangover in other words. No list note mentions it.</p><ul>'
+  f'<li>{mlink("acetaldehyde")}, why it matters (and so its page description): {hl(REC["why_it_matters"]["acetaldehyde"]["new"])}</li>'
+  f'<li>{vlink("formaldehyde/acetaldehyde")}, paragraph: {hl(next(e["new"] for e in REC["comparison"] if e["pair"] == "formaldehyde/acetaldehyde"))}</li>'
+  f'<li>{vlink("formaldehyde/acetaldehyde")}, answer line (the page\'s description): {hl(next(e["new"] for e in REC["answer"] if e["pair"] == "formaldehyde/acetaldehyde"))}</li>'
+  '</ul></div>')
+A('</section>')
+
+A('<section class="sec" id="found"><h2>Found while checking, and fixed</h2>')
+A("""<div class="card"><ul>
 <li><b>Two lines were wrong in our own data:</b> tirzepatide's "the largest medicine on this site by molecular weight" (tesamorelin,
 5,136, and insulin, 5,808, are heavier) and the semaglutide and tirzepatide paragraph's "the two largest molecules in this catalog"
 (inulin, insulin and tesamorelin outweigh both).</li>
@@ -246,7 +268,7 @@ have become "Sulfuric acid (Oil of vitriol)". Rewritten without it; no title mov
 A(f'<section class="sec" id="rewrites"><h2>2. Every rewrite</h2><p>Before, after, why the old line fails, and the basis for every clause of '
   f'the new one. A why-it-matters line leads its molecule page\'s description, so each of these {n_wim} pages gets a new meta '
   f'description, as expected; no title changes. Claim words are marked.</p>'
-  f'<div class="toc"><a href="#r-wim">Why it matters ({n_wim})</a><a href="#r-ed">Editorials ({n_ed})</a><a href="#r-cmp">Comparison paragraphs ({n_cmp})</a></div>')
+  f'<div class="toc"><a href="#r-wim">Why it matters ({n_wim})</a><a href="#r-ed">Editorials ({n_ed})</a><a href="#r-cmp">Comparison paragraphs ({n_cmp})</a><a href="#r-ans">Answer lines ({n_ans})</a></div>')
 A('<h3 id="r-wim" style="margin:24px 0 0;font:650 22px/1.3 var(--font-sans)">Why it matters</h3>')
 for slug in sorted(REC["why_it_matters"], key=lambda s: TITLES.get(s, s).lower()):
     e = REC["why_it_matters"][slug]
@@ -262,12 +284,19 @@ for slug, e in REC["editorial"].items():
       f'<span class="lbl">After</span><p class="after">{hl(e["new"])}</p>'
       f'<span class="lbl">Why the old one fails</span><p class="fails">{esc(e["fails"])}</p>'
       f'<span class="lbl">Basis</span><p class="basis">{esc(e["basis"])}</p></div>')
-A('<h3 id="r-cmp" style="margin:28px 0 0;font:650 22px/1.3 var(--font-sans)">Comparison paragraphs <small style="font:400 15px var(--font-sans);color:var(--muted)">one sentence each; the answer lines are untouched</small></h3>')
+A('<h3 id="r-cmp" style="margin:28px 0 0;font:650 22px/1.3 var(--font-sans)">Comparison paragraphs <small style="font:400 15px var(--font-sans);color:var(--muted)">one sentence each</small></h3>')
 for e in REC["comparison"]:
     A(f'<div class="card"><h3>{vlink(e["pair"])}</h3>'
       f'<span class="lbl">Before</span><p class="before">{hl(e["old"])}</p>'
       f'<span class="lbl">After</span><p class="after">{hl(e["new"])}</p>'
       f'<span class="lbl">Why the old sentence fails</span><p class="fails">{esc(e["fails"])}</p>'
+      f'<span class="lbl">Basis</span><p class="basis">{esc(e["basis"])}</p></div>')
+A('<h3 id="r-ans" style="margin:28px 0 0;font:650 22px/1.3 var(--font-sans)">Comparison answer lines <small style="font:400 15px var(--font-sans);color:var(--muted)">the page\'s description; only where you ruled</small></h3>')
+for e in REC["answer"]:
+    A(f'<div class="card"><h3>{vlink(e["pair"])}</h3>'
+      f'<span class="lbl">Before</span><p class="before">{hl(OLD_CMP[e["pair"]]["answer"])}</p>'
+      f'<span class="lbl">After</span><p class="after">{hl(e["new"])}</p>'
+      f'<span class="lbl">Why the old line fails</span><p class="fails">{esc(e["fails"])}</p>'
       f'<span class="lbl">Basis</span><p class="basis">{esc(e["basis"])}</p></div>')
 A('</section>')
 
@@ -302,7 +331,7 @@ cereal, chili peppers, coffee, eggs, fish and tonic water are sent by hand at de
 A(f'<section class="sec" id="kept"><h2>4. Lines that keep a claim word, and why</h2><p>{kept} lines, each pinned in '
   'sources/seeds/claims_allowed.yaml to the exact text of its line: a new line with one of the words, or an edit to one of these, stops the build '
   'until its basis is written down. A "data" line is also checked against the catalog on every run.</p>')
-KIND_NAMES = {"why_it_matters": "Why it matters", "editorial": "Editorials", "comparison": "Comparison paragraphs", "answer": "Comparison answer lines (not edited)"}
+KIND_NAMES = {"why_it_matters": "Why it matters", "editorial": "Editorials", "comparison": "Comparison paragraphs", "answer": "Comparison answer lines"}
 for kind in ("why_it_matters", "editorial", "comparison", "answer"):
     rows = sorted(((key, e) for (k, key), e in ALLOWED.items() if k == kind), key=lambda r: r[0])
     A(f'<details><summary>{KIND_NAMES[kind]} ({len(rows)})</summary><div><table><tr><th>Line</th><th>Basis</th><th>Why it stands</th></tr>')
@@ -316,7 +345,7 @@ for kind in ("why_it_matters", "editorial", "comparison", "answer"):
     A("</table></div></details>")
 A("</section>")
 A(f"""</main><footer class="foot"><div class="wrap">Generated by moleculefinder-etl/scripts/copy_sweep_review.py from
-scripts/copy_sweep_2026_11.yaml, {BASE}'s seeds and sources/seeds/claims_allowed.yaml. Branch copy-sweep-2026-11 in both repos; not deployed.
+scripts/copy_sweep_2026_11.yaml, {BASE}'s seeds and sources/seeds/claims_allowed.yaml. Branch copy-sweep-2026-11 in both repos; approved by Garrett 2026-11-10.
 Molecule pages whose description changes: {", ".join(DESC_CHANGED)}.</div></footer></body></html>
 """)
 text = "".join(parts)

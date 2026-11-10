@@ -4,7 +4,9 @@
 # A curated line may say "only", "first", "most", "leading", "largest", "world's", "never" or "always"
 # when (a) our own data shows it and the build asserts it (basis: data, with the check that asserts
 # it), (b) it is a standard, datable fact of chemistry, biology or history (basis: science or
-# history), or (c) the word ranks nothing (basis: ordinary). A comparison answer line is never edited
+# history; a US government agency's finding counts as history when the line names the agency, as
+# suzetrigine's FDA line and radon's EPA line do: Garrett, 2026-11-10), or (c) the word ranks
+# nothing (basis: ordinary). A comparison answer line is never edited
 # by the sweep; one that overreaches is held (basis: held) and listed for Garrett.
 #
 # Each entry pins its line by `line`, the first 12 hex digits of sha256 over the line's text with its
@@ -17,8 +19,8 @@
 # its answer lines (answer).
 
 why_it_matters:
-  acetaldehyde: {words: ["first"], basis: science, line: "a52037762dc3",
-    why: "\"First turns into\": ethanol is oxidised to acetaldehyde, then to acetate (standard biochemistry)."}
+  acetaldehyde: {words: ["first"], basis: science, line: "a71a48363f73",
+    why: "\"First turns into\": ethanol is oxidised to acetaldehyde, then to acetate (standard biochemistry). Its hangover clause says \"long blamed for part of\" (Garrett, 2026-11-10: the share is disputed)."}
   acetaminophen: {words: ["first"], basis: history, line: "684e0c27d9b5",
     why: "\"First made\": Morse, 1878. Datable history."}
   acetylcholine: {words: ["first"], basis: history, line: "6366039fa250",
@@ -185,6 +187,8 @@ why_it_matters:
     why: "Cholesterol side-chain cleavage (CYP11A1) gives pregnenolone, the first steroid of steroidogenesis (standard biochemistry)."}
   propranolol: {words: ["first"], basis: history, line: "b3606ae593d8",
     why: "Propranolol (1964), the first clinically successful beta blocker; James Black's 1988 Nobel Prize."}
+  radon: {words: ["only"], basis: history, line: "dd346b32e919",
+    why: "An attributed finding of a US government agency, named in the line (Garrett, 2026-11-10): the US EPA (A Citizen's Guide to Radon; Health Risk of Radon) estimates radon is the second leading cause of lung cancer, after smoking. \"Densest gaseous element\": about 9.7 g/l at 0 C (CRC Handbook)."}
   raspberry-ketone: {words: ["only"], basis: ordinary, line: "454f164034d6",
     why: "\"Only one to four milligrams\" ranks nothing."}
   remdesivir: {words: ["first"], basis: history, line: "fafd693dccfb",
@@ -243,8 +247,8 @@ editorial:
     why: "Our data: glucose's relative sweetness is 0.74 (sweetness seed, HSDB)."}
   naproxen: {words: ["most"], basis: ordinary, line: "c90d9c077f08",
     why: "\"Most of a day\" ranks nothing; naproxen's half-life is about 14 h (its record)."}
-  nicotine: {words: ["only"], basis: data, check: nicotine_half_life_two_hours, line: "4f87d4f1184e",
-    why: "Our data: nicotine's half-life is 2.0 hours (its curated hook)."}
+  nicotine: {words: ["only"], basis: data, check: nicotine_half_life_two_hours, line: "2d4743a1787d",
+    why: "Our data: nicotine's half-life is 2.0 hours (its curated hook). \"One of the fastest-clearing drugs people use\" ranked it against drugs our data does not hold; now \"it clears fast\" (Garrett, 2026-11-10)."}
   saccharin: {words: ["first"], basis: history, line: "68840dd386c2",
     why: "Fahlberg, 1879: saccharin, the first artificial sweetener. Datable history."}
 
@@ -363,8 +367,6 @@ answer:
     why: "\"Only ethanol is a drink\" ranks nothing beyond the two."}
   "gamma-aminobutyric-acid/gabapentin": {words: ["never"], basis: science, line: "1df6d87fe94d",
     why: "Gabapentin does not act on GABA receptors (standard pharmacology)."}
-  "hydrochlorothiazide/furosemide": {words: ["most"], basis: held, line: "b2abd3aa716b",
-    why: "Not edited (the page's description). Wrong: \"where most sodium is reabsorbed\"; the loop reabsorbs about a quarter, the proximal tubule about two thirds. Its paragraph is corrected. Listed for Garrett."}
   "hydrogen-peroxide/sodium-hypochlorite": {words: ["only"], basis: science, line: "b153722a9c35",
     why: "Hydrogen peroxide decomposes to water and oxygen only (standard chemistry)."}
   "hydroxyzine/diphenhydramine": {words: ["only"], basis: ordinary, line: "150001fdd2f2",
@@ -372,7 +374,7 @@ answer:
   "lycopene/beta-carotene": {words: ["only"], basis: science, line: "d98a04fcbb5a",
     why: "Of the two, only beta-carotene has terminal rings (standard chemistry)."}
   "meloxicam/ibuprofen": {words: ["most", "only"], basis: held, line: "684614be1c54",
-    why: "Not edited (the page's description). \"Prescription only in most countries\" counts regulators our records do not cover; its paragraph now says the US and the UK. Listed for Garrett."}
+    why: "Not edited (the page's description). \"Prescription only in most countries\" counts regulators our records do not cover; its paragraph now says the US and the UK. Garrett, 2026-11-10: it stays as it is."}
   "methane/propane": {words: ["only"], basis: science, line: "acd977b07198",
     why: "Methane boils at -161.5 C at 1 atm, and its critical temperature (-82.6 C) means pressure alone cannot liquefy it at room temperature (standard chemistry)."}
   "oxytocin/vasopressin": {words: ["only"], basis: science, line: "895364b10247",

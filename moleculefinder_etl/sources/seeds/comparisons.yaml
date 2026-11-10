@@ -1282,7 +1282,7 @@ metoprolol/propranolol:
     259.34.
 
 hydrochlorothiazide/furosemide:
-  answer: "Furosemide is a strong loop diuretic acting where most sodium is reabsorbed, while hydrochlorothiazide acts further along the kidney tubule and is gentler."
+  answer: "Furosemide is a strong loop diuretic acting in the loop of Henle, while hydrochlorothiazide acts further along the kidney tubule and is gentler."
   text: >
     Both are diuretics, and where each acts decides how strong it is. Furosemide is a loop diuretic, blocking sodium reabsorption in the thick ascending limb, which takes back about a quarter of the filtered sodium, so it produces a large and fast urine output and is used for fluid overload in heart failure. Hydrochlorothiazide acts further along in the distal tubule, where much
     less sodium is available to block, so it is gentler and is used for ongoing blood pressure
@@ -1497,14 +1497,14 @@ benzene/toluene:
     figure that understates how differently the two behave over long exposure.
 
 formaldehyde/acetaldehyde:
-  answer: "Formaldehyde is the simplest aldehyde, used in resins and embalming, while acetaldehyde is what ethanol becomes in the body and drives much of a hangover."
+  answer: "Formaldehyde is the simplest aldehyde, used in resins and embalming; acetaldehyde is what ethanol becomes in the body, long blamed for part of a hangover."
   text: >
     Both are small aldehydes, both are reactive, and both are classified as carcinogenic to
     humans, but they arrive by different routes. Formaldehyde is the simplest of all aldehydes
     at 30.03, used in resins, embalming fluid and disinfectants, and it cross-links proteins
     on contact, which is precisely what preservation and what irritation both are.
-    Acetaldehyde at 44.05 is what ethanol becomes as the body breaks it down, and it is
-    responsible for much of a hangover and for the flushing reaction in people whose version
+    Acetaldehyde at 44.05 is what ethanol becomes as the body breaks it down; it is long
+    blamed for part of a hangover, and it causes the flushing reaction in people whose version
     of the clearing enzyme works slowly. Their reported oral LD50 values differ by more than
     sixfold, 100 mg/kg in rats for formaldehyde against 661 mg/kg for acetaldehyde. The body
     produces both in small amounts as a normal part of metabolism.

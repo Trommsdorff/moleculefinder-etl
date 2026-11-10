@@ -203,9 +203,9 @@ why_it_matters:
     fails: "Wrong: \"targets only the COX-2 enzyme\"; celecoxib is selective, not exclusive, and \"gentler on the stomach\" is a health-outcome claim."
     basis: "COX-2's Val523 (Ile in COX-1) opens a side pocket that accommodates the sulfonamide of diarylheterocycle inhibitors (Kurumbail et al., Nature 1996)."
   radon:
-    new: "A radioactive noble gas that seeps from soil into basements. Denser than any other gaseous element, it gathers in low, closed rooms. Element 86."
-    fails: "\"The second leading cause of lung cancer after smoking\" is a health-outcome ranking, not in our data."
-    basis: "Radon gas density about 9.7 g/l at 0 C, the highest of the gaseous elements (CRC Handbook). Standard chemistry."
+    new: "A radioactive noble gas that seeps from soil into basements and, as the densest gaseous element, gathers in low rooms. The US EPA ranks it second only to smoking as a cause of lung cancer. Element 86."
+    fails: "\"The second leading cause of lung cancer after smoking\" stated a health-outcome ranking as our own fact, with no source named."
+    basis: "Radon gas density about 9.7 g/l at 0 C, the highest of the gaseous elements (CRC Handbook). The lung cancer ranking is the US EPA's own estimate (A Citizen's Guide to Radon; Health Risk of Radon), now attributed to it by name: an attributed finding of a US government agency stands under the rule (Garrett, 2026-11-10), as suzetrigine's FDA line does. Garrett's review restored it; the first rewrite had dropped it. Trimmed to 200 characters from his 214-character wording, facts kept."
   chlorpromazine:
     new: "The first antipsychotic, introduced in 1952, which changed how psychiatric illness was treated. It came out of a search for a better antihistamine to calm patients before surgery."
     fails: "\"Emptied a generation of asylums\" overstates one cause of deinstitutionalisation."
@@ -247,9 +247,9 @@ why_it_matters:
     fails: "\"The first of its class approved for that use\" could not be confirmed: fluoxetine's OCD approval came in the same year."
     basis: "US labelling of fluvoxamine (Luvox) carries OCD as its indication, not depression. Datable regulatory fact."
   acrylonitrile-butadiene-styrene:
-    new: "ABS: the tough, matte plastic of LEGO bricks, keyboard keys and a common 3D printer filament. Three monomers give it hardness, toughness and gloss."
+    new: "ABS: the tough, glossy plastic of LEGO bricks, keyboard keys and a common 3D printer filament. Three monomers give it hardness, toughness and gloss."
     fails: "\"Most 3D printer filament\" is a market claim (PLA is the common one), not in our data."
-    basis: "LEGO bricks are ABS; ABS is a standard FDM filament. Standard materials fact."
+    basis: "LEGO bricks are ABS; ABS is a standard FDM filament. Standard materials fact. \"Matte\" corrected to \"glossy\" in Garrett's review (2026-11-10): LEGO bricks are glossy, and the line already says gloss."
   californium:
     new: "A synthetic element made in only a few laboratories, so intensely neutron-emitting that a few micrograms can start up a nuclear reactor. Element 98."
     fails: "\"A gram of it is used to start nuclear reactors\" is wrong by about a millionfold: start-up sources hold micrograms."
@@ -267,9 +267,9 @@ why_it_matters:
     fails: "\"One of the most widely used seizure medicines\" is a usage ranking, not in our data."
     basis: "Levetiracetam (approved 1999) was the first antiseizure drug shown to act on synaptic vesicle protein 2A (Lynch et al., PNAS 2004). Datable history."
   doxorubicin:
-    new: "A cancer medicine sold as Adriamycin, named after the Adriatic Sea, near which the soil bacterium that makes it was found. Its deep red colour comes from that bacterium's ring system."
+    new: "A cancer medicine sold as Adriamycin, named after the Adriatic Sea, near which the soil bacterium that makes it was found. Its deep red colour comes from the four fused rings at the molecule's core."
     fails: "\"One of the most widely used chemotherapy drugs\" is a usage ranking, not in our data."
-    basis: "Streptomyces peucetius was isolated near Castel del Monte, Apulia; the drug was named for the Adriatic. Anthracycline chromophore. Datable history."
+    basis: "Streptomyces peucetius was isolated near Castel del Monte, Apulia; the drug was named for the Adriatic. Datable history. The colour is the molecule's own: its anthracycline core, four fused rings (a hydroxyanthraquinone chromophore). Garrett's review (2026-11-10) corrected the first rewrite, which credited the bacterium's ring system."
   atenolol:
     new: "A beta blocker sold as Tenormin. It mostly targets the heart's beta-1 receptors, and it dissolves in water rather than fat, so little of it reaches the brain."
     fails: "\"For decades one of the most prescribed heart medicines\" is a prescribing ranking, not in our data."
@@ -295,6 +295,10 @@ why_it_matters:
     new: "Collagen boiled until its ropes unwind. It sets jelly, gives marshmallows their chew, and melts just below body heat, which is why jelly melts in the mouth and capsules open in the stomach."
     fails: "\"The shell of most capsules\" is a market claim, not in our data."
     basis: "Gelatin gels melt at about 30 to 35 C, below body temperature (standard food chemistry); hard gelatin capsules dissolve in warm gastric fluid."
+  acetaldehyde:
+    new: "What alcohol first turns into as the body breaks it down, and long blamed for part of a hangover."
+    fails: "\"A large part of a hangover\" overstates disputed science: how much of a hangover acetaldehyde causes is not settled (Garrett's review, 2026-11-10)."
+    basis: "Ethanol is oxidised to acetaldehyde, then to acetate (standard biochemistry). Acetaldehyde has long been proposed as a cause of hangover symptoms; studies disagree on its share (e.g. Wiese et al., Ann Intern Med 2000; Penning et al., Curr Drug Abuse Rev 2010). Keeps \"first\"."
 
 editorial:
   caffeine:
@@ -316,6 +320,10 @@ editorial:
     new: "Acetaminophen, sold as Tylenol or paracetamol, eases pain and fever without the stomach irritation of the NSAIDs. The liver turns a small share of each dose into a reactive by-product, NAPQI, and neutralises it with glutathione; in an overdose the glutathione runs out and NAPQI damages liver cells."
     fails: "\"The most common drug in the medicine cabinet\" (what people keep), \"the leading cause of acute liver failure\" (a health-outcome ranking) and \"narrower than most people assume\" (what people think) are all named or covered by the build plan."
     basis: "CYP2E1 oxidises about 5 to 10 percent of a dose to NAPQI, conjugated with glutathione; depletion leads to hepatocellular necrosis. Standard toxicology (StatPearls, Acetaminophen Toxicity)."
+  nicotine:
+    new: "Nicotine is the stimulant that makes tobacco addictive, and it clears fast: its half-life is only about two hours, part of why cravings return so quickly. In the plant it is a natural pesticide."
+    fails: "\"One of the fastest-clearing drugs people use\" is a ranking our data cannot show (Garrett's review, 2026-11-10)."
+    basis: "Our data: nicotine's half-life is 2.0 hours (its curated hook), checked by the build every run (nicotine_half_life_two_hours). Keeps \"only\" (\"only about two hours\")."
 
 comparison:
   - pair: caffeine/theophylline
@@ -453,3 +461,20 @@ comparison:
     new: "Furosemide is a loop diuretic, blocking sodium reabsorption in the thick ascending limb, which takes back about a quarter of the filtered sodium, so it produces a large and fast urine output and is used for fluid overload in heart failure."
     fails: "Wrong (no claim word, found while sweeping): the bulk of sodium, about two thirds, is reabsorbed in the proximal tubule, not the loop."
     basis: "Renal physiology: proximal tubule about 65 percent, thick ascending limb about 25 percent, distal tubule about 5 to 10 percent of filtered sodium."
+  - pair: formaldehyde/acetaldehyde
+    old: "Acetaldehyde at 44.05 is what ethanol becomes as the body breaks it down, and it is responsible for much of a hangover and for the flushing reaction in people whose version of the clearing enzyme works slowly."
+    new: "Acetaldehyde at 44.05 is what ethanol becomes as the body breaks it down; it is long blamed for part of a hangover, and it causes the flushing reaction in people whose version of the clearing enzyme works slowly."
+    fails: "\"Responsible for much of a hangover\" overstates disputed science (Garrett's review, 2026-11-10: bring every acetaldehyde hangover line into line)."
+    basis: "As acetaldehyde's why-it-matters line. The flushing reaction from slow ALDH2 is standard pharmacogenetics."
+
+# Answer lines: never edited by the sweep, except where Garrett ruled (2026-11-10). Each is its /vs page's description, so these
+# are the only /vs descriptions that change; the web's frozen-text check expects exactly these two.
+answer:
+  - pair: hydrochlorothiazide/furosemide
+    new: "Furosemide is a strong loop diuretic acting in the loop of Henle, while hydrochlorothiazide acts further along the kidney tubule and is gentler."
+    fails: "Wrong: \"where most sodium is reabsorbed\"; the loop takes back about a quarter of the filtered sodium, the proximal tubule about two thirds."
+    basis: "Garrett's wording, 2026-11-10. Furosemide acts on the thick ascending limb of the loop of Henle; hydrochlorothiazide on the distal convoluted tubule. Standard renal pharmacology."
+  - pair: formaldehyde/acetaldehyde
+    new: "Formaldehyde is the simplest aldehyde, used in resins and embalming; acetaldehyde is what ethanol becomes in the body, long blamed for part of a hangover."
+    fails: "\"Drives much of a hangover\" overstates disputed science. Garrett chose (2026-11-10, asked in the session) to bring this description into line too."
+    basis: "As acetaldehyde's why-it-matters line; trimmed to 154 characters (under the answer line's 160)."
