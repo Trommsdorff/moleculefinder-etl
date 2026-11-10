@@ -896,6 +896,54 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Phase 2, the copy sweep (2026-11-09): BUILT on `copy-sweep-2026-11` (`5523931` code, `73b36b7` data, `6a033aa` review generator), not pushed
+Build plan everyday chemistry (`../BUILD-PLAN-everyday-chemistry-2026-11.md`), phase 2, with Garrett's amendment of 2026-11-10 (a
+rewrite stays as interesting as the line it replaces: a specific true fact, never a list of where the molecule occurs). **Waiting for
+Garrett's approval of the review page and for the 2026-11-24 Search Console read; then ETL `main` first, web `main` after.**
+- **THE CLAIM RULE (`transform/claims.py`).** A curated line may say "only", "first", "most", "leading", "largest", "world's", "never"
+  or "always" when our data shows it and the build asserts it (basis `data`, with a named check in `DATA_CHECKS`), when it is a
+  standard datable fact (`science`, `history`), or when the word ranks nothing (`ordinary`); a comparison answer line, never edited,
+  may be `held` for Garrett. A claim about how common something is, what people do or a health outcome is rewritten or loses the word.
+  **`sources/seeds/claims_allowed.yaml`** lists every line that keeps a word (180: science 68, history 65, ordinary 41, data 4, held
+  2), pinned to the line by `line`, the first 12 hex of sha256 over its whitespace-collapsed text. Covered: why_it_matters.yaml,
+  every curated editorial, comparisons.yaml's paragraphs and answer lines. **`claims.check_lines()` runs at the start of
+  `stage_transform` and in pytest**: a new or edited line carrying a word with no matching entry, a stale entry, a wrong word list, an
+  unknown basis or a `data` entry with no check stops the build, naming the line and printing its new hash. **To add or edit such a
+  line:** check the claim, then write or update its entry (words, basis, why, line). **`claims.check_data_claims()` runs in
+  `_preflight`** (so before the Supabase load and in the export): resiniferatoxin first on Spiciest and about 1,000 times capsaicin,
+  ethanethiol in Most pungent's top three, glucose about three quarters as sweet, nicotine's half-life about two hours; a check is
+  skipped only when its molecule is not in the catalog (no page carries the line). `CLAIM_WORDS` and `COMPLETENESS` ("every molecule
+  in", "all the molecules in", "the molecules in it") are pinned here and in the web's `lib/copy-rules.ts`: change both or neither.
+- **The sweep.** 1,229 lines examined (915 why-it-matters, 20 editorials, 147 comparison paragraphs, 147 answer lines); 252 carried a
+  word. Rewritten: 71 why-it-matters lines, the caffeine and acetaminophen editorials, 27 sentences in 26 comparison paragraphs. The
+  record, each with why the old line fails and the basis for the new: `scripts/copy_sweep_2026_11.yaml`. Wrong outright, not just
+  overreaching: tirzepatide "the largest medicine on this site" (tesamorelin and insulin are heavier), semaglutide/tirzepatide "the
+  two largest molecules in this catalog", insulin "the first human protein made by engineered bacteria", fluoxetine "the first SSRI to
+  reach the market", olive oil "stays liquid in the fridge", HFCS "mostly" fructose, californium "a gram", PMD "the only
+  plant-derived repellent", celecoxib "only COX-2", and furosemide's "where the bulk of it happens" (no claim word). The caffeine
+  editorial on the branch is the review page's candidate A (adenosine, and coffee, tea and cocoa each evolving their own way of making
+  it); candidate B is from our own presence marks. Answer lines held: hydrochlorothiazide/furosemide (wrong) and meloxicam/ibuprofen.
+  **A why-it-matters line can move a title:** `assemble.title_synonym` picks the first display synonym the line uses, and a first
+  sulfuric acid rewrite naming "oil of vitriol" would have made "Sulfuric acid (Oil of vitriol)". Compare `title` and
+  `title_synonym` against main after any rewrite.
+- **Garrett's rulings of 2026-11-10.** Tannic acid off `food_hubs.yaml` tea and wine and the glass-of-wine world (roster and journey);
+  2-nonenal off after-the-rain (it stays on beer); ethyl maltol off fresh-bread (roster and journey); glucose and fructose off
+  table-sugar; cheese, soy-sauce and mushrooms list `glutamic-acid` in place of MSG, with `curated/glutamic-acid.yaml` adding the
+  three `foods:` rows and the note "free glutamate, the taste of MSG" (marks unchanged). Hand marks 521 -> 514 (none 28 -> 21;
+  `tests/test_presence.py` updated). **Table sugar is then sucrose alone**, under the gate: its `products.yaml` row is removed (a
+  comment says why), the ledger keeps the slug, the web answers 410; `tests/test_relationships.py` has `SINGLE_SUBSTANCE_LISTS` for
+  the table-sugar hub (it keeps `/in/table-sugar`). Garrett may prefer a one-molecule page instead (review page).
+- **Checks.** `tests/test_copy_sweep.py` (18): the pinned lists, the matcher, every line covered, new/edited/stale/wrong entries
+  fail, the data claims hold and refuse when broken, the named wrong claims gone, caffeine's places are its natural marks, house
+  rules, the removals in the seeds and the snapshot, glutamate. Suite 1,082 passed, 1 skipped (1,064 + 18); ruff 130 (= main). Pinned
+  build (keys blanked) from the final code three times, exit 0, 0 PubChem POSTs, byte-identical (the very first run reported the
+  table sugar row as removed against main's products, so its products_gate.json differed once; every run after is identical).
+  Against main: 79 molecule files, comparisons.json, products.json, worlds.json, products_gate.json; no title moves; featured.json
+  and canon.parquet unchanged; descriptions 915 unique, 100 to 209 (duloxetine's 209 predates; fluvoxamine's 202 now under 200).
+- **Review page:** `scripts/copy_sweep_review.py` writes `../moleculefinder-web/docs/design/copy-sweep-review-2026-11.html` from
+  the record, main's seeds (git) and claims_allowed.yaml. Rerun it after any change to the record or the seeds.
+- **Before the deploy:** merge `main` (Monday's data) into the branch, rerun the pinned build and the claim test.
+
 ## Phase 1, the presence field (2026-11-09): DEPLOYED 2026-11-10 with Garrett's corrections (ETL `b15488e`, web `b0c1412`)
 Build plan everyday chemistry (`../BUILD-PLAN-everyday-chemistry-2026-11.md`), phase 1; Garrett's rulings b and g. Every curated
 food, drink, product and world entry says by hand how its molecule comes to be there, so no page ever shows an inferred mark.
