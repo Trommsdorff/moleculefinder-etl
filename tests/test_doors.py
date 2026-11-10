@@ -130,9 +130,69 @@ def test_every_mark_on_a_door_is_the_one_its_lists_own_seed_holds():
 def test_a_stop_with_no_mark_says_why_and_shows_none():
     unmarked = [(d["slug"], s["molecule"]["slug"]) for d in COMPILED["doors"] for s in d["stops"]
                 if s.get("molecule") and s.get("presence") is None]
-    assert unmarked == [("bread", "cellulose"), ("bread", "maltodextrin")]
-    for s in BY["bread"]["stops"][1:3]:
-        assert s["presence_absent"]["text"].startswith("Not on our bread list")
+    assert unmarked == [("bread", "cellulose")]
+    assert BY["bread"]["stops"][1]["presence_absent"]["text"].startswith("Not on our bread list")
+
+
+def test_the_bread_chain_garrett_ruled_2026_11_10():
+    """Re-ordered around what makes bread bread; maltodextrin only in starch's Read more."""
+    b = BY["bread"]
+    assert [s["molecule"]["slug"] if s.get("molecule") else s["nav"]["text"] for s in b["stops"]] == [
+        "starch", "cellulose", "gluten", "ethanol", "The smell", "Also in the loaf"]
+    gluten, ethanol = b["stops"][2], b["stops"][3]
+    assert gluten["presence"]["value"] == "natural" and "trap gas and rise" in gluten["text"]["text"]
+    assert (ethanol["presence"]["value"], ethanol["presence"]["formed_when"]) == ("formed", "fermentation")
+    assert ethanol["presence"]["note"] == "Made by the yeast as the dough rises; most bakes off."
+    starch_more = b["stops"][0]["more"]
+    assert any(m.get("ref", {}).get("kind") == "answer" and m["ref"]["pair"] == "maltodextrin-vs-starch" for m in starch_more)
+    assert any("maltodextrin-vs-starch" in json.dumps(link) for link in b["stops"][0]["links"])
+    shown = {s["molecule"]["slug"] for s in b["stops"] if s.get("molecule")}
+    assert "maltodextrin" not in shown
+    assert [i["molecule"]["slug"] for i in b["stops"][5]["items"]] == [
+        "sodium-chloride", "acrylamide", "thiamine", "niacin", "folic-acid", "iron"]
+
+
+def test_theobromines_dog_fact_is_one_new_sentence_in_the_first_layer():
+    stop = BY["coffee"]["stops"][2]
+    assert stop["molecule"]["slug"] == "theobromine"
+    assert stop["note"] == {"text": "Dogs clear theobromine far more slowly than people do, which is why chocolate is "
+                                    "dangerous to them.", "new": True}
+    assert ("coffee.stop3.note", stop["note"]["text"]) in doors.door_strings()
+    assert sum(1 for d in COMPILED["doors"] for s in d["stops"] if s.get("note")) == 1
+
+
+@pytest.mark.parametrize("bad, match", [
+    ("Dogs clear theobromine slowly. Chocolate is dangerous to them.", "one sentence"),
+    ("Dogs clear it slowly, its LD50 in dogs is 300 mg/kg.", "LD50"),
+    ("Dogs.", "characters"),
+])
+def test_a_note_is_one_sentence_of_new_writing_under_the_house_rules(bad, match):
+    seeds = copy.deepcopy(SEEDS)
+    seeds["coffee"]["stops"][2]["note"] = bad
+    _fails(match, seeds=seeds)
+
+
+def test_garretts_line_fixes_2026_11_10_are_what_the_doors_quote():
+    cmp = INPUTS[1]
+    bic = cmp["sodium-bicarbonate-vs-sodium-carbonate"]["text"]
+    assert "same two elements" not in bic
+    assert bic.startswith("Baking soda and washing soda are both sodium salts of carbonic acid, NaHCO3 against Na2CO3: "
+                          "washing soda has a second sodium where baking soda keeps a hydrogen, and that makes all the "
+                          "difference to how alkaline they are.")
+    lim = cmp["limonene-vs-linalool"]["text"]
+    assert "whole of citrus peel oil" not in lim and "makes up most of citrus peel oil" in lim
+    amm = cmp["ammonia-vs-sodium-hypochlorite"]["text"]
+    assert ("Dissolved in water, ammonia is alkaline, which breaks up grease, and it evaporates completely, which is "
+            "why it leaves glass without streaks.") in amm
+    vit = {m["slug"]: m for m in INPUTS[0]}["ascorbic-acid"]
+    assert "tart" not in vit["why_it_matters"]["text"] and "scurvy" in vit["why_it_matters"]["text"]
+    assert vit["title"] == "Vitamin C" and 100 <= len(vit["description"]) <= 200
+    quoted = json.dumps(COMPILED)
+    assert "same two elements" not in quoted and "tart brightness" not in quoted
+    clean = BY["household-cleaners"]
+    assert any("Dissolved in water, ammonia is alkaline" in json.dumps(m) for m in clean["stops"][0]["more"])
+    assert {m["slug"]: m for m in INPUTS[0]}["ammonia"]["what_it_does"]["sentences"][0]["text"].startswith(
+        "Dissolved in water, ammonia is alkaline")
 
 
 def test_the_mockups_coffee_chain():

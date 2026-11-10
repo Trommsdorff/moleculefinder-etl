@@ -54,6 +54,10 @@ stops:
     molecule: theobromine
     mark: {list: chocolate}
     text: {why: theobromine, pin: "581f490f2552"}
+    # Garrett, 2026-11-10: the mockup's dog fact, restored as one new sentence, no numbers, no LD50. Basis:
+    # standard veterinary toxicology and theobromine's own records (its editorial, the caffeine vs
+    # theobromine paragraph).
+    note: "Dogs clear theobromine far more slowly than people do, which is why chocolate is dangerous to them."
     number: {amount: {list: chocolate}}
     more:
       - {sentence: caffeine-vs-theobromine, starts: "That one group changes", pin: "50e315a46ec3"}

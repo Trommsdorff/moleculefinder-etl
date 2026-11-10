@@ -2,7 +2,7 @@
 """Write the door chains review page (build plan everyday chemistry 2026-11, phase 4).
 
 Reads the compiled data/snapshots/doors.json, the seeds' new writing (transform/doors.door_strings) and the
-record scripts/door_chains_2026_11.yaml (the basis for every new string, what needs Garrett), and writes one
+record scripts/door_chains_2026_11.yaml (the basis for every new string, Garrett's rulings, the line fixes and the checks), and writes one
 self-contained page for Garrett:
 
     ../moleculefinder-web/docs/design/door-chains-review-2026-11.html
@@ -146,6 +146,9 @@ def stop_html(slug, s, basis, labels) -> str:
         if s.get("presence_absent"):
             h.append(basis_html(f"{key}.unmarked", basis, labels))
         h.append(text_block(s.get("text")))
+        if s.get("note"):
+            h.append(f'<div class="explain">{e(s["note"]["text"])} <span class="tag tag--new">New writing</span></div>'
+                     + basis_html(f"{key}.note", basis, labels))
         h.append(number_html(s.get("number")))
     if s["labels"]:
         h.append('<table class="labels"><tr><th>Label</th><th>Active</th><th>Purpose (the label\'s words)</th><th>Strength</th></tr>')
@@ -289,9 +292,14 @@ def main() -> None:
     wid = {k: v for k, v in sorted(wid.items()) if v}
     meta = json.loads((SNAP / "meta.json").read_text())
 
-    needs = "".join(f'<div class="need"><h3>{i}. {e(n["title"])}</h3><p>{e(n["what"])}</p>'
-                    f'<p class="rec"><b>Recommended:</b> {e(n["recommend"])}</p></div>'
-                    for i, n in enumerate(record["needs_garrett"], 1))
+    rulings = "".join(f'<div class="need"><h3>{i}. {e(n["title"])}</h3><p>{e(n["asked"])}</p>'
+                      f'<p class="rec"><b>Your ruling:</b> {e(n["ruling"])}</p></div>'
+                      for i, n in enumerate(record["rulings"], 1))
+    fixes = "".join(f'<div class="need"><h3>{i}. {e(f["title"])}</h3><p><b>Was:</b> {e(f["was"])}</p>'
+                    f'<p class="rec"><b>Now:</b> {e(f["now"])}</p><p class="meta">{e(f["note"])}</p></div>'
+                    for i, f in enumerate(record["fixes"], 1))
+    changes = "".join(f"<li><b>{e(c['door'])}:</b> {e(c['text'])}</li>" for c in record["changes"])
+    checks = "".join(f"<li>{e(c)}</li>" for c in record["checks"])
     cards = "".join(f'<tr><td>{d["order"]}. {e(d["name"]["text"])}</td><td>{"Live: its own page" if d["live"] else "Dark until phase 7"}</td>'
                     f'<td class="mono">{e(d["card"]["href"])}</td><td class="mono">{e(d["href"])}</td></tr>' for d in data["doors"])
     wid_rows = "".join(f'<tr><td>{e(mol(s)["title"])}</td><td>{"".join(f"<p>{e(x["text"])} <span class=\'tag\'>/vs/{e(x["pair"])}</span></p>" for x in v["sentences"])}</td>'
@@ -301,8 +309,8 @@ def main() -> None:
 <main class="wrap">
 <h1>The six door chains: review</h1>
 <p class="meta">Build plan everyday chemistry, phase 4, built 2026-11-10 on branches <span class="mono">door-seeds-2026-11</span>
-(ETL and web). Snapshot data date {e(meta["refreshed"])}. Nothing here is live: the doors render from phase 7, and this page is
-the approval the phase 4 deploy waits for.</p>
+(ETL and web). Snapshot data date {e(meta["refreshed"])}. <b>Approved by Garrett on 2026-11-10 with the rulings below; this page
+shows the final chains as deployed.</b> Nothing on the doors is visible yet: they render from phase 7.</p>
 <p>How to read it. Every door is a hand seed of <b>references</b>: what a reader will see at each stop is quoted from a line
 MoleculeFinder already publishes (a molecule's why-it-matters line, a sentence of our comparison notes, an answer line, a label's
 own words), and each quote is pinned, so the build stops if that line ever changes. The only new writing is marked
@@ -311,8 +319,11 @@ here. "Requires" lines are facts the build checks on every run, including Monday
 stops, names the door and the fact, and the live site keeps last week's data.</p>
 <nav class="toc">{toc}</nav>
 
-<h2 style="margin-top:28px">Needs you ({len(record["needs_garrett"])}), each with a recommendation</h2>
-{needs}
+<h2 style="margin-top:28px">Your rulings on the seven questions ({len(record["rulings"])})</h2>
+{rulings}
+
+<h2 style="margin-top:28px">Four lines the doors quote, fixed (live copy)</h2>
+{fixes}
 
 <h2 style="margin-top:28px">Your ruling, recorded: the web phases deploy one at a time</h2>
 <p>Phase 6 (foundations, navigation, home page, search) deploys on its own, then phases 7, 8 and 9 each when built, checked and
@@ -321,45 +332,16 @@ dark until phase 7, and the home page's six cards need somewhere to link on the 
 <table class="plain"><tr><th>Door card</th><th>On phase 6's day</th><th>Card links to</th><th>Its own page (from phase 7)</th></tr>{cards}</table>
 
 <h2 style="margin-top:28px">What changed from the plan's table, and why</h2>
-<ul>
-<li><b>Sugar and sweeteners:</b> the table sugar member is <span class="mono">/in/table-sugar</span>; <span class="mono">/whats-in/table-sugar</span> answers 410 since phase 2. Aspartame's and sucralose's marks come from the diet soda list, stevioside's from the stevia list (Naturally present: it comes from the leaf), xylitol's and erythritol's from sugar-free gum, so those lists are members too.</li>
-<li><b>The medicine cabinet:</b> doxylamine's stop rests on two labels the plan did not name, DayQuil Severe Cold and Flu (it does not list doxylamine) and Unisom SleepTabs (its label calls it a nighttime sleep aid); both are members. Ibuprofen's Read more does not use its editorial's second sentence (it says how often to redose).</li>
-<li><b>Bread:</b> the plan's chain as written; its stops 2 and 3 are not on our bread list (Needs you, 1). Stop 4 shows the rest of the bread list as a grid, so nothing is left for "also".</li>
-<li><b>Household cleaners:</b> four stops, the three sodas as one; no other change.</li>
-<li><b>Coffee:</b> as the mockup, except the dog paragraph (Needs you, 5); soda is now our curated soft drinks list (Added by the maker), not Diet Pepsi's and Pepsi Max's Wikidata rows, so it cannot move with an outside edit.</li>
-<li><b>Citrus:</b> its "also in the fruit" is a fourth stop showing the rest of the list.</li>
-<li><b>Phase 2's changes, checked:</b> tannic acid, 2-nonenal and ethyl maltol are on no door; no door uses MSG; the one hangover line any door shows (acetaldehyde in coffee's "also on the list") reads "long blamed for part of a hangover", and the build refuses any other wording.</li>
-</ul>
+<ul>{changes}</ul>
 
 {"".join(door_html(d, basis, labels) for d in data["doors"])}
 
 <section class="door"><h2>What it does ({len(wid)} molecules)</h2>
-<p class="meta">The molecule page's section 3, rendered from phase 8; on the records now, read by no page. Each sentence is quoted from a
-comparison paragraph and pinned. Left out for want of a mechanism sentence: paraxanthine, dextromethorphan, doxylamine, stevioside
-(its sentence speaks of "both"), limonene (its sentence overreaches), ammonia, sodium carbonate, maltol, furaneol.</p>
+<p class="meta">{e(record["what_it_does_note"])}</p>
 <table class="plain"><tr><th>Molecule</th><th>Sentences</th><th>Illustration</th></tr>{wid_rows}</table></section>
 
 <section class="door"><h2>Checks</h2>
-<ul>
-<li>Every reference resolves and every requires holds (the compiler, in the export preflight, before the Supabase load).</li>
-<li>The build stops when one fails, proved by breaking them on purpose and restoring: a quoted sentence changed (the cleaners door's
-baking soda sentence: "no single sentence ... starts 'In baking, the carbon dioxide is the point'"), a label fact broken (the
-medicine door's "DayQuil does not list dextromethorphan", false: the run refused, naming the door and the fact), and in tests each
-kind: a label dropping the molecule, a label gaining what a line says it lacks, a list losing a stop molecule or gaining one the door
-does not show, a why line edited, a pair or product comparison gone, a formula or sweetness moved, a mark leaving its list, a group
-under three molecules. The snapshot on disk was untouched by every failed run.</li>
-<li>No dash, no advice or dosing word, no completeness phrase, no LD50 and no other hangover wording in any string a door shows; new
-writing joins the claim rule's corpus, and none of it carries a claim word.</li>
-<li>Titles, ledes and card lines unique across the doors; group page titles 65 or under and descriptions 100 to 160, unused by any
-product or molecule page.</li>
-<li>ETL: 1,119 passed, 1 skipped (1,084 + 35 in tests/test_doors.py); ruff 130 (= main). Pinned build (inputs f69fd345c58bfa08, keys
-blanked) twice, byte-identical, 0 PubChem POSTs; the snapshot changes by doors.json and <span class="mono">what_it_does</span> on 21
-molecule files, nothing else.</li>
-<li>Web, as CI runs it: verify-snapshot OK, typecheck clean, 257 passed and 21 skipped with no build; build 3,091 pages, 278 passed
-on the build; all 20,165 built files identical in content to a build of main (the differences are the build id, Next's flight-row
-order, file traces that now list doors.json, and the sitemap's lastmod); sitemap 1,711; IndexNow dry run against live: 0 new, 0
-changed, 0 removed (51 changed without the new ignore entry).</li>
-</ul></section>
+<ul>{checks}</ul></section>
 </main>"""
     html = (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             f'<title>Door chains review</title><style>{CSS}</style></head><body>{body}</body></html>')

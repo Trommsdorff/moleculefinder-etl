@@ -1,5 +1,5 @@
 # The door chains' record (build plan everyday chemistry 2026-11, phase 4): the basis for every piece of new
-# writing in sources/seeds/doors/*.yaml, and what needs Garrett. scripts/door_chains_review.py reads it with
+# writing in sources/seeds/doors/*.yaml, Garrett's rulings of 2026-11-10, the four line fixes and the checks. scripts/door_chains_review.py reads it with
 # the compiled data/snapshots/doors.json and writes moleculefinder-web/docs/design/door-chains-review-2026-11.html;
 # it refuses to write when a new string has no basis here, or a basis names a string the seeds no longer have.
 #
@@ -25,6 +25,11 @@ basis:
   coffee.stop3.heading: >-
     Theobromine's why-it-matters line, "a milder cousin of caffeine" (checked), and its editorial, "caffeine's
     gentler cousin". Our data: theobromine is on our chocolate list with its amount.
+  coffee.stop3.note: >-
+    Garrett's ruling, 2026-11-10: the mockup's dog fact, restored as one new sentence with no number and no LD50.
+    Standard veterinary toxicology: dogs metabolise theobromine far more slowly than people (a half-life of about
+    17.5 hours in dogs against about 7 in people), which is why chocolate poisons them. Theobromine's own records: its
+    editorial ("enough to poison a dog") and the caffeine vs theobromine paragraph (its LD50 "in dogs").
   coffee.stop4.heading: 'Our data: three lists besides coffee carry caffeine, tea, energy drinks and soft drinks (checked).'
   coffee.stop5.heading: The six molecules shown are on our coffee list, each with its own mark.
   coffee.next2.line: >-
@@ -55,27 +60,33 @@ basis:
     The menthol vs camphor paragraph: menthol activates TRPM8, "the cold receptor", and camphor works "on several
     TRP channels including the warm ones, which is why it reads as both cooling and warming". VapoRub's label lists
     both (camphor 4.8%, menthol 2.6%).
-  # ── bread ──
+  # ── bread ── (re-ordered around what makes bread bread: Garrett, 2026-11-10)
   bread.card.line: >-
-    The starch vs cellulose answer line, "a starch chain's alpha bonds digest and a cellulose chain's beta bonds
-    do not" (checked).
+    Our data: starch, gluten and ethanol are on our bread list (checked by the card's requires); gluten's line,
+    "lets bread dough trap gas and rise" (checked); ethanol's mark on the bread list, Formed by fermentation, "Made by
+    the yeast as the dough rises; most bakes off".
   bread.lede: >-
-    The same answer line; the maltodextrin vs starch answer line, "cut into short glucose chains" (checked);
-    maltol is on our Fresh-baked bread list, Formed when baked (checked), and its line names "fresh bread crust".
+    The starch vs cellulose answer line, "a starch chain's alpha bonds digest and a cellulose chain's beta bonds do
+    not" (checked); gluten's line, "the stretchy protein network ... lets bread dough trap gas" (checked); ethanol's
+    bread mark, "Made by the yeast as the dough rises"; maltol is on our Fresh-baked bread list, Formed when baked
+    (checked), and its line names "fresh bread crust".
   bread.stop1.heading: The starch vs cellulose answer line (checked).
   bread.stop2.heading: 'The starch vs cellulose paragraph, "beta bonds ... that human enzymes cannot touch".'
   bread.stop2.unmarked: >-
     Our data: cellulose is on no curated food list (its product rows are label inactive ingredients only).
     Standard chemistry: starch's glucose units are joined alpha-1,4 and cellulose's beta-1,4, the same sugar
-    joined the other way round.
-  bread.stop3.heading: 'Maltodextrin''s why-it-matters line, "A short chain of glucose units cut from starch".'
-  bread.stop3.unmarked: >-
-    Our data: maltodextrin's one curated list is processed snacks. "Made from starch": its line and the
-    maltodextrin vs starch answer line.
-  bread.stop4.heading: The eight molecules shown are the rest of our bread list, each with its own mark.
+    joined the other way round. Garrett, 2026-11-10: kept as starch's counterpart, unmarked, with this note.
+  bread.stop3.heading: >-
+    Gluten's line, "The stretchy protein network that forms when wheat flour meets water ... lets bread dough trap
+    gas and rise" (both phrases checked); gluten is on our bread list, Naturally present ("From the wheat flour's
+    proteins, gliadin and glutenin").
+  bread.stop4.heading: >-
+    Our data: ethanol is on our bread list (checked), Formed by fermentation, its note "Made by the yeast as the
+    dough rises; most bakes off", which the stop shows as its mark.
   bread.stop5.heading: >-
     Maltol's line, "fresh bread crust", and furaneol's, "forms as bread bakes" (both checked); both are on our
     Fresh-baked bread list, Formed when baked.
+  bread.stop6.heading: The six molecules shown are the rest of our bread list, each with its own mark.
   # ── sugar and sweeteners ──
   sugar-and-sweeteners.page_title: Sucrose and sucralose are both stops on the door.
   sugar-and-sweeteners.description: >-
@@ -104,8 +115,10 @@ basis:
     "Sodas": baking soda, washing soda and caustic soda are the names the three molecules' own lines and
     comparisons use.
   household-cleaners.description: >-
-    The ammonia, bleach and peroxide lines and sentences quoted on the door. Alkalinity: "the extra sodium makes
-    all the difference to how alkaline they are" (bicarbonate vs carbonate) and "they sit at opposite ends of that
+    The ammonia, bleach and peroxide lines and sentences quoted on the door; ammonia's, "Dissolved in water, ammonia
+    is alkaline, which breaks up grease" (the ammonia vs bleach paragraph, 2026-11-10). Alkalinity: "washing soda has
+    a second sodium where baking soda keeps a hydrogen, and that makes all the difference to how alkaline they are"
+    (bicarbonate vs carbonate, corrected 2026-11-10) and "they sit at opposite ends of that
     scale" (hydroxide vs bicarbonate).
   household-cleaners.card.line: >-
     The ammonia vs bleach answer line, "Ammonia cleans glass and grease"; bleach's line, "destroys the pigments in
@@ -123,63 +136,126 @@ basis:
     scent locked in orange and lemon peel" (both checked).
   citrus.lede: 'Citric acid''s line, "sourness of lemons, limes, and oranges" (checked), and the two lines above.'
   citrus.stop1.heading: >-
-    Vitamin C's line, "your body cannot make on its own" (checked). Standard biology: humans lack the last
+    Vitamin C's line (rewritten 2026-11-10), "humans, other primates and guinea pigs cannot" make it (checked). Standard biology: humans lack the last
     enzyme of the pathway (L-gulonolactone oxidase).
   citrus.stop2.heading: The citric acid vs vitamin C answer line (checked).
   citrus.stop3.heading: Limonene's line (checked).
   citrus.stop4.heading: The six molecules shown are the rest of the citrus page's list, each with its own mark.
 
-needs_garrett:
-  - title: "Bread: two of its five stops are not in bread by our data"
-    what: >-
-      Cellulose and maltodextrin are on no bread list, so their stops carry no presence mark and say why ("Not on
-      our bread list"). Cellulose is the door's point (the same glucose chain you cannot digest; "chain of starch
-      vs chain of cellulose" had 17 impressions at position 9). Maltodextrin is there for search ("maltodextrin vs
-      corn starch", 33 impressions) but is not in bread at all.
-    recommend: >-
-      Keep cellulose as stop 2. Replace stop 3 with ethanol, which IS on our bread list (Formed by fermentation:
-      "Made by the yeast as the dough rises; most bakes off"), and move maltodextrin into starch's Read more as the
-      maltodextrin vs starch answer line and link. Built as the plan's table has it until you say.
+rulings:
+  - title: "Bread: two of its five stops were not in bread by our data"
+    asked: >-
+      Cellulose and maltodextrin are on no bread list. Recommended: keep cellulose, replace maltodextrin with ethanol
+      (on our bread list), and move maltodextrin into starch's Read more.
+    ruling: >-
+      Re-order bread around what makes bread bread: starch; cellulose (starch's counterpart, unmarked, with its note);
+      gluten, the protein network that forms when flour meets water and traps the gas so the loaf rises; ethanol, made
+      by the yeast as the dough rises, most of it baking off; then the smell (maltol and furaneol). Maltodextrin goes
+      into starch's Read more as the maltodextrin vs starch answer line and link; "Also in the loaf" keeps the rest of
+      the bread list; card line, lede and headings rewritten to match. Applied.
   - title: "The medicine cabinet: doxylamine's line names a use no member label states"
-    what: >-
-      Its why-it-matters line ends "and, combined with vitamin B6, for nausea in pregnancy". True (the FDA-approved
-      doxylamine and pyridoxine combination), but your amendment says this door shows only what the labels state,
-      and neither NyQuil's nor Unisom's label says it. The line is also its page's description, frozen, so it
-      cannot be reworded here.
-    recommend: >-
-      Keep it: it describes the molecule, not a product, it carries no advice word, and the label rows beside it
-      say what NyQuil and Unisom state. The alternative is to show doxylamine with its two label rows and no line.
+    asked: Recommended keeping it (it describes the molecule, not a product).
+    ruling: The line stays as it is.
   - title: "The medicine cabinet: the dextromethorphan stop is thin"
-    what: >-
-      No comparison paragraph mentions dextromethorphan, so its stop is its line ("the cough suppressant marked
-      DM on cold medicine boxes, related to morphine in structure but not in its effect on pain") and two label
-      rows, with no Read more and no "What it does" entry.
-    recommend: Accept it for now; a /vs pair for it (for example with codeine) would give it a mechanism sentence later.
+    asked: Recommended accepting it for now.
+    ruling: Accepted as it is.
   - title: "Household cleaners: one sentence about mixing bleach and ammonia"
-    what: >-
-      The bleach stop's Read more quotes the ammonia vs bleach answer line, "mixing the two makes chloramines, a
-      toxic gas that badly irritates the airways". It is how the two react, stated as chemistry with no advice
-      word, and it is the live /vs page's description; it is also the one hazard sentence on any door.
-    recommend: Keep it in Read more (it is why cleaner bottles carry the warning), not in the stop's first layer.
+    asked: Recommended keeping it in Read more, not the stop's first layer.
+    ruling: It stays in Read more.
   - title: "Coffee: two differences from the approved mockup"
-    what: >-
-      (1) The mockup's "Why chocolate is dangerous for dogs" is not on the door: it was a clause cut out of a
-      sentence that carries two LD50s, plus an editorial sentence with the word "dose", and a door quotes whole
-      sentences only, never an LD50. (2) Stop 3's Read more quotes "Theobromine lingers longer instead, with a
-      half-life around 7.2 hours against caffeine's 5": a half-life in prose, not as the stop's number.
-    recommend: Accept both. The dog fact stays on theobromine's own page; the half-life sentence is how the two differ.
+    asked: >-
+      The dog paragraph was left out (it carried two LD50s and "dose"); the half-life sentence is in theobromine's
+      Read more. Recommended accepting both.
+    ruling: >-
+      Keep the half-life sentence. Restore the dog fact on the theobromine stop as one new sentence with no numbers
+      and no LD50, in the stop's first layer as the mockup had it: "Dogs clear theobromine far more slowly than people
+      do, which is why chocolate is dangerous to them." Basis: standard veterinary toxicology, and theobromine's own
+      records. Applied (a stop's new `note` field).
   - title: "Members and links that differ from the plan's table"
-    what: >-
-      The medicine cabinet gathers DayQuil Severe Cold and Flu and Unisom SleepTabs as well as the plan's Tylenol,
-      NyQuil, Advil, Aleve, Vicks and the Advil vs Tylenol page: stop 4's heading rests on the NyQuil and DayQuil
-      labels, and Unisom's label states doxylamine's purpose as a nighttime sleep aid. Sugar and sweeteners gathers
-      the diet soda, sugar-free gum, stevia and tabletop sweetener lists beside table sugar, soft drinks and the
-      Sweetest board, because its marks come from them. The sweeteners card links to /in/tabletop-sweetener until
-      phase 7 (the mockup's /whats-in/table-sugar answers 410 since phase 2).
-    recommend: Keep as built.
+    asked: Recommended keeping DayQuil, Unisom and the sweetener lists as members.
+    ruling: The added members stay.
   - title: "Found, not changed: limonene's comparison sentence overreaches"
-    what: >-
-      The limonene vs linalool paragraph says limonene "is the whole of citrus peel oil"; it is most of it (our own
-      presence note says "The main part of the peel oil"). The door quotes the pair's answer line instead, and
-      what_it_does.yaml leaves limonene out for this reason.
-    recommend: Fix that one sentence in comparisons.yaml in a small copy pass (a /vs paragraph, not a frozen string).
+    asked: Recommended fixing that one sentence in a small copy pass.
+    ruling: Fixed now (below).
+
+fixes:
+  - title: "Baking soda vs washing soda (/vs/sodium-bicarbonate-vs-sodium-carbonate)"
+    was: >-
+      Baking soda and washing soda are the same two elements in different proportions, NaHCO3 against Na2CO3, and the
+      extra sodium makes all the difference to how alkaline they are.
+    now: >-
+      Baking soda and washing soda are both sodium salts of carbonic acid, NaHCO3 against Na2CO3: washing soda has a
+      second sodium where baking soda keeps a hydrogen, and that makes all the difference to how alkaline they are.
+    note: >-
+      Garrett's wording, verbatim. Baking soda has four elements and washing soda three. No claim word. The cleaners
+      door's three sodas stop quotes it, re-pinned.
+  - title: "Vitamin C's why-it-matters line (/m/ascorbic-acid and every page that quotes it)"
+    was: Vitamin C, the tart brightness of citrus and a nutrient your body cannot make on its own.
+    now: >-
+      Vitamin C, the nutrient whose absence causes scurvy. Dogs, cats and nearly all other mammals make their own,
+      but humans, other primates and guinea pigs cannot, so ours has to come from food.
+    note: >-
+      The sourness of citrus is citric acid, the door's next stop. 190 characters, unique; it is also the page's
+      description; the title does not move. "Nearly all other mammals" in place of "most animals" keeps it outside
+      the claim rule and true (most bony fish, some bats and many songbirds cannot make it either). Standard
+      biology: humans, other primates and guinea pigs lack L-gulonolactone oxidase. The citrus door's first stop
+      quotes it, re-pinned, and its requires now checks "humans, other primates and guinea pigs cannot".
+  - title: "Limonene vs linalool (/vs/limonene-vs-linalool)"
+    was: >-
+      Limonene is a cyclic hydrocarbon, C10H16, and is the whole of citrus peel oil, which is why it is the solvent in
+      orange-oil cleaners as well as a fragrance.
+    now: >-
+      Limonene is a cyclic hydrocarbon, C10H16, and makes up most of citrus peel oil, which is why it is the solvent
+      in orange-oil cleaners as well as a fragrance.
+    note: >-
+      "Most" kept under the claim rule: an entry in claims_allowed.yaml, basis science (d-limonene is the main
+      constituent of the peel oil), in line with our own presence note, "The main part of the peel oil". No door
+      quotes this sentence (citrus quotes the pair's answer line).
+  - title: "Ammonia: why it cleans (/vs/ammonia-vs-sodium-hypochlorite)"
+    was: The ammonia stop's Read more compared only molecular weights.
+    now: >-
+      Dissolved in water, ammonia is alkaline, which breaks up grease, and it evaporates completely, which is why it
+      leaves glass without streaks.
+    note: >-
+      Placed as a new sentence in the ammonia vs bleach paragraph (its sixth, after the weights), not as new writing
+      on the door: the door quotes it by reference, pinned, so the "references, not copies" rule holds, and
+      what_it_does.yaml can quote it too (ammonia joins, 22 entries). Standard chemistry. No claim word. The cost: the
+      /vs page's paragraph shows the new sentence (its title and description, the answer line, do not change).
+
+changes:
+  - door: Sugar and sweeteners
+    text: >-
+      The table sugar member is /in/table-sugar; /whats-in/table-sugar answers 410 since phase 2. Aspartame's and
+      sucralose's marks come from the diet soda list, stevioside's from the stevia list, xylitol's and erythritol's
+      from sugar-free gum, so those lists are members too.
+  - door: The medicine cabinet
+    text: >-
+      Doxylamine's stop rests on DayQuil Severe Cold and Flu (it does not list doxylamine) and Unisom SleepTabs (its
+      label calls it a nighttime sleep aid); both are members. Ibuprofen's Read more does not use its editorial's
+      second sentence (it says how often to redose).
+  - door: Bread
+    text: >-
+      Re-ordered on Garrett's ruling: starch (maltodextrin in its Read more), cellulose, gluten, ethanol, the smell,
+      then also in the loaf (the other six on our bread list).
+  - door: Household cleaners
+    text: Four stops, the three sodas as one; ammonia's Read more now says why it cleans.
+  - door: Coffee
+    text: >-
+      As the mockup, with the dog fact as one new sentence on theobromine's stop; soda is our curated soft drinks list
+      (Added by the maker), not Wikidata rows, so it cannot move with an outside edit.
+  - door: Citrus
+    text: Its "also in the fruit" is a fourth stop showing the rest of the list; vitamin C's line no longer claims citrus's tartness.
+  - door: "Phase 2's changes, checked"
+    text: >-
+      Tannic acid, 2-nonenal and ethyl maltol are on no door; no door uses MSG; the one hangover line any door shows
+      (acetaldehyde in coffee's also) reads "long blamed for part of a hangover", and the build refuses any other
+      wording.
+
+what_it_does_note: >-
+  The molecule page's section 3, rendered from phase 8; on the records now, read by no page. Each sentence is quoted
+  from a comparison paragraph and pinned. Ammonia joined on 2026-11-10 with its new sentence. Left out for want of a
+  mechanism sentence: paraxanthine, dextromethorphan, doxylamine, stevioside (its sentence speaks of "both"), limonene
+  (its corrected sentence says what it is used for, not what it does), sodium carbonate, maltol, furaneol.
+
+checks:
+  - PENDING

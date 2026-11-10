@@ -4,8 +4,10 @@
 # the name of a hand-made illustration, or none. A molecule with no entry has no "What it does" section.
 # First entries: the molecules on the six door chains that have a mechanism sentence in our comparison
 # notes. Not here, for want of one: paraxanthine, dextromethorphan, doxylamine, stevioside (its sentence
-# speaks of "both"), limonene (its sentence overreaches: "the whole of citrus peel oil"), ammonia,
-# sodium carbonate, maltol, furaneol. Illustrations are web assets (transform/doors.ILLUSTRATIONS).
+# speaks of "both"), limonene (its comparison sentence was corrected on 2026-11-10 to "makes up most of
+# citrus peel oil", but it says what limonene is used for, not what it does), sodium carbonate, maltol,
+# furaneol. Ammonia joined on 2026-11-10 (Garrett's ruling: one sentence on why it cleans, written into the
+# ammonia vs bleach paragraph so the door and this file quote it by reference). Illustrations are web assets (transform/doors.ILLUSTRATIONS).
 caffeine:
   sentences:
     - {pair: adenosine-vs-caffeine, starts: "Adenosine is a molecule your body makes", pin: "cb76778cfdd8"}
@@ -95,4 +97,8 @@ citric-acid:
 ascorbic-acid:
   sentences:
     - {pair: citric-acid-vs-ascorbic-acid, starts: "Citric acid preserves by lowering pH", pin: "1860a0bf16d6"}
+  illustration: null
+ammonia:
+  sentences:
+    - {pair: ammonia-vs-sodium-hypochlorite, starts: "Dissolved in water, ammonia is alkaline", pin: "8b9ca7566abe"}
   illustration: null

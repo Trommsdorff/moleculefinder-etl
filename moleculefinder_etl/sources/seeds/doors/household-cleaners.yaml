@@ -26,6 +26,7 @@ stops:
     text: {why: ammonia, pin: "1bc15c6b40df"}
     more:
       - {sentence: ammonia-vs-sodium-hypochlorite, starts: "Ammonia is the far smaller molecule", pin: "dbdccb9fd1a0"}
+      - {sentence: ammonia-vs-sodium-hypochlorite, starts: "Dissolved in water, ammonia is alkaline", pin: "8b9ca7566abe"}
     links: [{molecule: ammonia}, {hub: household-cleaner}, {pair: ammonia-vs-sodium-hypochlorite}]
     requires:
       - says: {ref: {answer: ammonia-vs-sodium-hypochlorite, pin: "58be3f88f33f"}, words: "Ammonia cleans glass and grease"}
@@ -53,7 +54,7 @@ stops:
       - {molecule: sodium-carbonate, mark: {list: household-cleaner}, text: {why: sodium-carbonate, pin: "2fec51758fa9"}}
       - {molecule: sodium-hydroxide, mark: {list: household-cleaner}, text: {why: sodium-hydroxide, pin: "ca0765422578"}}
     more:
-      - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "Baking soda and washing soda are the same two elements", pin: "61a4b9278b13"}
+      - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "Baking soda and washing soda are both sodium salts", pin: "783853efabd6"}
       - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "Heating baking soda in an oven", pin: "169e4936b332"}
       - {sentence: sodium-bicarbonate-vs-sodium-carbonate, starts: "In baking, the carbon dioxide is the point", pin: "5a828e3aafc9"}
       - {sentence: sodium-hydroxide-vs-sodium-bicarbonate, starts: "Sodium hydroxide is caustic soda", pin: "aafdf841c76b"}

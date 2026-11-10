@@ -315,6 +315,8 @@ comparison:
     why: "Victoza 2009, before Ozempic 2017. Datable history."}
   "lisdexamfetamine/dextroamphetamine": {words: ["only"], basis: ordinary, line: "e8e7bc9183fd",
     why: "\"Only part of that weight\" ranks nothing (computed from the records' weights)."}
+  "limonene/linalool": {words: ["most"], basis: science, line: "97cb88c3e6ca",
+    why: "\"Makes up most of citrus peel oil\": d-limonene is the main constituent of orange and lemon peel oil, typically well over half by weight (standard flavour chemistry); our own presence note on citrus says \"The main part of the peel oil\". Was \"is the whole of\" (Garrett, 2026-11-10)."}
   "loratadine/cetirizine": {words: ["most"], basis: science, line: "f74c52ed581a",
     why: "Desloratadine, the active metabolite, carries most of loratadine's activity (standard pharmacology)."}
   "loratadine/diphenhydramine": {words: ["first", "most"], basis: science, line: "39f7b72fb3c6",

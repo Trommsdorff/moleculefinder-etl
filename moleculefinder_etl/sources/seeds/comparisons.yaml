@@ -438,7 +438,9 @@ ammonia/sodium-hypochlorite:
     household cleaners in their own right, bleach for whitening and disinfecting and ammonia
     for glass and grease, and both carry a GHS Danger signal word on their own. Ammonia is the
     far smaller molecule at 17.03 against 74.44 and is a gas dissolved in water rather than a
-    salt. The reason many cleaning products warn against mixing is this reaction specifically.
+    salt. Dissolved in water, ammonia is alkaline, which breaks up grease, and it evaporates
+    completely, which is why it leaves glass without streaks. The reason many cleaning products
+    warn against mixing is this reaction specifically.
 
 ethylene-glycol/propylene-glycol:
   answer: "The body turns ethylene glycol into oxalic acid, which harms the kidneys, and propylene glycol into lactic acid, which it handles routinely."
@@ -467,8 +469,9 @@ glycerol/propylene-glycol:
 sodium-bicarbonate/sodium-carbonate:
   answer: "Sodium bicarbonate is baking soda, mildly alkaline and edible, while sodium carbonate is washing soda, strongly alkaline and used for laundry and grease."
   text: >
-    Baking soda and washing soda are the same two elements in different proportions, NaHCO3
-    against Na2CO3, and the extra sodium makes all the difference to how alkaline they are.
+    Baking soda and washing soda are both sodium salts of carbonic acid, NaHCO3 against Na2CO3:
+    washing soda has a second sodium where baking soda keeps a hydrogen, and that makes all the
+    difference to how alkaline they are.
     Sodium bicarbonate is mildly alkaline and safe to eat, which is why it leavens cake and
     settles indigestion. Sodium carbonate is strongly alkaline, will irritate skin, and is
     used to soften laundry water and cut grease. Heating baking soda in an oven converts it
@@ -904,7 +907,7 @@ limonene/linalool:
   answer: "Limonene is a hydrocarbon that is the scent of citrus peel, while linalool carries an alcohol group and is the floral note in lavender."
   text: >
     Both are terpenes that carry a scent and both turn up on cosmetic ingredient lists as
-    declared allergens. Limonene is a cyclic hydrocarbon, C10H16, and is the whole of citrus
+    declared allergens. Limonene is a cyclic hydrocarbon, C10H16, and makes up most of citrus
     peel oil, which is why it is the solvent in orange-oil cleaners as well as a fragrance.
     Linalool carries an alcohol group, C10H18O, and is the floral, slightly spicy note in
     lavender, coriander and basil. That single oxygen makes linalool the less volatile and the

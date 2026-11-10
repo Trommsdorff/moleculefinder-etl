@@ -17,12 +17,12 @@ stops:
   - heading: "A vitamin your body cannot make: vitamin C"
     molecule: ascorbic-acid
     mark: {list: citrus}
-    text: {why: ascorbic-acid, pin: "5179c958b7c9"}
+    text: {why: ascorbic-acid, pin: "3a052640c5e2"}
     more:
       - {sentence: citric-acid-vs-ascorbic-acid, starts: "Ascorbic acid is vitamin C", pin: "9bd7d99a6435"}
     links: [{molecule: ascorbic-acid}, {pair: citric-acid-vs-ascorbic-acid}]
     requires:
-      - says: {ref: {why: ascorbic-acid, pin: "5179c958b7c9"}, words: "your body cannot make on its own"}
+      - says: {ref: {why: ascorbic-acid, pin: "3a052640c5e2"}, words: "humans, other primates and guinea pigs cannot"}
   - heading: "Sour, and not a vitamin at all: citric acid"
     molecule: citric-acid
     mark: {list: citrus}

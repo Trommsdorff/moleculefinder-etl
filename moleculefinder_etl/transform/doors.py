@@ -17,7 +17,8 @@ read from the list the seed names (``mark: {list: ...}``), never written in the 
 show only a mark phase 1's seeds hold.
 
 **The only new writing** is the door's title, lede and card line, each stop's heading and short nav
-label, a sub-heading inside Read more, and a Where next card's link text and line. It is held to the
+label, a sub-heading inside Read more, a Where next card's link text and line, and a stop's one-sentence
+``note`` (shown in its first layer; Garrett, 2026-11-10, for theobromine's dog fact). It is held to the
 house rules (no dash, no advice word, no completeness phrase, no "LD50", no claim word without an
 entry in claims_allowed.yaml: ``claims.corpus`` reads it as kind ``door``).
 
@@ -94,6 +95,7 @@ LENGTHS = {  # new writing, in characters (min, max)
     "title": (12, 60), "lede": (60, 260), "card.line": (40, 130), "card.go": (8, 40),
     "heading": (8, 72), "nav": (3, 24), "subheading": (8, 72), "where_next.go": (8, 50),
     "where_next.line": (20, 130), "page_title": (20, 65), "description": (100, 160),
+    "note": (40, 160),
 }
 
 TEXT_KINDS = ("why", "sentence", "answer", "editorial", "product_pair", "board", "world")
@@ -521,6 +523,11 @@ def _stop(c: _Compiler, n: int, s: dict, counts_shown: list[str]) -> dict:
             if not s.get("unmarked"):
                 c.fail(where, "a lead molecule with no mark must say why in `unmarked` (shown in Sources and notes)")
         out["text"] = c.text(f"{where} text", s.get("text"))
+        # `note`: one sentence of new writing shown in the stop's first layer, under its text (Garrett,
+        # 2026-11-10: theobromine's dog fact). Held to the new-writing rules and the claim corpus.
+        out["note"] = c.new(f"{where} note", s["note"], "note") if s.get("note") else None
+        if out["note"] and len(sentences(out["note"]["text"])) != 1:
+            c.fail(f"{where} note", "a note is one sentence")
         out["number"] = c.number(f"{where} number", s["number"], lead) if s.get("number") else None
     out["labels"] = [x for x in (c.label(f"{where} label", r) for r in s.get("labels") or []) if x]
     items = []
@@ -773,6 +780,7 @@ def door_strings(seeds: dict[str, dict] | None = None) -> list[tuple[str, str]]:
             add(f"{slug}.stop{n}.heading", st.get("heading"))
             add(f"{slug}.stop{n}.nav", st.get("nav"))
             add(f"{slug}.stop{n}.unmarked", st.get("unmarked"))
+            add(f"{slug}.stop{n}.note", st.get("note"))
             for i, r in enumerate(st.get("more") or [], 1):
                 if isinstance(r, dict):
                     add(f"{slug}.stop{n}.more{i}", r.get("subheading"))

@@ -1,18 +1,22 @@
 # The bread door (build plan everyday chemistry 2026-11, phase 4). /whats-in/bread, upgraded in place in
-# phase 7. Format: see coffee.yaml and transform/doors.py. Cellulose and maltodextrin are not on our bread
-# list, so their stops carry no presence mark (a stop shows only a mark the seeds hold) and say why.
+# phase 7. Format: see coffee.yaml and transform/doors.py. Re-ordered around what makes bread bread (Garrett,
+# 2026-11-10): starch, cellulose (starch's counterpart; not on our bread list, so no mark, and it says why),
+# gluten, ethanol, the smell. Maltodextrin left the stops for starch's Read more (its answer line and link).
 slug: bread
 page: {product: bread}
 name: Bread
 card:
-  line: "Starch, the glucose chain you digest, and cellulose, the one you cannot."
+  line: "Starch from the flour, gluten that traps the gas, and ethanol the yeast makes as the dough rises."
   go: "Explore bread"
   requires:
-    - says: {ref: {answer: starch-vs-cellulose, pin: "95fde5738ca9"}, words: "alpha bonds digest and a cellulose chain's beta bonds do not"}
+    - in_list: {list: bread, molecule: starch}
+    - in_list: {list: bread, molecule: gluten}
+    - in_list: {list: bread, molecule: ethanol}
+    - says: {ref: {why: gluten, pin: "037e775f945a"}, words: "trap gas and rise"}
 title: "What's inside bread?"
-lede: "Start with starch, the glucose chain your body takes apart, then meet cellulose, the same glucose joined by a bond your enzymes cannot cut, and maltodextrin, starch cut short. End at the crust, where baking makes the smell."
+lede: "Start with starch, the glucose chain your body takes apart, and cellulose, the one it cannot. Then meet gluten, the protein network that traps the gas, and the ethanol the yeast makes as the dough rises. End at the crust, where baking makes the smell."
 requires:
-  - says: {ref: {answer: maltodextrin-vs-starch, pin: "c083faaaffdf"}, words: "cut into short glucose chains"}
+  - says: {ref: {answer: starch-vs-cellulose, pin: "95fde5738ca9"}, words: "alpha bonds digest and a cellulose chain's beta bonds do not"}
   - in_list: {list: fresh-bread, molecule: maltol}
 stops:
   - heading: "The glucose chain you digest: starch"
@@ -22,7 +26,8 @@ stops:
     more:
       - {sentence: starch-vs-cellulose, starts: "Neither contains anything but glucose", pin: "129f102dad58"}
       - {sentence: starch-vs-cellulose, starts: "Starch links its glucose units", pin: "641d813af4e7"}
-    links: [{molecule: starch}, {product: bread}, {pair: starch-vs-cellulose}]
+      - {answer: maltodextrin-vs-starch, pin: "c083faaaffdf"}
+    links: [{molecule: starch}, {product: bread}, {pair: starch-vs-cellulose}, {pair: maltodextrin-vs-starch}]
   - heading: "The same glucose, a bond you cannot digest: cellulose"
     molecule: cellulose
     unmarked: "Not on our bread list: cellulose is here as starch's counterpart, the same glucose joined the other way."
@@ -32,26 +37,21 @@ stops:
       - {sentence: starch-vs-cellulose, starts: "Those flat ribbons stack", pin: "02750483a42e"}
       - {sentence: starch-vs-cellulose, starts: "Cows and termites", pin: "4ab232c52d28"}
     links: [{molecule: cellulose}, {pair: starch-vs-cellulose}]
-  - heading: "Starch cut short: maltodextrin"
-    molecule: maltodextrin
-    unmarked: "Not on our bread list: maltodextrin is made from starch, and it is here to show what starch becomes when its chains are cut."
-    text: {why: maltodextrin, pin: "809e2e35a4aa"}
-    more:
-      - {sentence: maltodextrin-vs-starch, starts: "Maltodextrin is the same glucose chains", pin: "b185aa49523c"}
-      - {sentence: maltodextrin-vs-starch, starts: "Starch is the storage form", pin: "6f7a925b60fe"}
-    links: [{molecule: maltodextrin}, {pair: maltodextrin-vs-starch}]
-  - heading: "Also in the loaf"
-    nav: "Also in the loaf"
-    items:
-      - {molecule: gluten, mark: {list: bread}, text: {why: gluten, pin: "037e775f945a"}}
-      - {molecule: ethanol, mark: {list: bread}, text: {why: ethanol, pin: "59324529ce54"}}
-      - {molecule: sodium-chloride, mark: {list: bread}, text: {why: sodium-chloride, pin: "d85bd2614b37"}}
-      - {molecule: acrylamide, mark: {list: bread}, text: {why: acrylamide, pin: "f1dbcb93c10c"}}
-      - {molecule: thiamine, mark: {list: bread}, text: {why: thiamine, pin: "5bc349cd3742"}}
-      - {molecule: niacin, mark: {list: bread}, text: {why: niacin, pin: "82defca3973d"}}
-      - {molecule: folic-acid, mark: {list: bread}, text: {why: folic-acid, pin: "b8a81401fa6b"}}
-      - {molecule: iron, mark: {list: bread}, text: {why: iron, pin: "eaa945f22d15"}}
-    links: [{product: bread}]
+  - heading: "The protein network that lets the loaf rise: gluten"
+    molecule: gluten
+    mark: {list: bread}
+    text: {why: gluten, pin: "037e775f945a"}
+    links: [{molecule: gluten}, {product: bread}]
+    requires:
+      - says: {ref: {why: gluten, pin: "037e775f945a"}, words: "forms when wheat flour meets water"}
+      - says: {ref: {why: gluten, pin: "037e775f945a"}, words: "trap gas and rise"}
+  - heading: "Made by the yeast as the dough rises: ethanol"
+    molecule: ethanol
+    mark: {list: bread}
+    text: {why: ethanol, pin: "59324529ce54"}
+    links: [{molecule: ethanol}, {product: bread}]
+    requires:
+      - in_list: {list: bread, molecule: ethanol}
   - heading: "The smell of fresh bread: maltol and furaneol"
     nav: "The smell"
     items:
@@ -61,6 +61,16 @@ stops:
     requires:
       - says: {ref: {why: maltol, pin: "aa1e908edbea"}, words: "fresh bread crust"}
       - says: {ref: {why: furaneol, pin: "b316e4787556"}, words: "forms as bread bakes"}
+  - heading: "Also in the loaf"
+    nav: "Also in the loaf"
+    items:
+      - {molecule: sodium-chloride, mark: {list: bread}, text: {why: sodium-chloride, pin: "d85bd2614b37"}}
+      - {molecule: acrylamide, mark: {list: bread}, text: {why: acrylamide, pin: "f1dbcb93c10c"}}
+      - {molecule: thiamine, mark: {list: bread}, text: {why: thiamine, pin: "5bc349cd3742"}}
+      - {molecule: niacin, mark: {list: bread}, text: {why: niacin, pin: "82defca3973d"}}
+      - {molecule: folic-acid, mark: {list: bread}, text: {why: folic-acid, pin: "b8a81401fa6b"}}
+      - {molecule: iron, mark: {list: bread}, text: {why: iron, pin: "eaa945f22d15"}}
+    links: [{product: bread}]
 also: []
 where_next:
   - go: "Explore fresh-baked bread"
