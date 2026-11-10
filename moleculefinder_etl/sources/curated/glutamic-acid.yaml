@@ -4,3 +4,10 @@ cid: 611
 slug: glutamic-acid
 types:
   - amino-acid
+# The copy sweep (2026-11, Garrett's ruling 2026-11-10): cheese, mushrooms and soy sauce hold free
+# glutamate, the taste of MSG, not MSG itself, so their rows point here and say so. The marks repeat
+# the food_hubs.yaml rows exactly (the build refuses a disagreement).
+foods:
+  - { category: cheese,    note: "free glutamate, the taste of MSG", presence: formed, formed_when: aged, presence_note: "Free glutamate is released as the proteins break down in ageing." }
+  - { category: mushrooms, note: "free glutamate, the taste of MSG", presence: natural, presence_note: "Mushrooms hold free glutamate of their own." }
+  - { category: soy-sauce, note: "free glutamate, the taste of MSG", presence: formed, formed_when: fermentation, presence_note: "Free glutamate released as the soy protein ferments." }

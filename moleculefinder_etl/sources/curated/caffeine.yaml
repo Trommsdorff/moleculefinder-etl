@@ -15,5 +15,6 @@ foods:
   - { category: energy-drinks, note: "~80 mg per 250 ml can", presence: added, presence_note: "The maker adds it." }
 smell_card: null
 editorial: |
-  Caffeine is the world's most widely used psychoactive drug, and the only one
-  routinely served to children (as chocolate) and at the breakfast table.
+  Caffeine works by impersonation: it fits the brain's receptors for adenosine, the sleepiness
+  signal that builds up the longer you are awake, without switching them on. Coffee, tea and cocoa
+  plants each evolved their own way of making it, and in the leaves it is a natural pesticide.

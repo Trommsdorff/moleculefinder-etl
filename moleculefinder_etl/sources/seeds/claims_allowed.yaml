@@ -1,0 +1,385 @@
+# Lines that keep a claim word, and why each stands (build plan everyday chemistry 2026-11, phase 2,
+# the copy sweep; the rule is in transform/claims.py).
+#
+# A curated line may say "only", "first", "most", "leading", "largest", "world's", "never" or "always"
+# when (a) our own data shows it and the build asserts it (basis: data, with the check that asserts
+# it), (b) it is a standard, datable fact of chemistry, biology or history (basis: science or
+# history), or (c) the word ranks nothing (basis: ordinary). A comparison answer line is never edited
+# by the sweep; one that overreaches is held (basis: held) and listed for Garrett.
+#
+# Each entry pins its line by `line`, the first 12 hex digits of sha256 over the line's text with its
+# whitespace collapsed. A new line carrying a claim word, or an edit to a line that carries one, has
+# no matching entry and stops the build (claims.check_lines, start of stage_transform; and pytest).
+# To fix: check the claim, then add or update the entry here with its basis and the new `line`
+# (the error message prints it). Entries for lines that no longer carry a word fail too.
+#
+# Covers why_it_matters.yaml, every curated editorial, comparisons.yaml's paragraphs (comparison) and
+# its answer lines (answer).
+
+why_it_matters:
+  acetaldehyde: {words: ["first"], basis: science, line: "a52037762dc3",
+    why: "\"First turns into\": ethanol is oxidised to acetaldehyde, then to acetate (standard biochemistry)."}
+  acetaminophen: {words: ["first"], basis: history, line: "684e0c27d9b5",
+    why: "\"First made\": Morse, 1878. Datable history."}
+  acetylcholine: {words: ["first"], basis: history, line: "6366039fa250",
+    why: "Loewi (1921) and Dale: the first neurotransmitter identified (1936 Nobel Prize)."}
+  adapalene: {words: ["first"], basis: history, line: "a52c1b01ffa9",
+    why: "Differin Gel 0.1%, FDA OTC switch July 2016, the first retinoid sold OTC in the US."}
+  albumin: {words: ["most"], basis: science, line: "e90c3c9d92d1",
+    why: "Albumin is the most abundant plasma protein, about 55 percent of it (standard physiology)."}
+  allantoin: {words: ["most"], basis: science, line: "22965fb67181",
+    why: "Most mammals oxidise uric acid to allantoin with uricase; humans and other apes lack it (standard biochemistry)."}
+  allopregnanolone: {words: ["first"], basis: history, line: "adcf0a57f86a",
+    why: "Brexanolone (Zulresso), FDA March 2019, the first drug approved specifically for postpartum depression."}
+  alpha-linolenic-acid: {words: ["only"], basis: science, line: "0cb3e72c6337",
+    why: "Conversion of ALA to EPA and DHA is only a few percent (standard nutrition science); \"only\" ranks nothing."}
+  alpha-pinene: {words: ["most"], basis: science, line: "eb1558140cd1",
+    why: "Alpha-pinene is commonly described as the most widely distributed terpene in nature, and the main component of turpentine (standard chemistry)."}
+  aluminium: {words: ["always"], basis: science, line: "c55c894caa30",
+    why: "Aluminium always carries a passivating oxide film in air (standard chemistry)."}
+  amygdalin: {words: ["never"], basis: history, line: "ae145b0f5c43",
+    why: "\"Never shown to be\" a cancer cure: the NCI-sponsored trial (Moertel et al., NEJM 1982) found no benefit; FDA has never approved it."}
+  asparagine: {words: ["first"], basis: history, line: "4f6e83c6720f",
+    why: "Vauquelin and Robiquet, 1806: the first amino acid isolated. Datable history."}
+  beta-santalol: {words: ["most"], basis: science, line: "644213f80c4b",
+    why: "The santalols make up most of sandalwood oil, and (Z)-beta-santalol carries its characteristic odour (standard flavour chemistry)."}
+  bromazepam: {words: ["most"], basis: science, line: "b3da2edd9202",
+    why: "Most benzodiazepines carry chlorine, not bromine (standard medicinal chemistry)."}
+  caesium: {words: ["most"], basis: science, line: "34e67a8ec396",
+    why: "Caesium is the most electropositive and reactive of the stable metals (standard chemistry; francium is too scarce to test)."}
+  calcium-oxalate: {words: ["most"], basis: science, line: "13d07c1719f9",
+    why: "Calcium oxalate makes up most kidney stones (NIDDK; standard urology). A composition fact about stones, kept."}
+  californium: {words: ["only"], basis: ordinary, line: "f836774aa598",
+    why: "\"Only a few laboratories\" (Oak Ridge and Dimitrovgrad) ranks nothing."}
+  casein: {words: ["most"], basis: science, line: "b8612e32411e",
+    why: "Casein is about 80 percent of cow's milk protein (standard food chemistry)."}
+  cefalexin: {words: ["first"], basis: ordinary, line: "88b12ec08c5d",
+    why: "\"First-generation\" is the cephalosporin class name; it ranks nothing."}
+  cellulose: {words: ["most"], basis: science, line: "4617b8be3886",
+    why: "Cellulose is the most abundant organic polymer on earth (standard biochemistry)."}
+  chitin: {words: ["most"], basis: science, line: "f9d8e9062157",
+    why: "Chitin is commonly given as the second most abundant natural polysaccharide after cellulose (standard biochemistry)."}
+  chloramphenicol: {words: ["first"], basis: history, line: "dc41728e5b7a",
+    why: "First isolated in 1947 from Streptomyces venezuelae. Datable history."}
+  chlordiazepoxide: {words: ["first"], basis: history, line: "0e31cc804a11",
+    why: "Sternbach, 1955: chlordiazepoxide, the first benzodiazepine (marketed 1960). Datable history."}
+  chlorogenic-acid: {words: ["most"], basis: science, line: "ce07300a8421",
+    why: "Chlorogenic acids are the main phenolic compounds of coffee, up to about a tenth of the green bean's dry weight (standard food chemistry)."}
+  chlorpromazine: {words: ["first"], basis: history, line: "469c5ce7cfa5",
+    why: "Delay and Deniker, 1952: chlorpromazine, the first antipsychotic. Datable history."}
+  cimetidine: {words: ["first"], basis: history, line: "9eb8164a06df",
+    why: "Tagamet (1976) is widely recorded as the first drug to reach a billion dollars a year in sales, the first blockbuster. Datable history."}
+  cinnamaldehyde: {words: ["most"], basis: science, line: "99b65f91e217",
+    why: "Cinnamaldehyde is about 80 to 90 percent of cassia bark oil (standard flavour chemistry)."}
+  citrulline: {words: ["first"], basis: history, line: "1921e17f92b2",
+    why: "First isolated from watermelon juice by Koga and Odake, 1914. Datable history."}
+  clomipramine: {words: ["first"], basis: history, line: "c5cf69b92e66",
+    why: "Anafranil, FDA December 1989, the first medicine approved for OCD in the US."}
+  clonazepam: {words: ["most"], basis: science, line: "ce74dbd741fe",
+    why: "Clonazepam's half-life (30 to 40 h) is longer than most benzodiazepines' (standard pharmacology)."}
+  copper: {words: ["first"], basis: history, line: "a8386dc14847",
+    why: "Copper smelting at Belovode, about 5000 BCE, among the earliest; \"one of the first\" (Radivojevic et al. 2010)."}
+  cortisone: {words: ["first"], basis: history, line: "8c21aeb68c62",
+    why: "Hench, Kendall and Reichstein, 1950 Nobel Prize: cortisone, the first steroid medicine."}
+  cyclic-adenosine-monophosphate: {words: ["first"], basis: history, line: "e30deed9fddf",
+    why: "Sutherland, 1957, the first second messenger found; 1971 Nobel Prize."}
+  cyclophosphamide: {words: ["only"], basis: science, line: "7fd8c0210a47",
+    why: "\"Only becomes active after the liver\": cyclophosphamide is a prodrug activated by CYP2B6 (standard pharmacology)."}
+  daidzein: {words: ["only"], basis: science, line: "fae80bb9cb06",
+    why: "Only some people carry the gut bacteria that make equol (standard microbiology)."}
+  dapoxetine: {words: ["first"], basis: history, line: "60a0736333db",
+    why: "Priligy, approved in 2009 (Sweden and Finland), the first medicine for premature ejaculation."}
+  daraxonrasib: {words: ["most"], basis: science, line: "6ba187eeca83",
+    why: "RAS genes are mutated in about one in five human cancers, among the most frequently mutated oncogenes (standard oncology)."}
+  dehydroepiandrosterone: {words: ["most"], basis: science, line: "a20762ec0580",
+    why: "DHEA sulfate is the most abundant circulating steroid (standard endocrinology)."}
+  dexamethasone: {words: ["first"], basis: history, line: "19785a020b09",
+    why: "RECOVERY trial, June 2020: the first treatment shown to reduce deaths from severe COVID-19."}
+  dihydrocapsaicin: {words: ["most"], basis: science, line: "23c6c2f7f73d",
+    why: "Dihydrocapsaicin is the second most abundant capsaicinoid, after capsaicin (standard food chemistry)."}
+  domperidone: {words: ["never"], basis: history, line: "d19f5c99bff1",
+    why: "Domperidone has never been approved by the FDA (FDA import alert, 2004). A datable regulatory fact."}
+  epigallocatechin-gallate: {words: ["most"], basis: science, line: "5d8c9bb184d9",
+    why: "EGCG is the most abundant catechin in green tea (standard food chemistry)."}
+  ergothioneine: {words: ["only"], basis: science, line: "b5beee88079a",
+    why: "Ergothioneine is synthesised only by fungi and some bacteria; humans carry the transporter OCTN1 for it (standard biochemistry)."}
+  ethanethiol: {words: ["most"], basis: data, check: ethanethiol_tops_pungent, line: "bf695944564c",
+    why: "Our data: first on the Most pungent board by odour threshold (Nagata 2003)."}
+  flibanserin: {words: ["first"], basis: history, line: "b5bcd8ea74f4",
+    why: "Addyi, FDA August 2015, the first approved for hypoactive sexual desire disorder in premenopausal women."}
+  fluorine: {words: ["most"], basis: science, line: "e4aa28b7d836",
+    why: "Fluorine is the most electronegative and most reactive element (standard chemistry)."}
+  fluoxetine: {words: ["first"], basis: history, line: "3d162df689f5",
+    why: "Prozac, US 1987: the first SSRI to become a blockbuster. Datable history."}
+  francium: {words: ["most"], basis: science, line: "4021f8988d76",
+    why: "Francium is the second rarest naturally occurring element, after astatine (standard chemistry)."}
+  geosmin: {words: ["first"], basis: ordinary, line: "31012af50b56",
+    why: "\"The first drops of rain\" ranks nothing."}
+  germanium: {words: ["first"], basis: history, line: "e84cd91d090c",
+    why: "Bell Labs' 1947 point-contact transistor used germanium. Datable history."}
+  glucono-delta-lactone: {words: ["only"], basis: ordinary, line: "a78bfb790d50",
+    why: "\"Only once dissolved\" ranks nothing: GDL hydrolyses to gluconic acid in water."}
+  glutamic-acid: {words: ["most"], basis: science, line: "f75e6b762c51",
+    why: "Glutamate is the main excitatory neurotransmitter of the vertebrate brain (standard neuroscience)."}
+  glutamine: {words: ["most"], basis: science, line: "d5d129368010",
+    why: "Glutamine is the most abundant free amino acid in plasma and skeletal muscle (standard biochemistry)."}
+  haloperidol: {words: ["first"], basis: ordinary, line: "8616bd2776a6",
+    why: "\"First-generation\" is the antipsychotic class name; it ranks nothing."}
+  helium: {words: ["most", "only"], basis: science, line: "21371560449c",
+    why: "Helium is the second most abundant element in the universe and does not solidify at 1 atm at any temperature (standard chemistry)."}
+  homocapsaicin: {words: ["only"], basis: ordinary, line: "0d9ae132c7a7",
+    why: "\"Only a small share\" ranks nothing."}
+  imatinib: {words: ["first"], basis: history, line: "c98681b4246c",
+    why: "Gleevec, FDA 2001, the first targeted drug for CML. Datable history."}
+  imipramine: {words: ["first"], basis: history, line: "0d5bc13a3285",
+    why: "Kuhn, 1950s: imipramine, the first tricyclic antidepressant. Datable history."}
+  insulin: {words: ["first"], basis: history, line: "b0ff70273bfa",
+    why: "Humulin, FDA 30 October 1982, the first recombinant DNA medicine approved."}
+  iodine: {words: ["first"], basis: ordinary, line: "48d54e9b5406",
+    why: "\"First aid kit\" ranks nothing."}
+  iridium: {words: ["first"], basis: history, line: "b1433643ac88",
+    why: "Alvarez et al., Science 1980: the iridium anomaly at the K-Pg boundary first suggested the impact."}
+  isopropyl-alcohol: {words: ["first"], basis: ordinary, line: "1f46efe3cc56",
+    why: "\"First aid kit\" ranks nothing."}
+  lactose: {words: ["most"], basis: science, line: "ff99e2df52f6",
+    why: "About two thirds of adults worldwide are lactase non-persistent (standard human genetics, e.g. NIH Genetics Home Reference)."}
+  lenacapavir: {words: ["first"], basis: history, line: "65d6302355ab",
+    why: "Sunlenca (2022), the first capsid inhibitor approved."}
+  leucine: {words: ["most"], basis: science, line: "e795e7f42ac7",
+    why: "Leucine is the branched-chain amino acid that activates mTORC1, switching on muscle protein synthesis (standard physiology)."}
+  linezolid: {words: ["first"], basis: history, line: "7689b3787620",
+    why: "Zyvox, FDA 2000, the first oxazolidinone. Datable history."}
+  luteolin: {words: ["first"], basis: history, line: "d4a8ee43eff8",
+    why: "Luteolin was first extracted from weld (Reseda luteola), its dye source. Datable history."}
+  meprobamate: {words: ["first"], basis: history, line: "a6652fb93847",
+    why: "Miltown (1955), the first blockbuster psychotropic medicine. Datable history."}
+  mercury: {words: ["only"], basis: science, line: "199d915e71fa",
+    why: "Mercury is the only metal liquid at 25 C (melts at -38.8 C; standard chemistry)."}
+  metformin: {words: ["first"], basis: history, line: "5dd56a5a42ff",
+    why: "NICE guideline NG28 names standard-release metformin the first-line medicine for type 2 diabetes. A datable guideline."}
+  misoprostol: {words: ["first"], basis: history, line: "caf0ea57eaca",
+    why: "Misoprostol was first approved (1988) to prevent NSAID-induced gastric ulcers. Datable history."}
+  naratriptan: {words: ["most"], basis: science, line: "6f99a03f1da8",
+    why: "Naratriptan's onset is slower and its half-life (about 6 h) longer than most triptans' (standard pharmacology)."}
+  nebivolol: {words: ["most"], basis: science, line: "8826e6081e4d",
+    why: "Nebivolol, unlike most beta blockers, releases nitric oxide (standard pharmacology)."}
+  norethisterone: {words: ["first"], basis: history, line: "fe4ff295d4b2",
+    why: "Djerassi, Miramontes and Rosenkranz, 1951: one of the first progestins. Datable history."}
+  oleic-acid: {words: ["most"], basis: science, line: "a8a4dc852d53",
+    why: "Oleic acid is 55 to 83 percent of olive oil's fatty acids (Codex standard for olive oils)."}
+  oxalic-acid: {words: ["most"], basis: science, line: "979ba05b9cea",
+    why: "Calcium oxalate makes up most kidney stones, about three quarters (NIDDK; standard urology). A composition fact about stones, kept."}
+  paclitaxel: {words: ["first"], basis: history, line: "fcabcf3dc90c",
+    why: "First found in Pacific yew bark (Wall and Wani, 1971). Datable history."}
+  palmitic-acid: {words: ["most"], basis: science, line: "d6f22a6dfb84",
+    why: "Palmitic acid is the most common saturated fatty acid in the human body and the diet (standard biochemistry); 44 percent of palm oil."}
+  phenol: {words: ["first"], basis: history, line: "939dfd99a962",
+    why: "Lister, 1867: carbolic acid, the first surgical antiseptic. Datable history."}
+  phenytoin: {words: ["first"], basis: history, line: "831a271d7430",
+    why: "Merritt and Putnam, 1938: the first anticonvulsant found that did not sedate. Datable history."}
+  phosphocreatine: {words: ["first"], basis: ordinary, line: "6ef3e4cc353d",
+    why: "\"The first few seconds\" ranks nothing."}
+  piracetam: {words: ["first"], basis: history, line: "6ff64fafaaa8",
+    why: "Giurgea coined \"nootropic\" for piracetam in 1972. Datable history."}
+  pregnenolone: {words: ["first"], basis: science, line: "7b584d457baa",
+    why: "Cholesterol side-chain cleavage (CYP11A1) gives pregnenolone, the first steroid of steroidogenesis (standard biochemistry)."}
+  propranolol: {words: ["first"], basis: history, line: "b3606ae593d8",
+    why: "Propranolol (1964), the first clinically successful beta blocker; James Black's 1988 Nobel Prize."}
+  raspberry-ketone: {words: ["only"], basis: ordinary, line: "454f164034d6",
+    why: "\"Only one to four milligrams\" ranks nothing."}
+  remdesivir: {words: ["first"], basis: history, line: "fafd693dccfb",
+    why: "Veklury, FDA 22 October 2020, the first medicine approved in the US for COVID-19."}
+  resiniferatoxin: {words: ["most"], basis: data, check: rtx_tops_spiciest, line: "42b3e6949f1a",
+    why: "Our data: first on the Spiciest board at 16 billion SHU, a thousand times capsaicin's 16 million; it is also the most potent TRPV1 agonist known (standard pharmacology)."}
+  retinal: {words: ["first"], basis: science, line: "666d81614c11",
+    why: "Photoisomerisation of 11-cis-retinal is the first step of vision (standard biochemistry)."}
+  scopolamine: {words: ["first"], basis: history, line: "16b2ef1d1974",
+    why: "Transderm Scop, FDA December 1979, the first transdermal patch approved."}
+  selenium: {words: ["first"], basis: history, line: "8c6c9620d3ec",
+    why: "Selenium photoconductors coated the drums of the first commercial xerographic copiers (Xerox, 1949 and 1959). Datable history."}
+  selenocysteine: {words: ["first"], basis: ordinary, line: "82d952c2066b",
+    why: "\"Twenty-first\" counts amino acids; it ranks nothing."}
+  silicon: {words: ["most"], basis: science, line: "2c5425078747",
+    why: "Silicon is about 28 percent of the crust, second to oxygen; quartz is the commonest mineral of sand (standard geochemistry)."}
+  sodium-nitrate: {words: ["world's"], basis: history, line: "e42376094bbf",
+    why: "Chilean nitrate was the world's main traded nitrogen fertilizer and saltpetre source before Haber-Bosch (datable 19th to early 20th century history)."}
+  sorbic-acid: {words: ["first"], basis: history, line: "fc9651456c27",
+    why: "First isolated from rowan berries by von Hofmann, 1859. Datable history."}
+  spermidine: {words: ["first"], basis: history, line: "fbeaadf459be",
+    why: "\"First seen\": Leeuwenhoek's spermine crystals, 1678. Datable history."}
+  stevioside: {words: ["most"], basis: science, line: "4368ccfc271d",
+    why: "Stevioside is the most abundant steviol glycoside in the stevia leaf, about 5 to 10 percent of dry weight (standard food chemistry)."}
+  sumatriptan: {words: ["first"], basis: history, line: "6cb452f1fd4a",
+    why: "Sumatriptan (Imitrex, 1991), the first triptan. Datable history."}
+  suvorexant: {words: ["first"], basis: history, line: "395b686d00e0",
+    why: "Belsomra, FDA 2014, the first orexin receptor antagonist approved."}
+  suzetrigine: {words: ["first"], basis: history, line: "9abe3f6880f9",
+    why: "FDA news release, 30 January 2025: the first new class of pain medicine in more than 20 years."}
+  telmisartan: {words: ["most"], basis: science, line: "3c28c32f569f",
+    why: "Telmisartan's half-life (about 24 h) is the longest of the sartans (standard pharmacology)."}
+  triiodothyronine: {words: ["most"], basis: science, line: "408e170824d3",
+    why: "About 80 percent of T3 comes from peripheral deiodination of T4 (standard endocrinology)."}
+  trimethylglycine: {words: ["first"], basis: history, line: "51d2de58638b",
+    why: "Betaine was first isolated from sugar beet (Scheibler, 1869). Datable history."}
+  uracil: {words: ["only"], basis: ordinary, line: "5c8c4ac6409b",
+    why: "\"The only difference\" between uracil and thymine is one methyl group: a structural statement (our records' formulas)."}
+  uranium: {words: ["first"], basis: history, line: "f540f376b2f1",
+    why: "Uranium is the heaviest element found in quantity in nature; the 1945 bombs used uranium (Little Boy) and plutonium bred from it. Standard chemistry and datable history."}
+  urolithin-a: {words: ["only"], basis: science, line: "5f06a0dc6750",
+    why: "Only some people carry the gut bacteria that make urolithins (metabotypes A, B and 0; standard microbiology)."}
+  verapamil: {words: ["first"], basis: history, line: "6e39e7150276",
+    why: "Verapamil (1960s), one of the first calcium channel blockers. Datable history."}
+  viloxazine: {words: ["first"], basis: history, line: "53dcecfa4da4",
+    why: "Viloxazine was first sold in Europe in the 1970s as an antidepressant. Datable history."}
+  vitamin-b12: {words: ["only"], basis: science, line: "9be1a1797bba",
+    why: "Cobalamin is the only vitamin containing a metal, cobalt (standard biochemistry)."}
+  zidovudine: {words: ["first"], basis: history, line: "3c713ac29821",
+    why: "AZT, FDA March 1987, the first medicine approved for HIV."}
+
+editorial:
+  aspartame: {words: ["only"], basis: ordinary, line: "1d00c90a8174",
+    why: "\"Only a trace\" ranks nothing."}
+  glucose: {words: ["only"], basis: data, check: glucose_three_quarters_sweet, line: "64e701b5070c",
+    why: "Our data: glucose's relative sweetness is 0.74 (sweetness seed, HSDB)."}
+  naproxen: {words: ["most"], basis: ordinary, line: "c90d9c077f08",
+    why: "\"Most of a day\" ranks nothing; naproxen's half-life is about 14 h (its record)."}
+  nicotine: {words: ["only"], basis: data, check: nicotine_half_life_two_hours, line: "4f87d4f1184e",
+    why: "Our data: nicotine's half-life is 2.0 hours (its curated hook)."}
+  saccharin: {words: ["first"], basis: history, line: "68840dd386c2",
+    why: "Fahlberg, 1879: saccharin, the first artificial sweetener. Datable history."}
+
+comparison:
+  "aciclovir/valaciclovir": {words: ["first", "only"], basis: science, line: "c284753af281",
+    why: "\"First pass\" is the pharmacology term; aciclovir is activated only by viral thymidine kinase (standard pharmacology)."}
+  "adapalene/tretinoin": {words: ["first", "only"], basis: history, line: "1b25d0ae1bea",
+    why: "Differin OTC switch, July 2016, the first retinoid sold OTC in the US; tretinoin remains Rx there."}
+  "agar/gelatin": {words: ["only"], basis: ordinary, line: "6785ae3451f9",
+    why: "\"Only melts around 85 degrees\" ranks nothing."}
+  "amlodipine/lisinopril": {words: ["first"], basis: history, line: "90f34d85aee7",
+    why: "NICE NG136 and the 2017 ACC/AHA guideline list CCBs and ACE inhibitors as first-line. Datable guidelines."}
+  "atenolol/propranolol": {words: ["first"], basis: history, line: "49299b5d670c",
+    why: "Propranolol (1964), the first clinically successful beta blocker."}
+  "beta-carotene/retinol": {words: ["only"], basis: science, line: "59fb20ae358e",
+    why: "Beta-carotene's conversion to vitamin A is regulated by need (BCO1 feedback; standard nutrition science)."}
+  "betamethasone/dexamethasone": {words: ["first"], basis: history, line: "c486aa698b18",
+    why: "RECOVERY trial, June 2020: the first treatment shown to reduce deaths from severe COVID-19."}
+  "bupropion/sertraline": {words: ["most"], basis: ordinary, line: "b77486b44fa3",
+    why: "\"Most of what separates them\" ranks nothing beyond the two records."}
+  "calcium-carbonate/sodium-bicarbonate": {words: ["only"], basis: ordinary, line: "a76a6be63074",
+    why: "\"Reacts only as acid reaches it\" ranks nothing."}
+  "cannabidiol/cannabigerol": {words: ["most"], basis: science, line: "0179a726feec",
+    why: "CBGA is the precursor converted to THCA and CBDA, so little CBG remains in mature plants (standard plant biochemistry)."}
+  "celecoxib/ibuprofen": {words: ["only"], basis: ordinary, line: "afa37f087218",
+    why: "\"Prescription only\" ranks nothing (US status)."}
+  "cholesterol/testosterone": {words: ["most"], basis: science, line: "8d8c1614b70f",
+    why: "About three quarters of the body's cholesterol is made in the body (standard physiology)."}
+  "clonazepam/alprazolam": {words: ["most"], basis: history, line: "82cd6fc2b1c7",
+    why: "Both are Schedule IV under the UN 1971 Convention on Psychotropic Substances, so controlled across Europe; US Schedule IV."}
+  "cortisone/cortisol": {words: ["first"], basis: history, line: "11dc69cfe168",
+    why: "Hench, Kendall and Reichstein, 1950 Nobel Prize: cortisone, the first steroid medicine."}
+  "creatine/creatinine": {words: ["first"], basis: ordinary, line: "d5e020c2664d",
+    why: "\"The first seconds\" ranks nothing."}
+  "diltiazem/verapamil": {words: ["only"], basis: ordinary, line: "f8aa9d379793",
+    why: "\"Not only for\" ranks nothing."}
+  "diphenhydramine/cetirizine": {words: ["first"], basis: ordinary, line: "d81844d68436",
+    why: "\"First and second generation\" are antihistamine class names."}
+  "donepezil/memantine": {words: ["most"], basis: ordinary, line: "d94c2027793d",
+    why: "\"Making the most of\" is an idiom; it ranks nothing."}
+  "duloxetine/venlafaxine": {words: ["only"], basis: science, line: "440eb7bcf89d",
+    why: "Venlafaxine's norepinephrine reuptake inhibition appears only at higher concentrations (standard pharmacology)."}
+  "estradiol/progesterone": {words: ["first"], basis: ordinary, line: "1408f9c6a0bd",
+    why: "\"The first half of the cycle\" and \"its first ring\" rank nothing."}
+  "estradiol/testosterone": {words: ["first"], basis: ordinary, line: "eb45d1057b39",
+    why: "\"The first ring\" (the A ring) ranks nothing."}
+  "fluorouracil/uracil": {words: ["first"], basis: history, line: "a56328c18868",
+    why: "Heidelberger, 1957: fluorouracil, one of the first rationally designed anticancer drugs."}
+  "fluticasone-propionate/budesonide": {words: ["first", "most"], basis: science, line: "b1cfaadded29",
+    why: "Both undergo extensive first-pass hepatic metabolism, over 90 percent for budesonide (standard pharmacology)."}
+  "gamma-aminobutyric-acid/gabapentin": {words: ["only"], basis: science, line: "6c506f863f10",
+    why: "Gabapentin does not act on GABA receptors; it binds the alpha-2-delta subunit (standard pharmacology)."}
+  "gelatin/pectin": {words: ["only"], basis: ordinary, line: "1ac011daff48",
+    why: "\"The only option of the two\" compares two records; it ranks nothing beyond them."}
+  "glucose/glycogen": {words: ["only"], basis: science, line: "45e7fca6c598",
+    why: "Muscle lacks glucose-6-phosphatase, so its glycogen serves only the muscle (standard biochemistry)."}
+  "hydrogen-peroxide/isopropyl-alcohol": {words: ["first"], basis: ordinary, line: "ac10cdd1052a",
+    why: "\"First-aid cabinet\" ranks nothing."}
+  "hydroxyzine/diphenhydramine": {words: ["first", "only"], basis: ordinary, line: "2c8141ad16ee",
+    why: "\"First generation\" is a class name; \"prescription-only\" is US and UK status."}
+  "lactose/galactose": {words: ["most", "only"], basis: science, line: "d0b081be37e6",
+    why: "About two thirds of adults are lactase non-persistent (standard human genetics); \"differing only\" is structural."}
+  "liraglutide/semaglutide": {words: ["first"], basis: history, line: "3d4f3b5a5401",
+    why: "Victoza 2009, before Ozempic 2017. Datable history."}
+  "lisdexamfetamine/dextroamphetamine": {words: ["only"], basis: ordinary, line: "e8e7bc9183fd",
+    why: "\"Only part of that weight\" ranks nothing (computed from the records' weights)."}
+  "loratadine/cetirizine": {words: ["most"], basis: science, line: "f74c52ed581a",
+    why: "Desloratadine, the active metabolite, carries most of loratadine's activity (standard pharmacology)."}
+  "loratadine/diphenhydramine": {words: ["first", "most"], basis: science, line: "39f7b72fb3c6",
+    why: "\"First generation\" is a class name; second-generation antihistamines are non-sedating for most people at labelled amounts (standard pharmacology)."}
+  "melatonin/serotonin": {words: ["only"], basis: ordinary, line: "2d0fe5134610",
+    why: "\"Prescription-only\" ranks nothing (UK and EU status)."}
+  "melatonin/zolpidem": {words: ["only"], basis: ordinary, line: "d805562c82ce",
+    why: "\"Prescription-only\" ranks nothing (UK and EU status)."}
+  "meloxicam/ibuprofen": {words: ["only"], basis: ordinary, line: "28d9e4964164",
+    why: "\"Prescription only\" ranks nothing (US and UK status)."}
+  "metformin/semaglutide": {words: ["first", "only"], basis: history, line: "7cb8d6701757",
+    why: "NICE NG28 names metformin first-line; \"only slightly\" ranks nothing."}
+  "methylphenidate/amphetamine": {words: ["only"], basis: ordinary, line: "e1b05cf871cf",
+    why: "\"Rather than only preserving it\" ranks nothing."}
+  "monosodium-glutamate/sodium-chloride": {words: ["most"], basis: science, line: "099816d17f67",
+    why: "Computed from the formulas: sodium is about 12 percent of MSG monohydrate's mass against 39 percent of salt's."}
+  "nifedipine/amlodipine": {words: ["first"], basis: history, line: "c036f2c88e58",
+    why: "Nifedipine (1975) preceded amlodipine (1989). Datable history."}
+  "oleic-acid/linoleic-acid": {words: ["most"], basis: science, line: "4b306a2a2e19",
+    why: "Oleic acid is 55 to 83 percent of olive oil's fatty acids (Codex standard for olive oils)."}
+  "oxazepam/diazepam": {words: ["first"], basis: ordinary, line: "1e823b35b976",
+    why: "\"Its first breakdown product\" is a sequence; it ranks nothing."}
+  "palmitic-acid/stearic-acid": {words: ["first", "most"], basis: science, line: "5816dcce4ae1",
+    why: "Palmitic acid is the most common saturated fatty acid in diet and tissue, and the product of fatty acid synthase (standard biochemistry)."}
+  "quetiapine/olanzapine": {words: ["only"], basis: ordinary, line: "1c1c860554da",
+    why: "\"Prescription only\" ranks nothing."}
+  "sertraline/fluoxetine": {words: ["first"], basis: history, line: "192b9be5906e",
+    why: "Prozac, FDA 29 December 1987, the first SSRI approved in the US."}
+  "starch/cellulose": {words: ["only"], basis: ordinary, line: "f6db0b36a7ac",
+    why: "\"Only by hosting microbes\" ranks nothing."}
+  "sumatriptan/naratriptan": {words: ["first"], basis: history, line: "dd3b6c4d1e6b",
+    why: "Sumatriptan (1991) was the first triptan. Datable history."}
+  "temazepam/zopiclone": {words: ["never"], basis: history, line: "dc0d4277541c",
+    why: "Zopiclone has never been approved by the FDA; eszopiclone (Lunesta) was approved in 2004."}
+  "tetrahydrocannabinol/cannabidiol": {words: ["only"], basis: science, line: "5aecd89e7ca4",
+    why: "THC is a CB1 partial agonist; CBD does not activate CB1 (standard pharmacology)."}
+
+answer:
+  "agar/gelatin": {words: ["only"], basis: ordinary, line: "fff7e0c077f0",
+    why: "\"Melts only near 85 degrees\" ranks nothing."}
+  "beta-carotene/retinol": {words: ["only"], basis: science, line: "2e8ecd27cdd3",
+    why: "Beta-carotene's conversion to vitamin A is regulated by need (standard nutrition science)."}
+  "betamethasone/dexamethasone": {words: ["only"], basis: science, line: "1f981bf1f688",
+    why: "The two are C16 epimers: the 16-methyl group is beta in betamethasone and alpha in dexamethasone (standard chemistry)."}
+  "diphenhydramine/cetirizine": {words: ["first"], basis: ordinary, line: "3839a974de31",
+    why: "\"First generation\" is a class name."}
+  "estradiol/progesterone": {words: ["first"], basis: ordinary, line: "7ff35c1b43e4",
+    why: "\"The first half of the menstrual cycle\" ranks nothing."}
+  "ethanol/isopropyl-alcohol": {words: ["only"], basis: ordinary, line: "90f061efe582",
+    why: "\"Only ethanol is a drink\" ranks nothing beyond the two."}
+  "gamma-aminobutyric-acid/gabapentin": {words: ["never"], basis: science, line: "1df6d87fe94d",
+    why: "Gabapentin does not act on GABA receptors (standard pharmacology)."}
+  "hydrochlorothiazide/furosemide": {words: ["most"], basis: held, line: "b2abd3aa716b",
+    why: "Not edited (the page's description). Wrong: \"where most sodium is reabsorbed\"; the loop reabsorbs about a quarter, the proximal tubule about two thirds. Its paragraph is corrected. Listed for Garrett."}
+  "hydrogen-peroxide/sodium-hypochlorite": {words: ["only"], basis: science, line: "b153722a9c35",
+    why: "Hydrogen peroxide decomposes to water and oxygen only (standard chemistry)."}
+  "hydroxyzine/diphenhydramine": {words: ["only"], basis: ordinary, line: "150001fdd2f2",
+    why: "\"Prescription only\" ranks nothing (US status)."}
+  "lycopene/beta-carotene": {words: ["only"], basis: science, line: "d98a04fcbb5a",
+    why: "Of the two, only beta-carotene has terminal rings (standard chemistry)."}
+  "meloxicam/ibuprofen": {words: ["most", "only"], basis: held, line: "684614be1c54",
+    why: "Not edited (the page's description). \"Prescription only in most countries\" counts regulators our records do not cover; its paragraph now says the US and the UK. Listed for Garrett."}
+  "methane/propane": {words: ["only"], basis: science, line: "acd977b07198",
+    why: "Methane boils at -161.5 C at 1 atm, and its critical temperature (-82.6 C) means pressure alone cannot liquefy it at room temperature (standard chemistry)."}
+  "oxytocin/vasopressin": {words: ["only"], basis: science, line: "895364b10247",
+    why: "The two nonapeptides differ at positions 3 and 8 (standard biochemistry)."}
+  "serotonin/dopamine": {words: ["most"], basis: science, line: "9b4d85295df4",
+    why: "About 90 percent of the body's serotonin is in the gut's enterochromaffin cells (standard physiology)."}
+  "testosterone-enanthate/testosterone-cypionate": {words: ["only"], basis: ordinary, line: "a6a775809642",
+    why: "\"Differ only in the fatty tail\" is a structural statement."}
+  "tetrahydrocannabinol/cannabidiol": {words: ["only"], basis: science, line: "8c35ed6828b8",
+    why: "THC is a CB1 partial agonist; CBD does not activate CB1 (standard pharmacology)."}

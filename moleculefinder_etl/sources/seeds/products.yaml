@@ -81,7 +81,9 @@ products:
   - {slug: processed-snacks, name: "Processed snacks", kind: food, curated: processed-snacks}
   - {slug: whipped-cream, name: "Whipped cream", kind: food, curated: whipped-cream}
   - {slug: sugar-free-gum, name: "Sugar-free gum", kind: food, curated: sugar-free-gum}
-  - {slug: table-sugar, name: "Table sugar", kind: food, curated: table-sugar}
+  # table-sugar: retired by the copy sweep (2026-11). Garrett ruled on 2026-11-10 that glucose and fructose
+  # come off the Table sugar list (they are not in the sugar), which leaves sucrose alone, under the
+  # three-molecule gate; /whats-in/table-sugar answers 410 (web lib/gone.ts). /in/table-sugar stays.
   - {slug: stevia, name: "Stevia", kind: food, curated: stevia}
   - {slug: m-and-ms, name: "M&M's", kind: food, wikidata: Q739550}
   - {slug: smarties, name: "Smarties", kind: food, wikidata: Q1400476}

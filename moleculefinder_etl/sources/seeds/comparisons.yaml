@@ -54,9 +54,7 @@ caffeine/theophylline:
   answer: "Theophylline is caffeine minus one methyl group, and theophylline also relaxes airway muscle strongly enough to have been a long-standing asthma medicine."
   text: >
     The formulas show that one group, C7H8N4O2 against C8H10N4O2, and the two sit in the same
-    alkaloid family for that reason. Both block adenosine, but theophylline also relaxes
-    airway muscle strongly enough that it was used as an asthma medicine for most of the
-    twentieth century, which caffeine never was. It stays in the body longer, a half-life near
+    alkaloid family for that reason. Both block adenosine, but theophylline also relaxes airway muscle strongly enough that it was a standard asthma medicine for much of the twentieth century; caffeine's effect on the airways is weaker. It stays in the body longer, a half-life near
     8 hours against caffeine's 5. Tea carries both, with caffeine dominant and theophylline in
     traces, so a cup does not deliver a medicinal amount of either. Their reported oral LD50
     values are close, 192 mg/kg in rats for caffeine and 332 mg/kg in mice for theophylline,
@@ -69,9 +67,7 @@ nicotine/caffeine:
     Both are plant alkaloids that plants make to poison insects, and both are stimulants in
     people, but they act on completely different receptors. Nicotine binds acetylcholine
     receptors directly; caffeine works by blocking adenosine, the molecule that builds up
-    while you are awake and makes you feel sleepy. The habit-forming pull is not comparable:
-    nicotine is one of the most reinforcing drugs known, and caffeine produces a mild
-    dependence that shows up mostly as a headache when it stops. Nicotine also clears far
+    while you are awake and makes you feel sleepy. The habit-forming pull is not comparable: nicotine reaches the brain within seconds of a puff and is strongly reinforcing, and caffeine produces a mild dependence that shows up mostly as a headache when it stops. Nicotine also clears far
     faster, a half-life near 2 hours against caffeine's 5, which is part of why smoking is
     paced in minutes and coffee in hours. Their oral LD50 values in rats are almost identical
     at 188 and 192 mg/kg, which says nothing useful about how each is actually encountered.
@@ -105,8 +101,7 @@ taurine/caffeine:
 acetaminophen/ibuprofen:
   answer: "Ibuprofen is an NSAID that eases inflammation as well as pain, while acetaminophen acts mainly in the central nervous system and does little for inflammation."
   text: >
-    These are the two painkillers most households keep, and they are not the same kind of
-    drug. Ibuprofen is an NSAID: it blocks the COX enzymes throughout the body, which is why
+    Both are sold over the counter for pain and fever, as Tylenol and Advil, and they are not the same kind of drug. Ibuprofen is an NSAID: it blocks the COX enzymes throughout the body, which is why
     it reduces inflammation and swelling as well as pain. Acetaminophen, called paracetamol
     outside the US, acts mainly in the central nervous system and does very little for
     inflammation, which is why a sprain and a headache are not the same problem for it. The
@@ -160,8 +155,7 @@ celecoxib/ibuprofen:
     largely sparing COX-1, which is the enzyme that maintains the stomach lining and normal
     platelet function. That selectivity is the entire reason celecoxib exists, and it shows in
     the structure: a sulfonamide and a trifluoromethyl group on a pyrazole core, nothing like
-    ibuprofen's small propionic acid. Celecoxib is prescription only and ibuprofen is sold
-    over the counter, which is the most visible difference to a shopper. It is also nearly
+    ibuprofen's small propionic acid. Celecoxib is prescription only and ibuprofen is sold over the counter, which is the difference a shopper sees. It is also nearly
     twice the weight, 381.4 against 206.28.
 
 meloxicam/ibuprofen:
@@ -170,8 +164,7 @@ meloxicam/ibuprofen:
     Both are NSAIDs, and meloxicam is dosed once a day where ibuprofen is dosed through the
     day. The structures are not close: meloxicam is an oxicam built on a thiazine ring with a
     sulfur-containing core, while ibuprofen is a small propionic acid on a benzene ring, and
-    the weights differ accordingly at 351.4 against 206.28. Meloxicam is prescription only in
-    most countries and ibuprofen is not, which is the practical line between them. Both carry
+    the weights differ accordingly at 351.4 against 206.28. Meloxicam is prescription only in the United States and the United Kingdom, where ibuprofen is sold over the counter, and that is the practical line between them. Both carry
     the class effects NSAIDs share, on the stomach lining and on the kidneys, and neither
     selectivity nor dosing schedule removes those.
 
@@ -199,14 +192,12 @@ tramadol/oxycodone:
     Oxycodone is a straightforward semi-synthetic opioid derived from thebaine, closer in
     structure and in effect to morphine. Tramadol also depends heavily on a liver enzyme to
     become its active form, which is why its effect varies between people more than
-    oxycodone's does. Both are controlled substances in most countries, and both appear in
-    this catalog as prescription medicines rather than as anything found in a food.
+    oxycodone's does. Both are controlled substances in the United States and the United Kingdom, and both appear in this catalog as prescription medicines rather than as anything found in a food.
 
 codeine/tramadol:
   answer: "Codeine is a poppy alkaloid the liver turns into morphine, while tramadol is synthetic and also blocks serotonin and norepinephrine reuptake."
   text: >
-    Both are weak opioids that owe much of their effect to being converted by the liver into
-    something stronger, which is the most interesting thing they share. Codeine is a natural
+    Both are weak opioids that owe much of their effect to being converted by the liver into something stronger, so each is partly a carrier for the molecule it becomes. Codeine is a natural
     poppy alkaloid, morphine with a methyl group on one oxygen, and the enzyme CYP2D6 strips
     that group to make morphine. Tramadol is fully synthetic and unrelated in shape, and the
     same enzyme turns it into a metabolite with far more opioid activity than the parent. In
@@ -267,12 +258,11 @@ aspartame/saccharin:
 sucralose/stevioside:
   answer: "Sucralose is made in a factory from sugar and stevioside is extracted from the stevia leaf, and sucralose is the sweeter of the two."
   text: >
-    That is the difference most shoppers are actually asking about. Sucralose is sucrose with
+    Where each comes from is half the story; the molecules differ just as much. Sucralose is sucrose with
     three chlorines substituted in, indigestible and about 600 times as sweet as sugar.
     Stevioside is a steviol glycoside from the Stevia rebaudiana leaf, a much larger molecule
     at 804.9 against 397.6, around 300 times as sweet, and it carries a liquorice bitterness
-    in the aftertaste that sucralose does not have. Most commercial stevia products are
-    purified away from stevioside toward rebaudioside A precisely to lose that bitterness.
+    in the aftertaste that sucralose does not have. Stevia sweeteners are often purified away from stevioside toward rebaudioside A precisely to lose that bitterness.
     Both pass through largely unmetabolised, which is why both contribute essentially no
     calories.
 
@@ -305,9 +295,7 @@ stevioside/rebaudioside-a:
     That extra sugar unit is why rebaudioside A is the heavier molecule at 967.0 against
     804.9. Both are steviol glycosides: the same steviol core with different sugars hung off
     it. Stevioside is the more abundant compound in the raw leaf and around 300 times as sweet
-    as sugar, but it carries a liquorice bitterness in the finish. Rebaudioside A is the
-    cleaner tasting of the two and as sweet, near 300 times sugar, which is why most
-    commercial stevia products are purified toward it. Reading a stevia label as one
+    as sugar, but it carries a liquorice bitterness in the finish. Rebaudioside A is the cleaner tasting of the two and as sweet, near 300 times sugar, which is why stevia sweeteners are often purified toward it. Reading a stevia label as one
     ingredient hides this: the taste depends almost entirely on the ratio between these two.
 
 glucose/fructose:
@@ -624,8 +612,7 @@ collagen/gelatin:
 collagen/keratin:
   answer: "Collagen is a glycine-rich triple helix that strengthens skin, tendon and bone, while keratin is a cysteine-rich coil that makes hair and nail hard."
   text: >
-    These are the two structural proteins most people have heard of, and they build different
-    things by different means. Collagen is a triple helix that gives skin, tendon and bone
+    These are the proteins behind skin, tendon, hair and nail, and they build different things by different means. Collagen is a triple helix that gives skin, tendon and bone
     their tensile strength, and it is rich in glycine and proline. Keratin is a coiled coil
     packed with cysteine, and the sulfur bridges between those cysteines are what make hair,
     nail, horn and hoof hard and insoluble. That disulfide bonding is why hair can be
@@ -639,9 +626,7 @@ serotonin/dopamine:
   text: >
     Both are monoamine neurotransmitters built from an amino acid, dopamine from tyrosine and
     serotonin from tryptophan, and both are routinely oversimplified in popular writing.
-    Dopamine is most associated with motivation and the anticipation of reward, the wanting
-    rather than the liking, and it is also central to movement, which is what Parkinson's
-    disease depletes. Serotonin is spread more widely still, with the large majority of the
+    Dopamine is tied to motivation and the anticipation of reward, the wanting rather than the liking, and it is also central to movement, which is what Parkinson's disease depletes. Serotonin is spread more widely still, with the large majority of the
     body's supply in the gut rather than the brain, where it regulates motility. Neither is a
     happiness molecule, and the calling of one the reward chemical and the other the happiness
     chemical does not survive contact with the pharmacology. Serotonin is also the direct
@@ -822,10 +807,7 @@ cholecalciferol/ergocalciferol:
     They differ in a side chain, C27H44O against C28H44O. D3 is what human skin makes when
     ultraviolet B light hits 7-dehydrocholesterol, and it is also what comes from fish and
     lanolin. D2 is the fungal and plant version, made when the same light hits ergosterol,
-    which is why ultraviolet-treated mushrooms are sold as vitamin D enhanced. Both are
-    converted by the liver and kidney into the active hormone, but D3 raises and holds blood
-    levels of the storage form more effectively than D2 does, which is the practical reason
-    most supplements now use D3. D2 remains the vegan option and the historical form used to
+    which is why ultraviolet-treated mushrooms are sold as vitamin D enhanced. Both are converted by the liver and kidney into the active hormone, but D3 raises and holds blood levels of the storage form more effectively than D2 does, which is the practical reason many supplements now use D3. D2 remains the vegan option and the historical form used to
     fortify milk.
 
 beta-carotene/retinol:
@@ -853,8 +835,7 @@ lycopene/beta-carotene:
 lutein/zeaxanthin:
   answer: "Lutein and zeaxanthin are isomers that differ in one double bond; zeaxanthin sits at the centre of the eye's macula and lutein toward its edge."
   text: >
-    They share the formula C40H56O2, and they are the only carotenoids the eye concentrates in
-    the macula. That single bond changes how each orients in the retina: zeaxanthin sits at
+    They share the formula C40H56O2, and with meso-zeaxanthin, which the eye makes from lutein, they are the carotenoids the macula concentrates. That single bond changes how each orients in the retina: zeaxanthin sits at
     the very centre of the macula and lutein spreads more toward the periphery. Both absorb
     blue light and both are antioxidants, which is the basis of the interest in them for eye
     health. Dietary sources differ, with lutein highest in kale, spinach and other dark greens
@@ -865,9 +846,7 @@ quercetin/resveratrol:
   answer: "Quercetin is a flavonoid with three rings and five hydroxyl groups, common in onions and tea, while resveratrol is a simpler stilbene from grape skin."
   text: >
     Both are plant polyphenols sold as antioxidant supplements and they belong to different
-    classes. Quercetin is a flavonoid, a three-ring structure with five hydroxyl groups, and
-    it is one of the most abundant flavonoids in the ordinary diet, concentrated in onion
-    skin, capers, apples and tea. Resveratrol is a much simpler stilbene, two rings joined by
+    classes. Quercetin is a flavonoid, a three-ring structure with five hydroxyl groups, concentrated in onion skin, capers, apples and tea. Resveratrol is a much simpler stilbene, two rings joined by
     a double bond, found in grape skin, red wine and Japanese knotweed, and it became famous
     through the French paradox. Both are poorly absorbed and rapidly conjugated by the liver,
     which is the central difficulty in translating their laboratory activity into anything
@@ -878,9 +857,7 @@ quercetin/epigallocatechin-gallate:
   text: >
     Both are plant polyphenols with antioxidant reputations and they come from different
     chemical families. Quercetin is a flavonol with a flat, conjugated three-ring core and
-    five hydroxyl groups, widespread in onions, apples, capers and tea. Epigallocatechin
-    gallate is a flavan-3-ol from green tea specifically, much larger at 458.4 against 302.2,
-    and its extra gallate ester is what makes it the most studied compound in green tea. EGCG
+    five hydroxyl groups, widespread in onions, apples, capers and tea. Epigallocatechin gallate is a flavan-3-ol from green tea specifically, much larger at 458.4 against 302.2, and its extra gallate ester adds a fourth ring carrying three more hydroxyl groups. EGCG
     is also the more unstable of the two, oxidising readily in warm water and in the gut,
     which complicates dose comparisons between studies. Both bind proteins and metal ions
     readily, which is part of why both interfere with the absorption of iron from a meal.
@@ -979,8 +956,7 @@ loratadine/cetirizine:
     symptoms. Loratadine is a prodrug in effect: the liver converts much of it to
     desloratadine, which is what does most of the work, and that adds a step cetirizine does
     not have. Cetirizine is the heavier molecule at 388.9 against 382.9 and carries a
-    carboxylic acid where loratadine carries a carbamate ester. Both are sold over the counter
-    in most countries.
+    carboxylic acid where loratadine carries a carbamate ester. Both are sold over the counter in the United States and the United Kingdom.
 
 loratadine/diphenhydramine:
   answer: "Diphenhydramine, sold as Benadryl, enters the brain and causes drowsiness for a few hours, while loratadine, sold as Claritin, stays out and lasts a full day."
@@ -1012,9 +988,7 @@ hydroxyzine/diphenhydramine:
   text: >
     Both are first generation antihistamines that cross into the brain, and they are used for
     noticeably different things. Diphenhydramine is an over-the-counter allergy medicine and
-    sleep aid with a short duration, a few hours. Hydroxyzine lasts much longer, is
-    prescription-only in most countries, and is used for anxiety and itching as well as
-    allergy, partly because it also acts on serotonin receptors. Hydroxyzine is the heavier
+    sleep aid with a short duration, a few hours. Hydroxyzine lasts much longer, is prescription-only in the United States and the United Kingdom, and is used for anxiety and itching as well as allergy, partly because it also acts on serotonin receptors. Hydroxyzine is the heavier
     molecule at 374.9 against 255.35 and carries a piperazine ring where diphenhydramine has a
     simple dimethylamine. Cetirizine, the common non-drowsy antihistamine, is actually
     hydroxyzine's own metabolite with that ring capped by a carboxylic acid.
@@ -1054,14 +1028,12 @@ sertraline/fluoxetine:
     level falls very slowly when it stops. Sertraline carries two chlorines on a naphthalene
     core instead and clears in a day or two. That difference shapes how each behaves at the
     edges: fluoxetine is the more forgiving of a missed dose and the harder to stop cleanly,
-    sertraline the reverse. Fluoxetine was the first SSRI to reach the market, in 1987 as
-    Prozac, and sertraline followed as Zoloft and is now among the most prescribed medicines
-    in the world.
+    sertraline the reverse. Fluoxetine was the first SSRI approved in the United States, in 1987 as Prozac, and sertraline followed as Zoloft in 1991.
 
 sertraline/escitalopram:
   answer: "Both are SSRIs, but escitalopram is far more selective for the serotonin transporter, while sertraline also acts on the dopamine transporter."
   text: >
-    These are the two most prescribed SSRIs. Sertraline also has meaningful activity at the
+    They block the same transporter, but not equally cleanly. Sertraline also has meaningful activity at the
     dopamine transporter and at sigma receptors, which escitalopram essentially lacks.
     Escitalopram is the isolated active half of citalopram, so it is a single-isomer molecule
     where sertraline is not, and it is the heavier at 324.4 against 306.2. In practice their
@@ -1312,10 +1284,7 @@ metoprolol/propranolol:
 hydrochlorothiazide/furosemide:
   answer: "Furosemide is a strong loop diuretic acting where most sodium is reabsorbed, while hydrochlorothiazide acts further along the kidney tubule and is gentler."
   text: >
-    Both are diuretics, and where each acts decides how strong it is. Furosemide is a loop
-    diuretic, blocking sodium reabsorption in the thick ascending limb where the bulk of it
-    happens, so it produces a large and fast urine output and is used for fluid overload in
-    heart failure. Hydrochlorothiazide acts further along in the distal tubule, where much
+    Both are diuretics, and where each acts decides how strong it is. Furosemide is a loop diuretic, blocking sodium reabsorption in the thick ascending limb, which takes back about a quarter of the filtered sodium, so it produces a large and fast urine output and is used for fluid overload in heart failure. Hydrochlorothiazide acts further along in the distal tubule, where much
     less sodium is available to block, so it is gentler and is used for ongoing blood pressure
     control. They also differ on calcium: thiazides retain it and loop diuretics lose it,
     which matters for bone and for kidney stones. Furosemide is the heavier at 330.7 against
@@ -1340,10 +1309,7 @@ semaglutide/tirzepatide:
     Both are injectable peptides that copy gut hormones. Semaglutide is a GLP-1 receptor
     agonist; tirzepatide is a dual agonist, hitting both GIP and GLP-1 receptors, which is the
     basis for the larger average weight loss reported in head-to-head trials. Both carry a
-    fatty acid chain that binds albumin and stretches their action to about a week. They are
-    the two largest molecules in this catalog by a wide margin, semaglutide at 4114 and
-    tirzepatide at 4813, so both are chains rather than small molecules and neither survives
-    the stomach in its ordinary form. Semaglutide is sold as Ozempic and Wegovy, tirzepatide
+    fatty acid chain that binds albumin and stretches their action to about a week. Both weigh more than 4000, semaglutide at 4114 and tirzepatide at 4813, about ten times a typical small-molecule medicine, so both are chains and neither survives the stomach in its ordinary form. Semaglutide is sold as Ozempic and Wegovy, tirzepatide
     as Mounjaro and Zepbound.
 
 # ── Skin, hair and infection ───────────────────────────────────────────────────
@@ -1481,8 +1447,7 @@ oleic-acid/linoleic-acid:
     sunflower and corn oil go rancid faster than olive oil and why olive oil keeps longer on a
     shelf and holds up to moderate heat. Linoleic acid is essential: the human body cannot
     introduce a double bond that far along the chain, so it must come from food, while oleic
-    acid the body makes for itself. Oleic acid is most of olive oil and is why it stays liquid
-    in a fridge where butter does not.
+    acid the body makes for itself. Oleic acid is most of olive oil, and the kink its double bond puts in the chain is why olive oil pours at room temperature where butter stays firm.
 
 palmitic-acid/stearic-acid:
   answer: "Stearic acid is two carbons longer than palmitic acid, so it melts at a higher temperature, and unlike palmitic acid it has little effect on blood cholesterol."
@@ -1612,9 +1577,7 @@ fluticasone-propionate/budesonide:
 ramipril/lisinopril:
   answer: "Ramipril is a prodrug the liver must convert into ramiprilat, while lisinopril is active as swallowed and leaves the body unchanged."
   text: >
-    Ramipril and lisinopril are ACE inhibitors, two of the most widely prescribed blood
-    pressure medicines, and both descend from a peptide found in the venom of a Brazilian pit
-    viper. The main chemical difference is that ramipril is a prodrug: it is an ethyl ester
+    Ramipril and lisinopril are ACE inhibitors, and both descend from a peptide found in the venom of a Brazilian pit viper. The main chemical difference is that ramipril is a prodrug: it is an ethyl ester
     that the liver must cut to make ramiprilat, the active form, while lisinopril is active as
     swallowed. Lisinopril is also unusual in its class for not being processed by the liver at
     all, and it leaves the body unchanged in urine. Their formulas are C23H32N2O5 at 416.5 and
@@ -1629,9 +1592,7 @@ nifedipine/amlodipine:
     difference that matters is time: amlodipine has a half-life of well over a day, while
     nifedipine clears within hours, which is why nifedipine is mostly made in slow-release
     forms. Amlodipine carries a chlorine and a longer side chain, C20H25ClN2O5 at 408.9, while
-    nifedipine carries a nitro group, C17H18N2O6 at 346.3. Nifedipine came first, in the
-    1970s, and amlodipine followed in the late 1980s to become one of the most prescribed
-    medicines in the world. Both are prescription medicines, sold as Adalat and Procardia, and
+    nifedipine carries a nitro group, C17H18N2O6 at 346.3. Nifedipine came first, in the 1970s, and amlodipine followed in the late 1980s. Both are prescription medicines, sold as Adalat and Procardia, and
     as Norvasc.
 
 diltiazem/verapamil:
@@ -1647,7 +1608,7 @@ diltiazem/verapamil:
 atenolol/propranolol:
   answer: "Propranolol blocks beta receptors in the heart, lungs and vessels and enters the brain, while atenolol prefers the heart's receptors and barely enters it."
   text: >
-    Propranolol was the first beta blocker. Atenolol is also far more water-soluble, so it
+    Propranolol was the first beta blocker to succeed as a medicine, in the 1960s. Atenolol is also far more water-soluble, so it
     barely crosses into the brain, while propranolol enters readily, which is part of why
     propranolol is used for tremor, migraine prevention and the physical side of stage fright.
     Their formulas are C14H22N2O3 at 266.3 and C16H21NO2 at 259.3. Atenolol leaves the body
@@ -1714,9 +1675,7 @@ tamoxifen/letrozole:
 ropinirole/pramipexole:
   answer: "Ropinirole is an indolone processed by the liver, while pramipexole carries a sulfur in an aminothiazole ring and leaves largely unchanged through the kidneys."
   text: >
-    Ropinirole and pramipexole are the two dopamine agonists most used for Parkinson's disease
-    and restless legs syndrome, and both act on the D2 and D3 dopamine receptors directly
-    rather than being turned into dopamine like L-DOPA. They are not built alike: ropinirole,
+    Ropinirole and pramipexole are dopamine agonists used for Parkinson's disease and restless legs syndrome, and both act on the D2 and D3 dopamine receptors directly rather than being turned into dopamine like L-DOPA. They are not built alike: ropinirole,
     C16H24N2O at 260.4, is an indolone, while pramipexole, C10H17N3S at 211.3, carries a
     sulfur in an aminothiazole ring. Ropinirole is processed by the liver, while pramipexole
     leaves the body largely unchanged through the kidneys. Both labels list the same

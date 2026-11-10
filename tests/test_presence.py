@@ -193,7 +193,9 @@ def test_the_loaders_still_hand_out_slugs():
 # ── the real seeds and the committed snapshot ───────────────────────────────
 def test_every_real_seed_entry_is_marked():
     marks = presence.load_marks()                  # raises, naming every problem, if one is not
-    assert len(marks["food"]) >= 329 and len(marks["product"]) >= 83 and len(marks["world"]) >= 60
+    # 329 food and 60 world entries at phase 1; the copy sweep (phase 2) removed four food rows (tannic acid
+    # from tea and wine, glucose and fructose from table sugar) and three world rows.
+    assert len(marks["food"]) >= 325 and len(marks["product"]) >= 83 and len(marks["world"]) >= 57
     for hub, entry in relationships.load_food_hubs().items():
         assert all((hub, s) in marks["food"] for s in entry["molecules"])
     for hub, entry in relationships.load_product_hubs().items():
@@ -223,12 +225,13 @@ def test_no_entry_is_not_yet_checked():
 
 
 def test_the_hand_mark_counts():
-    # Pinned so a changed mark shows up as a reviewed change (after Garrett's corrections, 2026-11-10).
+    # Pinned so a changed mark shows up as a reviewed change (after Garrett's corrections, 2026-11-10,
+    # and the copy sweep's removals, phase 2: seven "none" entries left their lists, 521 -> 514).
     from collections import Counter
     marks = _all_marks()
-    assert len(marks) == 521
+    assert len(marks) == 514
     assert Counter(m["value"] for _, _, m in marks) == {
-        "natural": 207, "added": 212, "formed": 57, "body": 17, "none": 28}
+        "natural": 207, "added": 212, "formed": 57, "body": 17, "none": 21}
     assert Counter(m["formed_when"] for _, _, m in marks if m["value"] == "formed") == {
         "fermentation": 33, "roasted": 7, "aged": 6, "baked": 5, "cured": 2, "cooked": 2, "crushed": 2}
 
@@ -244,10 +247,11 @@ def test_garretts_corrections_of_2026_11_10():
         "Made by microbes from the bean's amino acids as the cocoa ferments."
     assert m["food"][("cocoa", "phenethylamine")]["note"] == \
         "Made by microbes as the cocoa ferments; roasting forms more."
+    # Tannic acid (tea, wine, the wine world) and 2-nonenal (the after-rain world) were marked "due to
+    # be removed"; the copy sweep (phase 2) removed them: tests/test_copy_sweep.py holds them gone.
     for kind, key in (("food", ("tea", "tannic-acid")), ("food", ("wine", "tannic-acid")),
-                      ("world", ("glass-of-wine", "tannic-acid"))):
-        assert m[kind][key]["value"] == "none" and m[kind][key]["note"] == \
-            "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."
+                      ("world", ("glass-of-wine", "tannic-acid")), ("world", ("after-the-rain", "2-nonenal"))):
+        assert key not in m[kind], key
     for slug in ("benzene", "toluene"):
         assert m["product"][("fuel-and-flame", slug)] == {
             "value": "none", "note": "Partly from the crude oil and partly made in refining.",
@@ -258,8 +262,6 @@ def test_garretts_corrections_of_2026_11_10():
     for slug in ("potassium", "magnesium", "calcium", "sodium"):
         mark = m["wikidata"][("valio-valsa-milk-salt", slug)]
         assert mark["value"] == "none" and "not confirmed" in mark["note"]
-    assert m["world"][("after-the-rain", "2-nonenal")]["note"] == \
-        "No basis found for it here; this entry is due to be removed."
     for slug in ("allicin", "allyl-isothiocyanate"):
         assert m["world"][("spicy-dinner", slug)]["formed_when"] == "crushed"
     assert m["food"][("honey", "methylglyoxal")]["formed_when"] == "aged"

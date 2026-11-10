@@ -274,6 +274,12 @@ def test_product_membership_is_idempotent(monkeypatch):
     assert len(mols[0]["categories"]) == 1
 
 
+# A list that is one substance by nature, kept on purpose under the three-member floor. Table sugar is
+# sucrose: Garrett ruled on 2026-11-10 that glucose and fructose come off it (they are not in the sugar),
+# applied by the copy sweep (phase 2). /in/table-sugar keeps answering; its product page was retired.
+SINGLE_SUBSTANCE_LISTS = {("food_hubs", "table-sugar"): ["sucrose"]}
+
+
 def test_the_shipped_hub_files_name_only_real_molecules():
     """The real seeds against the real catalog: a hub naming a molecule with no page would
     publish a /in/ row that goes nowhere."""
@@ -285,6 +291,9 @@ def test_the_shipped_hub_files_name_only_real_molecules():
     known = {m["slug"] for m in json.loads(index.read_text())}
     for loader, label in ((rel.load_food_hubs, "food_hubs"), (rel.load_product_hubs, "product_hubs")):
         for hub, entry in loader().items():
+            if (label, hub) in SINGLE_SUBSTANCE_LISTS:
+                assert entry["molecules"] == SINGLE_SUBSTANCE_LISTS[(label, hub)], hub
+                continue
             assert len(entry["molecules"]) >= 3, f"{label}:{hub} has fewer than 3 members"
             unknown = [s for s in entry["molecules"] if s not in known]
             assert not unknown, f"{label}:{hub} names unknown molecule(s) {unknown}"

@@ -1,0 +1,455 @@
+# The copy sweep (build plan everyday chemistry 2026-11, phase 2): the record of every rewrite.
+#
+# Each entry is one curated line that claimed more than our data or a standard fact supports, or that
+# was simply wrong. `old` is filled in from git by scripts/copy_sweep_review.py (main's text), so this
+# file holds only what changed and why. `fails` says why the old wording does not stand; `basis` is
+# the support for every clause of the new one. The review page is built from this file.
+#
+# kinds: why_it_matters (sources/seeds/why_it_matters.yaml, the whole line), editorial
+# (sources/curated/<slug>.yaml, the whole paragraph), comparison (sources/seeds/comparisons.yaml,
+# one sentence of the pair's text; `old` is that sentence as written). Answer lines are never edited.
+
+why_it_matters:
+  acetaminophen:
+    new: "The pain and fever reliever sold as Tylenol and Panadol, called paracetamol outside the US. More than a century after it was first made, how it eases pain is still not fully understood."
+    fails: "\"The most-visited page on MoleculeFinder\" is a traffic figure the snapshot does not hold and the build cannot check; it will also go stale."
+    basis: "First made by Harmon Northrop Morse in 1878; its mechanism of action is still described as not fully understood in pharmacology references (e.g. StatPearls, Acetaminophen)."
+  ibuprofen:
+    new: "The anti-inflammatory painkiller sold as Advil and Motrin. It is sold as a mirror-image pair, and the body turns much of the inactive form into the active one."
+    fails: "\"One of the handful of drugs most households keep\" is a claim about what people do, not in our data."
+    basis: "Ibuprofen is marketed as the racemate; R-ibuprofen undergoes unidirectional chiral inversion to the active S form (roughly half to two thirds of it), standard pharmacology."
+  ammonia:
+    new: "The sharp, eye-watering smell of window cleaner and cat litter. Made from the nitrogen in air by the Haber-Bosch process, it is where synthetic fertilizer begins."
+    fails: "\"One of the most-manufactured chemicals on earth\" is a production ranking, not in our data."
+    basis: "Haber-Bosch fixes atmospheric N2 as NH3; synthetic nitrogen fertilizers (urea, ammonium nitrate, ammonium salts) are all made from that ammonia. Standard industrial chemistry."
+  urea:
+    new: "The body's way of packaging nitrogen for disposal in urine. Friedrich Wöhler made it from an inorganic salt, ammonium cyanate, in 1828: the textbook starting point of organic chemistry."
+    fails: "\"The first proof that life's molecules obey ordinary chemistry\" overstates it: historians of chemistry treat Wöhler's synthesis as a landmark, not a proof that ended vitalism."
+    basis: "Wöhler, Annalen der Physik und Chemie 1828: urea from ammonium cyanate. Its textbook standing is a datable fact of history."
+  sodium-chloride:
+    new: "Table salt. Sodium and chloride ions stack in a cubic lattice, which is why a grain of salt under a magnifier is a tiny cube."
+    fails: "\"The only rock people eat on purpose\" is a claim about what people do, and not true (clays and chalk are eaten too)."
+    basis: "NaCl crystallises in the rock-salt (face-centred cubic) structure, and halite grows as cubes; table salt grains are visibly cubic. Standard chemistry."
+  aspartame:
+    new: "The sweetener in blue packets, diet sodas and sugar-free gum, about 200 times sweeter than sugar. It is a dipeptide, so it carries a phenylalanine warning label."
+    fails: "\"Most diet sodas\" is a market-share claim, not in our data."
+    basis: "Our own lists: aspartame is on the Diet soda, Soft drinks and Sugar-free gum lists (products.json). Sweetness 200 is the sweetness seed's value. The phenylalanine statement is required on US labels (21 CFR 172.804)."
+  insulin:
+    new: "The pancreatic hormone that tells cells to take glucose out of the blood. Made by engineered bacteria as Humulin, it became the first genetically engineered medicine approved, in 1982."
+    fails: "Wrong: somatostatin (1977) was the first human protein made by engineered bacteria; insulin followed in 1978."
+    basis: "FDA approved Humulin (human insulin, recombinant DNA origin) on 30 October 1982, the first recombinant DNA drug approved. Datable history."
+  allura-red-ac:
+    new: "Red 40, the red of sports drinks, candy and breakfast cereal. It is an azo dye: two ringed halves joined by a nitrogen-nitrogen double bond."
+    fails: "\"The most-used red food dye in the United States\" is a usage ranking, not in our data."
+    basis: "Allura Red AC is a sulfonated azo dye: a substituted benzene and a naphthalene joined by -N=N-. Standard chemistry; the foods are the old line's own."
+  potassium-sorbate:
+    new: "The mold inhibitor in cheese, wine, and baked goods. It is the potassium salt of sorbic acid, and it dissolves readily in water where the acid itself barely does."
+    fails: "\"One of the most widely used food preservatives in the world\" is a usage ranking, not in our data."
+    basis: "Potassium sorbate dissolves at about 58 g per 100 ml of water; sorbic acid at about 0.16 g (Merck Index). Standard chemistry."
+  quercetin:
+    new: "A flavonoid pigment in onion skins, capers, and apple peel. Its name comes from quercetum, Latin for oak forest."
+    fails: "\"One of the most common polyphenols in an ordinary diet\" is a claim about what people eat, not in our data."
+    basis: "Named in 1857 from Latin quercetum (oak wood), after Quercus. Datable history of the name."
+  vanillin:
+    new: "The single molecule that carries the smell of vanilla. It can be made from clove oil, wood pulp or petrochemicals as well as from the orchid pod, and the molecule is the same."
+    fails: "\"Most of the world's supply is made from wood pulp or petrochemicals\" is a market claim, not in our data."
+    basis: "Vanillin is produced from eugenol (clove oil), lignin (wood pulp) and guaiacol (petrochemical) as well as extracted from Vanilla pods; the compound is identical. Standard industrial chemistry."
+  oleic-acid:
+    new: "The monounsaturated fat that makes up most of olive oil. The kink its one double bond puts in the chain is why olive oil pours at room temperature where butter stays firm."
+    fails: "\"Stays liquid in the fridge\" is not true: olive oil clouds and thickens in a refrigerator."
+    basis: "Oleic acid is 55 to 83 percent of olive oil's fatty acids (Codex Alimentarius standard for olive oils); a cis double bond lowers the melting point. Standard chemistry. Keeps \"most\" (see claims_allowed.yaml)."
+  dehydroepiandrosterone:
+    new: "DHEA, made by the adrenal glands and, as its sulfate, the most abundant steroid in human blood. The body converts it into testosterone and estrogen."
+    fails: "Imprecise: it is DHEA sulfate, not DHEA itself, that is the most abundant circulating steroid."
+    basis: "DHEA-S circulates at micromolar levels, higher than any other steroid (standard endocrinology). Keeps \"most\"."
+  spermidine:
+    new: "A polyamine named after spermine, its larger relative first seen as crystals in semen in 1678, and found in wheat germ, aged cheese, and soybeans. Cells need it to grow."
+    fails: "\"First isolated from semen\" is not established for spermidine; the semen crystals of 1678 were spermine."
+    basis: "Leeuwenhoek described spermine phosphate crystals in human semen in 1678; spermidine takes its name from spermine. Datable history."
+  linalool:
+    new: "The floral, slightly citrus note of lavender and coriander seed. It comes in two mirror-image forms that smell different: one woody and lavender-like, the other sweeter and floral."
+    fails: "\"One of the most common fragrance ingredients in soap and shampoo\" is a market claim, not in our data."
+    basis: "(R)-(-)-linalool (licareol, dominant in lavender) and (S)-(+)-linalool (coriandrol, dominant in coriander) differ in odour. Standard flavour chemistry."
+  cyclic-adenosine-monophosphate:
+    new: "The first second messenger ever found, which won Earl Sutherland the 1971 Nobel Prize. When a hormone knocks at the outside of a cell, this is the molecule that carries the message inward."
+    fails: "\"The cell's most famous second messenger\" is a popularity claim."
+    basis: "Sutherland discovered cAMP in 1957 and received the 1971 Nobel Prize in Physiology or Medicine for it. Datable history."
+  epigallocatechin-gallate:
+    new: "EGCG, the most abundant catechin in green tea, and a large part of the tea's bitter, drying taste."
+    fails: "\"The compound most green tea extracts are standardized to\" is a market claim, not in our data."
+    basis: "EGCG is the major catechin of green tea; catechins carry green tea's bitterness and astringency. Standard food chemistry. Keeps \"most\"."
+  eicosapentaenoic-acid:
+    new: "EPA, the other long omega-3 alongside DHA. Its name spells out its shape: a chain of twenty carbons (eicosa) with five double bonds (pentaene)."
+    fails: "\"The one most associated with the anti-inflammatory side of fish oil\" is a health association, not a fact our data holds."
+    basis: "Eicosapentaenoic acid, C20:5 n-3; the IUPAC-derived name encodes the 20 carbons and 5 double bonds. Our record's formula C20H30O2."
+  ubiquinol:
+    new: "The reduced, electron-carrying form of CoQ10. It holds two more hydrogens than ubiquinone, and passing them back and forth is how it ferries electrons in the mitochondria."
+    fails: "\"The form most supplements now advertise\" is a market claim, not in our data."
+    basis: "Ubiquinol (QH2) and ubiquinone (Q) interconvert by two electrons and two protons in the electron transport chain. Standard biochemistry."
+  carnosine:
+    new: "A small peptide made from beta-alanine and histidine that buffers the acid building up in working muscle. In food it comes from meat and fish, not from plants."
+    fails: "\"Meat is the only real dietary source\" leaves out fish (named in the build plan as a line that does not stand)."
+    basis: "Carnosine is an intracellular pH buffer in skeletal muscle; it occurs in animal tissue and not in plants. Standard biochemistry."
+  gallic-acid:
+    new: "The astringent phenol in oak galls, tea, and wine. Mixed with iron it makes iron gall ink, the ink the US Declaration of Independence was written in."
+    fails: "\"The ink most of the medieval world was written in\" overreaches: it was Europe's ink, while China and much of Asia wrote in carbon ink."
+    basis: "The US National Archives describes the Declaration of Independence as written in iron gall ink. Datable history."
+  tert-butylhydroquinone:
+    new: "TBHQ, the antioxidant that keeps frying oil and instant noodles from going rancid. It gives up a hydrogen atom to stop the chain reaction that turns fat stale."
+    fails: "\"One of the most effective preservatives for fats\" is an efficacy ranking, not in our data."
+    basis: "TBHQ is a phenolic radical scavenger: it donates its hydroxyl hydrogen to peroxyl radicals, ending lipid autoxidation chains. Standard chemistry."
+  myrcene:
+    new: "The earthy, hoppy, faintly mango note in hops, lemongrass, and cannabis. It can make up more than half of a hop's essential oil, though much of it boils away in the brew kettle."
+    fails: "\"One of the most abundant terpenes in beer\" is doubtful: much of the hop myrcene is lost in the boil."
+    basis: "Myrcene is commonly 30 to 60 percent or more of hop essential oil and is highly volatile, largely lost during wort boiling. Standard brewing chemistry."
+  sorbic-acid:
+    new: "First isolated from rowan berries in 1859, hence the name from Sorbus. It stops moulds and yeasts and works best in acidic foods such as cheese and wine."
+    fails: "\"One of the most-used mould inhibitors\" is a usage ranking, not in our data."
+    basis: "A. W. von Hofmann isolated it (as parasorbic acid) from rowan berry oil in 1859; its activity depends on the undissociated acid, so it works best at low pH. Standard food chemistry."
+  chromium-iii-picolinate:
+    new: "The chromium form sold in supplements for blood sugar and appetite. Three picolinate rings cradle one chromium atom, and the FDA calls the evidence for its blood sugar claim highly uncertain."
+    fails: "\"One of the most-studied and most-disputed mineral supplements\" is a popularity claim, not in our data."
+    basis: "Cr(pic)3 is a tris complex of chromium(III) with three picolinate ligands. FDA's 2005 qualified health claim letter: the relationship to insulin resistance is \"highly uncertain\"."
+  choline-chloride:
+    new: "The cheap, stable form of choline used to fortify animal feed and infant formula. Mixed with urea it forms a liquid that melts far below either solid, a deep eutectic solvent."
+    fails: "\"The largest-volume choline product made\" is a production ranking, not in our data."
+    basis: "Choline chloride and urea at 1:2 melt near 12 C, against about 302 C and 133 C for the two solids (Abbott et al., Chem. Commun. 2003). Standard chemistry."
+  acemannan:
+    new: "The long sugar chain that makes aloe vera gel slippery: mannose units, many carrying acetyl groups, which is where the name comes from."
+    fails: "\"The compound most of aloe's traditional uses are attributed to\" is a claim about belief and health, not in our data."
+    basis: "Acemannan is a beta-(1,4)-linked acetylated mannan. Standard carbohydrate chemistry."
+  raspberry-ketone:
+    new: "The compound that gives raspberries their smell, though a kilogram of the fruit holds only one to four milligrams of it."
+    fails: "\"One of the most expensive natural flavour extracts by weight\" is a price ranking, not in our data."
+    basis: "Raspberry ketone occurs in raspberries at roughly 1 to 4 mg per kg (flavour chemistry literature, e.g. Beekwilder et al. 2007). Keeps \"only\" in its plain sense."
+  p-menthane-3-8-diol:
+    new: "PMD, the active compound in oil of lemon eucalyptus, one of the repellents the US CDC lists beside DEET. It forms when the oil's citronellal closes into a ring under acid."
+    fails: "Wrong: \"the only plant-derived repellent that public health agencies rank with DEET\"; the CDC also lists 2-undecanone, from wild tomato (named in the build plan)."
+    basis: "CDC lists DEET, picaridin, IR3535, oil of lemon eucalyptus, PMD and 2-undecanone. PMD forms from citronellal by acid-catalysed cyclisation (Prins-type). Standard chemistry."
+  rebaudioside-a:
+    new: "A sweet compound of the stevia leaf, about 300 times sweeter than sugar, with less of stevioside's liquorice bitterness. It carries one more glucose than stevioside does."
+    fails: "\"The best-tasting\" is an opinion and \"the one most stevia products are purified to\" a market claim, neither in our data."
+    basis: "Sweetness 300 is the sweetness seed's value. Rebaudioside A is stevioside with a fourth glucose on the C-13 sugar. Standard chemistry."
+  sodium-lauryl-sulfate:
+    new: "SLS, the detergent that makes shampoo, toothpaste, and dish soap foam. It irritates skin so predictably that researchers use it as the standard irritant when testing the skin barrier."
+    fails: "\"The most common cause of a foaming product irritating skin\" is a health-outcome ranking, not in our data."
+    basis: "SLS is the reference irritant in skin irritation research (ESCD guideline, Tupker et al. 1997). Standard dermatology."
+  triclosan:
+    new: "The antibacterial once common in liquid soaps, banned from consumer hand soap in the United States in 2016 for lack of proven benefit."
+    fails: "\"Once in most liquid soaps\" is a market claim, not in our data."
+    basis: "FDA final rule, September 2016 (81 FR 61106): triclosan and 18 other actives not generally recognised as safe and effective in consumer antiseptic washes."
+  sertraline:
+    new: "The SSRI antidepressant sold as Zoloft, used for depression, anxiety and OCD. It blocks the pump that pulls serotonin back into nerve cells, so more stays in the gap between them."
+    fails: "\"One of the most prescribed medicines in the world\" is a prescribing ranking, not in our data."
+    basis: "Sertraline inhibits SERT, the serotonin reuptake transporter. Standard pharmacology."
+  mercury:
+    new: "The only metal that is liquid at room temperature, the silver column in old thermometers and barometers, now largely designed out of them because its vapour is toxic. Element 80."
+    fails: "\"Once in every thermometer\" is not true (alcohol thermometers are as old)."
+    basis: "Mercury melts at -38.8 C; the only other metals near liquid (caesium, gallium) melt near 29 C. Keeps \"only\"."
+  tirzepatide:
+    new: "A dual GIP and GLP-1 peptide for type 2 diabetes and weight loss, sold as Mounjaro and Zepbound. A fatty chain on its 39 amino acids lets it ride on albumin in the blood for days."
+    fails: "Wrong in our own data: tesamorelin (5,136) and insulin (5,808) both outweigh tirzepatide (4,813) on this site."
+    basis: "Tirzepatide is a 39-amino-acid peptide with a C20 fatty diacid on lysine 20 that binds albumin; half-life about 5 days (FDA label, Mounjaro)."
+  copper:
+    new: "One of the first metals people smelted, more than seven thousand years ago, and the reason electricity is affordable to move. It is also a trace nutrient and a surface that kills bacteria. Element 29."
+    fails: "\"The first metal people smelted\" is contested (smelted lead may be as old); the earliest smelting evidence is debated."
+    basis: "Copper smelting at Belovode, Serbia, about 5000 BCE (Radivojevic et al. 2010). Datable history. \"On contact\" dropped: copper's kill takes minutes to hours."
+  amlodipine:
+    new: "A calcium channel blocker sold as Norvasc, used for high blood pressure and angina. Its half-life, 30 to 50 hours, is many times that of nifedipine, the older drug of its class."
+    fails: "\"Among the most prescribed medicines on earth\" is a prescribing ranking, not in our data."
+    basis: "Amlodipine half-life 30 to 50 h (FDA label, Norvasc); nifedipine about 2 h (FDA label, Procardia). Standard pharmacology."
+  propranolol:
+    new: "The first beta blocker to succeed as a medicine, used for high blood pressure, angina, tremor, migraine prevention and the physical side of stage fright. Its discovery won a Nobel Prize."
+    fails: "\"The first beta blocker\" is imprecise: pronethalol came first (1962) and was withdrawn."
+    basis: "James Black's pronethalol (1962) was followed by propranolol (1964), the first clinically successful beta blocker; Black's 1988 Nobel Prize. Datable history."
+  scopolamine:
+    new: "A nightshade alkaloid used against motion sickness, as a small patch worn behind the ear. In 1979 it became the first medicine the FDA approved as a skin patch."
+    fails: "\"Most familiar as the small patch\" is a claim about what people know."
+    basis: "Transderm Scop was approved by the FDA in December 1979, the first transdermal delivery system. Datable history."
+  amoxicillin:
+    new: "A penicillin antibiotic used for ear, chest, throat and dental infections. One extra hydroxyl group over ampicillin lets far more of it reach the blood when swallowed."
+    fails: "\"The penicillin antibiotic most likely to be in a child's medicine cupboard\" is a claim about what people do."
+    basis: "Amoxicillin is p-hydroxy ampicillin; oral bioavailability about 70 to 90 percent against about 40 percent for ampicillin. Standard pharmacology."
+  rosuvastatin:
+    new: "The cholesterol-lowering statin sold as Crestor. In enzyme tests it grips its target, HMG-CoA reductase, more tightly than the other statins do."
+    fails: "\"Among the most potent of its class\" reads as a clinical-effect ranking; the measured fact is enzyme binding."
+    basis: "Rosuvastatin has the lowest IC50 against HMG-CoA reductase of the statins tested (McTaggart et al. 2001; Istvan and Deisenhofer 2001)."
+  sulfuric-acid:
+    new: "The acid in a car battery, so thirsty for water that it chars sugar and paper on contact: it pulls their hydrogen and oxygen out as water and leaves black carbon behind."
+    fails: "\"The most-produced industrial chemical on earth\" is a production ranking, not in our data."
+    basis: "Concentrated sulfuric acid dehydrates carbohydrates (C12H22O11 to 12 C plus 11 H2O), leaving carbon: the classic sugar demonstration. Standard chemistry. (A first draft named its old name, oil of vitriol, but that is one of its display synonyms and would have put it in the page title.)"
+  silicon:
+    new: "The element under every chip and solar panel, and in the quartz of most sand. The second most abundant element in the earth's crust, after oxygen. Element 14."
+    fails: "\"Most of the sand on every beach\" is not true: carbonate and volcanic beaches are not quartz."
+    basis: "Silicon is about 28 percent of the crust by mass, second to oxygen (CRC Handbook); quartz is the commonest mineral of sand. Keeps \"most\"."
+  cobalt:
+    new: "The metal that made deep blue glass and glaze for three thousand years, sits at the centre of vitamin B12, and is in the cathodes of many lithium-ion batteries. Element 27."
+    fails: "\"Now runs most lithium batteries\" is a market claim, and cobalt-free LFP cells are a large share."
+    basis: "Cobalt is a cathode element in LCO, NMC and NCA lithium-ion chemistries. Standard chemistry."
+  glyphosate:
+    new: "The active ingredient in Roundup. It blocks EPSP synthase, an enzyme plants have and animals do not, and crops given a resistant form of that enzyme can be sprayed with it."
+    fails: "\"The most-used herbicide in the world\" is a usage ranking, not in our data."
+    basis: "Glyphosate inhibits 5-enolpyruvylshikimate-3-phosphate synthase of the shikimate pathway, absent in animals; glyphosate-tolerant crops carry CP4 EPSPS. Standard biochemistry."
+  phosphorus:
+    new: "The element that made matches strike, that farms spread as phosphate fertilizer, and that forms the backbone of DNA. Element 15."
+    fails: "\"Fertilises most of the world's crops\" is a usage claim, not in our data."
+    basis: "Phosphate fertilizers; the sugar-phosphate backbone of DNA; phosphorus in match heads. Standard chemistry."
+  nickel:
+    new: "The metal that makes stainless steel and rechargeable batteries. Sweat dissolves traces of it from jewellery, which is why EU rules cap how much an earring may release. Element 28."
+    fails: "\"The most common cause of contact allergy\" is a health-outcome ranking, not in our data."
+    basis: "EU REACH Annex XVII entry 27 limits nickel release from articles in prolonged skin contact (0.5 microgram per square cm per week; 0.2 for piercing posts). Datable regulation."
+  celecoxib:
+    new: "A non-steroidal anti-inflammatory sold as Celebrex. Its sulfonamide group fits a side pocket that the COX-2 enzyme has and COX-1 lacks, so it favours COX-2."
+    fails: "Wrong: \"targets only the COX-2 enzyme\"; celecoxib is selective, not exclusive, and \"gentler on the stomach\" is a health-outcome claim."
+    basis: "COX-2's Val523 (Ile in COX-1) opens a side pocket that accommodates the sulfonamide of diarylheterocycle inhibitors (Kurumbail et al., Nature 1996)."
+  radon:
+    new: "A radioactive noble gas that seeps from soil into basements. Denser than any other gaseous element, it gathers in low, closed rooms. Element 86."
+    fails: "\"The second leading cause of lung cancer after smoking\" is a health-outcome ranking, not in our data."
+    basis: "Radon gas density about 9.7 g/l at 0 C, the highest of the gaseous elements (CRC Handbook). Standard chemistry."
+  chlorpromazine:
+    new: "The first antipsychotic, introduced in 1952, which changed how psychiatric illness was treated. It came out of a search for a better antihistamine to calm patients before surgery."
+    fails: "\"Emptied a generation of asylums\" overstates one cause of deinstitutionalisation."
+    basis: "Henri Laborit used chlorpromazine, a phenothiazine from Rhone-Poulenc's antihistamine programme, in anaesthesia before Delay and Deniker's 1952 psychiatric use. Datable history. Keeps \"first\"."
+  gallium:
+    new: "A metal that melts in your hand at 30 Celsius, and the element behind the blue LED and the chips in many radio transmitters. Element 31."
+    fails: "\"Most high-frequency chips\" is a market claim, not in our data."
+    basis: "Gallium melts at 29.8 C; GaN blue LEDs (2014 Nobel Prize in Physics); GaAs and GaN radio-frequency amplifiers. Standard chemistry."
+  tantalum:
+    new: "A metal so corrosion-proof that it goes into surgical implants, and so good at holding charge in a thin oxide film that it fills the capacitors of phones and laptops. Element 73."
+    fails: "\"The capacitors of most phones\" is a market claim, not in our data."
+    basis: "Tantalum electrolytic capacitors use a Ta2O5 dielectric film; tantalum is biocompatible. Standard chemistry."
+  levothyroxine:
+    new: "The manufactured copy of the body's own thyroid hormone, taken when the thyroid does not make enough. Four iodine atoms make up nearly two thirds of its weight."
+    fails: "\"One of the most dispensed medicines anywhere\" is a prescribing ranking, not in our data."
+    basis: "Our record: C15H11I4NO4 at 776.9; four iodines 507.6, which is 65 percent. Computed from the formula."
+  hydrochlorothiazide:
+    new: "A thiazide diuretic, in use since 1959: it makes the kidney pass more salt, and water follows. It is often combined with another blood pressure medicine in one tablet."
+    fails: "\"One of the oldest and most prescribed\" is a prescribing ranking, not in our data."
+    basis: "FDA approval 1959 (HydroDIURIL); thiazides block the Na-Cl cotransporter in the distal tubule. Standard pharmacology."
+  rhodium:
+    new: "A rare platinum-group metal, used to plate white gold jewellery and, in car exhaust catalysts, to turn nitrogen oxides back into nitrogen. Element 45."
+    fails: "\"The most expensive precious metal\" is a price ranking that changes with the market."
+    basis: "Rhodium reduces NOx to N2 in three-way catalytic converters; rhodium plating on white gold. Standard chemistry."
+  maltodextrin:
+    new: "A short chain of glucose units cut from starch by acid or enzymes. It bulks up powders and thickens sauces, and it tastes barely sweet."
+    fails: "\"One of the most common things on an ingredients list\" is a frequency claim our labels could show but the build does not assert."
+    basis: "Maltodextrins are starch hydrolysates with a dextrose equivalent under 20, only slightly sweet (21 CFR 184.1444). Standard food chemistry."
+  protactinium:
+    new: "One of the rarest naturally occurring elements, a radioactive metal that exists mainly as a step in uranium's decay. Element 91."
+    fails: "\"Most expensive\" is a price ranking, not in our data."
+    basis: "Protactinium occurs at under a part per million in uranium ores, from U-235 and U-238 decay. Standard chemistry."
+  technetium:
+    new: "The lightest element with no stable form at all, made in reactors. As technetium-99m, with a six-hour half-life, it is the tracer in many nuclear medicine scans. Element 43."
+    fails: "\"Most nuclear medicine scans\" is a usage figure, not in our data."
+    basis: "Technetium has no stable isotope; Tc-99m half-life 6.0 h. Standard nuclear chemistry."
+  fluvoxamine:
+    new: "An SSRI antidepressant used mainly for OCD. In the United States, unlike the other SSRIs, it is approved for OCD and not for depression."
+    fails: "\"The first of its class approved for that use\" could not be confirmed: fluoxetine's OCD approval came in the same year."
+    basis: "US labelling of fluvoxamine (Luvox) carries OCD as its indication, not depression. Datable regulatory fact."
+  acrylonitrile-butadiene-styrene:
+    new: "ABS: the tough, matte plastic of LEGO bricks, keyboard keys and a common 3D printer filament. Three monomers give it hardness, toughness and gloss."
+    fails: "\"Most 3D printer filament\" is a market claim (PLA is the common one), not in our data."
+    basis: "LEGO bricks are ABS; ABS is a standard FDM filament. Standard materials fact."
+  californium:
+    new: "A synthetic element made in only a few laboratories, so intensely neutron-emitting that a few micrograms can start up a nuclear reactor. Element 98."
+    fails: "\"A gram of it is used to start nuclear reactors\" is wrong by about a millionfold: start-up sources hold micrograms."
+    basis: "Cf-252 emits about 2.3 million neutrons per second per microgram; it is used in reactor start-up sources. Standard nuclear chemistry. Keeps \"only\"."
+  clomipramine:
+    new: "A tricyclic antidepressant used chiefly for OCD, and in 1989 the first medicine the FDA approved for it."
+    fails: "\"One of the most effective medicines available\" is a health-outcome ranking, not in our data."
+    basis: "FDA approved Anafranil for OCD in December 1989, the first drug approved for OCD in the US. Datable history."
+  suzetrigine:
+    new: "A non-opioid painkiller approved in 2025 that blocks Nav1.8, a sodium channel found mainly in pain-sensing nerves; the FDA called it the first new class of pain medicine in over 20 years."
+    fails: "\"Found only in pain-sensing nerves\" overstates Nav1.8's distribution; \"in decades\" paraphrased the FDA loosely."
+    basis: "FDA news release, 30 January 2025 (Journavx): \"first ... in this new class of non-opioid pain medicines\", the first new class of pain medicine in more than 20 years."
+  levetiracetam:
+    new: "An anticonvulsant sold as Keppra. It binds SV2A, a protein on the tiny sacs that release nerve signals, a target no seizure medicine before it had used."
+    fails: "\"One of the most widely used seizure medicines\" is a usage ranking, not in our data."
+    basis: "Levetiracetam (approved 1999) was the first antiseizure drug shown to act on synaptic vesicle protein 2A (Lynch et al., PNAS 2004). Datable history."
+  doxorubicin:
+    new: "A cancer medicine sold as Adriamycin, named after the Adriatic Sea, near which the soil bacterium that makes it was found. Its deep red colour comes from that bacterium's ring system."
+    fails: "\"One of the most widely used chemotherapy drugs\" is a usage ranking, not in our data."
+    basis: "Streptomyces peucetius was isolated near Castel del Monte, Apulia; the drug was named for the Adriatic. Anthracycline chromophore. Datable history."
+  atenolol:
+    new: "A beta blocker sold as Tenormin. It mostly targets the heart's beta-1 receptors, and it dissolves in water rather than fat, so little of it reaches the brain."
+    fails: "\"For decades one of the most prescribed heart medicines\" is a prescribing ranking, not in our data."
+    basis: "Atenolol is beta-1 selective and hydrophilic, with low CNS penetration. Standard pharmacology."
+  testosterone-cypionate:
+    new: "An injectable testosterone sold as Depo-Testosterone. Its cyclopentyl tail makes it dissolve in oil and lets it release slowly from the injection site."
+    fails: "\"The most common injectable testosterone in the United States\" is a usage ranking, not in our data."
+    basis: "Testosterone 17-beta-cyclopentylpropionate in cottonseed oil, a depot ester (FDA label). Standard pharmacology."
+  simvastatin:
+    new: "A statin sold as Zocor. It is made from lovastatin, a statin produced by a fungus, by adding one methyl group."
+    fails: "\"Long one of the most prescribed cholesterol medicines\" is a prescribing ranking, not in our data."
+    basis: "Simvastatin is the 2,2-dimethylbutyrate analogue of lovastatin (one extra methyl). Standard medicinal chemistry."
+  deet:
+    new: "An insect repellent the US Army took into use in 1946. It does not kill mosquitoes, it jams the receptors they use to smell you."
+    fails: "\"The active ingredient in most insect repellents\" is a market claim, not in our data."
+    basis: "Developed by the USDA for the US Army, in military use from 1946 and registered for public use in 1957 (US EPA). Datable history."
+  fructose:
+    new: "Fruit sugar, the sweetest of the common sugars. It makes up half of table sugar and 42 to 55 percent of high-fructose corn syrup."
+    fails: "Wrong: \"most of high-fructose corn syrup\"; HFCS-42 is 42 percent fructose."
+    basis: "HFCS-42 and HFCS-55 by definition; sucrose is half fructose. \"Sweetest\": our sweetness seed (fructose 1.73 against sucrose 1, glucose 0.74, galactose 0.32, maltose 0.3, lactose 0.17)."
+
+  gelatin:
+    new: "Collagen boiled until its ropes unwind. It sets jelly, gives marshmallows their chew, and melts just below body heat, which is why jelly melts in the mouth and capsules open in the stomach."
+    fails: "\"The shell of most capsules\" is a market claim, not in our data."
+    basis: "Gelatin gels melt at about 30 to 35 C, below body temperature (standard food chemistry); hard gelatin capsules dissolve in warm gastric fluid."
+
+editorial:
+  caffeine:
+    new: "Caffeine works by impersonation: it fits the brain's receptors for adenosine, the sleepiness signal that builds up the longer you are awake, without switching them on. Coffee, tea and cocoa plants each evolved their own way of making it, and in the leaves it is a natural pesticide."
+    fails: "\"The world's most widely used psychoactive drug\" is a claim about what people do, and \"the only one routinely served to children\" is not something our data can show (named in the build plan)."
+    basis: "Caffeine is an adenosine A1/A2A receptor antagonist; adenosine accumulates during wakefulness (both standard pharmacology; our adenosine line says the same). Independent evolution of caffeine biosynthesis in coffee, tea and cacao: Denoeud et al., Science 2014; Huang et al., PNAS 2016. Insecticidal at plant concentrations: Nathanson, Science 1984."
+    candidates:
+      - pick: true
+        text: "Caffeine works by impersonation: it fits the brain's receptors for adenosine, the sleepiness signal that builds up the longer you are awake, without switching them on. Coffee, tea and cocoa plants each evolved their own way of making it, and in the leaves it is a natural pesticide."
+        why: "Keeps the adenosine idea and adds two facts a reader will repeat: the trick is impersonation, and three unrelated plants arrived at the same molecule separately."
+      - pick: false
+        text: "Caffeine blocks adenosine, the brain's own sleepiness signal, which is why a cup lifts you. Coffee and tea plants make it, cocoa makes a little beside its larger store of theobromine, and energy drinks have it added by the maker."
+        why: "Every clause from our own records: the adenosine line, and caffeine's presence marks (natural in coffee, tea and chocolate, added in energy drinks). Safer, less surprising."
+      - pick: false
+        plan: true
+        text: "Caffeine occurs naturally in coffee, tea and cocoa, is added to energy drinks and soft drinks, and is an active ingredient in pain relievers such as Excedrin."
+        why: "The build plan's proposal; Garrett found it too flat (2026-11-10). Not offered."
+  acetaminophen:
+    new: "Acetaminophen, sold as Tylenol or paracetamol, eases pain and fever without the stomach irritation of the NSAIDs. The liver turns a small share of each dose into a reactive by-product, NAPQI, and neutralises it with glutathione; in an overdose the glutathione runs out and NAPQI damages liver cells."
+    fails: "\"The most common drug in the medicine cabinet\" (what people keep), \"the leading cause of acute liver failure\" (a health-outcome ranking) and \"narrower than most people assume\" (what people think) are all named or covered by the build plan."
+    basis: "CYP2E1 oxidises about 5 to 10 percent of a dose to NAPQI, conjugated with glutathione; depletion leads to hepatocellular necrosis. Standard toxicology (StatPearls, Acetaminophen Toxicity)."
+
+comparison:
+  - pair: caffeine/theophylline
+    old: "Both block adenosine, but theophylline also relaxes airway muscle strongly enough that it was used as an asthma medicine for most of the twentieth century, which caffeine never was."
+    new: "Both block adenosine, but theophylline also relaxes airway muscle strongly enough that it was a standard asthma medicine for much of the twentieth century; caffeine's effect on the airways is weaker."
+    fails: "\"Which caffeine never was\": strong coffee was recommended for asthma in the nineteenth century (Salter, 1859)."
+    basis: "Theophylline as a bronchodilator from the 1930s; caffeine is a weaker bronchodilator (Cochrane review, Welsh et al. 2010). Standard pharmacology."
+  - pair: nicotine/caffeine
+    old: "The habit-forming pull is not comparable: nicotine is one of the most reinforcing drugs known, and caffeine produces a mild dependence that shows up mostly as a headache when it stops."
+    new: "The habit-forming pull is not comparable: nicotine reaches the brain within seconds of a puff and is strongly reinforcing, and caffeine produces a mild dependence that shows up mostly as a headache when it stops."
+    fails: "\"One of the most reinforcing drugs known\" is a ranking of a health outcome."
+    basis: "Inhaled nicotine reaches the brain in about 10 to 20 seconds (Benowitz, Handbook of Experimental Pharmacology 2009). Standard pharmacology."
+  - pair: acetaminophen/ibuprofen
+    old: "These are the two painkillers most households keep, and they are not the same kind of drug."
+    new: "Both are sold over the counter for pain and fever, as Tylenol and Advil, and they are not the same kind of drug."
+    fails: "\"The two painkillers most households keep\" is a claim about what people do."
+    basis: "Both are OTC monograph or NDA OTC products in the US; the brands are our records' curated brands."
+  - pair: celecoxib/ibuprofen
+    old: "Celecoxib is prescription only and ibuprofen is sold over the counter, which is the most visible difference to a shopper."
+    new: "Celecoxib is prescription only and ibuprofen is sold over the counter, which is the difference a shopper sees."
+    fails: "\"The most visible difference\" ranks a perception."
+    basis: "US status of each (Drugs@FDA)."
+  - pair: meloxicam/ibuprofen
+    old: "Meloxicam is prescription only in most countries and ibuprofen is not, which is the practical line between them."
+    new: "Meloxicam is prescription only in the United States and the United Kingdom, where ibuprofen is sold over the counter, and that is the practical line between them."
+    fails: "\"In most countries\" counts regulators our records do not cover."
+    basis: "Drugs@FDA (Rx) and the MHRA (POM) for meloxicam; ibuprofen OTC in both. The registers MoleculeFinder reads."
+  - pair: tramadol/oxycodone
+    old: "Both are controlled substances in most countries, and both appear in this catalog as prescription medicines rather than as anything found in a food."
+    new: "Both are controlled substances in the United States and the United Kingdom, and both appear in this catalog as prescription medicines rather than as anything found in a food."
+    fails: "\"In most countries\" does not hold for tramadol, which is not under international control."
+    basis: "US: tramadol Schedule IV (2014), oxycodone Schedule II. UK: tramadol Class C (2014), oxycodone Class A."
+  - pair: codeine/tramadol
+    old: "Both are weak opioids that owe much of their effect to being converted by the liver into something stronger, which is the most interesting thing they share."
+    new: "Both are weak opioids that owe much of their effect to being converted by the liver into something stronger, so each is partly a carrier for the molecule it becomes."
+    fails: "\"The most interesting thing they share\" is an opinion."
+    basis: "Codeine to morphine and tramadol to O-desmethyltramadol by CYP2D6. Standard pharmacology."
+  - pair: sucralose/stevioside
+    old: "That is the difference most shoppers are actually asking about."
+    new: "Where each comes from is half the story; the molecules differ just as much."
+    fails: "\"The difference most shoppers are actually asking about\" is a claim about what people want."
+    basis: "Leads into the paragraph's own structural facts (both records)."
+  - pair: sucralose/stevioside
+    old: "Most commercial stevia products are purified away from stevioside toward rebaudioside A precisely to lose that bitterness."
+    new: "Stevia sweeteners are often purified away from stevioside toward rebaudioside A precisely to lose that bitterness."
+    fails: "\"Most commercial stevia products\" is a market claim, not in our data."
+    basis: "High-purity steviol glycoside sweeteners are commonly rebaudioside A extracts (JECFA specifications). Loses the superlative."
+  - pair: stevioside/rebaudioside-a
+    old: "Rebaudioside A is the cleaner tasting of the two and as sweet, near 300 times sugar, which is why most commercial stevia products are purified toward it."
+    new: "Rebaudioside A is the cleaner tasting of the two and as sweet, near 300 times sugar, which is why stevia sweeteners are often purified toward it."
+    fails: "\"Most commercial stevia products\" is a market claim, not in our data."
+    basis: "Both 300 in the sweetness seed. Loses the superlative."
+  - pair: collagen/keratin
+    old: "These are the two structural proteins most people have heard of, and they build different things by different means."
+    new: "These are the proteins behind skin, tendon, hair and nail, and they build different things by different means."
+    fails: "\"Most people have heard of\" is a claim about what people know."
+    basis: "The paragraph's own facts that follow."
+  - pair: serotonin/dopamine
+    old: "Dopamine is most associated with motivation and the anticipation of reward, the wanting rather than the liking, and it is also central to movement, which is what Parkinson's disease depletes."
+    new: "Dopamine is tied to motivation and the anticipation of reward, the wanting rather than the liking, and it is also central to movement, which is what Parkinson's disease depletes."
+    fails: "\"Most associated\" ranks a reputation; the answer line already says \"tied to\"."
+    basis: "Berridge and Robinson's wanting/liking distinction; nigrostriatal dopamine loss in Parkinson's disease. Standard neuroscience."
+  - pair: cholecalciferol/ergocalciferol
+    old: "Both are converted by the liver and kidney into the active hormone, but D3 raises and holds blood levels of the storage form more effectively than D2 does, which is the practical reason most supplements now use D3."
+    new: "Both are converted by the liver and kidney into the active hormone, but D3 raises and holds blood levels of the storage form more effectively than D2 does, which is the practical reason many supplements now use D3."
+    fails: "\"Most supplements\" is a market claim, not in our data."
+    basis: "Tripkovic et al., Am J Clin Nutr 2012 (D3 raises 25(OH)D more than D2). Loses the superlative."
+  - pair: lutein/zeaxanthin
+    old: "They share the formula C40H56O2, and they are the only carotenoids the eye concentrates in the macula."
+    new: "They share the formula C40H56O2, and with meso-zeaxanthin, which the eye makes from lutein, they are the carotenoids the macula concentrates."
+    fails: "\"The only carotenoids\" leaves out meso-zeaxanthin, the third macular pigment."
+    basis: "Macular pigment is lutein, zeaxanthin and meso-zeaxanthin; meso-zeaxanthin forms from lutein in the retina (Shyam et al., PNAS 2017)."
+  - pair: quercetin/resveratrol
+    old: "Quercetin is a flavonoid, a three-ring structure with five hydroxyl groups, and it is one of the most abundant flavonoids in the ordinary diet, concentrated in onion skin, capers, apples and tea."
+    new: "Quercetin is a flavonoid, a three-ring structure with five hydroxyl groups, concentrated in onion skin, capers, apples and tea."
+    fails: "\"One of the most abundant flavonoids in the ordinary diet\" is a claim about what people eat."
+    basis: "Our record's formula C15H10O7 (five OH); the foods are the paragraph's own. Loses the superlative."
+  - pair: quercetin/epigallocatechin-gallate
+    old: "Epigallocatechin gallate is a flavan-3-ol from green tea specifically, much larger at 458.4 against 302.2, and its extra gallate ester is what makes it the most studied compound in green tea."
+    new: "Epigallocatechin gallate is a flavan-3-ol from green tea specifically, much larger at 458.4 against 302.2, and its extra gallate ester adds a fourth ring carrying three more hydroxyl groups."
+    fails: "\"The most studied compound in green tea\" is a popularity claim, and the gallate is not why."
+    basis: "The galloyl ester is a trihydroxybenzoyl (fourth) ring. Our records' weights. Standard chemistry."
+  - pair: loratadine/cetirizine
+    old: "Both are sold over the counter in most countries."
+    new: "Both are sold over the counter in the United States and the United Kingdom."
+    fails: "\"In most countries\" counts regulators our records do not cover."
+    basis: "US OTC (Claritin 2002, Zyrtec 2007); UK GSL/P."
+  - pair: hydroxyzine/diphenhydramine
+    old: "Hydroxyzine lasts much longer, is prescription-only in most countries, and is used for anxiety and itching as well as allergy, partly because it also acts on serotonin receptors."
+    new: "Hydroxyzine lasts much longer, is prescription-only in the United States and the United Kingdom, and is used for anxiety and itching as well as allergy, partly because it also acts on serotonin receptors."
+    fails: "\"In most countries\" counts regulators our records do not cover."
+    basis: "US Rx (Drugs@FDA), UK POM (MHRA)."
+  - pair: sertraline/escitalopram
+    old: "These are the two most prescribed SSRIs."
+    new: "They block the same transporter, but not equally cleanly."
+    fails: "\"The two most prescribed SSRIs\" is a prescribing ranking, not in our data."
+    basis: "Leads into the paragraph's own receptor facts (sertraline's dopamine transporter and sigma activity)."
+  - pair: sertraline/fluoxetine
+    old: "Fluoxetine was the first SSRI to reach the market, in 1987 as Prozac, and sertraline followed as Zoloft and is now among the most prescribed medicines in the world."
+    new: "Fluoxetine was the first SSRI approved in the United States, in 1987 as Prozac, and sertraline followed as Zoloft in 1991."
+    fails: "Wrong: zimelidine (1982) and fluvoxamine (1983) reached European markets first; \"among the most prescribed\" is a prescribing ranking."
+    basis: "FDA approvals: Prozac 29 December 1987, Zoloft 30 December 1991. Datable history."
+  - pair: semaglutide/tirzepatide
+    old: "They are the two largest molecules in this catalog by a wide margin, semaglutide at 4114 and tirzepatide at 4813, so both are chains rather than small molecules and neither survives the stomach in its ordinary form."
+    new: "Both weigh more than 4000, semaglutide at 4114 and tirzepatide at 4813, about ten times a typical small-molecule medicine, so both are chains and neither survives the stomach in its ordinary form."
+    fails: "Wrong in our own data: inulin (6,179), insulin (5,808) and tesamorelin (5,136) are heavier."
+    basis: "Our records' weights; a typical oral small-molecule drug weighs about 300 to 500. Oral semaglutide needs an absorption enhancer (SNAC)."
+  - pair: oleic-acid/linoleic-acid
+    old: "Oleic acid is most of olive oil and is why it stays liquid in a fridge where butter does not."
+    new: "Oleic acid is most of olive oil, and the kink its double bond puts in the chain is why olive oil pours at room temperature where butter stays firm."
+    fails: "Not true: olive oil clouds and thickens in a refrigerator."
+    basis: "Codex standard for olive oils (oleic acid 55 to 83 percent); a cis double bond lowers the melting point. Keeps \"most\"."
+  - pair: ramipril/lisinopril
+    old: "Ramipril and lisinopril are ACE inhibitors, two of the most widely prescribed blood pressure medicines, and both descend from a peptide found in the venom of a Brazilian pit viper."
+    new: "Ramipril and lisinopril are ACE inhibitors, and both descend from a peptide found in the venom of a Brazilian pit viper."
+    fails: "\"Two of the most widely prescribed\" is a prescribing ranking, not in our data."
+    basis: "Teprotide from Bothrops jararaca led to captopril and the later ACE inhibitors. Datable history. Loses the superlative."
+  - pair: nifedipine/amlodipine
+    old: "Nifedipine came first, in the 1970s, and amlodipine followed in the late 1980s to become one of the most prescribed medicines in the world."
+    new: "Nifedipine came first, in the 1970s, and amlodipine followed in the late 1980s."
+    fails: "\"One of the most prescribed medicines in the world\" is a prescribing ranking, not in our data."
+    basis: "Nifedipine (Bayer, 1975); amlodipine (Pfizer, UK 1989, US 1992). Loses the superlative."
+  - pair: atenolol/propranolol
+    old: "Propranolol was the first beta blocker."
+    new: "Propranolol was the first beta blocker to succeed as a medicine, in the 1960s."
+    fails: "Imprecise: pronethalol came first (1962) and was withdrawn."
+    basis: "Propranolol, 1964 (James Black). Datable history."
+  - pair: ropinirole/pramipexole
+    old: "Ropinirole and pramipexole are the two dopamine agonists most used for Parkinson's disease and restless legs syndrome, and both act on the D2 and D3 dopamine receptors directly rather than being turned into dopamine like L-DOPA."
+    new: "Ropinirole and pramipexole are dopamine agonists used for Parkinson's disease and restless legs syndrome, and both act on the D2 and D3 dopamine receptors directly rather than being turned into dopamine like L-DOPA."
+    fails: "\"The two ... most used\" is a usage ranking, not in our data."
+    basis: "Both FDA-labelled for Parkinson's disease and RLS. Loses the superlative."
+  - pair: hydrochlorothiazide/furosemide
+    old: "Furosemide is a loop diuretic, blocking sodium reabsorption in the thick ascending limb where the bulk of it happens, so it produces a large and fast urine output and is used for fluid overload in heart failure."
+    new: "Furosemide is a loop diuretic, blocking sodium reabsorption in the thick ascending limb, which takes back about a quarter of the filtered sodium, so it produces a large and fast urine output and is used for fluid overload in heart failure."
+    fails: "Wrong (no claim word, found while sweeping): the bulk of sodium, about two thirds, is reabsorbed in the proximal tubule, not the loop."
+    basis: "Renal physiology: proximal tubule about 65 percent, thick ascending limb about 25 percent, distal tubule about 5 to 10 percent of filtered sodium."

@@ -26,7 +26,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
-from .transform import presence
+from .transform import presence, claims
 from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
@@ -307,6 +307,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     # The hand presence marks (2026-11-09), read and checked first: a curated entry with no mark or
     # a malformed one stops the build here, before any work, naming every problem.
     marks = presence.load_marks()
+    # The claim rule (copy sweep, 2026-11): a curated line carrying "only", "first", "most" and the rest
+    # needs its basis in claims_allowed.yaml, pinned to the line's exact text, or the build stops here.
+    claims.check_lines()
     canon = canon_stage.read_parquet()
     fetched_by_cid = {f["cid"]: f for f in json.loads(FETCHED.read_text())}
     curated_by_cid = _load_curated()
@@ -466,6 +469,9 @@ def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict
     ``guard=False`` only because ``snapshot_export.export`` runs the same guard itself.
     """
     boards = {slug: leaderboards.rank(slug, molecules) for slug in leaderboards.BOARDS}
+    # A line whose claim rests on our own data (claims_allowed.yaml, basis data) must still be true of
+    # this catalog: resiniferatoxin still first on Spiciest, ethanethiol still atop Most pungent, ...
+    claims.check_data_claims(molecules, boards)
     # Compiled here, against the whole catalog, so a curated pair naming a molecule that is
     # not in it fails the run instead of quietly exporting one fewer page.
     comparisons = relationships.build_comparisons(molecules)

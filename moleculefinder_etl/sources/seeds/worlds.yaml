@@ -78,7 +78,6 @@ worlds:
       - {slug: geosmin, presence: natural, presence_note: "Made by soil bacteria; rain lifts it into the air."}
       - {slug: dimethyl-sulfide, presence: natural, presence_note: "Made by microbes in soil and water."}
       - {slug: methanethiol, presence: natural, presence_note: "Made by microbes in soil and water."}
-      - {slug: 2-nonenal, presence: none, presence_note: "No basis found for it here; this entry is due to be removed."}
     journey:
       - {slug: geosmin, caption: the petrichor note}
       - {slug: dimethyl-sulfide, caption: also earthy}
@@ -109,13 +108,11 @@ worlds:
     molecules:
       - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the grape sugars."}
       - {slug: resveratrol, presence: natural, presence_note: "From the grape skins."}
-      - {slug: tannic-acid, presence: none, presence_note: "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."}
       - {slug: tartaric-acid, presence: natural, presence_note: "The main acid of the grape."}
       - {slug: malic-acid, presence: natural, presence_note: "An acid of the grape; malolactic fermentation turns part of it into lactic acid."}
       - {slug: cyanidin, presence: natural, presence_note: "From the grape skins, as a glycoside among the red pigments."}
     journey:
       - {slug: ethanol, caption: the alcohol}
-      - {slug: tannic-acid, caption: pairs with}
       - {slug: cyanidin, caption: the color}
       - {slug: tartaric-acid, caption: the tartness}
 
@@ -125,14 +122,12 @@ worlds:
     tint: food-flavor
     molecules:
       - {slug: maltol, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it bakes."}
-      - {slug: ethyl-maltol, presence: none, presence_note: "A synthetic flavouring; baking forms maltol, its relative, not ethyl maltol."}
       - {slug: furaneol, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it bakes."}
       - {slug: hydroxymethylfurfural, presence: formed, formed_when: baked, presence_note: "Formed from the sugars as the crust browns."}
       - {slug: acetic-acid, presence: formed, formed_when: fermentation, presence_note: "Made by bacteria in a sourdough; yeast make a little."}
       - {slug: acrylamide, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it browns."}
     journey:
       - {slug: maltol, caption: warm crust aroma}
-      - {slug: ethyl-maltol, caption: caramel cousin}
       - {slug: furaneol, caption: strawberry note}
       - {slug: hydroxymethylfurfural, caption: browning}
 

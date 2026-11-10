@@ -79,7 +79,7 @@ def test_food_category_from_curated():
 
 def test_editorial_content_block():
     blocks = _caffeine()["content_blocks"]
-    assert any(b["block_type"] == "editorial" and "psychoactive" in b["body_md"] for b in blocks)
+    assert any(b["block_type"] == "editorial" and "adenosine" in b["body_md"] for b in blocks)
 
 
 # ── confidence is routed through confidence.py for every value ───────────────
