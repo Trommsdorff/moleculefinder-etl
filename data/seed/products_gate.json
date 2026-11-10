@@ -1,9 +1,9 @@
 {
- "seeded": 476,
- "passed": 425,
+ "seeded": 475,
+ "passed": 424,
  "failed": 51,
  "by_kind": {
-  "food": 35,
+  "food": 34,
   "drink": 14,
   "medicine": 299,
   "cosmetic": 60,
