@@ -202,6 +202,72 @@ def test_every_real_seed_entry_is_marked():
         assert all((w["slug"], s) in marks["world"] for s in w["molecules"])
 
 
+def test_the_closed_list_of_endings():
+    # Garrett, 2026-11-10: "crushed" joins the list (allicin, allyl isothiocyanate). Any other change is a ruling.
+    assert set(presence.FORMED_WHEN) == {"roasted", "baked", "cooked", "cured", "aged", "crushed", "fermentation"}
+    assert presence.wording({"value": "formed", "formed_when": "crushed"}) == "Formed when crushed"
+    assert presence.wording({"value": "formed", "formed_when": "fermentation"}) == "Formed by fermentation"
+
+
+def _all_marks() -> list[tuple[str, tuple, dict]]:
+    return [(kind, key, mark) for kind, marks in presence.load_marks().items() for key, mark in marks.items()]
+
+
+def test_no_entry_is_not_yet_checked():
+    # Garrett, 2026-11-10: every entry is decided; "not yet checked" is not a reason a page may carry.
+    bad = [(kind, key) for kind, key, mark in _all_marks() if "not yet checked" in (mark.get("note") or "").lower()]
+    assert bad == []
+    seeds = Path(presence.SEEDS_DIR)
+    for f in [*seeds.glob("*.yaml"), *presence.CURATED_DIR.glob("*.yaml")]:
+        assert "not yet checked" not in f.read_text().lower(), f.name
+
+
+def test_the_hand_mark_counts():
+    # Pinned so a changed mark shows up as a reviewed change (after Garrett's corrections, 2026-11-10).
+    from collections import Counter
+    marks = _all_marks()
+    assert len(marks) == 521
+    assert Counter(m["value"] for _, _, m in marks) == {
+        "natural": 207, "added": 212, "formed": 57, "body": 17, "none": 28}
+    assert Counter(m["formed_when"] for _, _, m in marks if m["value"] == "formed") == {
+        "fermentation": 33, "roasted": 7, "aged": 6, "baked": 5, "cured": 2, "cooked": 2, "crushed": 2}
+
+
+def test_garretts_corrections_of_2026_11_10():
+    m = presence.load_marks()
+    for hub in ("chocolate", "cocoa"):
+        for slug in ("phenethylamine", "tyramine"):
+            assert m["food"][(hub, slug)]["formed_when"] == "fermentation", (hub, slug)
+    for slug in ("phenethylamine", "tyramine"):
+        assert m["world"][("chocolate", slug)]["formed_when"] == "fermentation"
+    assert m["food"][("chocolate", "tyramine")]["note"] == \
+        "Made by microbes from the bean's amino acids as the cocoa ferments."
+    assert m["food"][("cocoa", "phenethylamine")]["note"] == \
+        "Made by microbes as the cocoa ferments; roasting forms more."
+    for kind, key in (("food", ("tea", "tannic-acid")), ("food", ("wine", "tannic-acid")),
+                      ("world", ("glass-of-wine", "tannic-acid"))):
+        assert m[kind][key]["value"] == "none" and m[kind][key]["note"] == \
+            "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."
+    for slug in ("benzene", "toluene"):
+        assert m["product"][("fuel-and-flame", slug)] == {
+            "value": "none", "note": "Partly from the crude oil and partly made in refining.",
+            "confidence": "from_source", "source": "curated"}
+    assert m["world"][("sunscreen-summer-skin", "hyaluronic-acid")]["value"] == "body"
+    assert m["world"][("sunscreen-summer-skin", "hyaluronic-acid")]["note"] == \
+        "Your skin makes it; skincare products also add it."
+    for slug in ("potassium", "magnesium", "calcium", "sodium"):
+        mark = m["wikidata"][("valio-valsa-milk-salt", slug)]
+        assert mark["value"] == "none" and "not confirmed" in mark["note"]
+    assert m["world"][("after-the-rain", "2-nonenal")]["note"] == \
+        "No basis found for it here; this entry is due to be removed."
+    for slug in ("allicin", "allyl-isothiocyanate"):
+        assert m["world"][("spicy-dinner", slug)]["formed_when"] == "crushed"
+    assert m["food"][("honey", "methylglyoxal")]["formed_when"] == "aged"
+    # Methylglyoxal is on no other list; if one adds it, it must be marked the same way.
+    others = [(k, key) for k, key, mark in _all_marks() if key[1] == "methylglyoxal" and key != ("honey", "methylglyoxal")]
+    assert all(m[k][key] == m["food"][("honey", "methylglyoxal")] for k, key in others)
+
+
 def test_every_curated_list_row_in_the_snapshot_is_marked_from_the_closed_list():
     rows = [c["presence"] for m in _molecules() for c in m.get("categories") or []
             if c["kind"] in ("food", "product") and c.get("source") == "curated"]

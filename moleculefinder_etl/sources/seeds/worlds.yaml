@@ -45,8 +45,8 @@ worlds:
       - {slug: piperine, presence: natural, presence_note: "Made by the pepper plant, in the peppercorn."}
       - {slug: gingerol, presence: natural, presence_note: "Made by the ginger root."}
       - {slug: shogaol, presence: formed, formed_when: cooked, presence_note: "Formed from gingerol when ginger is dried or cooked."}
-      - {slug: allicin, presence: none, presence_note: "Formed by an enzyme when garlic is crushed or cut; intact garlic holds alliin instead."}
-      - {slug: allyl-isothiocyanate, presence: none, presence_note: "Formed by an enzyme when mustard seed or horseradish is crushed and wetted."}
+      - {slug: allicin, presence: formed, formed_when: crushed, presence_note: "Formed by an enzyme when garlic is crushed or cut; intact garlic holds alliin instead."}
+      - {slug: allyl-isothiocyanate, presence: formed, formed_when: crushed, presence_note: "Formed by an enzyme when mustard seed or horseradish is crushed and wetted."}
     journey:
       - {slug: capsaicin, caption: the chili burn}
       - {slug: piperine, caption: milder cousin}
@@ -60,10 +60,10 @@ worlds:
     molecules:
       - {slug: theobromine, presence: natural, presence_note: "From the cocoa bean."}
       - {slug: caffeine, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine."}
-      - {slug: phenethylamine, presence: none, presence_note: "not yet checked"}
+      - {slug: phenethylamine, presence: formed, formed_when: fermentation, presence_note: "Made by microbes as the cocoa ferments; roasting forms more."}
       - {slug: anandamide, presence: natural, presence_note: "Reported in small amounts in the cocoa bean."}
       - {slug: tryptophan, presence: natural, presence_note: "An amino acid of the cocoa proteins."}
-      - {slug: tyramine, presence: none, presence_note: "not yet checked"}
+      - {slug: tyramine, presence: formed, formed_when: fermentation, presence_note: "Made by microbes from the bean's amino acids as the cocoa ferments."}
     journey:
       - {slug: theobromine, caption: chocolate's stimulant}
       - {slug: caffeine, caption: cousin}
@@ -78,7 +78,7 @@ worlds:
       - {slug: geosmin, presence: natural, presence_note: "Made by soil bacteria; rain lifts it into the air."}
       - {slug: dimethyl-sulfide, presence: natural, presence_note: "Made by microbes in soil and water."}
       - {slug: methanethiol, presence: natural, presence_note: "Made by microbes in soil and water."}
-      - {slug: 2-nonenal, presence: none, presence_note: "not yet checked"}
+      - {slug: 2-nonenal, presence: none, presence_note: "No basis found for it here; this entry is due to be removed."}
     journey:
       - {slug: geosmin, caption: the petrichor note}
       - {slug: dimethyl-sulfide, caption: also earthy}
@@ -109,7 +109,7 @@ worlds:
     molecules:
       - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the grape sugars."}
       - {slug: resveratrol, presence: natural, presence_note: "From the grape skins."}
-      - {slug: tannic-acid, presence: none, presence_note: "not yet checked"}
+      - {slug: tannic-acid, presence: none, presence_note: "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."}
       - {slug: tartaric-acid, presence: natural, presence_note: "The main acid of the grape."}
       - {slug: malic-acid, presence: natural, presence_note: "An acid of the grape; malolactic fermentation turns part of it into lactic acid."}
       - {slug: cyanidin, presence: natural, presence_note: "From the grape skins, as a glycoside among the red pigments."}
@@ -146,7 +146,7 @@ worlds:
       - {slug: cholecalciferol, presence: body, presence_note: "Your skin makes it when sunlight reaches it."}
       - {slug: retinol, presence: added, presence_note: "An ingredient the maker adds to skincare."}
       - {slug: salicylic-acid, presence: added, presence_note: "An ingredient the maker adds to skincare."}
-      - {slug: hyaluronic-acid, presence: none, presence_note: "not yet checked"}
+      - {slug: hyaluronic-acid, presence: body, presence_note: "Your skin makes it; skincare products also add it."}
     journey:
       - {slug: zinc-oxide, caption: mineral block}
       - {slug: melanin, caption: your own sunscreen}

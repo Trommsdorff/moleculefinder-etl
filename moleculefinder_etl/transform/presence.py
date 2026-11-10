@@ -7,7 +7,7 @@ inferred mark. One of five values:
 * ``natural``  Naturally present        caffeine in coffee
 * ``added``    Added by the maker       caffeine in energy drinks
 * ``body``     Made by your body        adenosine in the Morning coffee world
-* ``formed``   Formed when roasted (baked, cooked, cured, aged) or Formed by fermentation, with
+* ``formed``   Formed when roasted (baked, cooked, cured, aged, crushed) or Formed by fermentation, with
                ``formed_when`` from the closed list ``FORMED_WHEN``, so the words are true for each
                food (bread is baked, not roasted)
 * ``none``     no mark, with a written reason in ``presence_note``
@@ -56,6 +56,7 @@ FORMED_WHEN = {
     "cooked": "Formed when cooked",
     "cured": "Formed when cured",
     "aged": "Formed when aged",
+    "crushed": "Formed when crushed",         # Garrett, 2026-11-10: allicin, allyl isothiocyanate
     "fermentation": "Formed by fermentation",
 }
 WORDS = {"natural": "Naturally present", "added": "Added by the maker", "body": "Made by your body"}

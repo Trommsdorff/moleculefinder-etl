@@ -62,10 +62,10 @@ products:
     - {slug: carmine, presence: added, presence_note: "The colour the maker adds to the shell."}
     - {slug: beta-carotene, presence: added, presence_note: "The colour the maker adds to the shell."}
   valio-valsa-milk-salt:
-    - {slug: potassium, presence: none, presence_note: "not yet checked"}
-    - {slug: magnesium, presence: none, presence_note: "not yet checked"}
-    - {slug: calcium, presence: none, presence_note: "not yet checked"}
-    - {slug: sodium, presence: none, presence_note: "not yet checked"}
+    - {slug: potassium, presence: none, presence_note: "The milk salt's composition is not confirmed, so it carries no mark."}
+    - {slug: magnesium, presence: none, presence_note: "The milk salt's composition is not confirmed, so it carries no mark."}
+    - {slug: calcium, presence: none, presence_note: "The milk salt's composition is not confirmed, so it carries no mark."}
+    - {slug: sodium, presence: none, presence_note: "The milk salt's composition is not confirmed, so it carries no mark."}
   vegeta:
     - {slug: monosodium-glutamate, presence: added, presence_note: "The flavour enhancer the maker adds."}
     - {slug: disodium-inosinate, presence: added, presence_note: "The flavour enhancer the maker adds."}

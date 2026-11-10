@@ -1,8 +1,8 @@
 """Build the presence review page (build plan everyday chemistry 2026-11, phase 1) from the seeds.
 
 Reads every hand mark through transform/presence.load_marks (the same marks the build exports) and writes
-one self-contained HTML page for Garrett: the entries not yet checked first, then every formed, body and
-reasoned no-mark entry and every molecule marked differently in two places, then every mark by list.
+one self-contained HTML page for Garrett: the entries his corrections of 2026-11-10 changed first, then every formed,
+body and reasoned no-mark entry and every molecule marked differently in two places, then every mark by list.
 Run after editing a mark, from the ETL root:
     ./.venv/bin/python3 scripts/presence_review.py [out.html]
 The default output is the web repo's docs/design/presence-review-2026-11.html.
@@ -18,8 +18,6 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from moleculefinder_etl.transform import presence
-
-NYC = "not yet checked"
 
 
 def _code(m):
@@ -52,30 +50,32 @@ WORLD_NAMES = {w["slug"]: w["title"] for w in yaml.safe_load((ETL / "moleculefin
 PRODUCT_NAMES = {p["slug"]: p["name"] for p in PRODUCTS}
 OVERLAY_ONLY = {"tabletop-sweetener", "diet-soda", "sugar-free-gum", "stevia"}
 
-WHEN = {"roasted": "Formed when roasted", "baked": "Formed when baked", "cooked": "Formed when cooked",
-        "cured": "Formed when cured", "aged": "Formed when aged", "fermentation": "Formed by fermentation"}
+WHEN = presence.FORMED_WHEN
 WORD = {"N": "Naturally present", "A": "Added by the maker", "B": "Made by your body", "X": "No mark"}
 CLS = {"N": "natural", "A": "added", "B": "body", "X": "none"}
 
-WHY_UNSURE = {
-    "tannic-acid": "Tea and wine tannins are catechin polymers and their oxidation products, not tannic acid (the "
-                   "gallotannin of oak galls and sumac); commercial tannic acid is also sold as an oenological tannin "
-                   "for wine. Is this molecule in the drink at all, and if so is it natural or added?",
-    "phenethylamine": "Reported in cocoa, but accounts differ on whether it is in the raw bean or forms as the beans "
-                      "ferment and roast. Natural, formed by fermentation, or formed when roasted?",
-    "tyramine": "A biogenic amine that in cocoa may come from microbes decarboxylating tyrosine while the beans "
-                "ferment. Natural, or formed by fermentation?",
-    "2-nonenal": "2-Nonenal is a fat oxidation aldehyde (the stale beer note, the odour of older skin). I found no "
-                 "basis for it in the smell after rain, so I could not say how it comes to be there; the roster "
-                 "entry itself may want a look.",
-    "hyaluronic-acid": "The skin makes its own (body) and serums add it (added); the world's caption, skincare or skin, "
-                       "does not say which this entry means.",
-    "benzene": "Petrol's benzene is partly from the crude oil and partly made in refining (catalytic reforming). "
-               "Natural, added, or no mark?",
-    "toluene": "Petrol's toluene is partly from the crude oil and partly made in refining (catalytic reforming). "
-               "Natural, added, or no mark?",
-    "milk-salt": "A salt made from milk minerals. I could not confirm its composition (whether its sodium is the "
-                 "milk's own or added salt), so none of the four elements is marked.",
+# Garrett's corrections of 2026-11-10 (he approved the page with these): (list key, molecule) -> what he ruled.
+CORRECTED = {
+    ("food:chocolate", "phenethylamine"): "Formed by fermentation, with his reason.",
+    ("food:chocolate", "tyramine"): "Formed by fermentation, with his reason.",
+    ("food:cocoa", "phenethylamine"): "Formed by fermentation, with his reason.",
+    ("food:cocoa", "tyramine"): "Formed by fermentation, with his reason.",
+    ("world:chocolate", "phenethylamine"): "Formed by fermentation, with his reason.",
+    ("world:chocolate", "tyramine"): "Formed by fermentation, with his reason.",
+    ("food:tea", "tannic-acid"): "Stays unmarked, his reason; removal queued for phase 2.",
+    ("food:wine", "tannic-acid"): "Stays unmarked, his reason; removal queued for phase 2.",
+    ("world:glass-of-wine", "tannic-acid"): "Stays unmarked, his reason; removal queued for phase 2.",
+    ("product:fuel-and-flame", "benzene"): "No mark, his reason.",
+    ("product:fuel-and-flame", "toluene"): "No mark, his reason.",
+    ("world:sunscreen-summer-skin", "hyaluronic-acid"): "Made by your body, his reason.",
+    ("wikidata:valio-valsa-milk-salt", "potassium"): "Stays unmarked: its composition is not confirmed.",
+    ("wikidata:valio-valsa-milk-salt", "magnesium"): "Stays unmarked: its composition is not confirmed.",
+    ("wikidata:valio-valsa-milk-salt", "calcium"): "Stays unmarked: its composition is not confirmed.",
+    ("wikidata:valio-valsa-milk-salt", "sodium"): "Stays unmarked: its composition is not confirmed.",
+    ("world:after-the-rain", "2-nonenal"): "Stays unmarked, his reason; removal queued for phase 2.",
+    ("world:spicy-dinner", "allicin"): "Formed when crushed (the new ending), the reason kept.",
+    ("world:spicy-dinner", "allyl-isothiocyanate"): "Formed when crushed (the new ending), the reason kept.",
+    ("food:honey", "methylglyoxal"): "Natural to formed when aged, his reason. No other list carries methylglyoxal.",
 }
 
 
@@ -130,10 +130,12 @@ R = rows()
 counts = defaultdict(int)
 for r in R:
     counts["formed" if r["code"].startswith("F:") else CLS[r["code"]]] += 1
-unsure = [r for r in R if r["note"] == NYC]
+corrected = [r for r in R if (r["key"], r["slug"]) in CORRECTED]
+assert len(corrected) == len(CORRECTED), "a corrected entry is missing from the seeds"
+assert not any("not yet checked" in r["note"].lower() for r in R)
 formed = [r for r in R if r["code"].startswith("F:")]
 body = [r for r in R if r["code"] == "B"]
-nones = [r for r in R if r["code"] == "X" and r["note"] != NYC]
+nones = [r for r in R if r["code"] == "X"]
 by_mol = defaultdict(list)
 for r in R:
     by_mol[r["slug"]].append(r)
@@ -203,41 +205,41 @@ h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
 }
 </style></head><body>
 <header class="site-head"><div class="wrap site-head__in"><span class="brand__word">molecule<b>finder</b> · review</span>
-<nav class="site-nav"><a href="#unsure">Not yet checked</a><a href="#second">Second look</a><a href="#asks">Questions</a><a href="#all">Every mark</a><a href="#rule">By rule</a></nav></div></header>
+<nav class="site-nav"><a href="#corrected">Corrected</a><a href="#second">Second look</a><a href="#asks">Rulings</a><a href="#all">Every mark</a><a href="#rule">By rule</a></nav></div></header>
 <main class="wrap">
 """)
 A(f"""<section class="hero"><h1>Presence marks: how each molecule comes to be there</h1>
 <p class="lede">Every curated food, drink, product and world entry now says, by hand, how its molecule comes to be in it.
 Build plan everyday chemistry, phase 1. Nothing here is on the site yet: the marks are in the data, and no page renders them
-until the door and molecule pages (phases 7 and 8). This page is for your approval before the data ships.</p>
+until the door and molecule pages (phases 7 and 8). <b>Approved by Garrett on 2026-11-10 with the corrections below</b>;
+this is the page regenerated from the corrected seeds, as it ships.</p>
 <div class="stats">
 <div class="stat"><b>{len(R)}</b><span>entries marked by hand</span></div>
 <div class="stat"><b>{counts['natural']}</b><span>Naturally present</span></div>
 <div class="stat"><b>{counts['added']}</b><span>Added by the maker</span></div>
 <div class="stat"><b>{counts['formed']}</b><span>Formed when ...</span></div>
 <div class="stat"><b>{counts['body']}</b><span>Made by your body</span></div>
-<div class="stat"><b>{counts['none']}</b><span>No mark ({len(unsure)} not yet checked)</span></div>
+<div class="stat"><b>{counts['none']}</b><span>No mark, each with a reason</span></div>
 </div>
-<div class="legend">{pill('N')}{pill('A')}{pill('B')}{pill('F:roasted')}{pill('F:baked')}{pill('F:cooked')}{pill('F:cured')}{pill('F:aged')}{pill('F:fermentation')}{pill('X')}</div>
-<p style="margin-top:14px;color:var(--ink-2)">The list of words is closed: a mark is one of the four, or "formed" with one of the six
+<div class="legend">{pill('N')}{pill('A')}{pill('B')}{pill('F:roasted')}{pill('F:baked')}{pill('F:cooked')}{pill('F:cured')}{pill('F:aged')}{pill('F:crushed')}{pill('F:fermentation')}{pill('X')}</div>
+<p style="margin-top:14px;color:var(--ink-2)">The list of words is closed: a mark is one of the four, or "formed" with one of the seven
 endings shown, or no mark with a written reason. The build stops if a curated entry has no mark or a word outside the list.
 Each line's reason is the one-line note that a later phase shows under Sources and notes, so it is site copy too.
 {len(R)} entries are 329 food and drink list entries, 83 product list entries, 60 world entries and 49 Wikidata ingredient rows;
 the 20 sweetener and staple entries that sit both in a molecule's own curated file and in a food list carry one mark,
 written once and checked equal by the build.</p>
-<div class="note"><b>How to answer.</b> For any line you disagree with, tell Claude the list, the molecule and the right mark
-(and the reason, if the line's reason is wrong). For the {len(unsure)} lines not yet checked, a mark or "leave it unmarked" each.
-Nothing deploys until you approve this page; then ETL main goes first and web main after, a rebuild with no visible change.</div>
+<div class="note"><b>Approved, 2026-11-10.</b> Garrett's corrections changed {len(corrected)} entries (listed first) and added
+"crushed" to the closed list. No entry carries "not yet checked" any more, and a test holds it so. Removals he ruled
+(tannic acid from tea, wine and the wine world; 2-nonenal from the smell after rain; ethyl maltol from fresh-baked bread;
+glucose and fructose from table sugar) and the glutamate wording are queued for phase 2.</div>
 </section>
 """)
 
-# Not yet checked
-A(f'<section class="sec" id="unsure"><h2>Not yet checked ({len(unsure)})</h2>'
-  "<p>Where I was not confident, I did not guess: these carry no mark and the reason \"not yet checked\". "
-  "Each says what I could not settle.</p><div class=\"rows\">")
-for r in unsure:
-    key = "milk-salt" if r["key"] == "wikidata:valio-valsa-milk-salt" else r["slug"]
-    A(row_html(r, show_list=True, reason=WHY_UNSURE[key]))
+# Garrett's corrections
+A(f'<section class="sec" id="corrected"><h2>Garrett\'s corrections, 2026-11-10 ({len(corrected)})</h2>'
+  "<p>Each entry as it now reads in the seeds, with what he ruled.</p><div class=\"rows\">")
+for r in corrected:
+    A(row_html(r, show_list=True, reason=r["note"] + " (" + CORRECTED[(r["key"], r["slug"])] + ")"))
 A("</div></section>")
 
 # Second look
@@ -261,17 +263,14 @@ for s in sorted(mixed, key=lambda x: TITLES.get(x, x).lower()):
 A("</div></section>")
 
 # Questions
-A("""<section class="sec" id="asks"><h2>Questions the marking raised</h2><ol class="ask">
-<li><b>A word for "formed when crushed".</b> Allicin (garlic) and allyl isothiocyanate (mustard, horseradish) form by an
-enzyme only when the plant is crushed or cut. None of the six endings is true for them, so they carry no mark with that
-reason. Recommended: add <b>crushed</b> to the closed list ("Formed when crushed") and mark both formed.</li>
-<li><b>Ethyl maltol in the Fresh-baked bread world.</b> Ethyl maltol is a synthetic flavouring; baking forms maltol, not
-ethyl maltol, so it carries no mark with that reason. Recommended: take it off the world's roster in the copy sweep
-(phase 2), since the roster says bread has it.</li>
-<li><b>2-Nonenal in The smell after rain.</b> Not yet checked above: I found no basis for it in petrichor. Recommended:
-take it off the world's roster in phase 2 unless you know the source.</li>
-<li><b>Folic acid in leafy greens and romaine lettuce.</b> Greens carry folates, not folic acid itself, so both carry no
-mark with that reason, while bread and cereal mark folic acid added. Recommended: keep as marked.</li>
+A("""<section class="sec" id="asks"><h2>Rulings, 2026-11-10</h2><ol class="ask">
+<li><b>"Formed when crushed" joins the closed list.</b> Allicin and allyl isothiocyanate in A spicy dinner are marked formed,
+crushed, keeping their reasons.</li>
+<li><b>Queued for phase 2 (the copy sweep), not done here:</b> remove tannic acid from the Tea and Wine lists and the wine
+world; remove 2-nonenal from The smell after rain; remove ethyl maltol from Fresh-baked bread; remove glucose and fructose
+from the Table sugar list; and where Cheese, Soy sauce and Mushrooms list monosodium glutamate, the page wording says
+glutamate (free glutamate, the taste of MSG), not MSG.</li>
+<li><b>Folic acid in leafy greens and romaine lettuce</b> stays unmarked, as recommended (folates, not folic acid).</li>
 </ol></section>""")
 
 # Every mark
@@ -302,9 +301,9 @@ the reason "A class page: its molecules share a structure, not a source." Neithe
 <p>A Wikidata ingredient row that a weekly refresh adds with no mark is exported unmarked (a page will say "Not marked"),
 listed in the ETL's <code>data/seed/presence_unmarked.json</code> and the run's summary, and never fails the run.
 Today that list is empty.</p></section>
-</main><footer class="foot"><div class="wrap">Review page for Garrett, built 2026-11-09 from the ETL branch presence-2026-11
+</main><footer class="foot"><div class="wrap">Review page for Garrett, built 2026-11-09, regenerated 2026-11-10 after his corrections, from the ETL branch presence-2026-11
 (read from the seeds by scripts/presence_review.py). Not part of the site.</div></footer></body></html>
 """)
 OUT.write_text("".join(parts))
 assert "—" not in OUT.read_text() and "–" not in OUT.read_text()
-print(OUT, len(OUT.read_text()), "bytes;", len(R), "rows;", len(unsure), "unsure;", len(mixed), "mixed molecules")
+print(OUT, len(OUT.read_text()), "bytes;", len(R), "rows;", len(corrected), "corrected;", len(mixed), "mixed molecules")

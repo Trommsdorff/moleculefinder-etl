@@ -54,7 +54,7 @@ tea:
     - {slug: epigallocatechin-gallate, presence: natural, presence_note: "The main catechin of the tea leaf."}   # the headline green tea catechin
     - {slug: catechin, presence: natural, presence_note: "A flavanol of the tea leaf."}
     - {slug: gallic-acid, presence: natural, presence_note: "In the tea leaf, and freed from the catechin gallates in processing."}
-    - {slug: tannic-acid, presence: none, presence_note: "not yet checked"}   # the dry grip of strong tea
+    - {slug: tannic-acid, presence: none, presence_note: "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."}   # the dry grip of strong tea
     - {slug: quercetin, presence: natural, presence_note: "A flavonol of the tea leaf, mostly as its glycosides."}
     - {slug: water, presence: added, presence_note: "The brewing water."}
     - {slug: manganese, presence: natural, presence_note: "The tea plant takes it up from the soil and holds it in the leaf."}   # tea leaves concentrate it; a notable dietary source
@@ -64,9 +64,9 @@ chocolate:
   molecules:
     - {slug: theobromine, presence: natural, presence_note: "From the cocoa bean."}
     - {slug: caffeine, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine."}
-    - {slug: phenethylamine, presence: none, presence_note: "not yet checked"}
+    - {slug: phenethylamine, presence: formed, formed_when: fermentation, presence_note: "Made by microbes as the cocoa ferments; roasting forms more."}
     - {slug: anandamide, presence: natural, presence_note: "Reported in small amounts in the cocoa bean."}
-    - {slug: tyramine, presence: none, presence_note: "not yet checked"}
+    - {slug: tyramine, presence: formed, formed_when: fermentation, presence_note: "Made by microbes from the bean's amino acids as the cocoa ferments."}
     - {slug: catechin, presence: natural, presence_note: "A flavanol of the cocoa bean."}
     - {slug: stearic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}   # cocoa butter's dominant fat
     - {slug: oleic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
@@ -85,9 +85,9 @@ cocoa:
   molecules:
     - {slug: theobromine, presence: natural, presence_note: "From the cocoa bean."}
     - {slug: caffeine, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine."}
-    - {slug: phenethylamine, presence: none, presence_note: "not yet checked"}
+    - {slug: phenethylamine, presence: formed, formed_when: fermentation, presence_note: "Made by microbes as the cocoa ferments; roasting forms more."}
     - {slug: anandamide, presence: natural, presence_note: "Reported in small amounts in the cocoa bean."}
-    - {slug: tyramine, presence: none, presence_note: "not yet checked"}
+    - {slug: tyramine, presence: formed, formed_when: fermentation, presence_note: "Made by microbes from the bean's amino acids as the cocoa ferments."}
     - {slug: catechin, presence: natural, presence_note: "A flavanol of the cocoa bean."}
     - {slug: stearic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
     - {slug: palmitic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
@@ -102,7 +102,7 @@ wine:
   molecules:
     - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the grape sugars."}
     - {slug: resveratrol, presence: natural, presence_note: "From the grape skins."}
-    - {slug: tannic-acid, presence: none, presence_note: "not yet checked"}
+    - {slug: tannic-acid, presence: none, presence_note: "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."}
     - {slug: tartaric-acid, presence: natural, presence_note: "The main acid of the grape."}
     - {slug: malic-acid, presence: natural, presence_note: "An acid of the grape; malolactic fermentation turns part of it into lactic acid."}
     - {slug: cyanidin, presence: natural, presence_note: "From the grape skins, as a glycoside among the red pigments."}
@@ -204,7 +204,7 @@ honey:
     - {slug: sucrose, presence: natural, presence_note: "Nectar sugar the bees have not yet split."}
     - {slug: maltose, presence: natural, presence_note: "A minor sugar of honey."}
     - {slug: gluconic-acid, presence: natural, presence_note: "Made from glucose by the bees' glucose oxidase."}   # honey's principal acid
-    - {slug: methylglyoxal, presence: natural, presence_note: "In manuka honey, formed from the dihydroxyacetone of manuka nectar."}   # the manuka activity marker
+    - {slug: methylglyoxal, presence: formed, formed_when: aged, presence_note: "Forms from the nectar's dihydroxyacetone as the honey matures; manuka honey holds the most."}   # the manuka activity marker
     - {slug: hydroxymethylfurfural, presence: none, presence_note: "Forms slowly from the sugars in storage and faster when honey is heated; fresh honey holds little."}   # the standard freshness and heating marker
     - {slug: phenylacetic-acid, presence: natural, presence_note: "An aroma compound of honey."}   # a honey aroma note
 

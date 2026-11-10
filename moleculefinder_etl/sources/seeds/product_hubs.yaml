@@ -113,8 +113,8 @@ fuel-and-flame:
     - {slug: butane, presence: natural, presence_note: "Separated from natural gas and crude oil."}   # lighter fuel and camping cartridges
     - {slug: ethanol, presence: added, presence_note: "Blended into petrol by the refiner."}   # blended into petrol, and the fuel in a spirit stove
     - {slug: carbon-monoxide, presence: none, presence_note: "Formed when a fuel burns without enough air."}   # the product of burning any of them without enough air
-    - {slug: benzene, presence: none, presence_note: "not yet checked"}   # a component of petrol
-    - {slug: toluene, presence: none, presence_note: "not yet checked"}
+    - {slug: benzene, presence: none, presence_note: "Partly from the crude oil and partly made in refining."}   # a component of petrol
+    - {slug: toluene, presence: none, presence_note: "Partly from the crude oil and partly made in refining."}
     - {slug: carbon, presence: none, presence_note: "Charcoal is mostly carbon, left when wood is heated without air."}   # charcoal
 
 battery-and-electronics:
