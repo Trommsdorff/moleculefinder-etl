@@ -241,3 +241,14 @@ def test_glutamate_not_msg_on_cheese_soy_sauce_and_mushrooms():
     assert notes == {f: "free glutamate, the taste of MSG" for f in ("cheese", "mushrooms", "soy-sauce")}
     msg = json.loads((SNAP / "molecules" / "monosodium-glutamate.json").read_text())
     assert [c["slug"] for c in msg["categories"] if c["kind"] == "food"] == ["processed-snacks"]
+
+
+def test_a_food_hub_reads_its_own_name_on_every_molecule():
+    # A curated overlay's foods: row once named its category by title-casing the slug ("Table Sugar"), so a
+    # hub's name depended on which molecule supplied it; with sucrose alone on Table sugar that moved the
+    # /in/table-sugar title (Garrett, 2026-11-10: fix the casing). Every food category carries its hub's name.
+    hubs = relationships.load_food_hubs()
+    for path in (SNAP / "molecules").glob("*.json"):
+        for c in json.loads(path.read_text())["categories"]:
+            if c["kind"] == "food" and c["slug"] in hubs:
+                assert c["name"] == hubs[c["slug"]]["name"], (path.stem, c["slug"], c["name"])

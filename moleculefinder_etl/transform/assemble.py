@@ -50,6 +50,16 @@ def _to_float(v):
         return None
 
 
+@functools.lru_cache(maxsize=1)
+def _food_hub_names() -> dict[str, str]:
+    """{hub slug: name} from food_hubs.yaml. A curated overlay's ``foods:`` row names its category with the
+    hub's own name when the hub exists, so a hub reads the same whichever molecule supplies it: with
+    glucose and fructose off Table sugar (Garrett, 2026-11-10) sucrose's overlay row alone supplied the hub
+    and its title-cased slug, "Table Sugar", would have changed /in/table-sugar's title."""
+    data = yaml.safe_load((SEEDS_DIR / "food_hubs.yaml").read_text()) or {}
+    return {str(k): v["name"] for k, v in data.items() if isinstance(v, dict) and v.get("name")}
+
+
 def _titleize(slug: str) -> str:
     return slug.replace("-", " ").replace("_", " ").strip().title()
 
@@ -423,7 +433,7 @@ def _merge_curated(rec: dict, curated: dict) -> None:
     for food in curated.get("foods") or []:
         fslug = food.get("category")
         if fslug:
-            rec["categories"].append({"slug": fslug, "name": _titleize(fslug), "kind": "food",
+            rec["categories"].append({"slug": fslug, "name": _food_hub_names().get(fslug) or _titleize(fslug), "kind": "food",
                                       "note": food.get("note"), "confidence": label_for("curated_fact"),
                                       "source": _src("curated")})
 
