@@ -189,8 +189,9 @@ comparison paragraphs and {n_ans} answer lines. Kept: {by_basis.get('science', 0
 as datable history (an agency's finding named in the line counts here), {by_basis.get('ordinary', 0)} where the word ranks nothing,
 {by_basis.get('data', 0)} on our own data (checked by the build every run), {by_basis.get('held', 0)} answer line held as it is, by
 your ruling. Unchanged by design: every /vs title, H1 and FAQ question, every other /vs description and answer line, every
-molecule page title, the molecule of the week's title and description (checked page by page against a build of main: the only
-differences are the two answer lines you ruled on, on their own two pages).</p>
+molecule page title, the molecule of the week's title and description, and every other page title (checked page by page
+against a build of main with the web's scripts/frozen-text.mjs: the only differences are the two answer lines you ruled on, and
+six titles whose molecule count follows your removals, which you accepted on 2026-11-10).</p>
 </section>""")
 
 # ── 1. Garrett's rulings, 2026-11-10 ─────────────────────────────────────────
@@ -321,11 +322,19 @@ for title, why, pages in REMOVALS:
     A(f'<div class="card"><h3>{esc(title)}</h3><p class="basis">{esc(why)}</p><span class="lbl">Pages it moves</span>'
       f'<p class="pages">{" · ".join(esc(p) for p in pages)}</p></div>')
 A("""<div class="card"><h3>What a search engine is told at deploy</h3>
-<p>IndexNow dry run against live main (b0c1412): sitemap 1,712 to 1,711, <b>0 new, 376 changed, 1 removed</b> (/whats-in/table-sugar, which
-answers 410): 79 molecule pages, 56 comparison pages (the 26 with a rewritten sentence and 30 that show a rewritten molecule), 228 product
-pages and the /whats-in index (each lists a molecule whose line changed, or lost or gained one above), 6 lists, 3 worlds, the home page,
-/classroom and /embed. Six curated pages change only in the link label ("Browse the coffee list") and the delta cannot see a label: breakfast
-cereal, chili peppers, coffee, eggs, fish and tonic water are sent by hand at deploy, as earlier label-only changes were.</p></div></section>""")
+<p>IndexNow dry run against live main (b0c1412), with your review fixes: sitemap 1,712 to 1,711, <b>0 new, 385 changed, 1 removed</b>
+(/whats-in/table-sugar, which answers 410): 83 molecule pages, 60 comparison pages, 230 product pages and the /whats-in index (each lists
+a molecule whose line changed, or lost or gained one above), 6 lists, 3 worlds, the home page, /classroom and /embed. Six curated pages
+change only in the link label ("Browse the coffee list") and the delta cannot see a label: breakfast cereal, chili peppers, coffee, eggs,
+fish and tonic water are sent by hand at deploy (coffee is in the delta now as well, through acetaldehyde; sending it twice is harmless).</p></div>""")
+A("""<div class="card"><h3>Found at the final check, and fixed with your word</h3><ul>
+<li><b>Six titles carry a molecule count</b> that your removals change: What's in tea 11 to 10, What's in wine 21 to 20, A glass of wine 6
+to 5 (its /whats-in and /roam pages), The smell after rain 4 to 3, Fresh-baked bread 6 to 5. You accepted them as they are.</li>
+<li><b>/in/table-sugar's title would have read "In Table Sugar"</b>: sucrose's own row named the hub by capitalising its address, and with
+glucose and fructose gone it was the only row left. Every food list now takes its name from the list itself, so the title stays "In
+Table sugar". Five other rows had the same slip and now match their lists' own names on the molecule pages: Energy drinks (caffeine),
+Chili peppers and Hot sauce (capsaicin), Soy sauce (glutamic acid), Black pepper (piperine). No title moves.</li>
+</ul></div></section>""")
 
 # ── 4. Kept ──────────────────────────────────────────────────────────────────
 A(f'<section class="sec" id="kept"><h2>4. Lines that keep a claim word, and why</h2><p>{kept} lines, each pinned in '
