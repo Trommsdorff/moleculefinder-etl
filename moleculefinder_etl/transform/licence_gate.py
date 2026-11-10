@@ -80,6 +80,11 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
     for c in m.get("categories") or []:
         for s in str(c.get("source") or "").split("+") if c.get("source") else [None]:
             yield f"{slug}.categories.{c.get('slug')}", _key(s)
+        if c.get("presence"):                        # the presence mark (2026-11-09) cites its own source
+            yield f"{slug}.categories.{c.get('slug')}.presence", _key(c["presence"].get("source"))
+    for p in m.get("products") or []:
+        if p.get("presence"):
+            yield f"{slug}.products.{p.get('slug')}.presence", _key(p["presence"].get("source"))
     for i, t in enumerate(m.get("toxicity") or []):
         srcs = t.get("sources") or [None]          # a row with no source is a failure
         for s in srcs:
@@ -102,6 +107,9 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
 def product_citations(p: dict) -> Iterator[tuple[str, str | None]]:
     for s in [p.get("source") or {}] + list(p.get("also") or []):
         yield f"product:{p.get('slug')}.source", PRODUCT_SOURCES.get(s.get("type"))
+    for m in p.get("molecules") or []:
+        if m.get("presence"):
+            yield f"product:{p.get('slug')}.{m.get('slug')}.presence", _key(m["presence"].get("source"))
 
 
 _MGKG = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*mg/kg")

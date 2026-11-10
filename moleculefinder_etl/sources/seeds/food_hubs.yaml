@@ -19,204 +19,210 @@
 # build rather than shipping a dangling hub.
 #
 # `name` overrides the titleized slug where title case would look wrong.
+#
+# PRESENCE (build plan everyday chemistry 2026-11, phase 1; Garrett's rulings b and g, 2026-11-09).
+# Every entry says, by hand, how its molecule comes to be in the food or drink: presence natural, added,
+# body, formed (with formed_when: roasted, baked, cooked, cured, aged or fermentation) or none (with a
+# written presence_note). presence_note is the one-line reason. transform/presence.py holds the closed
+# list; an entry with no mark, or a bad one, stops the build and fails pytest.
 
 coffee:
   name: Coffee
   molecules:
-    - caffeine              # the reason most people drink it
-    - chlorogenic-acid      # the most abundant polyphenol in a cup
-    - caffeic-acid          # chlorogenic acid's other half
-    - theobromine           # trace, alongside caffeine
-    - theophylline          # trace, alongside caffeine
-    - niacin                # formed from trigonelline during roasting
-    - guaiacol              # roast smoke note
-    - furfural              # roast note, and a staling marker
-    - hydroxymethylfurfural # forms as the sugars caramelize in the roast
-    - acrylamide            # forms from asparagine and sugars in the roast
-    - water                 # about 98 percent of the cup by weight
-    - potassium             # coffee is a leading dietary source in many diets
-    - magnesium
-    - acetaldehyde          # a roast volatile, and it fades as the coffee stales
+    - {slug: caffeine, presence: natural, presence_note: "Made by the coffee plant; it carries into the brewed cup."}   # the reason most people drink it
+    - {slug: chlorogenic-acid, presence: natural, presence_note: "A polyphenol of the coffee bean; roasting breaks part of it down."}   # the most abundant polyphenol in a cup
+    - {slug: caffeic-acid, presence: natural, presence_note: "Half of chlorogenic acid in the bean, and freed from it as the bean roasts."}   # chlorogenic acid's other half
+    - {slug: theobromine, presence: natural, presence_note: "Present in trace amounts in the coffee bean."}   # trace, alongside caffeine
+    - {slug: theophylline, presence: natural, presence_note: "Present in trace amounts in the coffee bean."}   # trace, alongside caffeine
+    - {slug: niacin, presence: formed, formed_when: roasted, presence_note: "Formed from trigonelline as the beans roast."}   # formed from trigonelline during roasting
+    - {slug: guaiacol, presence: formed, formed_when: roasted, presence_note: "Formed from ferulic acid as the beans roast."}   # roast smoke note
+    - {slug: furfural, presence: formed, formed_when: roasted, presence_note: "Formed from the bean's sugars as it roasts."}   # roast note, and a staling marker
+    - {slug: hydroxymethylfurfural, presence: formed, formed_when: roasted, presence_note: "Formed from the bean's sugars as it roasts."}   # forms as the sugars caramelize in the roast
+    - {slug: acrylamide, presence: formed, formed_when: roasted, presence_note: "Formed from asparagine and sugars as the beans roast."}   # forms from asparagine and sugars in the roast
+    - {slug: water, presence: added, presence_note: "The brewing water, about 98 percent of the cup."}   # about 98 percent of the cup by weight
+    - {slug: potassium, presence: natural, presence_note: "A mineral the bean carries into the cup."}   # coffee is a leading dietary source in many diets
+    - {slug: magnesium, presence: natural, presence_note: "A mineral the bean carries into the cup."}
+    - {slug: acetaldehyde, presence: formed, formed_when: roasted, presence_note: "A volatile formed as the beans roast; it fades as coffee stales."}   # a roast volatile, and it fades as the coffee stales
 
 tea:
   name: Tea
   molecules:
-    - caffeine
-    - theophylline
-    - theobromine
-    - theanine                  # found almost nowhere but tea
-    - epigallocatechin-gallate  # the headline green tea catechin
-    - catechin
-    - gallic-acid
-    - tannic-acid               # the dry grip of strong tea
-    - quercetin
-    - water
-    - manganese             # tea leaves concentrate it; a notable dietary source
+    - {slug: caffeine, presence: natural, presence_note: "Made by the tea plant; it carries into the brewed cup."}
+    - {slug: theophylline, presence: natural, presence_note: "Present in small amounts in the tea leaf."}
+    - {slug: theobromine, presence: natural, presence_note: "Present in small amounts in the tea leaf."}
+    - {slug: theanine, presence: natural, presence_note: "An amino acid made by the tea plant."}   # found almost nowhere but tea
+    - {slug: epigallocatechin-gallate, presence: natural, presence_note: "The main catechin of the tea leaf."}   # the headline green tea catechin
+    - {slug: catechin, presence: natural, presence_note: "A flavanol of the tea leaf."}
+    - {slug: gallic-acid, presence: natural, presence_note: "In the tea leaf, and freed from the catechin gallates in processing."}
+    - {slug: tannic-acid, presence: none, presence_note: "not yet checked"}   # the dry grip of strong tea
+    - {slug: quercetin, presence: natural, presence_note: "A flavonol of the tea leaf, mostly as its glycosides."}
+    - {slug: water, presence: added, presence_note: "The brewing water."}
+    - {slug: manganese, presence: natural, presence_note: "The tea plant takes it up from the soil and holds it in the leaf."}   # tea leaves concentrate it; a notable dietary source
 
 chocolate:
   name: Chocolate
   molecules:
-    - theobromine
-    - caffeine
-    - phenethylamine
-    - anandamide
-    - tyramine
-    - catechin
-    - stearic-acid   # cocoa butter's dominant fat
-    - oleic-acid
-    - palmitic-acid
-    - lecithin       # the standard emulsifier in a bar
-    - vanillin       # the standard flavoring in a bar
-    - sucrose
-    - magnesium             # dark chocolate is among the densest food sources
-    - iron
-    - copper
-    - lactose               # milk chocolate
-    - casein                # milk chocolate
+    - {slug: theobromine, presence: natural, presence_note: "From the cocoa bean."}
+    - {slug: caffeine, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine."}
+    - {slug: phenethylamine, presence: none, presence_note: "not yet checked"}
+    - {slug: anandamide, presence: natural, presence_note: "Reported in small amounts in the cocoa bean."}
+    - {slug: tyramine, presence: none, presence_note: "not yet checked"}
+    - {slug: catechin, presence: natural, presence_note: "A flavanol of the cocoa bean."}
+    - {slug: stearic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}   # cocoa butter's dominant fat
+    - {slug: oleic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
+    - {slug: palmitic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
+    - {slug: lecithin, presence: added, presence_note: "The emulsifier the maker adds to the bar."}   # the standard emulsifier in a bar
+    - {slug: vanillin, presence: added, presence_note: "The flavouring the maker adds to the bar."}   # the standard flavoring in a bar
+    - {slug: sucrose, presence: added, presence_note: "The sugar the maker adds to the bar."}
+    - {slug: magnesium, presence: natural, presence_note: "A mineral of the cocoa solids."}   # dark chocolate is among the densest food sources
+    - {slug: iron, presence: natural, presence_note: "A mineral of the cocoa solids."}
+    - {slug: copper, presence: natural, presence_note: "A mineral of the cocoa solids."}
+    - {slug: lactose, presence: added, presence_note: "Comes with the milk the maker adds to milk chocolate."}   # milk chocolate
+    - {slug: casein, presence: added, presence_note: "Comes with the milk the maker adds to milk chocolate."}   # milk chocolate
 
 cocoa:
   name: Cocoa
   molecules:
-    - theobromine
-    - caffeine
-    - phenethylamine
-    - anandamide
-    - tyramine
-    - catechin
-    - stearic-acid
-    - palmitic-acid
-    - oleic-acid
-    - magnesium
-    - iron
-    - copper
-    - theophylline          # trace, alongside theobromine
+    - {slug: theobromine, presence: natural, presence_note: "From the cocoa bean."}
+    - {slug: caffeine, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine."}
+    - {slug: phenethylamine, presence: none, presence_note: "not yet checked"}
+    - {slug: anandamide, presence: natural, presence_note: "Reported in small amounts in the cocoa bean."}
+    - {slug: tyramine, presence: none, presence_note: "not yet checked"}
+    - {slug: catechin, presence: natural, presence_note: "A flavanol of the cocoa bean."}
+    - {slug: stearic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
+    - {slug: palmitic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
+    - {slug: oleic-acid, presence: natural, presence_note: "Part of the fats of cocoa butter."}
+    - {slug: magnesium, presence: natural, presence_note: "A mineral of the cocoa solids."}
+    - {slug: iron, presence: natural, presence_note: "A mineral of the cocoa solids."}
+    - {slug: copper, presence: natural, presence_note: "A mineral of the cocoa solids."}
+    - {slug: theophylline, presence: natural, presence_note: "Present in trace amounts in the cocoa bean."}   # trace, alongside theobromine
 
 wine:
   name: Wine
   molecules:
-    - ethanol
-    - resveratrol
-    - tannic-acid
-    - tartaric-acid
-    - malic-acid
-    - cyanidin
-    - quercetin
-    - catechin
-    - gallic-acid
-    - succinic-acid
-    - glycerol
-    - acetic-acid            # the volatile acidity every wine carries a little of
-    - isoamyl-alcohol        # a fermentation fusel alcohol
-    - potassium-bitartrate   # the "wine diamonds" that crystallize in a cold bottle
-    - sodium-metabisulfite   # the added sulfite the label has to declare
-    - water                 # roughly 86 percent by weight
-    - sulfur-dioxide        # the preservative, declared on every label
-    - acetaldehyde          # the marker of oxidation, and of sherry on purpose
-    - histamine             # forms in the malolactic fermentation
-    - tyramine
-    - methanol              # trace, released from grape pectin
+    - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the grape sugars."}
+    - {slug: resveratrol, presence: natural, presence_note: "From the grape skins."}
+    - {slug: tannic-acid, presence: none, presence_note: "not yet checked"}
+    - {slug: tartaric-acid, presence: natural, presence_note: "The main acid of the grape."}
+    - {slug: malic-acid, presence: natural, presence_note: "An acid of the grape; malolactic fermentation turns part of it into lactic acid."}
+    - {slug: cyanidin, presence: natural, presence_note: "From the grape skins, as a glycoside among the red pigments."}
+    - {slug: quercetin, presence: natural, presence_note: "From the grape skins."}
+    - {slug: catechin, presence: natural, presence_note: "From the grape seeds and skins."}
+    - {slug: gallic-acid, presence: natural, presence_note: "From the grape seeds and skins."}
+    - {slug: succinic-acid, presence: formed, formed_when: fermentation, presence_note: "Made by yeast during fermentation."}
+    - {slug: glycerol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast during fermentation."}
+    - {slug: acetic-acid, presence: formed, formed_when: fermentation, presence_note: "Made in fermentation; the volatile acidity of a wine."}   # the volatile acidity every wine carries a little of
+    - {slug: isoamyl-alcohol, presence: formed, formed_when: fermentation, presence_note: "A fusel alcohol yeast make from leucine."}   # a fermentation fusel alcohol
+    - {slug: potassium-bitartrate, presence: natural, presence_note: "From the grape; it crystallizes out of a cold bottle."}   # the "wine diamonds" that crystallize in a cold bottle
+    - {slug: sodium-metabisulfite, presence: added, presence_note: "The sulfite the winemaker adds as a preservative."}   # the added sulfite the label has to declare
+    - {slug: water, presence: natural, presence_note: "From the grape juice."}   # roughly 86 percent by weight
+    - {slug: sulfur-dioxide, presence: added, presence_note: "The preservative the winemaker adds, directly or as a metabisulfite; yeast make a little too."}   # the preservative, declared on every label
+    - {slug: acetaldehyde, presence: formed, formed_when: fermentation, presence_note: "Made by yeast; it rises as a wine oxidizes."}   # the marker of oxidation, and of sherry on purpose
+    - {slug: histamine, presence: formed, formed_when: fermentation, presence_note: "Formed by bacteria in the malolactic fermentation."}   # forms in the malolactic fermentation
+    - {slug: tyramine, presence: formed, formed_when: fermentation, presence_note: "Formed by bacteria during fermentation."}
+    - {slug: methanol, presence: none, presence_note: "Released from grape pectin by enzymes during winemaking, not made by the yeast."}   # trace, released from grape pectin
 
 beer:
   name: Beer
   molecules:
-    - ethanol
-    - maltose             # what the mashed starch becomes
-    - myrcene             # hop oil
-    - caryophyllene       # hop oil
-    - isoamyl-acetate     # the banana ester of an ale yeast
-    - isoamyl-alcohol
-    - diacetyl            # the butterscotch off-flavour brewers test for
-    - acetaldehyde        # green apple, another fermentation marker
-    - 2-nonenal           # the cardboard note of a stale beer
-    - glycerol
-    - carbon-dioxide
-    - water                 # roughly 92 percent by weight
-    - niacin                # from the brewing yeast
-    - riboflavin
+    - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the malt sugars."}
+    - {slug: maltose, presence: none, presence_note: "Made from the grain's starch by the malt's own enzymes in the mash, before fermentation."}   # what the mashed starch becomes
+    - {slug: myrcene, presence: natural, presence_note: "From the hop oil."}   # hop oil
+    - {slug: caryophyllene, presence: natural, presence_note: "From the hop oil."}   # hop oil
+    - {slug: isoamyl-acetate, presence: formed, formed_when: fermentation, presence_note: "An ester the yeast make; the banana note of an ale."}   # the banana ester of an ale yeast
+    - {slug: isoamyl-alcohol, presence: formed, formed_when: fermentation, presence_note: "A fusel alcohol yeast make from leucine."}
+    - {slug: diacetyl, presence: formed, formed_when: fermentation, presence_note: "Made during fermentation; the yeast take most of it back up."}   # the butterscotch off-flavour brewers test for
+    - {slug: acetaldehyde, presence: formed, formed_when: fermentation, presence_note: "Made by yeast during fermentation."}   # green apple, another fermentation marker
+    - {slug: 2-nonenal, presence: formed, formed_when: aged, presence_note: "Forms from the grain's fats as a beer goes stale."}   # the cardboard note of a stale beer
+    - {slug: glycerol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast during fermentation."}
+    - {slug: carbon-dioxide, presence: formed, formed_when: fermentation, presence_note: "Made by yeast in fermentation; many brewers also add it to carbonate."}
+    - {slug: water, presence: added, presence_note: "The brewing water."}   # roughly 92 percent by weight
+    - {slug: niacin, presence: natural, presence_note: "From the malt and the yeast."}   # from the brewing yeast
+    - {slug: riboflavin, presence: natural, presence_note: "From the malt and the yeast."}
 
 spirits:
   name: Spirits
   molecules:
-    - ethanol
-    - isoamyl-alcohol   # the largest fusel alcohol in a distillate
-    - acetaldehyde
-    - ethyl-acetate     # the solvent-pear note of a young spirit
-    - methanol          # a trace congener of any fruit distillate
-    - furfural          # from the barrel
-    - vanillin          # from the charred oak
-    - guaiacol          # from the char
-    - maltol
+    - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by fermentation, then concentrated by distillation."}
+    - {slug: isoamyl-alcohol, presence: formed, formed_when: fermentation, presence_note: "A fusel alcohol from the fermentation, carried through distillation."}   # the largest fusel alcohol in a distillate
+    - {slug: acetaldehyde, presence: formed, formed_when: fermentation, presence_note: "Made in the fermentation, carried through distillation."}
+    - {slug: ethyl-acetate, presence: formed, formed_when: fermentation, presence_note: "An ester from the fermentation, carried through distillation."}   # the solvent-pear note of a young spirit
+    - {slug: methanol, presence: none, presence_note: "Released from fruit pectin by enzymes, not made by the yeast."}   # a trace congener of any fruit distillate
+    - {slug: furfural, presence: none, presence_note: "Taken up from the toasted oak barrel as the spirit ages."}   # from the barrel
+    - {slug: vanillin, presence: none, presence_note: "Taken up from the charred oak barrel as the spirit ages."}   # from the charred oak
+    - {slug: guaiacol, presence: none, presence_note: "Taken up from the charred oak barrel as the spirit ages."}   # from the char
+    - {slug: maltol, presence: none, presence_note: "Taken up from the toasted oak barrel as the spirit ages."}
 
 chili-peppers:
   name: Chili peppers
   molecules:
-    - capsaicin
-    - dihydrocapsaicin
-    - nordihydrocapsaicin
-    - homocapsaicin
-    - homodihydrocapsaicin
-    - nonivamide
-    - ascorbic-acid    # peppers are among the richest sources of vitamin C
-    - beta-carotene
-    - lutein
-    - zeaxanthin
+    - {slug: capsaicin, presence: natural, presence_note: "Made by the chili pepper."}
+    - {slug: dihydrocapsaicin, presence: natural, presence_note: "Made by the chili pepper."}
+    - {slug: nordihydrocapsaicin, presence: natural, presence_note: "Made by the chili pepper."}
+    - {slug: homocapsaicin, presence: natural, presence_note: "Made by the chili pepper."}
+    - {slug: homodihydrocapsaicin, presence: natural, presence_note: "Made by the chili pepper."}
+    - {slug: nonivamide, presence: natural, presence_note: "Made by the chili pepper in small amounts; commercial nonivamide is synthetic."}
+    - {slug: ascorbic-acid, presence: natural, presence_note: "Made by the pepper."}   # peppers are among the richest sources of vitamin C
+    - {slug: beta-carotene, presence: natural, presence_note: "A pigment of the pepper."}
+    - {slug: lutein, presence: natural, presence_note: "A pigment of the pepper."}
+    - {slug: zeaxanthin, presence: natural, presence_note: "A pigment of the pepper."}
 
 hot-sauce:
   name: Hot sauce
   molecules:
-    - capsaicin
-    - dihydrocapsaicin
-    - nordihydrocapsaicin
-    - nonivamide
-    - acetic-acid      # the vinegar base
-    - sodium-chloride
-    - sodium-benzoate  # the usual preservative
-    - xanthan-gum      # the usual thickener
+    - {slug: capsaicin, presence: natural, presence_note: "From the chili peppers in the sauce."}
+    - {slug: dihydrocapsaicin, presence: natural, presence_note: "From the chili peppers in the sauce."}
+    - {slug: nordihydrocapsaicin, presence: natural, presence_note: "From the chili peppers in the sauce."}
+    - {slug: nonivamide, presence: natural, presence_note: "From the chili peppers in the sauce."}
+    - {slug: acetic-acid, presence: added, presence_note: "From the vinegar the maker adds."}   # the vinegar base
+    - {slug: sodium-chloride, presence: added, presence_note: "Salt the maker adds."}
+    - {slug: sodium-benzoate, presence: added, presence_note: "The preservative the maker adds."}   # the usual preservative
+    - {slug: xanthan-gum, presence: added, presence_note: "The thickener the maker adds."}   # the usual thickener
 
 black-pepper:
   name: Black pepper
   molecules:
-    - piperine
-    - caryophyllene
-    - limonene
-    - alpha-pinene
-    - myrcene
-    - linalool
+    - {slug: piperine, presence: natural, presence_note: "Made by the pepper plant, in the peppercorn."}
+    - {slug: caryophyllene, presence: natural, presence_note: "Part of the peppercorn's essential oil."}
+    - {slug: limonene, presence: natural, presence_note: "Part of the peppercorn's essential oil."}
+    - {slug: alpha-pinene, presence: natural, presence_note: "Part of the peppercorn's essential oil."}
+    - {slug: myrcene, presence: natural, presence_note: "Part of the peppercorn's essential oil."}
+    - {slug: linalool, presence: natural, presence_note: "Part of the peppercorn's essential oil."}
 
 table-sugar:
   name: Table sugar
   molecules:
-    - sucrose
-    - glucose    # what sucrose splits into
-    - fructose
+    - {slug: sucrose, presence: natural, presence_note: "Table sugar is sucrose, refined from sugar cane or sugar beet."}
+    - {slug: glucose, presence: none, presence_note: "Not in the sugar itself: sucrose splits into glucose and fructose when digested or heated with acid."}   # what sucrose splits into
+    - {slug: fructose, presence: none, presence_note: "Not in the sugar itself: sucrose splits into glucose and fructose when digested or heated with acid."}
 
 honey:
   name: Honey
   molecules:
-    - fructose
-    - glucose
-    - sucrose
-    - maltose
-    - gluconic-acid           # honey's principal acid
-    - methylglyoxal           # the manuka activity marker
-    - hydroxymethylfurfural   # the standard freshness and heating marker
-    - phenylacetic-acid       # a honey aroma note
+    - {slug: fructose, presence: natural, presence_note: "The bees' enzymes split nectar sucrose into fructose and glucose."}
+    - {slug: glucose, presence: natural, presence_note: "The bees' enzymes split nectar sucrose into fructose and glucose."}
+    - {slug: sucrose, presence: natural, presence_note: "Nectar sugar the bees have not yet split."}
+    - {slug: maltose, presence: natural, presence_note: "A minor sugar of honey."}
+    - {slug: gluconic-acid, presence: natural, presence_note: "Made from glucose by the bees' glucose oxidase."}   # honey's principal acid
+    - {slug: methylglyoxal, presence: natural, presence_note: "In manuka honey, formed from the dihydroxyacetone of manuka nectar."}   # the manuka activity marker
+    - {slug: hydroxymethylfurfural, presence: none, presence_note: "Forms slowly from the sugars in storage and faster when honey is heated; fresh honey holds little."}   # the standard freshness and heating marker
+    - {slug: phenylacetic-acid, presence: natural, presence_note: "An aroma compound of honey."}   # a honey aroma note
 
 fruit:
   name: Fruit
   molecules:
-    - fructose
-    - glucose
-    - sucrose
-    - citric-acid
-    - malic-acid
-    - tartaric-acid
-    - ascorbic-acid
-    - pectin
-    - quercetin
-    - beta-carotene
-    - limonene
-    - ethylene       # the hormone that ripens it
+    - {slug: fructose, presence: natural, presence_note: "Made by the plant."}
+    - {slug: glucose, presence: natural, presence_note: "Made by the plant."}
+    - {slug: sucrose, presence: natural, presence_note: "Made by the plant."}
+    - {slug: citric-acid, presence: natural, presence_note: "An acid the fruit makes."}
+    - {slug: malic-acid, presence: natural, presence_note: "An acid the fruit makes."}
+    - {slug: tartaric-acid, presence: natural, presence_note: "An acid the fruit makes, notably grapes."}
+    - {slug: ascorbic-acid, presence: natural, presence_note: "Made by the plant."}
+    - {slug: pectin, presence: natural, presence_note: "Part of the fruit's cell walls."}
+    - {slug: quercetin, presence: natural, presence_note: "A flavonol of fruit skins."}
+    - {slug: beta-carotene, presence: natural, presence_note: "A pigment of orange and yellow fruit."}
+    - {slug: limonene, presence: natural, presence_note: "Part of the peel oil of citrus fruit."}
+    - {slug: ethylene, presence: natural, presence_note: "The fruit makes it as it ripens."}   # the hormone that ripens it
 
 # ── Phase 6 additions (2026-09-07) ─────────────────────────────────────────────
 # The build plan asked for curated foods on the 60 highest-demand molecules still showing
@@ -232,179 +238,179 @@ fruit:
 red-meat:
   name: Red meat
   molecules:
-    - creatine              # muscle stores it; beef is the densest common source
-    - carnosine             # a dipeptide concentrated in skeletal muscle
-    - taurine               # abundant in muscle tissue
-    - cholesterol           # in every animal cell membrane
-    - vitamin-b12           # essentially absent from plants
-    - iron                  # haem iron, the readily absorbed form
-    - zinc
-    - coenzyme-q10          # highest in heart and other organ meat
-    - palmitic-acid         # the main saturated fat in beef fat
-    - stearic-acid
-    - oleic-acid            # about half the fat in beef is monounsaturated
+    - {slug: creatine, presence: natural, presence_note: "Stored in the animal's muscle."}   # muscle stores it; beef is the densest common source
+    - {slug: carnosine, presence: natural, presence_note: "A dipeptide of the animal's muscle."}   # a dipeptide concentrated in skeletal muscle
+    - {slug: taurine, presence: natural, presence_note: "Present in the animal's muscle."}   # abundant in muscle tissue
+    - {slug: cholesterol, presence: natural, presence_note: "Part of every animal cell membrane."}   # in every animal cell membrane
+    - {slug: vitamin-b12, presence: natural, presence_note: "Made by microbes and stored in the animal's tissues."}   # essentially absent from plants
+    - {slug: iron, presence: natural, presence_note: "Mostly as haem iron in the muscle."}   # haem iron, the readily absorbed form
+    - {slug: zinc, presence: natural, presence_note: "A mineral of the meat."}
+    - {slug: coenzyme-q10, presence: natural, presence_note: "Present in the animal's tissues, highest in heart."}   # highest in heart and other organ meat
+    - {slug: palmitic-acid, presence: natural, presence_note: "Part of the fats of the meat."}   # the main saturated fat in beef fat
+    - {slug: stearic-acid, presence: natural, presence_note: "Part of the fats of the meat."}
+    - {slug: oleic-acid, presence: natural, presence_note: "Part of the fats of the meat."}   # about half the fat in beef is monounsaturated
 
 fish:
   name: Fish
   molecules:
-    - docosahexaenoic-acid  # the long-chain omega-3 oily fish is eaten for
-    - taurine
-    - creatine
-    - vitamin-b12
-    - selenium
-    - iodine                # sea fish concentrate it from seawater
-    - cholesterol
-    - histamine             # forms in poorly chilled scombroid fish
+    - {slug: docosahexaenoic-acid, presence: natural, presence_note: "Part of the fats of oily fish."}   # the long-chain omega-3 oily fish is eaten for
+    - {slug: taurine, presence: natural, presence_note: "Present in the fish's muscle."}
+    - {slug: creatine, presence: natural, presence_note: "Stored in the fish's muscle."}
+    - {slug: vitamin-b12, presence: natural, presence_note: "Stored in the fish's tissues."}
+    - {slug: selenium, presence: natural, presence_note: "A mineral of the fish."}
+    - {slug: iodine, presence: natural, presence_note: "Sea fish take it up from seawater, as iodide."}   # sea fish concentrate it from seawater
+    - {slug: cholesterol, presence: natural, presence_note: "Part of every animal cell membrane."}
+    - {slug: histamine, presence: none, presence_note: "Formed by bacteria from histidine when fish is not kept cold; fresh fish holds little."}   # forms in poorly chilled scombroid fish
 
 eggs:
   name: Eggs
   molecules:
-    - cholesterol           # the yolk is one of the densest dietary sources
-    - choline               # as phosphatidylcholine in the yolk
-    - lutein                # with zeaxanthin, the yellow of the yolk
-    - zeaxanthin
-    - biotin
-    - riboflavin
-    - vitamin-b12
-    - tryptophan
+    - {slug: cholesterol, presence: natural, presence_note: "Part of the yolk."}   # the yolk is one of the densest dietary sources
+    - {slug: choline, presence: natural, presence_note: "Part of the yolk, as phosphatidylcholine."}   # as phosphatidylcholine in the yolk
+    - {slug: lutein, presence: natural, presence_note: "A pigment of the yolk."}   # with zeaxanthin, the yellow of the yolk
+    - {slug: zeaxanthin, presence: natural, presence_note: "A pigment of the yolk."}
+    - {slug: biotin, presence: natural, presence_note: "Present in the yolk."}
+    - {slug: riboflavin, presence: natural, presence_note: "Present in the egg."}
+    - {slug: vitamin-b12, presence: natural, presence_note: "Present in the yolk."}
+    - {slug: tryptophan, presence: natural, presence_note: "An amino acid of the egg's proteins."}
 
 milk:
   name: Milk
   molecules:
-    - lactose               # the sugar that gives milk its name
-    - casein                # about 80 percent of milk protein
-    - calcium
-    - riboflavin
-    - vitamin-b12
-    - tryptophan
-    - water                 # roughly 87 percent of milk by weight
+    - {slug: lactose, presence: natural, presence_note: "The sugar of milk."}   # the sugar that gives milk its name
+    - {slug: casein, presence: natural, presence_note: "The main protein of milk."}   # about 80 percent of milk protein
+    - {slug: calcium, presence: natural, presence_note: "A mineral of milk."}
+    - {slug: riboflavin, presence: natural, presence_note: "Present in milk."}
+    - {slug: vitamin-b12, presence: natural, presence_note: "Present in milk."}
+    - {slug: tryptophan, presence: natural, presence_note: "An amino acid of the milk proteins."}
+    - {slug: water, presence: natural, presence_note: "About 87 percent of milk."}   # roughly 87 percent of milk by weight
 
 cheese:
   name: Cheese
   molecules:
-    - casein                # the curd itself
-    - calcium
-    - sodium-chloride       # salt is a required step, not a seasoning
-    - monosodium-glutamate  # free glutamate, which is why parmesan tastes savoury
-    - tyramine              # forms as the protein breaks down in ageing
-    - histamine
-    - butyric-acid          # the sharp note of aged and blue cheeses
+    - {slug: casein, presence: natural, presence_note: "The milk protein the curd is made of."}   # the curd itself
+    - {slug: calcium, presence: natural, presence_note: "A mineral of the milk the cheese is made from."}
+    - {slug: sodium-chloride, presence: added, presence_note: "Salt the cheesemaker adds."}   # salt is a required step, not a seasoning
+    - {slug: monosodium-glutamate, presence: formed, formed_when: aged, presence_note: "Free glutamate is released as the proteins break down in ageing."}   # free glutamate, which is why parmesan tastes savoury
+    - {slug: tyramine, presence: formed, formed_when: aged, presence_note: "Formed as the proteins break down in ageing."}   # forms as the protein breaks down in ageing
+    - {slug: histamine, presence: formed, formed_when: aged, presence_note: "Formed as the proteins break down in ageing."}
+    - {slug: butyric-acid, presence: formed, formed_when: aged, presence_note: "Released from the milk fat as the cheese ages."}   # the sharp note of aged and blue cheeses
 
 nuts:
   name: Nuts
   molecules:
-    - oleic-acid            # the dominant fat in almonds, cashews and macadamias
-    - linoleic-acid
-    - tocopherol            # vitamin E, which is why nut oils resist rancidity
-    - magnesium
-    - copper
-    - selenium              # brazil nuts are the densest food source known
-    - phytic-acid           # binds minerals; the reason for soaking
-    - biotin
+    - {slug: oleic-acid, presence: natural, presence_note: "Part of the fats of the nut."}   # the dominant fat in almonds, cashews and macadamias
+    - {slug: linoleic-acid, presence: natural, presence_note: "Part of the fats of the nut."}
+    - {slug: tocopherol, presence: natural, presence_note: "Present in the nut's oil."}   # vitamin E, which is why nut oils resist rancidity
+    - {slug: magnesium, presence: natural, presence_note: "A mineral of the nut."}
+    - {slug: copper, presence: natural, presence_note: "A mineral of the nut."}
+    - {slug: selenium, presence: natural, presence_note: "A mineral of the nut, notably the Brazil nut."}   # brazil nuts are the densest food source known
+    - {slug: phytic-acid, presence: natural, presence_note: "The seed's store of phosphate."}   # binds minerals; the reason for soaking
+    - {slug: biotin, presence: natural, presence_note: "Present in the nut."}
 
 shellfish:
   name: Shellfish
   molecules:
-    - copper                # their blood carries copper, not iron
-    - zinc                  # oysters are the densest common source
-    - taurine
-    - vitamin-b12
-    - iodine
-    - glycine               # much of the sweetness of crab and prawn
-    - cholesterol
+    - {slug: copper, presence: natural, presence_note: "Part of the haemocyanin in their blood."}   # their blood carries copper, not iron
+    - {slug: zinc, presence: natural, presence_note: "A mineral of the shellfish, notably oysters."}   # oysters are the densest common source
+    - {slug: taurine, presence: natural, presence_note: "Present in the shellfish's muscle."}
+    - {slug: vitamin-b12, presence: natural, presence_note: "Present in the shellfish's tissues."}
+    - {slug: iodine, presence: natural, presence_note: "Taken up from seawater, as iodide."}
+    - {slug: glycine, presence: natural, presence_note: "A free amino acid of crab and prawn muscle."}   # much of the sweetness of crab and prawn
+    - {slug: cholesterol, presence: natural, presence_note: "Part of every animal cell membrane."}
 
 leafy-greens:
   name: Leafy greens
   molecules:
-    - folic-acid            # folate, named after foliage
-    - lutein
-    - oxalic-acid           # the chalky feel of spinach on the teeth
-    - magnesium             # the metal at the centre of chlorophyll
-    - iron
-    - beta-carotene
-    - quercetin
-    - calcium
+    - {slug: folic-acid, presence: none, presence_note: "Greens hold natural folates, the family folic acid belongs to; folic acid itself is the form added to fortified foods."}   # folate, named after foliage
+    - {slug: lutein, presence: natural, presence_note: "A pigment of the leaf."}
+    - {slug: oxalic-acid, presence: natural, presence_note: "Made by the plant, notably spinach."}   # the chalky feel of spinach on the teeth
+    - {slug: magnesium, presence: natural, presence_note: "The metal at the centre of chlorophyll."}   # the metal at the centre of chlorophyll
+    - {slug: iron, presence: natural, presence_note: "A mineral of the leaf."}
+    - {slug: beta-carotene, presence: natural, presence_note: "A pigment of the leaf."}
+    - {slug: quercetin, presence: natural, presence_note: "A flavonol of the leaf."}
+    - {slug: calcium, presence: natural, presence_note: "A mineral of the leaf."}
 
 mushrooms:
   name: Mushrooms
   molecules:
-    - monosodium-glutamate  # free glutamate, the savoury depth of dried shiitake
-    - ergocalciferol        # vitamin D2, formed when ultraviolet light hits ergosterol
-    - chitin                # the cell wall, which is why they are chewy
-    - selenium
-    - copper
-    - riboflavin
-    - agaritine             # in the common button mushroom
+    - {slug: monosodium-glutamate, presence: natural, presence_note: "Mushrooms hold free glutamate of their own."}   # free glutamate, the savoury depth of dried shiitake
+    - {slug: ergocalciferol, presence: natural, presence_note: "Made in the mushroom from ergosterol when ultraviolet light reaches it."}   # vitamin D2, formed when ultraviolet light hits ergosterol
+    - {slug: chitin, presence: natural, presence_note: "The mushroom's cell wall."}   # the cell wall, which is why they are chewy
+    - {slug: selenium, presence: natural, presence_note: "A mineral of the mushroom."}
+    - {slug: copper, presence: natural, presence_note: "A mineral of the mushroom."}
+    - {slug: riboflavin, presence: natural, presence_note: "Present in the mushroom."}
+    - {slug: agaritine, presence: natural, presence_note: "Made by the common button mushroom."}   # in the common button mushroom
 
 bread:
   name: Bread
   molecules:
-    - starch                # the flour itself
-    - gluten                # the protein network that holds the crumb open
-    - ethanol               # a fermentation product, mostly baked off
-    - sodium-chloride       # controls the yeast as well as the taste
-    - acrylamide            # forms in the crust as it browns
-    - thiamine              # fortification, standard in the US and UK
-    - niacin
-    - folic-acid
-    - iron
+    - {slug: starch, presence: natural, presence_note: "From the flour."}   # the flour itself
+    - {slug: gluten, presence: natural, presence_note: "From the wheat flour's proteins, gliadin and glutenin."}   # the protein network that holds the crumb open
+    - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by the yeast as the dough rises; most bakes off."}   # a fermentation product, mostly baked off
+    - {slug: sodium-chloride, presence: added, presence_note: "Salt the baker adds."}   # controls the yeast as well as the taste
+    - {slug: acrylamide, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it browns."}   # forms in the crust as it browns
+    - {slug: thiamine, presence: added, presence_note: "Added to enriched flour; whole grain carries its own as well."}   # fortification, standard in the US and UK
+    - {slug: niacin, presence: added, presence_note: "Added to enriched flour; whole grain carries its own as well."}
+    - {slug: folic-acid, presence: added, presence_note: "Added to enriched flour."}
+    - {slug: iron, presence: added, presence_note: "Added to enriched flour; whole grain carries its own as well."}
 
 breakfast-cereal:
   name: Breakfast cereal
   molecules:
-    - starch
-    - iron                  # fortification; the powder a magnet can lift from crushed flakes
-    - folic-acid
-    - thiamine
-    - riboflavin
-    - niacin
-    - nicotinamide
-    - pyridoxine
-    - zinc
-    - sucrose
+    - {slug: starch, presence: natural, presence_note: "From the grain."}
+    - {slug: iron, presence: added, presence_note: "Added in fortification."}   # fortification; the powder a magnet can lift from crushed flakes
+    - {slug: folic-acid, presence: added, presence_note: "Added in fortification."}
+    - {slug: thiamine, presence: added, presence_note: "Added in fortification."}
+    - {slug: riboflavin, presence: added, presence_note: "Added in fortification."}
+    - {slug: niacin, presence: added, presence_note: "Added in fortification."}
+    - {slug: nicotinamide, presence: added, presence_note: "Added in fortification."}
+    - {slug: pyridoxine, presence: added, presence_note: "Added in fortification."}
+    - {slug: zinc, presence: added, presence_note: "Added in fortification."}
+    - {slug: sucrose, presence: added, presence_note: "The sugar the maker adds."}
 
 cured-meat:
   name: Cured meat
   molecules:
-    - sodium-nitrite        # the cure itself, and the source of the pink colour
-    - potassium-nitrate     # saltpetre, the traditional cure that becomes nitrite
-    - sodium-chloride
-    - tyramine
-    - histamine
-    - creatine
-    - palmitic-acid
+    - {slug: sodium-nitrite, presence: added, presence_note: "The cure the maker adds."}   # the cure itself, and the source of the pink colour
+    - {slug: potassium-nitrate, presence: added, presence_note: "The traditional cure the maker adds; bacteria turn it into nitrite."}   # saltpetre, the traditional cure that becomes nitrite
+    - {slug: sodium-chloride, presence: added, presence_note: "Salt the maker adds."}
+    - {slug: tyramine, presence: formed, formed_when: cured, presence_note: "Formed as the proteins break down during curing."}
+    - {slug: histamine, presence: formed, formed_when: cured, presence_note: "Formed as the proteins break down during curing."}
+    - {slug: creatine, presence: natural, presence_note: "From the meat."}
+    - {slug: palmitic-acid, presence: natural, presence_note: "Part of the fats of the meat."}
 
 soy-sauce:
   name: Soy sauce
   molecules:
-    - monosodium-glutamate  # free glutamate from the fermented soy protein
-    - sodium-chloride
-    - lactic-acid           # from the fermentation
-    - ethanol
-    - histamine
-    - tyramine
+    - {slug: monosodium-glutamate, presence: formed, formed_when: fermentation, presence_note: "Free glutamate released as the soy protein ferments."}   # free glutamate from the fermented soy protein
+    - {slug: sodium-chloride, presence: added, presence_note: "The brine the maker adds."}
+    - {slug: lactic-acid, presence: formed, formed_when: fermentation, presence_note: "Made by lactic acid bacteria during fermentation."}   # from the fermentation
+    - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast during fermentation."}
+    - {slug: histamine, presence: formed, formed_when: fermentation, presence_note: "Formed by microbes during fermentation."}
+    - {slug: tyramine, presence: formed, formed_when: fermentation, presence_note: "Formed by microbes during fermentation."}
 
 soft-drinks:
   name: Soft drinks
   molecules:
-    - carbon-dioxide        # the carbonation
-    - citric-acid
-    - phosphoric-acid       # the tang of a cola specifically
-    - sucrose
-    - caffeine
-    - sodium-benzoate       # preservative
-    - allura-red-ac         # Red 40
-    - aspartame
-    - water
+    - {slug: carbon-dioxide, presence: added, presence_note: "The carbonation the maker adds."}   # the carbonation
+    - {slug: citric-acid, presence: added, presence_note: "An acid the maker adds."}
+    - {slug: phosphoric-acid, presence: added, presence_note: "The acid the maker adds to a cola."}   # the tang of a cola specifically
+    - {slug: sucrose, presence: added, presence_note: "The sugar the maker adds."}
+    - {slug: caffeine, presence: added, presence_note: "The maker adds it to colas."}
+    - {slug: sodium-benzoate, presence: added, presence_note: "The preservative the maker adds."}   # preservative
+    - {slug: allura-red-ac, presence: added, presence_note: "The colour the maker adds."}   # Red 40
+    - {slug: aspartame, presence: added, presence_note: "The sweetener the maker adds to diet versions."}
+    - {slug: water, presence: added, presence_note: "The base of the drink."}
 
 tonic-water:
   name: Tonic water
   molecules:
-    - quinine               # the bitterness, and the reason it fluoresces under UV
-    - carbon-dioxide
-    - citric-acid
-    - sucrose
-    - sodium-benzoate
+    - {slug: quinine, presence: added, presence_note: "The bitter the maker adds."}   # the bitterness, and the reason it fluoresces under UV
+    - {slug: carbon-dioxide, presence: added, presence_note: "The carbonation the maker adds."}
+    - {slug: citric-acid, presence: added, presence_note: "An acid the maker adds."}
+    - {slug: sucrose, presence: added, presence_note: "The sugar the maker adds."}
+    - {slug: sodium-benzoate, presence: added, presence_note: "The preservative the maker adds."}
 
 # Run C2 (2026-10-22). The standard ingredients printed on mainstream energy drink cans (Red Bull,
 # Monster, Rockstar and the like), the molecules MoleculeFinder holds. A category list like soft
@@ -413,58 +419,58 @@ tonic-water:
 energy-drinks:
   name: Energy drinks
   molecules:
-    - caffeine              # the point of the drink
-    - taurine
-    - sucrose
-    - glucose
-    - citric-acid
-    - carbon-dioxide        # the carbonation
-    - trisodium-citrate     # an acidity regulator
-    - sodium-bicarbonate
-    - magnesium-carbonate
-    - sodium-benzoate       # preservative
-    - sorbic-acid           # preservative
-    - nicotinamide          # vitamin B3, as niacinamide on the label
-    - pantothenic-acid      # vitamin B5, as calcium pantothenate
-    - pyridoxine            # vitamin B6
-    - cyanocobalamin        # vitamin B12
-    - riboflavin            # vitamin B2, also a colour
-    - carnitine
-    - inositol
-    - sucralose             # sugar-free versions
-    - acesulfame-potassium  # sugar-free versions
-    - aspartame             # sugar-free versions
-    - water
+    - {slug: caffeine, presence: added, presence_note: "The maker adds it."}   # the point of the drink
+    - {slug: taurine, presence: added, presence_note: "The maker adds it."}
+    - {slug: sucrose, presence: added, presence_note: "The sugar the maker adds."}
+    - {slug: glucose, presence: added, presence_note: "The sugar the maker adds."}
+    - {slug: citric-acid, presence: added, presence_note: "An acid the maker adds."}
+    - {slug: carbon-dioxide, presence: added, presence_note: "The carbonation the maker adds."}   # the carbonation
+    - {slug: trisodium-citrate, presence: added, presence_note: "An acidity regulator the maker adds."}   # an acidity regulator
+    - {slug: sodium-bicarbonate, presence: added, presence_note: "An acidity regulator the maker adds."}
+    - {slug: magnesium-carbonate, presence: added, presence_note: "An acidity regulator the maker adds."}
+    - {slug: sodium-benzoate, presence: added, presence_note: "The preservative the maker adds."}   # preservative
+    - {slug: sorbic-acid, presence: added, presence_note: "The preservative the maker adds."}   # preservative
+    - {slug: nicotinamide, presence: added, presence_note: "Vitamin B3, added by the maker."}   # vitamin B3, as niacinamide on the label
+    - {slug: pantothenic-acid, presence: added, presence_note: "Vitamin B5, added by the maker as calcium pantothenate."}   # vitamin B5, as calcium pantothenate
+    - {slug: pyridoxine, presence: added, presence_note: "Vitamin B6, added by the maker."}   # vitamin B6
+    - {slug: cyanocobalamin, presence: added, presence_note: "Vitamin B12, added by the maker."}   # vitamin B12
+    - {slug: riboflavin, presence: added, presence_note: "Vitamin B2, added by the maker."}   # vitamin B2, also a colour
+    - {slug: carnitine, presence: added, presence_note: "The maker adds it."}
+    - {slug: inositol, presence: added, presence_note: "The maker adds it."}
+    - {slug: sucralose, presence: added, presence_note: "The sweetener the maker adds to sugar free versions."}   # sugar-free versions
+    - {slug: acesulfame-potassium, presence: added, presence_note: "The sweetener the maker adds to sugar free versions."}   # sugar-free versions
+    - {slug: aspartame, presence: added, presence_note: "The sweetener the maker adds to sugar free versions."}   # sugar-free versions
+    - {slug: water, presence: added, presence_note: "The base of the drink."}
 
 citrus:
   name: Citrus
   molecules:
-    - citric-acid           # named for it
-    - ascorbic-acid
-    - limonene              # the peel oil
-    - linalool
-    - hesperidin            # the flavonoid of the white pith
-    - pectin                # the peel is a commercial source
-    - sucrose
+    - {slug: citric-acid, presence: natural, presence_note: "The main acid of citrus juice."}   # named for it
+    - {slug: ascorbic-acid, presence: natural, presence_note: "Made by the fruit."}
+    - {slug: limonene, presence: natural, presence_note: "The main part of the peel oil."}   # the peel oil
+    - {slug: linalool, presence: natural, presence_note: "Part of the peel oil."}
+    - {slug: hesperidin, presence: natural, presence_note: "A flavonoid of the white pith and peel."}   # the flavonoid of the white pith
+    - {slug: pectin, presence: natural, presence_note: "Part of the peel's cell walls."}   # the peel is a commercial source
+    - {slug: sucrose, presence: natural, presence_note: "Made by the fruit."}
 
 processed-snacks:
   name: Processed snacks
   molecules:
-    - monosodium-glutamate
-    - sodium-chloride
-    - maltodextrin
-    - silicon-dioxide       # anti-caking
-    - allura-red-ac
-    - propylene-glycol      # carries flavour and holds moisture
-    - acrylamide            # forms when starch is fried or baked hot
-    - sodium-benzoate
-    - potassium-sorbate
+    - {slug: monosodium-glutamate, presence: added, presence_note: "The flavour enhancer the maker adds."}
+    - {slug: sodium-chloride, presence: added, presence_note: "Salt the maker adds."}
+    - {slug: maltodextrin, presence: added, presence_note: "A carrier and filler the maker adds."}
+    - {slug: silicon-dioxide, presence: added, presence_note: "The anti caking agent the maker adds."}   # anti-caking
+    - {slug: allura-red-ac, presence: added, presence_note: "The colour the maker adds."}
+    - {slug: propylene-glycol, presence: added, presence_note: "A carrier for flavour the maker adds."}   # carries flavour and holds moisture
+    - {slug: acrylamide, presence: formed, formed_when: cooked, presence_note: "Formed when starchy foods are fried or baked hot."}   # forms when starch is fried or baked hot
+    - {slug: sodium-benzoate, presence: added, presence_note: "The preservative the maker adds."}
+    - {slug: potassium-sorbate, presence: added, presence_note: "The preservative the maker adds."}
 
 whipped-cream:
   name: Whipped cream
   molecules:
-    - nitrous-oxide         # E942, the propellant in an aerosol can
-    - cholesterol
-    - casein
-    - sucrose
-    - vanillin
+    - {slug: nitrous-oxide, presence: added, presence_note: "The propellant in the aerosol can."}   # E942, the propellant in an aerosol can
+    - {slug: cholesterol, presence: natural, presence_note: "From the cream."}
+    - {slug: casein, presence: natural, presence_note: "From the cream."}
+    - {slug: sucrose, presence: added, presence_note: "The sugar the maker adds."}
+    - {slug: vanillin, presence: added, presence_note: "The flavouring the maker adds."}

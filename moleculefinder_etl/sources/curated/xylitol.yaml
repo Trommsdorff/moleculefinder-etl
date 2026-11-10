@@ -7,8 +7,8 @@ types:
   - sugar-alcohol
   - sweetener
 foods:
-  - { category: tabletop-sweetener }
-  - { category: sugar-free-gum }
+  - { category: tabletop-sweetener, presence: added, presence_note: "The sweetener in the packet." }
+  - { category: sugar-free-gum, presence: added, presence_note: "The sweetener the maker adds." }
 editorial: |
   Xylitol is a sugar alcohol almost exactly as sweet as sugar, gram for gram,
   but with far fewer calories. It starves the bacteria that cause tooth decay,

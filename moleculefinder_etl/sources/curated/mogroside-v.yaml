@@ -2,4 +2,4 @@
 cid: 24721270
 slug: mogroside-v
 foods:
-  - { category: tabletop-sweetener }
+  - { category: tabletop-sweetener, presence: added, presence_note: "Extracted from monk fruit and put in the packet." }

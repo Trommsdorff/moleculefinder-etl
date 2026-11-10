@@ -10,13 +10,26 @@
 # and fails loudly on a typo, so this file can never ship a dangling reference.
 #
 # Captions and blurbs are neutral, no health advice, no em-dashes (house rules).
+#
+# PRESENCE (build plan everyday chemistry 2026-11, phase 1; Garrett's rulings b and g, 2026-11-09).
+# Every entry says, by hand, how its molecule comes to be in the world: presence natural, added,
+# body, formed (with formed_when: roasted, baked, cooked, cured, aged or fermentation) or none (with a
+# written presence_note). presence_note is the one-line reason. transform/presence.py holds the closed
+# list; an entry with no mark, or a bad one, stops the build and fails pytest.
 
 worlds:
   - slug: morning-coffee
     title: Morning coffee
     blurb: What's in your cup, and why it wakes you up.
     tint: food-flavor
-    molecules: [caffeine, chlorogenic-acid, theobromine, niacin, paraxanthine, adenosine, theophylline]
+    molecules:
+      - {slug: caffeine, presence: natural, presence_note: "Made by the coffee plant; it carries into the brewed cup."}
+      - {slug: chlorogenic-acid, presence: natural, presence_note: "A polyphenol of the coffee bean; roasting breaks part of it down."}
+      - {slug: theobromine, presence: natural, presence_note: "Present in trace amounts in the coffee bean."}
+      - {slug: niacin, presence: formed, formed_when: roasted, presence_note: "Formed from trigonelline as the beans roast."}
+      - {slug: paraxanthine, presence: body, presence_note: "Your liver makes it from caffeine."}
+      - {slug: adenosine, presence: body, presence_note: "Your body makes it; caffeine blocks its receptors."}
+      - {slug: theophylline, presence: natural, presence_note: "Present in trace amounts in the coffee bean."}
     journey:
       - {slug: caffeine, caption: in your cup}
       - {slug: adenosine, caption: blocks}
@@ -27,7 +40,13 @@ worlds:
     title: A spicy dinner
     blurb: The molecules that make food burn.
     tint: plant-compound
-    molecules: [capsaicin, piperine, gingerol, shogaol, allicin, allyl-isothiocyanate]
+    molecules:
+      - {slug: capsaicin, presence: natural, presence_note: "Made by the chili pepper."}
+      - {slug: piperine, presence: natural, presence_note: "Made by the pepper plant, in the peppercorn."}
+      - {slug: gingerol, presence: natural, presence_note: "Made by the ginger root."}
+      - {slug: shogaol, presence: formed, formed_when: cooked, presence_note: "Formed from gingerol when ginger is dried or cooked."}
+      - {slug: allicin, presence: none, presence_note: "Formed by an enzyme when garlic is crushed or cut; intact garlic holds alliin instead."}
+      - {slug: allyl-isothiocyanate, presence: none, presence_note: "Formed by an enzyme when mustard seed or horseradish is crushed and wetted."}
     journey:
       - {slug: capsaicin, caption: the chili burn}
       - {slug: piperine, caption: milder cousin}
@@ -38,7 +57,13 @@ worlds:
     title: Chocolate
     blurb: Why chocolate feels good.
     tint: food-flavor
-    molecules: [theobromine, caffeine, phenethylamine, anandamide, tryptophan, tyramine]
+    molecules:
+      - {slug: theobromine, presence: natural, presence_note: "From the cocoa bean."}
+      - {slug: caffeine, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine."}
+      - {slug: phenethylamine, presence: none, presence_note: "not yet checked"}
+      - {slug: anandamide, presence: natural, presence_note: "Reported in small amounts in the cocoa bean."}
+      - {slug: tryptophan, presence: natural, presence_note: "An amino acid of the cocoa proteins."}
+      - {slug: tyramine, presence: none, presence_note: "not yet checked"}
     journey:
       - {slug: theobromine, caption: chocolate's stimulant}
       - {slug: caffeine, caption: cousin}
@@ -49,7 +74,11 @@ worlds:
     title: The smell after rain
     blurb: Petrichor, molecule by molecule.
     tint: scent-aroma
-    molecules: [geosmin, dimethyl-sulfide, methanethiol, 2-nonenal]
+    molecules:
+      - {slug: geosmin, presence: natural, presence_note: "Made by soil bacteria; rain lifts it into the air."}
+      - {slug: dimethyl-sulfide, presence: natural, presence_note: "Made by microbes in soil and water."}
+      - {slug: methanethiol, presence: natural, presence_note: "Made by microbes in soil and water."}
+      - {slug: 2-nonenal, presence: none, presence_note: "not yet checked"}
     journey:
       - {slug: geosmin, caption: the petrichor note}
       - {slug: dimethyl-sulfide, caption: also earthy}
@@ -59,7 +88,14 @@ worlds:
     title: Falling asleep
     blurb: The chemistry of a good night.
     tint: body-endogenous
-    molecules: [melatonin, adenosine, gamma-aminobutyric-acid, glycine, serotonin, tryptophan, 5-hydroxytryptophan]
+    molecules:
+      - {slug: melatonin, presence: body, presence_note: "Your pineal gland makes it as darkness falls."}
+      - {slug: adenosine, presence: body, presence_note: "Your body makes it; it builds up through the waking day."}
+      - {slug: gamma-aminobutyric-acid, presence: body, presence_note: "Your brain makes it from glutamate."}
+      - {slug: glycine, presence: body, presence_note: "Your body makes it."}
+      - {slug: serotonin, presence: body, presence_note: "Your body makes it from tryptophan."}
+      - {slug: tryptophan, presence: none, presence_note: "An essential amino acid: it comes from food, and the body cannot make it."}
+      - {slug: 5-hydroxytryptophan, presence: body, presence_note: "Your body makes it from tryptophan."}
     journey:
       - {slug: tryptophan, caption: starts in dinner}
       - {slug: 5-hydroxytryptophan, caption: becomes}
@@ -70,7 +106,13 @@ worlds:
     title: A glass of wine
     blurb: What's in the glass.
     tint: food-flavor
-    molecules: [ethanol, resveratrol, tannic-acid, tartaric-acid, malic-acid, cyanidin]
+    molecules:
+      - {slug: ethanol, presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the grape sugars."}
+      - {slug: resveratrol, presence: natural, presence_note: "From the grape skins."}
+      - {slug: tannic-acid, presence: none, presence_note: "not yet checked"}
+      - {slug: tartaric-acid, presence: natural, presence_note: "The main acid of the grape."}
+      - {slug: malic-acid, presence: natural, presence_note: "An acid of the grape; malolactic fermentation turns part of it into lactic acid."}
+      - {slug: cyanidin, presence: natural, presence_note: "From the grape skins, as a glycoside among the red pigments."}
     journey:
       - {slug: ethanol, caption: the alcohol}
       - {slug: tannic-acid, caption: pairs with}
@@ -81,7 +123,13 @@ worlds:
     title: Fresh-baked bread
     blurb: The smell of the oven.
     tint: food-flavor
-    molecules: [maltol, ethyl-maltol, furaneol, hydroxymethylfurfural, acetic-acid, acrylamide]
+    molecules:
+      - {slug: maltol, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it bakes."}
+      - {slug: ethyl-maltol, presence: none, presence_note: "A synthetic flavouring; baking forms maltol, its relative, not ethyl maltol."}
+      - {slug: furaneol, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it bakes."}
+      - {slug: hydroxymethylfurfural, presence: formed, formed_when: baked, presence_note: "Formed from the sugars as the crust browns."}
+      - {slug: acetic-acid, presence: formed, formed_when: fermentation, presence_note: "Made by bacteria in a sourdough; yeast make a little."}
+      - {slug: acrylamide, presence: formed, formed_when: baked, presence_note: "Formed in the crust as it browns."}
     journey:
       - {slug: maltol, caption: warm crust aroma}
       - {slug: ethyl-maltol, caption: caramel cousin}
@@ -92,7 +140,13 @@ worlds:
     title: Sunscreen and summer skin
     blurb: Molecules between you and the sun.
     tint: body-endogenous
-    molecules: [zinc-oxide, melanin, cholecalciferol, retinol, salicylic-acid, hyaluronic-acid]
+    molecules:
+      - {slug: zinc-oxide, presence: added, presence_note: "The mineral filter the maker adds to sunscreen."}
+      - {slug: melanin, presence: body, presence_note: "The pigment your skin makes in sunlight."}
+      - {slug: cholecalciferol, presence: body, presence_note: "Your skin makes it when sunlight reaches it."}
+      - {slug: retinol, presence: added, presence_note: "An ingredient the maker adds to skincare."}
+      - {slug: salicylic-acid, presence: added, presence_note: "An ingredient the maker adds to skincare."}
+      - {slug: hyaluronic-acid, presence: none, presence_note: "not yet checked"}
     journey:
       - {slug: zinc-oxide, caption: mineral block}
       - {slug: melanin, caption: your own sunscreen}
@@ -103,7 +157,13 @@ worlds:
     title: Citrus
     blurb: A fresh orange, unpacked.
     tint: plant-compound
-    molecules: [limonene, citral, ascorbic-acid, citric-acid, hesperidin, naringin]
+    molecules:
+      - {slug: limonene, presence: natural, presence_note: "The main part of the peel oil."}
+      - {slug: citral, presence: natural, presence_note: "Part of the peel oil."}
+      - {slug: ascorbic-acid, presence: natural, presence_note: "Made by the fruit."}
+      - {slug: citric-acid, presence: natural, presence_note: "The main acid of citrus juice."}
+      - {slug: hesperidin, presence: natural, presence_note: "A flavonoid of the white pith and peel."}
+      - {slug: naringin, presence: natural, presence_note: "The bitter flavonoid of grapefruit."}
     journey:
       - {slug: limonene, caption: the orange scent}
       - {slug: citral, caption: peel aroma}
@@ -114,7 +174,13 @@ worlds:
     title: Your workout
     blurb: What powers and burns your muscles.
     tint: body-endogenous
-    molecules: [adenosine-triphosphate, creatine, lactic-acid, beta-hydroxybutyric-acid, epinephrine, carnitine]
+    molecules:
+      - {slug: adenosine-triphosphate, presence: body, presence_note: "Every cell makes it."}
+      - {slug: creatine, presence: body, presence_note: "Your body makes it and stores it in muscle; food supplies some too."}
+      - {slug: lactic-acid, presence: body, presence_note: "Your muscles make it from glucose as they work."}
+      - {slug: beta-hydroxybutyric-acid, presence: body, presence_note: "Your liver makes it from fat."}
+      - {slug: epinephrine, presence: body, presence_note: "Your adrenal glands make it."}
+      - {slug: carnitine, presence: body, presence_note: "Your body makes it; food supplies some too."}
     journey:
       - {slug: adenosine-triphosphate, caption: your fuel}
       - {slug: creatine, caption: recharged by}

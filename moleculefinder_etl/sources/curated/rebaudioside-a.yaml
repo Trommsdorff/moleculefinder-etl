@@ -2,6 +2,6 @@
 cid: 6918840
 slug: rebaudioside-a
 foods:
-  - { category: tabletop-sweetener }
-  - { category: stevia }
-  - { category: diet-soda }
+  - { category: tabletop-sweetener, presence: added, presence_note: "Extracted from the stevia leaf and put in the packet." }
+  - { category: stevia, presence: natural, presence_note: "Made in the leaves of the stevia plant." }
+  - { category: diet-soda, presence: added, presence_note: "The sweetener the maker adds." }

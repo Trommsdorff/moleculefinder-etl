@@ -6,10 +6,10 @@ tier: marquee
 types:
   - sugar
 foods:
-  - { category: tabletop-sweetener }
-  - { category: table-sugar }
-  - { category: fruit }
-  - { category: honey }
+  - { category: tabletop-sweetener, presence: natural, presence_note: "A sugar packet is sucrose itself, refined from cane or beet." }
+  - { category: table-sugar, presence: natural, presence_note: "Table sugar is sucrose, refined from sugar cane or sugar beet." }
+  - { category: fruit, presence: natural, presence_note: "Made by the plant." }
+  - { category: honey, presence: natural, presence_note: "Nectar sugar the bees have not yet split." }
 editorial: |
   Sucrose, ordinary table sugar, is the yardstick every other sweetener is
   measured against. By definition it sits at 1x on the sweetness scale; a

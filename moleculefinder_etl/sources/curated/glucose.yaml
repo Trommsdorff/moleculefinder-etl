@@ -6,8 +6,8 @@ tier: marquee
 types:
   - sugar
 foods:
-  - { category: fruit }
-  - { category: honey }
+  - { category: fruit, presence: natural, presence_note: "Made by the plant." }
+  - { category: honey, presence: natural, presence_note: "The bees' enzymes split nectar sucrose into fructose and glucose." }
 editorial: |
   Glucose is the sugar the body actually runs on, the molecule a blood-sugar
   reading measures. On the tongue it is only about three quarters as sweet as

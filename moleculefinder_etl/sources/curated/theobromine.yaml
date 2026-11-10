@@ -9,8 +9,8 @@ types:
 hooks:
   still_in_system: { half_life_hours: 7.2, serving_mg: 200, source: "pharmacology review" }
 foods:
-  - { category: chocolate, note: "~150 to 250 mg per serving of dark chocolate" }
-  - { category: cocoa }
+  - { category: chocolate, note: "~150 to 250 mg per serving of dark chocolate", presence: natural, presence_note: "From the cocoa bean." }
+  - { category: cocoa, presence: natural, presence_note: "From the cocoa bean." }
 editorial: |
   Theobromine is caffeine's gentler cousin and the molecule that gives chocolate
   its lift. Named for the cacao tree (Theobroma, food of the gods), it clears the

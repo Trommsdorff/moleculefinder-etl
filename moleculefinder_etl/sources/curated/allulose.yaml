@@ -2,4 +2,4 @@
 cid: 90008
 slug: allulose
 foods:
-  - { category: tabletop-sweetener }
+  - { category: tabletop-sweetener, presence: added, presence_note: "The sweetener in the packet." }

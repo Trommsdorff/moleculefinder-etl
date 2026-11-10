@@ -10,7 +10,7 @@ smell_card:
   experience: "the sharp bite of black pepper"
   detection: "acts on the TRPV1 heat receptor, like a milder capsaicin"
 foods:
-  - { category: black-pepper }
+  - { category: black-pepper, presence: natural, presence_note: "Made by the pepper plant, in the peppercorn." }
 editorial: |
   Piperine is the molecule behind the bite of black pepper, mild on the Scoville
   scale next to capsaicin but working on some of the same heat receptors. It also

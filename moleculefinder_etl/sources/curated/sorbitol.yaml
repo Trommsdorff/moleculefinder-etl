@@ -7,7 +7,7 @@ types:
   - sugar-alcohol
   - sweetener
 foods:
-  - { category: sugar-free-gum }
+  - { category: sugar-free-gum, presence: added, presence_note: "The sweetener the maker adds." }
 editorial: |
   Sorbitol is a sugar alcohol about sixty percent as sweet as sugar, common in
   sugar-free gum and candy. The body absorbs it slowly, which is why too much

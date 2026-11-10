@@ -2,5 +2,5 @@
 cid: 11074431
 slug: acesulfame-potassium
 foods:
-  - { category: tabletop-sweetener }
-  - { category: diet-soda }
+  - { category: tabletop-sweetener, presence: added, presence_note: "The sweetener in the packet." }
+  - { category: diet-soda, presence: added, presence_note: "The sweetener the maker adds." }

@@ -6,8 +6,8 @@ tier: marquee
 types:
   - sweetener
 foods:
-  - { category: diet-soda }
-  - { category: tabletop-sweetener }
+  - { category: diet-soda, presence: added, presence_note: "The sweetener the maker adds." }
+  - { category: tabletop-sweetener, presence: added, presence_note: "The sweetener in the packet." }
 editorial: |
   Saccharin was the first artificial sweetener, discovered by accident in 1879
   by a chemist who noticed his dinner tasted sweet after a day in the lab. Around

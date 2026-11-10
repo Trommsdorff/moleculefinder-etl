@@ -7,9 +7,9 @@ tier: marquee
 types:
   - depressant
 foods:
-  - { category: beer,    note: "~5% alcohol by volume" }
-  - { category: wine,    note: "~12% alcohol by volume" }
-  - { category: spirits, note: "~40% alcohol by volume" }
+  - { category: beer,    note: "~5% alcohol by volume", presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the malt sugars." }
+  - { category: wine,    note: "~12% alcohol by volume", presence: formed, formed_when: fermentation, presence_note: "Made by yeast from the grape sugars." }
+  - { category: spirits, note: "~40% alcohol by volume", presence: formed, formed_when: fermentation, presence_note: "Made by fermentation, then concentrated by distillation." }
 smell_card:
   experience: "the sharp warmth of liquor"
   detection: "highly volatile; sensed by smell and as a burn"

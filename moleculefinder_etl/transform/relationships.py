@@ -58,11 +58,23 @@ FOUND_IN_NOTE = "everyday world"
 
 
 # ── inputs ───────────────────────────────────────────────────────────────────
+def _entry_slug(entry) -> str:
+    """A seed list entry -> its molecule slug: a bare slug, or a mapping with ``slug`` (the presence
+    field, 2026-11-09, made every curated entry a mapping that also carries its mark)."""
+    return str(entry.get("slug") if isinstance(entry, dict) else entry or "").strip()
+
+
 def load_worlds() -> list[dict]:
+    """The worlds, each ``molecules`` a list of slugs (the roster entries also carry their presence
+    marks, which ``transform/presence.py`` reads from the file itself)."""
     if not WORLDS_YAML.exists():
         return []
     data = yaml.safe_load(WORLDS_YAML.read_text()) or {}
-    return list(data.get("worlds") or [])
+    worlds = list(data.get("worlds") or [])
+    for w in worlds:
+        if w.get("molecules"):
+            w["molecules"] = [s for s in (_entry_slug(m) for m in w["molecules"]) if s]
+    return worlds
 
 
 def load_why_it_matters() -> dict[str, str]:
@@ -726,13 +738,16 @@ def attach_otc_uses(molecules: list[dict]) -> None:
 
 # ── Food hubs (build plan 2026-09-05, phase 2.3) ──────────────────────────────
 def _load_hub_yaml(path) -> dict[str, dict]:
-    """Read a hub file -> {hub slug: {"name": ..., "molecules": [...]}}."""
+    """Read a hub file -> {hub slug: {"name": ..., "molecules": [...]}}.
+
+    An entry is a mapping since the presence field (2026-11-09): ``{slug, presence, ...}``. Only the
+    slugs are returned here; ``transform/presence.py`` reads and checks the marks."""
     if not path.exists():
         return {}
     data = yaml.safe_load(path.read_text()) or {}
     out: dict[str, dict] = {}
     for slug, entry in data.items():
-        mols = [str(m).strip() for m in ((entry or {}).get("molecules") or []) if str(m).strip()]
+        mols = [s for s in (_entry_slug(m) for m in ((entry or {}).get("molecules") or [])) if s]
         if mols:
             out[str(slug)] = {"name": (entry or {}).get("name") or str(slug).replace("-", " ").title(),
                               "molecules": mols}

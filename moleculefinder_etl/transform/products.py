@@ -979,7 +979,9 @@ def attach_products(records: list[dict], products: list[dict]) -> None:
     for p in products:
         for m in p["molecules"]:
             by_slug[m["slug"]].setdefault("products", []).append(
-                {"slug": p["slug"], "name": p["name"], "kind": p["kind"], "role": m["role"]})
+                {"slug": p["slug"], "name": p["name"], "kind": p["kind"], "role": m["role"],
+                 # The presence mark (2026-11-09) is the product entry's own, copied: one fact.
+                 **({"presence": m["presence"]} if "presence" in m else {})})
     for r in records:
         if "products" in r:
             r["products"].sort(key=lambda x: (KINDS.index(x["kind"]), x["name"].lower(), x["slug"]))

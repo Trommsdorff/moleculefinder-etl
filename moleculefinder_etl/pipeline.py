@@ -26,6 +26,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
+from .transform import presence
 from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
@@ -50,6 +51,9 @@ NEXT_TRANCHE_QUEUE = SEED_DIR / "next_tranche_queue.csv"
 # Trust run 3: every UNII that reaches a molecule, and how (committed; tests/test_unii_index.py
 # holds products.json to it in both directions).
 UNII_INDEX = SEED_DIR / "unii_index.json"
+# Wikidata ingredient rows a refresh added with no presence mark (2026-11-09): exported unmarked,
+# listed here (committed; [] when every row is marked) and in the run summary, never a failure.
+PRESENCE_UNMARKED = SEED_DIR / "presence_unmarked.json"
 
 
 def _require(path: Path, prior: str) -> None:
@@ -143,6 +147,28 @@ def _report_products_held(held: list[dict], removed: list[dict]) -> None:
                 if removed_lines:
                     f.write(f"\n### Product pages removed on purpose ({len(removed)})\n\n")
                     f.writelines(f"- {line}\n" for line in removed_lines)
+                f.write("\n")
+
+
+def _report_presence_unmarked(unmarked: list[dict]) -> None:
+    """Wikidata ingredient rows with no presence mark (build plan everyday chemistry, phase 1): one log
+    line each, the committed ``data/seed/presence_unmarked.json``, and on GitHub Actions a notice and a
+    section of the run's summary. Never a failure: an outside edit to Wikidata must not break Monday."""
+    presence.write_unmarked(unmarked, PRESENCE_UNMARKED)
+    lines = [presence.unmarked_line(u) for u in unmarked]
+    log.info("  presence: %d Wikidata ingredient row(s) exported unmarked", len(unmarked))
+    for line in lines:
+        log.info("  unmarked: %s", line)
+    if unmarked and os.getenv("GITHUB_ACTIONS") == "true":
+        for line in lines:
+            print(f"::notice title=Ingredient row with no presence mark::{line}", flush=True)
+        summary = os.getenv("GITHUB_STEP_SUMMARY")
+        if summary:
+            with open(summary, "a", encoding="utf-8") as f:
+                f.write(f"### Ingredient rows with no presence mark ({len(unmarked)})\n\n"
+                        "A Wikidata row new this run is shown unmarked until a person marks it in "
+                        "sources/seeds/presence_wikidata.yaml.\n\n")
+                f.writelines(f"- {line}\n" for line in lines)
                 f.write("\n")
 
 
@@ -278,6 +304,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     RDLogger.DisableLog("rdApp.*")           # silence per-molecule SMILES parse noise
 
     log.info("stage 2: transform (names, fingerprints, similarity, tox, hooks)")
+    # The hand presence marks (2026-11-09), read and checked first: a curated entry with no mark or
+    # a malformed one stops the build here, before any work, naming every problem.
+    marks = presence.load_marks()
     canon = canon_stage.read_parquet()
     fetched_by_cid = {f["cid"]: f for f in json.loads(FETCHED.read_text())}
     curated_by_cid = _load_curated()
@@ -354,6 +383,9 @@ def stage_transform(settings: Settings) -> list[dict]:
     assemble.attach_derived_categories(kept)
     assemble.unify_category_kinds(kept)
     assemble.prune_thin_categories(kept)
+    # How each molecule comes to be in each curated food and product list (2026-11-09). After the
+    # prune, so it marks exactly the categories that ship; a curated one with no mark stops the build.
+    log.info("  presence: %d curated food and product memberships marked", presence.mark_categories(kept, marks))
     # The page description (phase 1). LAST of the attach passes on purpose: it composes
     # from the curated why_it_matters line, the foods, the odor threshold and everything
     # assembled above, so it has to see all of them. Raises on a duplicate or a
@@ -381,6 +413,9 @@ def stage_transform(settings: Settings) -> list[dict]:
             since=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META) or datetime.now(UTC).date().isoformat(),
             previous=products_hold.read_held(), min_molecules=products.MIN_MOLECULES)
         _report_products_held(held, removed)
+        # Every product row's presence mark (2026-11-09), before the reverse is written onto the
+        # molecules, so both directions carry the one mark. Held pages are marked from the seeds too.
+        _report_presence_unmarked(presence.mark_products(passed, marks))
         products.attach_products(kept, passed)
         PRODUCTS_STAGED.write_text(json.dumps(passed, ensure_ascii=False))
         # The next tranche's queue, every label ingredient MF lacks, is its own committed CSV.

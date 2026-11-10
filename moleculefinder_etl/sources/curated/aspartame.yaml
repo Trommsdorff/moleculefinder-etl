@@ -6,9 +6,9 @@ tier: marquee
 types:
   - sweetener
 foods:
-  - { category: tabletop-sweetener }
-  - { category: diet-soda }
-  - { category: sugar-free-gum }
+  - { category: tabletop-sweetener, presence: added, presence_note: "The sweetener in the packet." }
+  - { category: diet-soda, presence: added, presence_note: "The sweetener the maker adds." }
+  - { category: sugar-free-gum, presence: added, presence_note: "The sweetener the maker adds." }
 editorial: |
   Aspartame is roughly two hundred times sweeter than sugar, so a diet soda
   needs only a trace of it to match the sweetness of the ~40 grams of sugar in

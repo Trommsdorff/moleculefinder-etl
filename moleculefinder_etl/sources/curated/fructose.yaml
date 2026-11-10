@@ -9,8 +9,8 @@ tier: marquee
 types:
   - sugar
 foods:
-  - { category: fruit }
-  - { category: honey }
+  - { category: fruit, presence: natural, presence_note: "Made by the plant." }
+  - { category: honey, presence: natural, presence_note: "The bees' enzymes split nectar sucrose into fructose and glucose." }
 editorial: |
   Fructose is the sugar that makes fruit taste sweet, and the sweetest of the
   common sugars, well over one and a half times as sweet as table sugar. The body

@@ -1,0 +1,72 @@
+# Presence marks for the ingredient rows that come from Wikidata (build plan everyday chemistry
+# 2026-11, phase 1). A product whose molecules are read from a Wikidata item's "has part(s)" (P527)
+# or "made from material" (P186) gets each row's mark from here, keyed by product and molecule.
+#
+# The marks are MoleculeFinder's own hand curation, never fetched. The values are the closed list
+# in transform/presence.py: natural, added, body, formed (with formed_when) or none (with a written
+# presence_note). A row a weekly refresh adds that has no mark here is exported unmarked, listed in
+# data/seed/presence_unmarked.json and the run summary, and never fails the run; mark it here.
+# A mark here whose row Wikidata no longer lists is unused and harmless (it is logged).
+
+products:
+  bullens-pilsnerkorv:
+    - {slug: water, presence: added, presence_note: "An ingredient the maker adds."}
+    - {slug: ascorbic-acid, presence: added, presence_note: "The antioxidant the maker adds to the cure."}
+    - {slug: sodium-nitrite, presence: added, presence_note: "The cure the maker adds."}
+  chitato:
+    - {slug: oleic-acid, presence: added, presence_note: "Comes with the frying oil the maker uses."}
+    - {slug: monosodium-glutamate, presence: added, presence_note: "The flavour enhancer the maker adds."}
+    - {slug: disodium-inosinate, presence: added, presence_note: "The flavour enhancer the maker adds."}
+  diet-pepsi:
+    - {slug: phosphoric-acid, presence: added, presence_note: "The acid the maker adds."}
+    - {slug: sucralose, presence: added, presence_note: "The sweetener the maker adds."}
+    - {slug: acesulfame-potassium, presence: added, presence_note: "The sweetener the maker adds."}
+    - {slug: caffeine, presence: added, presence_note: "The maker adds it."}
+    - {slug: citric-acid, presence: added, presence_note: "An acid the maker adds."}
+  glico-wings-frost-bite:
+    - {slug: water, presence: added, presence_note: "An ingredient the maker adds."}
+    - {slug: maltodextrin, presence: added, presence_note: "An ingredient the maker adds."}
+    - {slug: sunset-yellow-fcf, presence: added, presence_note: "The colour the maker adds."}
+    - {slug: brilliant-blue-fcf, presence: added, presence_note: "The colour the maker adds."}
+  m-and-ms:
+    - {slug: lactose, presence: added, presence_note: "Comes with the milk the maker adds to the chocolate."}
+    - {slug: sodium-chloride, presence: added, presence_note: "Salt the maker adds."}
+    - {slug: curcumin, presence: added, presence_note: "The colour the maker adds to the shell."}
+    - {slug: carmine, presence: added, presence_note: "The colour the maker adds to the shell."}
+    - {slug: brilliant-blue-fcf, presence: added, presence_note: "The colour the maker adds to the shell."}
+  mcdonalds-chicken-strips:
+    - {slug: water, presence: added, presence_note: "An ingredient the maker adds."}
+    - {slug: monosodium-glutamate, presence: added, presence_note: "The flavour enhancer the maker adds."}
+    - {slug: maltodextrin, presence: added, presence_note: "An ingredient the maker adds."}
+  milk:
+    - {slug: sodium-chloride, presence: natural, presence_note: "Milk carries sodium and chloride ions of its own."}
+    - {slug: phosphorus, presence: natural, presence_note: "A mineral of milk, as phosphate."}
+    - {slug: potassium, presence: natural, presence_note: "A mineral of milk."}
+    - {slug: magnesium, presence: natural, presence_note: "A mineral of milk."}
+  pepsi-max:
+    - {slug: water, presence: added, presence_note: "The base of the drink."}
+    - {slug: phosphoric-acid, presence: added, presence_note: "The acid the maker adds."}
+    - {slug: caffeine, presence: added, presence_note: "The maker adds it."}
+  romaine-lettuce:
+    - {slug: ascorbic-acid, presence: natural, presence_note: "Made by the plant."}
+    - {slug: calcium, presence: natural, presence_note: "A mineral of the leaf."}
+    - {slug: iron, presence: natural, presence_note: "A mineral of the leaf."}
+    - {slug: phosphorus, presence: natural, presence_note: "A mineral of the leaf, as phosphate."}
+    - {slug: potassium, presence: natural, presence_note: "A mineral of the leaf."}
+    - {slug: water, presence: natural, presence_note: "Most of the leaf's weight."}
+    - {slug: folic-acid, presence: none, presence_note: "Lettuce holds natural folates, the family folic acid belongs to; folic acid itself is the form added to fortified foods."}
+  smarties:
+    - {slug: shellac, presence: added, presence_note: "The glaze the maker adds."}
+    - {slug: maltodextrin, presence: added, presence_note: "An ingredient the maker adds."}
+    - {slug: curcumin, presence: added, presence_note: "The colour the maker adds to the shell."}
+    - {slug: carmine, presence: added, presence_note: "The colour the maker adds to the shell."}
+    - {slug: beta-carotene, presence: added, presence_note: "The colour the maker adds to the shell."}
+  valio-valsa-milk-salt:
+    - {slug: potassium, presence: none, presence_note: "not yet checked"}
+    - {slug: magnesium, presence: none, presence_note: "not yet checked"}
+    - {slug: calcium, presence: none, presence_note: "not yet checked"}
+    - {slug: sodium, presence: none, presence_note: "not yet checked"}
+  vegeta:
+    - {slug: monosodium-glutamate, presence: added, presence_note: "The flavour enhancer the maker adds."}
+    - {slug: disodium-inosinate, presence: added, presence_note: "The flavour enhancer the maker adds."}
+    - {slug: riboflavin, presence: added, presence_note: "The maker adds it."}

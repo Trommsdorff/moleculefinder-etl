@@ -10,8 +10,8 @@ smell_card:
   experience: "the burn of chili peppers"
   detection: "binds the TRPV1 heat receptor"
 foods:
-  - { category: chili-peppers }
-  - { category: hot-sauce }
+  - { category: chili-peppers, presence: natural, presence_note: "Made by the chili pepper." }
+  - { category: hot-sauce, presence: natural, presence_note: "From the chili peppers in the sauce." }
 editorial: |
   Capsaicin doesn't actually burn tissue; it hijacks the same receptor that
   senses real heat, which is why your brain insists your mouth is on fire.

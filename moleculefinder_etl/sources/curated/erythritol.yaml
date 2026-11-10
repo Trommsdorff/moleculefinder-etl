@@ -2,5 +2,5 @@
 cid: 222285
 slug: erythritol
 foods:
-  - { category: tabletop-sweetener }
-  - { category: sugar-free-gum }
+  - { category: tabletop-sweetener, presence: added, presence_note: "The sweetener in the packet." }
+  - { category: sugar-free-gum, presence: added, presence_note: "The sweetener the maker adds." }

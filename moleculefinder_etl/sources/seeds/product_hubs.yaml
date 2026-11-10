@@ -16,122 +16,128 @@
 # ingredient of the product named. A molecule that is merely manufactured INTO
 # something is not a member; a reader looking at the bottle would find it there.
 # Hubs are kept to three members or more so none is a page about nothing.
+#
+# PRESENCE (build plan everyday chemistry 2026-11, phase 1; Garrett's rulings b and g, 2026-11-09).
+# Every entry says, by hand, how its molecule comes to be in the product: presence natural, added,
+# body, formed (with formed_when: roasted, baked, cooked, cured, aged or fermentation) or none (with a
+# written presence_note). presence_note is the one-line reason. transform/presence.py holds the closed
+# list; an entry with no mark, or a bad one, stops the build and fails pytest.
 
 household-cleaner:
   name: Household cleaners
   molecules:
-    - sodium-hypochlorite   # chlorine bleach
-    - ammonia               # glass and grease cleaners
-    - sodium-hydroxide      # caustic drain and oven cleaner
-    - sodium-carbonate      # washing soda
-    - sodium-bicarbonate    # the mild abrasive and deodoriser
-    - borax                 # laundry booster and water softener
-    - hydrogen-peroxide     # oxygen bleach
-    - acetic-acid           # vinegar, descaler and limescale remover
-    - citric-acid           # descaler, and the acid in many "natural" cleaners
-    - ethylenediaminetetraacetic-acid  # binds hard-water metals so detergent works
-    - sodium-lauryl-sulfate # the foaming surfactant
-    - triclosan             # antibacterial agent, now restricted in many products
+    - {slug: sodium-hypochlorite, presence: added, presence_note: "The active ingredient of chlorine bleach."}   # chlorine bleach
+    - {slug: ammonia, presence: added, presence_note: "The maker adds it to glass and grease cleaners."}   # glass and grease cleaners
+    - {slug: sodium-hydroxide, presence: added, presence_note: "The active ingredient of drain and oven cleaners."}   # caustic drain and oven cleaner
+    - {slug: sodium-carbonate, presence: added, presence_note: "Sold as washing soda, and added to detergents."}   # washing soda
+    - {slug: sodium-bicarbonate, presence: added, presence_note: "Sold as baking soda, and added to cleaners."}   # the mild abrasive and deodoriser
+    - {slug: borax, presence: added, presence_note: "Sold as a laundry booster, and added to detergents."}   # laundry booster and water softener
+    - {slug: hydrogen-peroxide, presence: added, presence_note: "The active ingredient of oxygen bleach."}   # oxygen bleach
+    - {slug: acetic-acid, presence: added, presence_note: "The acid of vinegar cleaners and descalers."}   # vinegar, descaler and limescale remover
+    - {slug: citric-acid, presence: added, presence_note: "The acid the maker adds to descalers."}   # descaler, and the acid in many "natural" cleaners
+    - {slug: ethylenediaminetetraacetic-acid, presence: added, presence_note: "The maker adds it to bind hard water metals."}   # binds hard-water metals so detergent works
+    - {slug: sodium-lauryl-sulfate, presence: added, presence_note: "The surfactant the maker adds."}   # the foaming surfactant
+    - {slug: triclosan, presence: added, presence_note: "The antibacterial agent the maker adds, now restricted in many products."}   # antibacterial agent, now restricted in many products
 
 first-aid-kit:
   name: First aid kit
   molecules:
-    - hydrogen-peroxide     # the 3 percent solution
-    - isopropyl-alcohol     # the 70 percent solution
-    - povidone-iodine       # antiseptic
-    - acetaminophen
-    - ibuprofen
-    - aspirin
-    - diphenhydramine       # for allergic reactions
-    - loperamide
+    - {slug: hydrogen-peroxide, presence: added, presence_note: "The active ingredient of the 3 percent solution."}   # the 3 percent solution
+    - {slug: isopropyl-alcohol, presence: added, presence_note: "The active ingredient of the 70 percent solution."}   # the 70 percent solution
+    - {slug: povidone-iodine, presence: added, presence_note: "The active ingredient of the antiseptic."}   # antiseptic
+    - {slug: acetaminophen, presence: added, presence_note: "The active ingredient of the tablets."}
+    - {slug: ibuprofen, presence: added, presence_note: "The active ingredient of the tablets."}
+    - {slug: aspirin, presence: added, presence_note: "The active ingredient of the tablets."}
+    - {slug: diphenhydramine, presence: added, presence_note: "The active ingredient of the tablets."}   # for allergic reactions
+    - {slug: loperamide, presence: added, presence_note: "The active ingredient of the tablets."}
 
 skincare:
   name: Skincare
   molecules:
-    - glycerol              # the humectant in most moisturisers
-    - hyaluronic-acid
-    - salicylic-acid        # the beta hydroxy acid in acne products
-    - nicotinamide          # listed as niacinamide
-    - retinol
-    - tretinoin
-    - urea                  # keratolytic and humectant
-    - tocopherol            # vitamin E
-    - 4-aminobenzoic-acid   # PABA, the original sunscreen filter
-    - zinc-oxide            # mineral sunscreen and nappy cream
-    - lactic-acid           # alpha hydroxy acid
-    - ascorbic-acid         # vitamin C serums
+    - {slug: glycerol, presence: added, presence_note: "The humectant the maker adds."}   # the humectant in most moisturisers
+    - {slug: hyaluronic-acid, presence: added, presence_note: "An ingredient the maker adds; the skin makes its own as well."}
+    - {slug: salicylic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # the beta hydroxy acid in acne products
+    - {slug: nicotinamide, presence: added, presence_note: "An ingredient the maker adds, listed as niacinamide."}   # listed as niacinamide
+    - {slug: retinol, presence: added, presence_note: "An ingredient the maker adds."}
+    - {slug: tretinoin, presence: added, presence_note: "The active ingredient of the prescription cream."}
+    - {slug: urea, presence: added, presence_note: "An ingredient the maker adds."}   # keratolytic and humectant
+    - {slug: tocopherol, presence: added, presence_note: "An ingredient the maker adds."}   # vitamin E
+    - {slug: 4-aminobenzoic-acid, presence: added, presence_note: "A sunscreen filter the maker adds."}   # PABA, the original sunscreen filter
+    - {slug: zinc-oxide, presence: added, presence_note: "The mineral filter the maker adds."}   # mineral sunscreen and nappy cream
+    - {slug: lactic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # alpha hydroxy acid
+    - {slug: ascorbic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # vitamin C serums
 
 toothpaste:
   name: Toothpaste
   molecules:
-    - sodium-fluoride       # the anticaries agent
-    - sodium-lauryl-sulfate # the foam
-    - glycerol              # keeps the paste from drying out
-    - calcium-carbonate     # the abrasive
-    - silicon-dioxide       # the abrasive in clear gels
-    - xylitol               # sweetener that mouth bacteria cannot ferment
-    - sorbitol
-    - menthol               # with the flavour oils, the cooling finish
+    - {slug: sodium-fluoride, presence: added, presence_note: "The anticaries agent the maker adds."}   # the anticaries agent
+    - {slug: sodium-lauryl-sulfate, presence: added, presence_note: "The foaming agent the maker adds."}   # the foam
+    - {slug: glycerol, presence: added, presence_note: "The humectant the maker adds."}   # keeps the paste from drying out
+    - {slug: calcium-carbonate, presence: added, presence_note: "The abrasive the maker adds."}   # the abrasive
+    - {slug: silicon-dioxide, presence: added, presence_note: "The abrasive the maker adds."}   # the abrasive in clear gels
+    - {slug: xylitol, presence: added, presence_note: "The sweetener the maker adds."}   # sweetener that mouth bacteria cannot ferment
+    - {slug: sorbitol, presence: added, presence_note: "The sweetener and humectant the maker adds."}
+    - {slug: menthol, presence: added, presence_note: "The cooling flavour the maker adds."}   # with the flavour oils, the cooling finish
 
 paint-and-solvent:
   name: Paint and solvent
   molecules:
-    - acetone               # nail polish remover, and a general resin solvent
-    - toluene               # thinner, and the smell of model glue
-    - ethyl-acetate         # the acetone-free remover
-    - isopropyl-alcohol
-    - methanol              # in methylated spirit
-    - benzene               # historic solvent, now restricted as a carcinogen
-    - dichloromethane       # paint stripper
-    - titanium              # as titanium dioxide, the white of nearly all white paint
-    - poly-methyl-methacrylate  # acrylic paint binder
-    - shellac               # the traditional sealing varnish
+    - {slug: acetone, presence: added, presence_note: "The solvent the maker uses."}   # nail polish remover, and a general resin solvent
+    - {slug: toluene, presence: added, presence_note: "The solvent the maker uses."}   # thinner, and the smell of model glue
+    - {slug: ethyl-acetate, presence: added, presence_note: "The solvent the maker uses."}   # the acetone-free remover
+    - {slug: isopropyl-alcohol, presence: added, presence_note: "The solvent the maker uses."}
+    - {slug: methanol, presence: added, presence_note: "Added to methylated spirit."}   # in methylated spirit
+    - {slug: benzene, presence: none, presence_note: "A historic solvent, now restricted; current products should not contain it."}   # historic solvent, now restricted as a carcinogen
+    - {slug: dichloromethane, presence: added, presence_note: "The solvent of paint strippers."}   # paint stripper
+    - {slug: titanium, presence: added, presence_note: "Added as titanium dioxide, the white pigment."}   # as titanium dioxide, the white of nearly all white paint
+    - {slug: poly-methyl-methacrylate, presence: added, presence_note: "The binder the maker adds to acrylic paint."}   # acrylic paint binder
+    - {slug: shellac, presence: added, presence_note: "The resin of the varnish."}   # the traditional sealing varnish
 
 garden-and-pest:
   name: Garden and pest control
   molecules:
-    - glyphosate            # the most used herbicide in the world
-    - permethrin            # insecticide, and the treatment on outdoor clothing
-    - deet                  # the insect repellent
-    - boric-acid            # ant and cockroach bait
-    - sulfur                # fungicide, and the oldest one still in use
-    - potassium-nitrate     # fertiliser, the K and the N of NPK
-    - phosphorus            # the P
-    - calcium-hydroxide     # garden lime, for raising soil pH
+    - {slug: glyphosate, presence: added, presence_note: "The active ingredient of the herbicide."}   # the most used herbicide in the world
+    - {slug: permethrin, presence: added, presence_note: "The active ingredient of the insecticide."}   # insecticide, and the treatment on outdoor clothing
+    - {slug: deet, presence: added, presence_note: "The active ingredient of the repellent."}   # the insect repellent
+    - {slug: boric-acid, presence: added, presence_note: "The active ingredient of the bait."}   # ant and cockroach bait
+    - {slug: sulfur, presence: added, presence_note: "The active ingredient of the fungicide."}   # fungicide, and the oldest one still in use
+    - {slug: potassium-nitrate, presence: added, presence_note: "A fertiliser the maker blends in."}   # fertiliser, the K and the N of NPK
+    - {slug: phosphorus, presence: added, presence_note: "Added as phosphates in fertiliser."}   # the P
+    - {slug: calcium-hydroxide, presence: added, presence_note: "Sold as garden lime."}   # garden lime, for raising soil pH
 
 fuel-and-flame:
   name: Fuel and flame
   molecules:
-    - methane               # mains gas
-    - propane               # the barbecue bottle
-    - butane                # lighter fuel and camping cartridges
-    - ethanol               # blended into petrol, and the fuel in a spirit stove
-    - carbon-monoxide       # the product of burning any of them without enough air
-    - benzene               # a component of petrol
-    - toluene
-    - carbon                # charcoal
+    - {slug: methane, presence: natural, presence_note: "Natural gas is mostly methane."}   # mains gas
+    - {slug: propane, presence: natural, presence_note: "Separated from natural gas and crude oil."}   # the barbecue bottle
+    - {slug: butane, presence: natural, presence_note: "Separated from natural gas and crude oil."}   # lighter fuel and camping cartridges
+    - {slug: ethanol, presence: added, presence_note: "Blended into petrol by the refiner."}   # blended into petrol, and the fuel in a spirit stove
+    - {slug: carbon-monoxide, presence: none, presence_note: "Formed when a fuel burns without enough air."}   # the product of burning any of them without enough air
+    - {slug: benzene, presence: none, presence_note: "not yet checked"}   # a component of petrol
+    - {slug: toluene, presence: none, presence_note: "not yet checked"}
+    - {slug: carbon, presence: none, presence_note: "Charcoal is mostly carbon, left when wood is heated without air."}   # charcoal
 
 battery-and-electronics:
   name: Batteries and electronics
   molecules:
-    - lithium               # the ion in every rechargeable phone battery
-    - cobalt                # the cathode metal
-    - nickel
-    - copper                # the wiring
-    - silicon               # the chip
-    - gold                  # contact plating, because it does not corrode
-    - tin                   # solder
-    - tantalum              # capacitors
-    - gallium               # LEDs and high frequency chips
-    - manganese             # alkaline cell cathode
-    - zinc                  # alkaline cell anode
+    - {slug: lithium, presence: added, presence_note: "Built into the battery by the maker."}   # the ion in every rechargeable phone battery
+    - {slug: cobalt, presence: added, presence_note: "Built into the battery cathode by the maker."}   # the cathode metal
+    - {slug: nickel, presence: added, presence_note: "Built into the battery cathode by the maker."}
+    - {slug: copper, presence: added, presence_note: "The wiring the maker builds in."}   # the wiring
+    - {slug: silicon, presence: added, presence_note: "The chip the maker builds in."}   # the chip
+    - {slug: gold, presence: added, presence_note: "Contact plating the maker applies."}   # contact plating, because it does not corrode
+    - {slug: tin, presence: added, presence_note: "The solder the maker uses."}   # solder
+    - {slug: tantalum, presence: added, presence_note: "Built into the capacitors by the maker."}   # capacitors
+    - {slug: gallium, presence: added, presence_note: "Built into LEDs and chips by the maker."}   # LEDs and high frequency chips
+    - {slug: manganese, presence: added, presence_note: "Built into the alkaline cell cathode by the maker."}   # alkaline cell cathode
+    - {slug: zinc, presence: added, presence_note: "Built into the alkaline cell anode by the maker."}   # alkaline cell anode
 
 aerosol-can:
   name: Aerosol cans
   molecules:
-    - propane               # propellant
-    - butane                # propellant
-    - 1-1-difluoroethane    # the gas in canned air, and the reason it frosts
-    - nitrous-oxide         # whipped cream chargers
-    - carbon-dioxide
-    - ethanol               # the carrier in deodorant and hairspray
+    - {slug: propane, presence: added, presence_note: "The propellant the maker fills."}   # propellant
+    - {slug: butane, presence: added, presence_note: "The propellant the maker fills."}   # propellant
+    - {slug: 1-1-difluoroethane, presence: added, presence_note: "The gas the maker fills into canned air."}   # the gas in canned air, and the reason it frosts
+    - {slug: nitrous-oxide, presence: added, presence_note: "The propellant in whipped cream chargers."}   # whipped cream chargers
+    - {slug: carbon-dioxide, presence: added, presence_note: "The propellant the maker fills."}
+    - {slug: ethanol, presence: added, presence_note: "The carrier the maker adds to sprays."}   # the carrier in deodorant and hairspray

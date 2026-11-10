@@ -9,7 +9,7 @@ types:
 hooks:
   still_in_system: { half_life_hours: 8.0, serving_mg: 300, source: "pharmacology review" }
 foods:
-  - { category: tea, note: "trace amounts" }
+  - { category: tea, note: "trace amounts", presence: natural, presence_note: "Present in small amounts in the tea leaf." }
 editorial: |
   Theophylline is the third of the three dietary methylxanthines, found in trace
   amounts in tea and used as a drug to open the airways. It shares caffeine's

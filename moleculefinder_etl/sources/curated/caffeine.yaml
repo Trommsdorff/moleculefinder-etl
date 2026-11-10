@@ -9,10 +9,10 @@ hooks:
   still_in_system: { half_life_hours: 5.0, serving_mg: 95, source: "pharmacology review" }
   dose_poison:     { ld50_mg_per_kg: 192, species: rat, route: oral, source: hsdb }
 foods:
-  - { category: coffee,    note: "~95 mg per 8 oz cup" }
-  - { category: tea,       note: "~47 mg per 8 oz cup" }
-  - { category: chocolate }
-  - { category: energy-drinks, note: "~80 mg per 250 ml can" }
+  - { category: coffee,    note: "~95 mg per 8 oz cup", presence: natural, presence_note: "Made by the coffee plant; it carries into the brewed cup." }
+  - { category: tea,       note: "~47 mg per 8 oz cup", presence: natural, presence_note: "Made by the tea plant; it carries into the brewed cup." }
+  - { category: chocolate, presence: natural, presence_note: "From the cocoa bean, in smaller amounts than theobromine." }
+  - { category: energy-drinks, note: "~80 mg per 250 ml can", presence: added, presence_note: "The maker adds it." }
 smell_card: null
 editorial: |
   Caffeine is the world's most widely used psychoactive drug, and the only one
