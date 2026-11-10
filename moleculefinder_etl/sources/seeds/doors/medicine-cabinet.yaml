@@ -53,6 +53,7 @@ stops:
     links: [{molecule: dextromethorphan}, {product: vicks-nyquil-intense-flu-liquicaps}, {product: vicks-dayquil-severe-cold-and-flu}]
     requires:
       - says: {ref: {why: dextromethorphan, pin: "84df64fab450"}, words: "marked DM"}
+      - lists: {product: mucinex-dm, molecule: dextromethorphan, role: active}
   - heading: "In NyQuil, not in DayQuil: doxylamine"
     molecule: doxylamine
     mark: {list: vicks-nyquil-intense-flu-liquicaps}
