@@ -896,13 +896,13 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
-## Phase 1, the presence field (2026-11-09): BUILT on `presence-2026-11` (`8c21c6e` code, `9715c1b` data), NOT pushed
+## Phase 1, the presence field (2026-11-09): DEPLOYED 2026-11-10 with Garrett's corrections (ETL `b15488e`, web `b0c1412`)
 Build plan everyday chemistry (`../BUILD-PLAN-everyday-chemistry-2026-11.md`), phase 1; Garrett's rulings b and g. Every curated
 food, drink, product and world entry says by hand how its molecule comes to be there, so no page ever shows an inferred mark.
-**Waiting for Garrett's approval of the review page** (`../moleculefinder-web/docs/design/presence-review-2026-11.html`), then
-ETL `main` first, web `main` after (no visible change; may go before 2026-11-24).
+**Garrett approved the review page on 2026-11-10 with corrections; applied, then DEPLOYED on his word, 2026-11-10 about 02:33 UTC**
+(record below, "The corrections and the deploy"). No page renders the field yet.
 - **`transform/presence.py`.** Values `natural`, `added`, `body`, `formed` (+ `formed_when`: roasted, baked, cooked, cured, aged,
-  fermentation; `FORMED_WHEN` holds the page words), `none` (+ a written `presence_note`). `load_marks()` reads and checks every
+  crushed (added 2026-11-10), fermentation; `FORMED_WHEN` holds the page words), `none` (+ a written `presence_note`). `load_marks()` reads and checks every
   mark; `mark_categories()` stamps the curated `food`/`product` categories (after the prune, so exactly the shipped ones);
   `mark_products()` stamps every products.json molecule row by role (curated hub, world, Wikidata from the seed; label rows
   `added` and class rows `none` by rule, `rule: "label"`/`"class"`), and `attach_products` copies the mark onto the molecule's
@@ -919,18 +919,49 @@ ETL `main` first, web `main` after (no visible change; may go before 2026-11-24)
   the committed `data/seed/presence_unmarked.json` (`[]` today) and, on Actions, a `::notice` and a run-summary section
   ("Ingredient rows with no presence mark"); a seed mark whose row Wikidata dropped is logged as unused. To fix: add the row to
   `presence_wikidata.yaml`.
-- **Numbers.** 521 distinct hand marks (541 seed rows): natural 208, added 212, formed 48 (fermentation 27, roasted 7, aged 5,
-  baked 5, cured 2, cooked 2), body 16, none 37 (20 with a reason, 17 "not yet checked", listed first on the review page). By
-  rule: 2,479 label rows on 371 label pages added, 4 PFAS rows none. 412 curated categories marked.
+- **Numbers (as built 2026-11-09; superseded by the corrections below).** 521 distinct hand marks (541 seed rows): natural 208,
+  added 212, formed 48 (fermentation 27, roasted 7, aged 5, baked 5, cured 2, cooked 2), body 16, none 37 (20 with a reason, 17
+  "not yet checked"). By rule: 2,479 label rows on 371 label pages added, 4 PFAS rows none. 412 curated categories marked.
 - **Checks.** `tests/test_presence.py` (25); suite 1,060 passed, 1 skipped (1,035 + 25); ruff 130 (= main). Pinned build
   (`sync-inputs` f69fd345c58bfa08, keys blanked) twice, 0 POSTs, byte-identical; against `main` 477 molecule files and
   products.json differ by `presence` alone (compared with the field stripped), `canon.parquet` unchanged, plus
   `presence_unmarked.json`.
 - **`scripts/presence_review.py`** rebuilds the review page from the seeds (after Garrett's corrections, edit the seed lines,
   run it, rebuild).
-- **For Garrett (recommendations):** add `crushed` to `FORMED_WHEN` ("Formed when crushed") for allicin and allyl
-  isothiocyanate (today none, with that reason); take ethyl maltol (synthetic; bread forms maltol) off the Fresh-baked bread
-  world and 2-nonenal off The smell after rain in phase 2; folic acid in greens stays unmarked (folates, not folic acid).
+- **For Garrett (recommendations, all answered 2026-11-10):** `crushed` added; ethyl maltol and 2-nonenal come off their worlds
+  in phase 2; folic acid in greens stays unmarked.
+- **The corrections and the deploy (2026-11-10).** Garrett's rulings, applied to the seeds only (commits `089068f` code, seeds and
+  tests, `b15488e` data, on top of the branch's `e5d6ee6`): phenethylamine and tyramine in Chocolate, Cocoa and the Chocolate
+  world (6) formed by fermentation ("Made by microbes from the bean's amino acids as the cocoa ferments." for tyramine, "Made by
+  microbes as the cocoa ferments; roasting forms more." for phenethylamine); tannic acid in Tea, Wine and A glass of wine (3)
+  unmarked, "Tea and wine tannins are a different family from tannic acid; this entry is due to be removed."; benzene and
+  toluene in Fuel and flame (2) unmarked, "Partly from the crude oil and partly made in refining."; hyaluronic acid in Sunscreen
+  and summer skin body, "Your skin makes it; skincare products also add it."; Valio ValSa milk salt's four elements unmarked,
+  "The milk salt's composition is not confirmed, so it carries no mark."; 2-nonenal in The smell after rain unmarked, "No basis
+  found for it here; this entry is due to be removed."; `crushed` joins `FORMED_WHEN` ("Formed when crushed") and allicin and
+  allyl isothiocyanate in A spicy dinner are formed, crushed, reasons kept; methylglyoxal in Honey natural -> formed, aged,
+  "Forms from the nectar's dihydroxyacetone as the honey matures; manuka honey holds the most." (no other list carries
+  methylglyoxal; a test holds any future one to the same mark). Apostrophes written straight, as every other note. 20 entries.
+  **Counts now:** 521 hand marks: natural 207, added 212, formed 57 (fermentation 33, roasted 7, aged 6, baked 5, cured 2, cooked
+  2, crushed 2), body 17, none 28 (each with a reason). No entry carries "not yet checked". By rule unchanged (2,479 label rows
+  added, 4 PFAS rows none). **Tests** (+4, `tests/test_presence.py`): the closed list exactly (with crushed), no "not yet
+  checked" in any mark or any seed or overlay file, the counts above pinned, each correction. 1,064 passed, 1 skipped; ruff 130
+  (= main). **Pinned build** (`sync-inputs` f69fd345c58bfa08, keys blanked) twice: exit 0, 0 PubChem POSTs, byte-identical over
+  `data/seed` and `data/snapshots`; against the branch before the session exactly 14 molecule files and `products.json`
+  change, and with `presence` stripped every one is equal: 41 presence changes, all and only the 20 corrected entries (their
+  categories, their products.json rows and the molecules' own products rows); `canon.parquet` unchanged. `scripts/
+  presence_review.py` now lists the corrections first (and asserts none is "not yet checked"), the rulings in place of the
+  questions; the page regenerated. Phase 2 queue (Garrett, 2026-11-10): the plan's phase 2, "Garrett's rulings, 2026-11-10".
+  **Deployed:** no other branch waiting in either repo; origin/main unmoved (ETL `fcc88f4`, web `8bd8e47`), so no rebase; no
+  news run in progress (the 00:50 slot had not fired). ETL `main` fcc88f4 -> `b15488e` (pushed 02:32:41 UTC, deploys nothing,
+  with the notes commit `9277d7d` and the phase 1 commits), then web `main` 8bd8e47 -> `b0c1412` (pushed 02:32:58). GitHub
+  deployment `7671909837` Production success 02:33:55. IndexNow run 42743636072: 1,712 -> 1,712, 0 new, 0 changed, 0 removed,
+  audit exact, nothing submitted (`indexnow-last` stays `8bd8e47`). Live `/`, `/whats-in/coffee`, `/m/caffeine`,
+  `/whats-in/ambien` 200, 0 console errors, 0 failed requests (headless Brave); sitemap 1,712.
+  **Monday 2026-11-16's weekly run is the first on this code:** it rebuilds the same marks from the seeds (nothing is fetched
+  for them), so the data PR's only presence change would come from Wikidata: a new "has part" row is exported unmarked, listed
+  in `presence_unmarked.json` (today `[]`) and the run summary, and never fails the run; a dropped row is logged as unused. The
+  PR carries week 47 and meta 2026-11-16 as usual; IndexNow ignores `presence`, so no page is sent for it.
 
 ## Gate hold (2026-11-09): a live product page is held, never silently dropped. DEPLOYED 2026-11-10 (ETL `fcc88f4`; `24cce3a` code, `688b084` data)
 **DEPLOYED 2026-11-10 about 01:10 UTC (2026-11-09 his time) on Garrett's word**, with both choices confirmed: Ambien restored on Cosette's current label, Blue Lizard Sport SPF 50 on Crown's current label (the mineral-only formula). Before the push: origin/main unmoved in both repos (ETL `ed5912d`, web `1c1c9d5`), no rebase; ETL venv pyarrow 26.0.0 -> **26.0.1**, the version weekly run 42638720696 installed (`pip install -e .` leaves it unpinned, so the run takes the newest), and the pinned build (`sync-inputs` f69fd345c58bfa08, keys blanked) exited 0 with `git status` clean, `canon.parquet` included; web `front-door-research-2026-11` merged in as `8bd8e47`, documents only (30 files under `docs/design/`, nothing under app/, components/, lib/, data/ or public/, checked by diff). Checks: ETL 1,035 passed, 1 skipped, ruff 130 (= main); web `rm -rf .next`, verify-snapshot OK, typecheck clean, vitest 244 passed and 20 skipped with no build, build 3,093 pages, 264 passed on the build, built sitemap 1,712; IndexNow dry run vs live `1c1c9d5`: 2 new, 21 changed, 0 removed. No other branch was waiting. ETL `main` ed5912d -> `fcc88f4` (pushed 01:07:14 UTC, deploys nothing); web `main` 1c1c9d5 -> `8bd8e47` (with `94ae652`, `12e6f93`, the docs merge; pushed 01:09:25 UTC; the auto-mode classifier refused the first attempt and Garrett confirmed; no news run in progress, the 18:50 slot had run at 22:44 and the 00:50 slot had not started). GitHub deployment `7670641494` Production success 01:10:27 UTC. **IndexNow** run 42733844306: 1,710 -> 1,712, 2 new, 21 changed, 0 removed, 23 submitted and 23 accepted, audit exact, `indexnow-last` -> `8bd8e47` (the same base and head as the dry run, which listed both restored pages, so nothing was sent by hand). **Live, all passed:** `/whats-in/ambien` 200, "from Cosette Pharmaceuticals, Inc.", 11 ingredients, 6 matched, set id `747949c5-...`, no Sanofi; `/whats-in/blue-lizard-sport-spf-50` 200, "from Crown Laboratories", version 2, set id `2f3844d8-...`, 33 ingredients, 8 matched, zinc oxide (10%) the linked active, titanium dioxide "(active)" under Also on the label, no octisalate anywhere in the page; `/m/zolpidem` lists Ambien, `/m/zinc-oxide` and `/m/gluconic-acid` list Blue Lizard under "Found in these products"; `/whats-in/sudafed-sinus-congestion` and `/whats-in/mucinex-vs-sudafed-sinus-congestion` 200; sitemap 1,712; `/` and `/m/caffeine` 200 with 0 console errors and 0 failed requests. **Live Lighthouse** (mobile, median of 3, headless Brave): Ambien perf 100, SEO 100, LCP 1.87 s, CLS 0, TBT 0, 275 KB; Blue Lizard 99, 100, 2.13 s, 0, 0, 276 KB (one of its three runs had CLS 0.03). `.next` deleted (434 MB; `out` and `.lighthouseci` absent); `df -h /` 437 GiB free before and after. **Monday 2026-11-16's weekly run is the first on this code:** green, both new set ids fetched (the products cache lives 6 days), 425 products pass, 0 held (`products_held.json` stays `[]`, the all-clear shows held 0), the ledger 425 products and 11 pairs unless a new page arrives; data PR with week 47 benzoic acid and meta 2026-11-16, `ci / verify` green with `lib/gone.test.ts`; sitemap stays 1,712; IndexNow 0 removed. A label that 404s again shows as held (notice, run summary), never as a missing page.
