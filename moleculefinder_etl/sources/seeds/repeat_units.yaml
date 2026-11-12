@@ -1,0 +1,33 @@
+# Repeat units (everyday chemistry phase 5A, 2026-11-12; Garrett's ruling 5 of 2026-11-09): for a
+# hand-modelled polymer with no single structure, a curated fragment of its chain, drawn by the ETL
+# with the linkage highlighted and labelled as part of a chain, never as the whole molecule.
+# Compiled by transform/drawings.py into `structure_repeat_unit` on the record.
+# Full guide (and which other polymers suit one): docs/DRAWING-RECIPES.md.
+#
+# Each unit: smiles (the fragment; `*` marks where the chain carries on), linkage (what the joint
+# is, as data), linkage_smarts (finds the joint; must match exactly `linkages` times), units, label.
+#
+# Starch: two alpha-D-glucopyranose units joined 1->4, the joint of amylose and of amylopectin's
+# chains. Derived from the catalog's maltose (PubChem's maltose, 4-O-alpha-D-glucopyranosyl-
+# D-glucose): its linkage kept as PubChem draws it, its reducing end set to the same alpha
+# configuration, and both chain ends opened to `*`. Cellulose: the same two units with both
+# anomeric carbons inverted, beta-1,4. The proof is a pattern, not a CIP label (a `*` end and the
+# neighbouring ring both move CIP priorities): the alpha-glucosyl unit cut from that maltose
+# matches both units of starch and neither of cellulose; its inverse, the reverse; starch with
+# hydrogen for `*` is that maltose, stereo included; the catalog's amylose model matches the alpha
+# unit twice (tests/test_drawings.py).
+units:
+  starch:
+    smiles: "*O[C@H]1O[C@H](CO)[C@@H](O[C@H]2O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O"
+    linkage: alpha-1,4
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    units: 2
+    label: Two units of the chain
+  cellulose:
+    smiles: "*O[C@@H]1O[C@H](CO)[C@@H](O[C@@H]2O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O"
+    linkage: beta-1,4
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    units: 2
+    label: Two units of the chain

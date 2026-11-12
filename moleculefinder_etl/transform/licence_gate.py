@@ -35,6 +35,9 @@ IMPLIED: tuple[tuple[str, str], ...] = (
     # The molecule page's "What it does" (phase 4, 2026-11): sentences quoted from the curated
     # comparison notes, by reference (transform/doors.py).
     ("what_it_does", "curated"),
+    # Phase 5A (2026-11-12): the parts of a drawing, found by curated rules and drawn by RDKit, and a
+    # polymer's curated repeat unit (transform/drawings.py).
+    ("structure_parts", "curated"), ("structure_repeat_unit", "curated"),
 )
 
 # A licence record's register (lib/registers.ts on the web) -> registry key. A record with no

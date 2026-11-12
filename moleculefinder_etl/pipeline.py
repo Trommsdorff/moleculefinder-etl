@@ -26,7 +26,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
-from .transform import presence, claims, doors
+from .transform import presence, claims, doors, drawings
 from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
@@ -400,6 +400,11 @@ def stage_transform(settings: Settings) -> list[dict]:
     # The title's parenthetical: the Wikidata label where it differs from the title, else a
     # name on the synonym line that the description itself uses. After the description.
     assemble.attach_title_synonyms(kept, {int(r["cid"]): r.get("wikidata_label") for r in canon})
+    # Phase 5A (2026-11-12): the parts of each molecule as amber layers under its ONE shipped
+    # drawing, placed at atom positions read from that drawing, and the repeat units of starch and
+    # cellulose. Carried forward by key; nothing redraws a shipped structure (transform/drawings.py).
+    drawings.attach_structure_parts(kept, prior_by_cid)
+    drawings.attach_repeat_units(kept, prior_by_cid)
 
     # Hand the PUG-View fetch dates to the export guard. Written here rather than carried
     # on the records: a per-record timestamp would move every run and put all 788 molecule
@@ -455,7 +460,7 @@ def stage_transform(settings: Settings) -> list[dict]:
 
 
 # ── Export preflight: every refusal, before anything is written anywhere ─────
-def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict, object, dict]:
+def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict, object, dict, dict]:
     """Run every check that can refuse this snapshot, and write nothing.
 
     The load used to run before the export, and the export is where the snapshot guard
@@ -486,9 +491,14 @@ def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict
     staged = json.loads(PRODUCTS_STAGED.read_text()) if PRODUCTS_STAGED.exists() else None
     pairs = json.loads(PRODUCT_PAIRS_STAGED.read_text()) if PRODUCT_PAIRS_STAGED.exists() else None
     door_data = doors.compile_doors(molecules, comparisons, boards, staged, pairs)
+    # The two drawings of every /vs pair (phase 5A), carried by key from the shipped
+    # compare_drawings.json; a caption on a pair that is not highlighted stops the run here.
+    prior_pairs = SNAPSHOTS / snapshot_export.COMPARE_DRAWINGS
+    compare = drawings.compile_compare_drawings(
+        molecules, comparisons, json.loads(prior_pairs.read_text()) if prior_pairs.exists() else None)
     if guard:
         snapshot_guard.check(molecules, SNAPSHOTS)
-    return boards, comparisons, queue, door_data
+    return boards, comparisons, queue, door_data, compare
 
 
 # ── Stage 3: load ────────────────────────────────────────────────────────────
@@ -520,7 +530,7 @@ def stage_load(settings: Settings) -> None:
 def stage_export(settings: Settings) -> Path:
     _require(MOLECULES, "transform")
     molecules = json.loads(MOLECULES.read_text())
-    boards, comparisons, queue, door_data = _preflight(molecules, guard=False)
+    boards, comparisons, queue, door_data, compare = _preflight(molecules, guard=False)
     # A pinned build exports only from the inputs main was built from, and keeps its date.
     inputs.before_export()
     # The featured builder runs inside export, for the date meta.json gets.
@@ -541,7 +551,7 @@ def stage_export(settings: Settings) -> Path:
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
                                   products=staged, product_pairs=pairs, published=published,
-                                  doors=door_data)
+                                  doors=door_data, compare_drawings=compare)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)

@@ -26,6 +26,7 @@ PRODUCTS = "products.json"
 # Product comparisons (SEO run 2): the pairs for /whats-in/<a>-vs-<b>, built from products.json.
 PRODUCT_PAIRS = "product_pairs.json"
 DOORS = "doors.json"
+COMPARE_DRAWINGS = "compare_drawings.json"
 # Gate hold (2026-11-09): every /whats-in/ product and pair slug ever published (never shrinks).
 PUBLISHED = products_hold.PUBLISHED
 # The source registry with each source's licence class and attribution (2026-10-23), so the site
@@ -61,7 +62,8 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
            comparisons: dict[str, dict] | None = None, *,
            featured: Callable[[str], dict] | None = None, today: str | None = None,
            products: list[dict] | None = None, product_pairs: list[dict] | None = None,
-           published: dict[str, list[str]] | None = None, doors: dict | None = None) -> Path:
+           published: dict[str, list[str]] | None = None, doors: dict | None = None,
+           compare_drawings: dict | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files + meta.json.
 
     Each leaderboard file is a self-describing board (metadata + enriched
@@ -98,6 +100,10 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
 
     ``doors`` (``transform/doors.compile_doors``, everyday chemistry phase 4) becomes doors.json, the
     six door chains the web renders from phase 7; None (no seeds) removes a doors.json left behind.
+
+    ``compare_drawings`` (``transform/drawings.compile_compare_drawings``, phase 5A) becomes
+    compare_drawings.json, the two drawings of every /vs pair; kept apart from comparisons.json so
+    that file stays small. None removes one left behind.
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
     # The source-licence rule: nothing is written if any value cites a source that is not in
@@ -153,6 +159,9 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     if product_pairs is not None:
         outputs[pairs_path] = json.dumps({"pairs": product_pairs}, ensure_ascii=False)
 
+    compare_path = SNAPSHOTS / COMPARE_DRAWINGS
+    if compare_drawings is not None:
+        outputs[compare_path] = json.dumps(compare_drawings, ensure_ascii=False)
     doors_path = SNAPSHOTS / DOORS
     if doors is not None and doors.get("doors"):
         outputs[doors_path] = json.dumps(doors, ensure_ascii=False)
@@ -169,6 +178,8 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
         stale.append(pairs_path)
     if doors_path not in outputs and doors_path.exists():
         stale.append(doors_path)
+    if compare_path not in outputs and compare_path.exists():
+        stale.append(compare_path)
     changed = bool(stale) or any(_read_text(path) != text for path, text in outputs.items())
     meta_path = SNAPSHOTS / META
     refreshed = _prior_refreshed(meta_path)
@@ -190,4 +201,6 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
         pairs_path.unlink()
     if doors_path not in outputs and doors_path.exists():
         doors_path.unlink()
+    if compare_path not in outputs and compare_path.exists():
+        compare_path.unlink()
     return SNAPSHOTS

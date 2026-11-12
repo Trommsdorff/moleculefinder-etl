@@ -1,0 +1,14 @@
+# The two drawings of each /vs pair (everyday chemistry phase 5A, 2026-11-12), compiled by
+# transform/drawings.py into data/snapshots/compare_drawings.json. Full guide: docs/DRAWING-RECIPES.md.
+#
+# Every pair in comparisons.yaml gets an entry by rule: aligned on its common core when the core is
+# big enough, with the difference marked when it is a small group, else the two shipped drawings.
+# This seed only adds what a rule cannot:
+#   captions: {pair: one short sentence}   shown under a HIGHLIGHTED pair; the build stops if the
+#             pair is not highlighted. New writing: in the claim rule's corpus (kind `part`).
+#             Captions beyond caffeine vs theobromine's are phase 5B's to write.
+#   shipped:  {pair: the reason}           holds a pair to its two shipped drawings whatever the
+#             rule finds (for a pair whose aligned drawing reads worse than the two apart).
+captions:
+  caffeine-vs-theobromine: One methyl group apart.
+shipped: {}

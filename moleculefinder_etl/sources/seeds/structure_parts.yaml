@@ -1,0 +1,77 @@
+# The parts of a molecule ("Explore its structure", everyday chemistry phase 5A, 2026-11-12).
+# Compiled by transform/drawings.py into `structure_parts` on each molecule record: every part is
+# a small amber layer under the molecule's ONE shipped drawing, placed at atom positions read from
+# that drawing (transform/svg_geometry.py). Full guide: docs/DRAWING-RECIPES.md.
+#
+# A part is found BY RULE, never by atom number:
+#   group:  a key of categories.FUNCTIONAL_GROUPS (the SMARTS behind the /in hubs), or
+#   smarts: a SMARTS pattern of its own, or
+#   rule: ring-system   (the largest set of rings sharing atoms, with its ring bonds).
+# Optional: light: [pattern atom numbers to light] (default: every matched atom);
+#           bonds: within (default; bonds between lit atoms) or touching (every matched bond with a
+#           lit end); expect: {matches: N} or {atoms: N} (a curated part only: the build stops when
+#           the molecule no longer has what the part says, so a sentence cannot describe atoms that
+#           moved).
+# Text: label (the button), sentence (one or two sentences), from (where the sentence comes from).
+# Every label, sentence and note is in the claim rule's corpus (kind `part`, claims_allowed.yaml).
+#
+# Defaults: tried in this order, most specific first; a molecule shows at most `max_parts`. A part
+# is skipped when it lights nothing, the whole molecule, or only atoms an earlier part already lit.
+# Lone ions are never lit. Labels and sentences for the defaults are phase 5B's to write (null here:
+# the web shows no default part until 5B fills them).
+max_parts: 3
+defaults:
+  - {id: carboxylic-acid, group: carboxylic-acids, label: null, sentence: null}
+  - {id: ester, group: esters, label: null, sentence: null}
+  - {id: amide, group: amides, label: null, sentence: null}
+  - {id: aldehyde, group: aldehydes, label: null, sentence: null}
+  - {id: ketone, group: ketones, label: null, sentence: null}
+  - {id: phosphate, group: phosphates, label: null, sentence: null}
+  - {id: phenol, group: phenols, label: null, sentence: null}
+  - {id: thiol, group: thiols, label: null, sentence: null}
+  - {id: amine, group: amines, label: null, sentence: null}
+  - {id: alcohol, group: alcohols, label: null, sentence: null}
+  - {id: ether, group: ethers, label: null, sentence: null}
+  - {id: halogen, group: halogenated, label: null, sentence: null}
+  - {id: benzene-ring, group: aromatics, label: null, sentence: null}
+  - {id: ring-system, rule: ring-system, label: null, sentence: null}
+
+# Curated parts replace the defaults for that molecule. The worked example: caffeine's three, the
+# labels and sentences of the approved mockup (moleculefinder-web/docs/design/mockups/direction-2/
+# molecule-caffeine.html), verbatim.
+molecules:
+  caffeine:
+    parts:
+      - id: xanthine-core
+        rule: ring-system
+        expect: {atoms: 9}
+        label: The xanthine core
+        sentence: >-
+          Two fused rings, one of six atoms and one of five, holding all four nitrogens. Caffeine
+          shares this skeleton with theobromine and theophylline, the other two molecules in our
+          Methylxanthine group, and it makes caffeine a purine, the same ring family as adenosine.
+        from: >-
+          standard chemistry for the rings; the shared group is our Methylxanthine group; "both
+          purines" is from the adenosine vs caffeine notes.
+      - id: methyl-groups
+        smarts: "[CH3]-[#7]"
+        light: [0]
+        bonds: touching
+        expect: {matches: 3}
+        label: The three methyl groups
+        sentence: >-
+          Three methyl groups (CH3), one on each of three nitrogens; its systematic name,
+          1,3,7-trimethylxanthine, counts them. Take one away and you have theobromine or
+          theophylline, which is why both read C7H8N4O2 against caffeine's C8H10N4O2.
+        from: standard chemistry for the name; the formulas are PubChem's.
+      - id: carbonyl-oxygens
+        smarts: "[#6]=[OX1]"
+        light: [1]
+        bonds: touching
+        expect: {matches: 2}
+        label: The carbonyl oxygens
+        sentence: >-
+          Two carbonyl groups (C=O) on the six-membered ring. Caffeine has no N-H or O-H to lend a
+          hydrogen bond (PubChem counts 0 donors), so it can only accept them, and these two
+          oxygens are among its 3 acceptors.
+        from: standard chemistry; the counts are PubChem's computed values.

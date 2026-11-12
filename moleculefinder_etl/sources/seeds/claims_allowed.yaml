@@ -387,3 +387,9 @@ answer:
     why: "\"Differ only in the fatty tail\" is a structural statement."}
   "tetrahydrocannabinol/cannabidiol": {words: ["only"], basis: science, line: "8c35ed6828b8",
     why: "THC is a CB1 partial agonist; CBD does not activate CB1 (standard pharmacology)."}
+
+# The drawing seeds' new writing (phase 5A, 2026-11-12): part labels, sentences and notes
+# (structure_parts.yaml), pair captions (compare_drawings.yaml), repeat unit labels (repeat_units.yaml).
+part:
+  "caffeine.carbonyl-oxygens.sentence": {words: ["only"], basis: ordinary, line: "3b667928ad47",
+    why: "\"It can only accept them\" ranks nothing: with 0 donors (PubChem's count) a molecule can accept hydrogen bonds and not give them. The approved mockup's sentence, verbatim."}

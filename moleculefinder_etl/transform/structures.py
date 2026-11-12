@@ -324,13 +324,12 @@ def recolour(svg: str, smiles: str) -> str:
     return _paint(svg, mol) if mol is not None else svg
 
 
-def svg_for(smiles: str, width: int = 400, height: int = 300) -> str | None:
-    from rdkit import Chem
+def drawer(width: int = 400, height: int = 300, *, flag_close_contacts: bool = True,
+           fixed_bond_px: float | None = None):
+    """An RDKit SVG drawer with this recipe's options (the palette, one bond colour, no
+    background). ``svg_for`` uses it as it is; the phase 5A recipes (``drawings``) turn off the
+    close-contact box (a pure red #FF0000 that is no band colour) and may fix the bond length."""
     from rdkit.Chem.Draw import rdMolDraw2D
-
-    mol = Chem.MolFromSmiles(smiles) if smiles else None
-    if mol is None:
-        return None
 
     d = rdMolDraw2D.MolDraw2DSVG(width, height)
     opts = d.drawOptions()
@@ -340,7 +339,25 @@ def svg_for(smiles: str, width: int = 400, height: int = 300) -> str | None:
     opts.singleColourBonds = True                      # one bond color, not split half-by-atom
     opts.setSymbolColour((*_rgb01(CPK_HEX[6]), 1.0))   # bonds + carbon symbols = light blue-gray
     opts.clearBackground = False                       # transparent — sits on the dark panel
+    if not flag_close_contacts:
+        opts.flagCloseContactsDist = -1
+    if fixed_bond_px:
+        opts.fixedBondLength = fixed_bond_px
+    return d
 
+
+def draw(mol, width: int = 400, height: int = 300, **kw):
+    """(svg, drawer) for ``mol`` as it is, its own 2D conformer kept if it has one."""
+    d = drawer(width, height, **kw)
     d.DrawMolecule(mol)
     d.FinishDrawing()
-    return _paint(d.GetDrawingText(), mol)             # radical dots: RDKit draws them black
+    return _paint(d.GetDrawingText(), mol), d          # radical dots: RDKit draws them black
+
+
+def svg_for(smiles: str, width: int = 400, height: int = 300) -> str | None:
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(smiles) if smiles else None
+    if mol is None:
+        return None
+    return draw(mol, width, height)[0]

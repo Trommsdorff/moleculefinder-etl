@@ -57,7 +57,7 @@ BASES = {
     "held": "a comparison answer line, never edited by the sweep; listed for Garrett",
 }
 
-KINDS = ("why_it_matters", "editorial", "comparison", "answer", "door")
+KINDS = ("why_it_matters", "editorial", "comparison", "answer", "door", "part")
 
 
 class ClaimError(SystemExit):
@@ -96,6 +96,12 @@ def corpus(seeds: Path = SEEDS_DIR, curated: Path = CURATED_DIR) -> list[tuple[s
     # there needs an entry under `door:` like any other curated line.
     from .doors import DOORS_DIR, door_strings, load_seeds
     out += [("door", key, text) for key, text in door_strings(load_seeds(seeds / DOORS_DIR.name))]
+    # The drawing seeds' new writing (phase 5A, 2026-11-12): part labels, sentences and notes, pair
+    # captions, repeat unit labels. A claim word there needs an entry under `part:`.
+    from . import drawings
+    out += [("part", key, text) for key, text in drawings.strings(
+        seeds / drawings.PARTS_YAML.name, seeds / drawings.COMPARE_YAML.name,
+        seeds / drawings.REPEAT_YAML.name)]
     return out
 
 
