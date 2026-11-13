@@ -310,6 +310,8 @@ def stage_transform(settings: Settings) -> list[dict]:
     # The claim rule (copy sweep, 2026-11): a curated line carrying "only", "first", "most" and the rest
     # needs its basis in claims_allowed.yaml, pinned to the line's exact text, or the build stops here.
     claims.check_lines()
+    # The drawing seeds' text (phase 5B): part labels and sentences, pair captions, the house rules.
+    drawings.check_text()
     canon = canon_stage.read_parquet()
     fetched_by_cid = {f["cid"]: f for f in json.loads(FETCHED.read_text())}
     curated_by_cid = _load_curated()

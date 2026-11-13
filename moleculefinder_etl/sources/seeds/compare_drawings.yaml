@@ -6,9 +6,101 @@
 # This seed only adds what a rule cannot:
 #   captions: {pair: one short sentence}   shown under a HIGHLIGHTED pair; the build stops if the
 #             pair is not highlighted. New writing: in the claim rule's corpus (kind `part`).
-#             Captions beyond caffeine vs theobromine's are phase 5B's to write.
+#             Phase 5B (2026-11-12): every highlighted pair has one. A caption is the rule's text
+#             (drawings.caption_rule, generated from the computed difference) unless the pair is
+#             listed under `curated:` with the reason the rule cannot say it truthfully;
+#             tests/test_drawings.py holds every other caption to the rule's text.
+#   curated:  {pair: why the rule's text is not used}
+#   stereo:   {pair: a mark}  for a pair whose two molecules have the same atoms and bonds and
+#             differ only in their arrangement in space (the common-core search ignores stereo,
+#             so it finds nothing to mark). The mark is a pattern matched on BOTH molecules,
+#             never atom numbers: smarts, light (pattern atoms to light), bonds (within or
+#             touching), expect {matches: N}. The build stops unless it lights the same atoms on
+#             both sides of the core map. Phase 5B's one engine change (drawings._stereo_mark).
 #   shipped:  {pair: the reason}           holds a pair to its two shipped drawings whatever the
 #             rule finds (for a pair whose aligned drawing reads worse than the two apart).
 captions:
-  caffeine-vs-theobromine: One methyl group apart.
+  # by rule
+  acetone-vs-ethyl-acetate: "Acetone has a methyl group where ethyl acetate has an ethoxy group."
+  acetone-vs-isopropyl-alcohol: "Acetone has a ketone where isopropyl alcohol has a hydroxyl group."
+  amitriptyline-vs-nortriptyline: "One methyl group apart."
+  benzene-vs-toluene: "One methyl group apart."
+  butane-vs-propane: "One carbon longer."
+  caffeine-vs-theobromine: "One methyl group apart."
+  caffeine-vs-theophylline: "One methyl group apart."
+  cortisone-vs-cortisol: "Cortisone has a ketone where cortisol has a hydroxyl group."
+  diazepam-vs-lorazepam: "Three differences: a methyl group on diazepam, and a hydroxyl group and a chlorine on lorazepam."
+  dopamine-vs-norepinephrine: "One hydroxyl group apart."
+  epinephrine-vs-norepinephrine: "One methyl group apart."
+  ethanol-vs-isopropyl-alcohol: "One methyl group apart."
+  ethylene-glycol-vs-propylene-glycol: "One methyl group apart."
+  fluorouracil-vs-uracil: "Fluorouracil has a fluorine where uracil has a hydrogen."
+  glycerol-vs-propylene-glycol: "One hydroxyl group apart."
+  melatonin-vs-serotonin: "Two differences: an acetyl group and a methyl group on melatonin."
+  oxazepam-vs-diazepam: "Two differences: a hydroxyl group on oxazepam, and a methyl group on diazepam."
+  oxycodone-vs-hydrocodone: "One hydroxyl group apart."
+  palmitic-acid-vs-stearic-acid: "Two carbons longer."
+  # curated (the reasons are under `curated:`)
+  erythritol-vs-allulose: "Allulose is two carbons longer, with a ketone."
+  hyoscine-butylbromide-vs-scopolamine: "A butyl group added on the nitrogen, which then carries a positive charge."
+  nicotinamide-vs-niacin: "Nicotinamide has NH2 where niacin has OH: an amide in place of an acid."
+  prednisone-vs-dexamethasone: "Three differences: dexamethasone has a hydroxyl where prednisone has a ketone, plus a methyl and a fluorine."
+  xylitol-vs-erythritol: "Xylitol is one carbon longer, with one more hydroxyl group."
+  # the three-dimensional marks (`stereo:` below)
+  betamethasone-vs-dexamethasone: "The same atoms; one methyl group points the other way."
+  escitalopram-vs-citalopram: "The same atoms; escitalopram is one mirror-image form, citalopram a mix of both."
+  levocetirizine-vs-cetirizine: "The same atoms; levocetirizine is one mirror-image form, cetirizine a mix of both."
+  armodafinil-vs-modafinil: "The same atoms; armodafinil is one mirror-image form, modafinil a mix of both."
+  eszopiclone-vs-zopiclone: "The same atoms; eszopiclone is one mirror-image form, zopiclone a mix of both."
+  dexmethylphenidate-vs-methylphenidate: "The same atoms; at the two marked carbons dexmethylphenidate is one form, methylphenidate a mix."
+  isotretinoin-vs-tretinoin: "The same atoms; the marked double bond is cis in isotretinoin and trans in tretinoin."
+curated:
+  erythritol-vs-allulose: "the added piece is a chain carbon with a C=O plus a CH2OH, which the rule has no name for."
+  hyoscine-butylbromide-vs-scopolamine: "the common core maps scopolamine's N-methyl onto the butyl chain, so the rule would read a propyl and a methyl; the true difference is one butyl on the nitrogen."
+  nicotinamide-vs-niacin: "NH2 against OH on a C=O is an amide against an acid, which the rule's group names do not say."
+  prednisone-vs-dexamethasone: "three sites, one of them a swap, which the rule does not phrase."
+  xylitol-vs-erythritol: "the added piece is a CH2OH, which the rule has no name for; the chain is one CHOH unit longer."
+  betamethasone-vs-dexamethasone: "a three-dimensional mark; the rule writes no caption for one."
+  escitalopram-vs-citalopram: "a three-dimensional mark."
+  levocetirizine-vs-cetirizine: "a three-dimensional mark."
+  armodafinil-vs-modafinil: "a three-dimensional mark."
+  eszopiclone-vs-zopiclone: "a three-dimensional mark."
+  dexmethylphenidate-vs-methylphenidate: "a three-dimensional mark."
+  isotretinoin-vs-tretinoin: "a three-dimensional mark."
 shipped: {}
+# The pairs that differ only in arrangement in space: all seven aligned pairs whose atoms all match
+# except the two salt pairs (calcium carbonate vs sodium bicarbonate, sodium bicarbonate vs sodium
+# carbonate), whose difference is their ions and a hydrogen, not an arrangement.
+stereo:
+  betamethasone-vs-dexamethasone:   # C16's methyl: up in one, down in the other (the answer line)
+    smarts: "[CH3]-[CX4;R;H1]"
+    expect: {matches: 1}
+  escitalopram-vs-citalopram:       # the ring carbon holding the chain, the fluorophenyl and the O
+    smarts: "[CX4;R;H0]([OX2;R])[CH2;!R]"
+    light: [0]
+    bonds: touching
+    expect: {matches: 1}
+  levocetirizine-vs-cetirizine:     # the carbon holding the two rings and the piperazine
+    smarts: "[CX4;H1](c)(c)[NX3]"
+    light: [0]
+    bonds: touching
+    expect: {matches: 1}
+  armodafinil-vs-modafinil:         # the sulfur, whose lone pair makes it a stereocentre
+    smarts: "[SX3](=O)([#6])[#6]"
+    light: [0]
+    bonds: touching
+    expect: {matches: 1}
+  eszopiclone-vs-zopiclone:         # the ring carbon holding the carbamate oxygen
+    smarts: "[CX4;H1;R]([OX2;!R])[NX3;R]"
+    light: [0]
+    bonds: touching
+    expect: {matches: 1}
+  dexmethylphenidate-vs-methylphenidate:  # the two neighbouring stereocentres
+    smarts: "[CX4;H1;!R](C(=O)O)(c)[CX4;H1;R][NX3;R]"
+    light: [0, 5]
+    bonds: within
+    expect: {matches: 1}
+  isotretinoin-vs-tretinoin:        # the C13=C14 double bond, cis in one and trans in the other
+    smarts: "[CX3;!R]([CH3])=[CH1][CX3](=O)[OX2H]"
+    light: [0, 2]
+    expect: {matches: 1}

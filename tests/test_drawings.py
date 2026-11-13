@@ -130,6 +130,22 @@ def test_a_lone_ion_is_never_lit_and_a_saltless_reading_needs_no_bond():
 
 
 # ── Parts ────────────────────────────────────────────────────────────────────────────────────
+def _terminal_double_mids(svg: str, mol) -> dict[int, tuple[float, float]]:
+    lines: dict[tuple[int, int], list[tuple[float, ...]]] = {}
+    for i, j, x1, y1, x2, y2 in re.findall(
+            r"class='bond-\d+ atom-(\d+) atom-(\d+)' d='M (-?[\d.]+),(-?[\d.]+) L (-?[\d.]+),(-?[\d.]+)'", svg):
+        lines.setdefault((int(i), int(j)), []).append(tuple(map(float, (x1, y1, x2, y2))))
+    out = {}
+    for (i, j), ls in lines.items():
+        if len(ls) != 2:
+            continue
+        for atom, k in ((i, 0), (j, 2)):
+            at = mol.GetAtomWithIdx(atom)
+            if at.GetDegree() == 1 and at.GetSymbol() == "C" and f"class='atom-{atom}'" not in svg:
+                out[atom] = ((ls[0][k] + ls[1][k]) / 2, (ls[0][k + 1] + ls[1][k + 1]) / 2)
+    return out
+
+
 def _dots(layer_svg: str) -> list[tuple[float, float]]:
     return [(float(x), float(y)) for x, y in re.findall(r"M(-?[\d.]+),(-?[\d.]+)h0", layer_svg)]
 
@@ -161,6 +177,10 @@ def test_every_dot_sits_where_the_shipped_lines_put_its_atom(records):
             continue
         mol = Chem.MolFromSmiles(r["isomeric_smiles"])
         exact = G.exact_points(r["structure_svg"], G.drawing_mol(mol, r["structure_svg"]))
+        # Phase 5B: a chain-end atom on a double bond (limonene's =CH2) is drawn as two parallel
+        # lines either side of the bond's axis; exact_points takes one line's end, the atom sits
+        # midway between the two (RDKit's own coordinates agree to 0.02 px). Hold the dot to that.
+        exact.update(_terminal_double_mids(r["structure_svg"], mol))
         for p in sp["parts"]:
             for a, (x, y) in zip(p["atoms"], _dots(p["layer"])):
                 if a in exact:
@@ -199,7 +219,7 @@ def test_default_parts_are_capped_and_never_the_whole_molecule(records):
         mol = Chem.MolFromSmiles(r["isomeric_smiles"])
         heavy = {a.GetIdx() for a in mol.GetAtoms() if a.GetAtomicNum() > 1 and a.GetDegree() > 0}
         for p in sp["parts"]:
-            assert not set(p["atoms"]) >= heavy or r["slug"] == "caffeine", (r["slug"], p["id"])
+            assert not set(p["atoms"]) >= heavy or p["confidence"] == "from_source", (r["slug"], p["id"])
 
 
 def test_an_unproven_drawing_is_recorded_so_no_machine_tries_again(by_slug):
@@ -264,7 +284,9 @@ def test_the_pair_counts(pairs):
         k = p["mode"] + ("+highlight" if p["highlight"] else "")
         modes[k] = modes.get(k, 0) + 1
     assert len(pairs["pairs"]) == 147
-    assert modes == {"aligned+highlight": 24, "aligned": 51, "shipped": 72}
+    # phase 5A: 24 highlighted, 51 aligned; phase 5B adds the seven three-dimensional marks
+    assert modes == {"aligned+highlight": 31, "aligned": 44, "shipped": 72}
+    assert sum(1 for p in pairs["pairs"].values() if p.get("stereo")) == 7
 
 
 def test_a_caption_needs_a_highlighted_pair(records):
@@ -436,3 +458,117 @@ def test_making_from_scratch_is_deterministic(records):
         outs.append(json.dumps([r["structure_parts"] for r in fresh]))
     assert outs[0] == outs[1]
     assert json.loads(outs[0]) == [r["structure_parts"] for r in sample]
+
+
+# ── Phase 5B (2026-11-12): the text, the corrected rules, the captions, the 3D marks ──────────
+STOPS = {  # doors.json: each stop's molecule, and the paired molecules of the two-molecule stops
+    "caffeine", "adenosine", "theobromine", "acetaminophen", "ibuprofen", "dextromethorphan",
+    "doxylamine", "menthol", "camphor", "ethanol", "maltol", "furaneol", "sucrose", "aspartame",
+    "sucralose", "stevioside", "xylitol", "erythritol", "sodium-bicarbonate", "sodium-carbonate",
+    "ascorbic-acid", "citric-acid", "limonene"}
+# One or two atoms, or ions that are never lit; or no single structure (starch and cellulose
+# show their repeat unit). They carry no parts on purpose.
+STOPS_WITHOUT_PARTS = {"ammonia", "hydrogen-peroxide", "sodium-hypochlorite", "sodium-hydroxide",
+                       "starch", "cellulose", "gluten"}
+
+
+def _parts(r):
+    return (r.get("structure_parts") or {}).get("parts") or []
+
+
+def test_every_part_shown_has_a_label_a_sentence_and_its_basis(records):
+    shown = 0
+    for r in records:
+        for p in _parts(r):
+            assert p["label"] and p["sentence"] and p["from"], (r["slug"], p["id"])
+            shown += 1
+    assert shown > 1500
+    seed = D.load_parts_seed()
+    assert all(s["label"] and s["sentence"] and s["from"] for s in seed["defaults"])
+
+
+def test_the_drawing_text_keeps_the_house_rules():
+    assert D.text_problems() == []
+    bad = [("default.x.sentence", "It is safe \u2014 and every molecule in it."),
+           ("caption.a-vs-b", "No full stop")]
+    assert len(D.text_problems(bad)) == 5   # dash, advice, completeness; length, full stop
+
+
+def test_every_door_stop_molecule_has_curated_parts(by_slug):
+    doors = json.loads((SNAP / "doors.json").read_text())["doors"]
+    leads = {(s["molecule"] or {}).get("slug") if isinstance(s["molecule"], dict) else s["molecule"]
+             for d in doors for s in d["stops"] if s.get("molecule")}
+    assert leads <= STOPS | STOPS_WITHOUT_PARTS
+    for slug in STOPS:
+        parts = _parts(by_slug[slug])
+        assert parts and all(p["confidence"] == "from_source" for p in parts), slug
+    for slug in STOPS_WITHOUT_PARTS:
+        assert not _parts(by_slug[slug]), slug
+
+
+def _ids(by_slug, slug):
+    return [p["id"] for p in _parts(by_slug[slug])]
+
+
+def test_the_rules_the_contact_sheet_read_wrongly(by_slug, records):
+    assert "epoxide" in _ids(by_slug, "scopolamine") and "ether" not in _ids(by_slug, "scopolamine")
+    for s in ("pentobarbital", "amobarbital"):
+        assert _ids(by_slug, s)[0] == "barbiturate-ring" and "amide" not in _ids(by_slug, s)
+    assert "carbamate" in _ids(by_slug, "meprobamate") and "ester" not in _ids(by_slug, "meprobamate")
+    assert "sulfonamide" in _ids(by_slug, "celecoxib") and "amine" not in _ids(by_slug, "celecoxib")
+    assert "phenol" not in _ids(by_slug, "maltol")
+    assert "aldehyde" not in _ids(by_slug, "formic-acid")
+    # the ring system never simply repeats a benzene ring part: no benzene ring part shares an
+    # atom with the ring system part
+    for r in records:
+        parts = {p["id"]: set(p["atoms"]) for p in _parts(r)}
+        if "benzene-ring" in parts and "ring-system" in parts:
+            assert not parts["benzene-ring"] & parts["ring-system"], r["slug"]
+
+
+def test_every_highlighted_pair_has_a_caption_and_the_rule_wrote_all_but_the_curated(by_slug, pairs):
+    seed = D.load_compare_seed()
+    curated = seed.get("curated") or {}
+    for slug, p in pairs["pairs"].items():
+        assert bool(p["caption"]) == bool(p["highlight"]), slug
+        if not p["highlight"]:
+            continue
+        rule = D.caption_rule(by_slug[p["a"]], by_slug[p["b"]], p)
+        if slug in curated:
+            assert rule != p["caption"], f"{slug}: the rule now says it; drop it from curated"
+        else:
+            assert rule == p["caption"], (slug, rule, p["caption"])
+    assert len(curated) == 12
+
+
+def test_a_pair_that_differs_only_in_space_is_marked_on_both(by_slug, pairs):
+    """Every aligned pair whose atoms all match is either one of the two salt pairs (the ions
+    differ, not an arrangement) or carries a three-dimensional mark, which lights the same atoms
+    on both sides, where the two molecules' stereo really differs."""
+    salts = {"calcium-carbonate-vs-sodium-bicarbonate", "sodium-bicarbonate-vs-sodium-carbonate"}
+    found = set()
+    for slug, p in pairs["pairs"].items():
+        if p["mode"] != "aligned" or p.get("extra_atoms") not in (0, None):
+            continue
+        if p.get("stereo"):
+            found.add(slug)
+            core = dict(map(tuple, p["core_map"]))
+            assert [core[i] for i in p["a_atoms"]] == p["b_atoms"]
+            ma = Chem.MolFromSmiles(by_slug[p["a"]]["isomeric_smiles"])
+            mb = Chem.MolFromSmiles(by_slug[p["b"]]["isomeric_smiles"])
+            def stereo_of(mol, i):
+                at = mol.GetAtomWithIdx(i)
+                bonds = [str(b.GetStereo()) for b in at.GetBonds()]
+                return (str(at.GetChiralTag()), sorted(bonds))
+            assert any(stereo_of(ma, i) != stereo_of(mb, core[i]) for i in p["a_atoms"]), slug
+        elif p["reason"].startswith("aligned; 0 atoms differ"):
+            assert slug in salts, slug
+    assert found == set(D.load_compare_seed()["stereo"])
+    assert "betamethasone-vs-dexamethasone" in found
+
+
+def test_vitamin_c_says_apes_and_monkeys(by_slug):
+    rec = by_slug["ascorbic-acid"]
+    assert "humans, apes, monkeys and guinea pigs cannot" in rec["why_it_matters"]["text"]
+    assert "other primates" not in json.dumps(rec) and rec["title"] == "Vitamin C"
+    assert 100 <= len(rec["description"]) <= 200

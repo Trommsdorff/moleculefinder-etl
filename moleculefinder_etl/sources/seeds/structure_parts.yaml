@@ -17,24 +17,219 @@
 #
 # Defaults: tried in this order, most specific first; a molecule shows at most `max_parts`. A part
 # is skipped when it lights nothing, the whole molecule, or only atoms an earlier part already lit.
-# Lone ions are never lit. Labels and sentences for the defaults are phase 5B's to write (null here:
-# the web shows no default part until 5B fills them).
+# Lone ions are never lit. Every default has its label and sentence (phase 5B); a part with no
+# label is never shown on the site.
 max_parts: 3
+# Phase 5B (2026-11-12): every default rule now has its label and sentence, standard chemistry
+# (`from` says so), one sentence per rule reused on every molecule the rule matches, so each is
+# written to be true of every match (tests/test_drawings.py sweeps the matches). Rules the phase 5A
+# contact sheet showed reading wrongly are fixed here, most specific first, without touching the
+# /in hubs' own patterns (categories.FUNCTIONAL_GROUPS stays as it is; where a part needs a
+# narrower pattern it carries its own `smarts:`). What changed and why, rule by rule:
+#   epoxide       NEW, before ether: scopolamine's three-membered C-O-C ring read as "ether".
+#   ether         own SMARTS: not in a three-membered ring, and neither carbon an acetal carbon.
+#   acetal, hemiacetal  NEW, before ether: a sugar's linking carbon (two oxygens on one carbon)
+#                 read as two "ethers" (sucrose, the glycosides, amylose).
+#   barbiturate-ring  NEW, first: pentobarbital's and amobarbital's ring read as a plain "amide".
+#   imide, urea   NEW, before amide: a nitrogen between two C=O (phenytoin, buspirone, the
+#                 xanthines' ring nitrogen) or a C=O between two nitrogens (carbamazepine) read
+#                 as "amide".
+#   amide         own SMARTS: the nitrogen is not an imide's.
+#   carbamate     NEW, before ester: N-C(=O)-O read as "ester" (eszopiclone, meprobamate,
+#                 methocarbamol, carisoprodol, linezolid, loratadine and six more).
+#   lactone       NEW, before ester: a ring ester (vitamin C, nepetalactone, the macrolides) is
+#                 named as what it is; ester then means the open-chain kind.
+#   ester         own SMARTS: no carbamate, no carbonate, and the C(=O)-O bond not in a ring.
+#   aldehyde      own SMARTS: the C=O carbon carries no O or N, so formic acid and benfotiamine's
+#                 formamide no longer read as "aldehyde".
+#   sulfonamide   NEW, before amine: an SO2-NH2 read as "amine" (celecoxib, furosemide,
+#                 hydrochlorothiazide and nine more).
+#   guanidine     NEW, before amine: a C(=N)(N)N read as "amine" (creatine, clonidine, arginine's
+#                 relatives).
+#   amine         own SMARTS: no sulfonamide nitrogen, no guanidine or amidine nitrogen.
+#   phenol        own SMARTS: the O-H sits on a benzene ring (maltol's O-H, on a pyranone ring
+#                 RDKit calls aromatic, read as "phenol").
+#   halogen       own SMARTS: bonded to carbon (bleach's chlorine, bonded to oxygen, is not an
+#                 organic halogen).
+#   benzene-ring  own SMARTS: a benzene ring that stands alone (each atom in one ring). A benzene
+#                 ring fused to another ring is part of the ring system instead, so the ring
+#                 system never simply repeats the benzene ring (indoles, the benzodiazepines,
+#                 the steroids' aromatic A ring, naphthalenes).
 defaults:
-  - {id: carboxylic-acid, group: carboxylic-acids, label: null, sentence: null}
-  - {id: ester, group: esters, label: null, sentence: null}
-  - {id: amide, group: amides, label: null, sentence: null}
-  - {id: aldehyde, group: aldehydes, label: null, sentence: null}
-  - {id: ketone, group: ketones, label: null, sentence: null}
-  - {id: phosphate, group: phosphates, label: null, sentence: null}
-  - {id: phenol, group: phenols, label: null, sentence: null}
-  - {id: thiol, group: thiols, label: null, sentence: null}
-  - {id: amine, group: amines, label: null, sentence: null}
-  - {id: alcohol, group: alcohols, label: null, sentence: null}
-  - {id: ether, group: ethers, label: null, sentence: null}
-  - {id: halogen, group: halogenated, label: null, sentence: null}
-  - {id: benzene-ring, group: aromatics, label: null, sentence: null}
-  - {id: ring-system, rule: ring-system, label: null, sentence: null}
+  - id: barbiturate-ring
+    smarts: "O=C1[CX4]C(=O)[NX3]C(=O)[NX3]1"
+    label: The barbiturate ring
+    sentence: >-
+      A ring of four carbons and two nitrogens carrying three C=O groups, the ring every
+      barbiturate is built on. The two groups on its one carbon with no oxygen are what tell one
+      barbiturate from another.
+    from: standard chemistry (pyrimidine-2,4,6-trione, barbituric acid's ring).
+  - id: carboxylic-acid
+    group: carboxylic-acids
+    label: The carboxylic acid group
+    sentence: >-
+      A carbon carrying both a C=O and an O-H, written COOH. In water it gives up that hydrogen,
+      which is what makes the molecule an acid.
+    from: standard chemistry.
+  - id: carbamate
+    smarts: "[NX3][CX3](=[OX1])[OX2][#6]"
+    light: [0, 1, 2, 3]
+    label: The carbamate group
+    sentence: >-
+      A C=O with a nitrogen on one side and an oxygen on the other, half amide and half ester.
+      Water splits it more slowly than it splits an ester.
+    from: standard chemistry.
+  - id: lactone
+    smarts: "[#6][CX3;R](=[OX1])@[OX2;R][#6]"
+    light: [1, 2, 3]
+    label: The lactone, a ring ester
+    sentence: >-
+      An ester closed into a ring: the C=O carbon and the oxygen beside it are both ring atoms.
+      Like any ester, it can be split by water, which opens the ring.
+    from: standard chemistry.
+  - id: ester
+    smarts: "[CX3;!$(C(=O)[NX3]);!$(C(=O)(O)O)](=[OX1])!@[OX2H0][#6]"
+    label: The ester group
+    sentence: >-
+      A C=O joined through an oxygen to another carbon, the link an acid and an alcohol make when
+      they combine. Water can split it back into the two.
+    from: standard chemistry.
+  - id: imide
+    smarts: "[CX3](=[OX1])[NX3][CX3](=[OX1])"
+    label: The imide
+    sentence: >-
+      A nitrogen between two C=O groups. Both pull on the nitrogen, so a hydrogen on it comes off
+      far more easily than one on an ordinary amide.
+    from: standard chemistry.
+  - id: urea
+    smarts: "[NX3][CX3](=[OX1])[NX3]"
+    label: The urea group
+    sentence: >-
+      A C=O with a nitrogen on each side, the same arrangement as in urea itself. Its N-H and C=O
+      groups form hydrogen bonds readily.
+    from: standard chemistry.
+  - id: amide
+    smarts: "[NX3;!$(N(C=O)C=O)][CX3](=[OX1])[#6]"
+    label: The amide group
+    sentence: >-
+      A C=O bonded to a nitrogen, the same link that joins amino acids in a protein. It is sturdy,
+      and its nitrogen is not a base the way an amine's is.
+    from: standard chemistry.
+  - id: aldehyde
+    smarts: "[CX3;H1,H2;!$(C[O,N;!$(*=*)])]=[OX1]"
+    label: The aldehyde group
+    sentence: >-
+      A C=O with a hydrogen on its carbon, written CHO. It reacts readily and is easily oxidised
+      to a carboxylic acid.
+    from: standard chemistry.
+  - id: ketone
+    group: ketones
+    label: The ketone group
+    sentence: >-
+      A C=O with a carbon on each side. Its oxygen accepts hydrogen bonds but has no hydrogen to
+      give, and it resists oxidation better than an aldehyde.
+    from: standard chemistry.
+  - id: phosphate
+    group: phosphates
+    label: The phosphate group
+    sentence: >-
+      A phosphorus atom bonded to four oxygens. Living cells use phosphate groups to carry energy,
+      as in ATP, and to switch molecules on and off.
+    from: standard chemistry and biochemistry.
+  - id: phenol
+    smarts: "[OX2H][c;$(c1ccccc1)]"
+    label: The phenol group
+    sentence: >-
+      An O-H fixed directly to a benzene ring. The ring makes that hydrogen easier to give up than
+      an ordinary alcohol's, which is why many phenols act as antioxidants.
+    from: standard chemistry.
+  - id: thiol
+    group: thiols
+    label: The thiol group
+    sentence: >-
+      A sulfur carrying a hydrogen, written SH, the sulfur version of an alcohol. Two thiols can
+      join into a disulfide bridge, as they do in proteins.
+    from: standard chemistry.
+  - id: sulfonamide
+    smarts: "[NX3][SX4](=[OX1])(=[OX1])[#6]"
+    light: [0, 1, 2, 3]
+    label: The sulfonamide group
+    sentence: >-
+      A sulfur carrying two oxygens and a nitrogen, written SO2N. It is a polar, sturdy group, the
+      one the sulfa drugs are named for.
+    from: standard chemistry.
+  - id: guanidine
+    smarts: "[NX3][CX3](=[NX2])[NX3]"
+    label: The guanidine group
+    sentence: >-
+      A carbon bonded to three nitrogens, one of them by a double bond, the same group the amino
+      acid arginine carries. Its N-H groups form hydrogen bonds readily.
+    from: standard chemistry.
+  - id: amine
+    smarts: "[NX3;H2,H1;!$(NC=O);!$(NS(=O)=O);!$(NC=N);!$(N=C)]"
+    label: The amine group
+    sentence: >-
+      A nitrogen carrying one or two hydrogens. Its spare pair of electrons can pick up a hydrogen
+      ion, so an amine is a base.
+    from: standard chemistry.
+  - id: alcohol
+    group: alcohols
+    label: The hydroxyl group
+    sentence: >-
+      An O-H on a carbon that is not part of an aromatic ring, the group that makes a molecule an
+      alcohol. It both gives and accepts hydrogen bonds, which helps the molecule mix with water.
+    from: standard chemistry.
+  - id: epoxide
+    smarts: "[#6;r3]1[OX2;r3][#6;r3]1"
+    label: The epoxide ring
+    sentence: >-
+      A three-membered ring of two carbons and one oxygen. The ring is strained, so it opens more
+      readily than an ordinary ether.
+    from: standard chemistry.
+  - id: acetal
+    smarts: "[CX4]([OX2][#6])[OX2][#6]"
+    light: [0, 1, 3]
+    label: The acetal
+    sentence: >-
+      One carbon bonded to two oxygens, each joined in turn to another carbon. It is the kind of link
+      that joins sugars together: it stands up to bases, and acid splits it.
+    from: standard chemistry.
+  - id: hemiacetal
+    smarts: "[CX4;R]([OX2;R][#6])[OX2H]"
+    light: [0, 1, 3]
+    label: The hemiacetal
+    sentence: >-
+      One carbon bonded to a ring oxygen and to an O-H. In water this ring can open and close
+      again, which is how sugars such as glucose switch between their forms.
+    from: standard chemistry.
+  - id: ether
+    smarts: "[OD2;!r3]([#6;!$([#6]=[OX1]);!$([CX4]([OX2])[OX2])])[#6;!$([#6]=[OX1]);!$([CX4]([OX2])[OX2])]"
+    label: The ether oxygen
+    sentence: >-
+      An oxygen bridging two carbons, written C-O-C. It accepts hydrogen bonds but has no hydrogen
+      to give, and it is slow to react.
+    from: standard chemistry.
+  - id: halogen
+    smarts: "[F,Cl,Br,I;$(*[#6])]"
+    label: The halogen atoms
+    sentence: >-
+      Fluorine, chlorine, bromine or iodine bonded to carbon. Each pulls electrons toward itself,
+      and each is larger than the hydrogen the carbon would otherwise carry.
+    from: standard chemistry.
+  - id: benzene-ring
+    smarts: "[c;R1]1[c;R1][c;R1][c;R1][c;R1][c;R1]1"
+    label: The benzene ring
+    sentence: >-
+      Six carbons in a flat hexagon, sharing their electrons evenly around the ring. It is stable,
+      flat and oily, and it stacks readily against other flat rings.
+    from: standard chemistry.
+  - id: ring-system
+    rule: ring-system
+    label: The ring system
+    sentence: >-
+      Rings joined where they share atoms, or a single ring standing alone. Atoms in a ring are
+      held in place, so this part keeps its shape while chains around it can bend.
+    from: standard chemistry.
 
 # Curated parts replace the defaults for that molecule. The worked example: caffeine's three, the
 # labels and sentences of the approved mockup (moleculefinder-web/docs/design/mockups/direction-2/
@@ -75,3 +270,516 @@ molecules:
           hydrogen bond (PubChem counts 0 donors), so it can only accept them, and these two
           oxygens are among its 3 acceptors.
         from: standard chemistry; the counts are PubChem's computed values.
+
+  # ── The door chains' stop molecules (phase 5B, 2026-11-12): curated parts for the molecules the
+  # six door pages lead with (doors.json: each stop's molecule, plus the paired molecules of the
+  # menthol and camphor, maltol and furaneol, xylitol and erythritol, and three sodas stops). The
+  # "also in" lists are not stops and keep their defaults. Every sentence is standard chemistry or
+  # a value MoleculeFinder already publishes; `from` names the basis for each, as the copy sweep
+  # did. Left without parts, on purpose: ammonia, hydrogen peroxide, sodium hypochlorite and
+  # sodium hydroxide (one or two atoms, or ions that are never lit: the whole molecule is the
+  # part); starch, cellulose and gluten (no single structure; starch and cellulose show their
+  # repeat unit instead).
+  adenosine:
+    parts:
+      - id: adenine-base
+        smarts: "[NH2]c1ncnc2c1ncn2"
+        expect: {matches: 1}
+        label: The adenine base
+        sentence: >-
+          Two fused rings holding four nitrogens, with an NH2 group: adenine, one of the four
+          bases of DNA. Caffeine is built on the same two-ring skeleton, a purine.
+        from: >-
+          standard chemistry; "both purines" is from the adenosine vs caffeine notes.
+      - id: ribose
+        smarts: "[OX2H][CH2][CH1]1[O][CH1](n)[CH1]([OX2H])[CH1]1[OX2H]"
+        light: [0, 1, 2, 3, 4, 6, 7, 8, 9]
+        bonds: touching
+        expect: {matches: 1}
+        label: The ribose sugar
+        sentence: >-
+          A five-membered ring sugar, ribose, joined to adenine through a nitrogen. Add phosphate
+          groups to this sugar and adenosine becomes ATP, the molecule cells use to carry energy.
+        from: standard chemistry and biochemistry.
+  theobromine:
+    parts:
+      - id: xanthine-core
+        rule: ring-system
+        expect: {atoms: 9}
+        label: The xanthine core
+        sentence: >-
+          Two fused rings, one of six atoms and one of five, holding all four nitrogens: the
+          skeleton theobromine shares with caffeine and theophylline in our Methylxanthine group.
+        from: standard chemistry for the rings; the shared group is our Methylxanthine group.
+      - id: methyl-groups
+        smarts: "[CH3]-[#7]"
+        light: [0]
+        bonds: touching
+        expect: {matches: 2}
+        label: The two methyl groups
+        sentence: >-
+          Two methyl groups (CH3), one on each of two nitrogens; its systematic name,
+          3,7-dimethylxanthine, counts them. Caffeine carries a third, on the nitrogen that here
+          holds a hydrogen.
+        from: standard chemistry for the names (caffeine is 1,3,7-trimethylxanthine).
+      - id: n-h
+        smarts: "[#7;H1]"
+        expect: {matches: 1}
+        label: The N-H group
+        sentence: >-
+          The one nitrogen without a methyl keeps its hydrogen, so theobromine can lend a
+          hydrogen bond, which caffeine cannot.
+        from: >-
+          standard chemistry; PubChem's computed hydrogen bond donor counts are 1 for
+          theobromine and 0 for caffeine.
+  acetaminophen:
+    parts:
+      - id: acetamide
+        smarts: "[CH3][CX3](=[OX1])[NX3H1]"
+        expect: {matches: 1}
+        label: The amide group
+        sentence: >-
+          A C=O and a nitrogen joining a methyl to the ring, written NHCOCH3: an amide. It is the
+          "acetyl" in the drug's chemical name, N-acetyl-para-aminophenol, shortened to APAP.
+        from: standard chemistry and the drug's chemical name.
+      - id: phenol
+        smarts: "[OX2H]c"
+        light: [0]
+        bonds: touching
+        expect: {matches: 1}
+        label: The phenol group
+        sentence: >-
+          An O-H fixed directly to the benzene ring, the "phenol" in its chemical name. The liver
+          attaches sugar or sulfate groups at this O-H to clear the drug from the body.
+        from: standard chemistry and pharmacology (glucuronidation and sulfation).
+      - id: benzene-ring
+        smarts: "c1ccccc1"
+        expect: {matches: 1}
+        label: The benzene ring
+        sentence: >-
+          A six-carbon ring with its two groups on opposite sides, the "para" in
+          para-aminophenol.
+        from: standard chemistry.
+  ibuprofen:
+    parts:
+      - id: propionic-acid
+        smarts: "[CH1;X4]([CH3])(c)C(=O)[OH]"
+        light: [0, 1, 3, 4, 5]
+        bonds: touching
+        expect: {matches: 1}
+        label: The propionic acid group
+        sentence: >-
+          A COOH group on the carbon next to the ring, which makes ibuprofen a weak acid. Naproxen
+          carries the same group, which is why both are called profens.
+        from: standard chemistry (2-arylpropionic acids).
+      - id: chiral-carbon
+        smarts: "[CH1;X4]([CH3])(c)C(=O)[OH]"
+        light: [0]
+        bonds: touching
+        expect: {matches: 1}
+        label: The carbon with two mirror forms
+        sentence: >-
+          This carbon holds four different groups, so ibuprofen comes in two mirror-image forms.
+          Tablets hold both, and the body turns much of the less active form into the active one.
+        from: standard pharmacology (chiral inversion of R- to S-ibuprofen).
+      - id: isobutyl
+        smarts: "[CH3][CH1]([CH3])[CH2]c"
+        light: [0, 1, 2, 3]
+        bonds: touching
+        expect: {matches: 1}
+        label: The isobutyl group
+        sentence: >-
+          A branched chain of four carbons on the far side of the ring, the oily end of the
+          molecule. The name ibuprofen comes from isobutylphenylpropionic acid.
+        from: standard chemistry and the name's origin.
+  dextromethorphan:
+    parts:
+      - id: morphinan
+        rule: ring-system
+        expect: {atoms: 17}
+        label: The morphinan skeleton
+        sentence: >-
+          Four fused rings, the skeleton of the opioids. Dextromethorphan is the mirror-image form
+          of levomethorphan, an opioid, and in this mirrored form it acts weakly at opioid
+          pain receptors.
+        from: standard chemistry and pharmacology.
+      - id: methoxy
+        smarts: "[CH3][OX2]c"
+        expect: {matches: 1}
+        label: The methoxy group
+        sentence: >-
+          A methyl joined to the ring through an oxygen, written OCH3. The liver removes this
+          methyl to make dextrorphan, an active form of the drug.
+        from: standard pharmacology (O-demethylation by CYP2D6).
+      - id: n-methyl
+        smarts: "[CH3][NX3]"
+        expect: {matches: 1}
+        label: The nitrogen and its methyl
+        sentence: >-
+          A nitrogen with a methyl, an amine. It is a base, so at the body's pH it holds an extra
+          hydrogen and carries a positive charge.
+        from: standard chemistry.
+  doxylamine:
+    parts:
+      - id: two-rings
+        smarts: "[CX4](c1ccccc1)(c1ccccn1)"
+        expect: {matches: 1}
+        label: The two rings
+        sentence: >-
+          A benzene ring and a pyridine ring (a ring with one nitrogen) on the same carbon.
+          Diphenhydramine has the same shape with two benzene rings.
+        from: standard chemistry; both structures are PubChem's.
+      - id: ether-link
+        smarts: "[CX4;H0][OX2][CH2][CH2]"
+        expect: {matches: 1}
+        label: The ether link
+        sentence: >-
+          An oxygen joining the ring carbon to a two-carbon chain, as in diphenhydramine: both are
+          ethanolamine antihistamines.
+        from: standard pharmacology (the antihistamine classes).
+      - id: dimethylamino
+        smarts: "[CH3][NX3]([CH3])[CH2]"
+        light: [0, 1, 2]
+        expect: {matches: 1}
+        label: The dimethylamino group
+        sentence: >-
+          A nitrogen with two methyls at the chain's end, an amine. At the body's pH it holds an
+          extra hydrogen and carries a positive charge.
+        from: standard chemistry.
+  ethanol:
+    parts:
+      - id: hydroxyl
+        smarts: "[CX4][OX2H]"
+        light: [1]
+        bonds: touching
+        expect: {matches: 1}
+        label: The hydroxyl group
+        sentence: >-
+          An O-H on the end of the chain. It forms hydrogen bonds with water, so ethanol and water
+          mix in any proportion.
+        from: standard chemistry.
+      - id: ethyl
+        smarts: "[CH3][CH2]"
+        expect: {matches: 1}
+        label: The ethyl group
+        sentence: >-
+          Two carbons, written CH3CH2. They let ethanol dissolve oily substances too, which is why
+          it is used to make extracts such as vanilla.
+        from: standard chemistry.
+  sucrose:
+    parts:
+      - id: glucose-unit
+        smarts: "[C;R]1[O;R][C;R][C;R][C;R][C;R]1"
+        expect: {matches: 1}
+        label: The glucose ring
+        sentence: >-
+          A six-membered ring of five carbons and one oxygen: glucose. Digestion splits sucrose
+          into this glucose and the fructose beside it.
+        from: standard chemistry and biochemistry.
+      - id: fructose-unit
+        smarts: "[C;R]1[O;R][C;R][C;R][C;R]1"
+        expect: {matches: 1}
+        label: The fructose ring
+        sentence: >-
+          A five-membered ring of four carbons and one oxygen: fructose, which on its own is
+          sweeter than either glucose or sucrose.
+        from: >-
+          standard chemistry; our sourced sweetness values: fructose 1.73, sucrose 1, glucose
+          0.74.
+      - id: glycosidic-bond
+        smarts: "[CH1;R][OX2;!R][CX4;R]"
+        expect: {matches: 1}
+        label: The glycosidic bond
+        sentence: >-
+          One oxygen joins the two rings at the carbons that would let each ring open, so
+          sucrose, unlike glucose and fructose, is not a reducing sugar.
+        from: standard chemistry (sucrose is a non-reducing disaccharide).
+  aspartame:
+    parts:
+      - id: aspartic-acid
+        smarts: "[NH2][CH1]([CH2]C(=O)[OH])C(=O)N"
+        light: [0, 1, 2, 3, 4, 5, 6, 7]
+        expect: {matches: 1}
+        label: The aspartic acid unit
+        sentence: >-
+          One half is the amino acid aspartic acid, still carrying its NH2 and its own COOH.
+        from: standard chemistry (aspartame is aspartyl-phenylalanine methyl ester).
+      - id: phenylalanine
+        smarts: "N[CH1]([CH2]c1ccccc1)C(=O)O"
+        light: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        expect: {matches: 1}
+        label: The phenylalanine unit
+        sentence: >-
+          The other half is the amino acid phenylalanine, joined to aspartic acid by a peptide bond,
+          the link that holds proteins together.
+        from: standard chemistry.
+      - id: methyl-ester
+        smarts: "C(=O)O[CH3]"
+        light: [2, 3]
+        bonds: touching
+        expect: {matches: 1}
+        label: The methyl ester
+        sentence: >-
+          The phenylalanine end is capped with a methyl through an oxygen. Digestion cuts it off
+          as a small amount of methanol.
+        from: standard biochemistry (aspartame is digested to aspartic acid, phenylalanine and methanol).
+  sucralose:
+    parts:
+      - id: chlorines
+        smarts: "[CX4][Cl]"
+        light: [1]
+        bonds: touching
+        expect: {matches: 3}
+        label: The three chlorines
+        sentence: >-
+          Three chlorine atoms stand where sucrose has three O-H groups. Sucralose is about 600
+          times as sweet as sugar.
+        from: >-
+          standard chemistry (4,1',6'-trichloro-galactosucrose; PubChem's formulas C12H19Cl3O8 and
+          C12H22O11); 600 is our sourced value (FDA).
+      - id: glycosidic-bond
+        smarts: "[CH1;R][OX2;!R][CX4;R]"
+        expect: {matches: 1}
+        label: The glycosidic bond
+        sentence: >-
+          One oxygen joins the two rings, the same link that joins the two halves of sucrose.
+        from: standard chemistry.
+  stevioside:
+    parts:
+      - id: steviol-core
+        rule: ring-system
+        expect: {atoms: 16}
+        label: The steviol core
+        sentence: >-
+          Four fused rings of carbon, steviol, the part every stevia sweetener shares.
+        from: standard chemistry (the steviol glycosides share the aglycone steviol).
+      - id: glucose-units
+        smarts: "[C;R]1[O;R][C;R][C;R][C;R][C;R]1"
+        expect: {matches: 3}
+        label: The three glucose units
+        sentence: >-
+          Three glucose rings, two linked together on one side of the core and one on the other.
+          Rebaudioside A carries one more.
+        from: standard chemistry; both structures are PubChem's.
+      - id: ester-link
+        smarts: "[CX3](=O)[OX2][CH1;R]"
+        expect: {matches: 1}
+        label: The ester link
+        sentence: >-
+          One glucose is attached to the core's acid group through an ester; the other two hang
+          on a sugar link at the far end.
+        from: standard chemistry.
+  ascorbic-acid:
+    parts:
+      - id: lactone-ring
+        smarts: "O=C1O[CH1]C=C1"
+        expect: {matches: 1}
+        label: The lactone ring
+        sentence: >-
+          A five-membered ring closed by an ester, a lactone, with a C=C double bond inside it.
+        from: standard chemistry.
+      - id: enediol
+        smarts: "[OX2H][CX3]=[CX3][OX2H]"
+        expect: {matches: 1}
+        label: The enediol
+        sentence: >-
+          Two O-H groups on the two carbons of the C=C. These hydrogens come away easily, which
+          makes vitamin C an acid and lets it give up electrons as an antioxidant.
+        from: standard chemistry.
+      - id: side-chain
+        smarts: "[OX2H][CH2][CH1]([OX2H])"
+        expect: {matches: 1}
+        label: The side chain
+        sentence: >-
+          Two carbons outside the ring, each with an O-H, which help vitamin C dissolve in water.
+        from: standard chemistry.
+  citric-acid:
+    parts:
+      - id: carboxylic-acids
+        smarts: "C(=O)[OX2H]"
+        expect: {matches: 3}
+        label: The three carboxylic acid groups
+        sentence: >-
+          Three COOH groups, each able to give up a hydrogen in water, which is what tastes sour
+          in lemons and limes.
+        from: standard chemistry.
+      - id: hydroxyl
+        smarts: "[CX4;H0][OX2H]"
+        expect: {matches: 1}
+        label: The hydroxyl group
+        sentence: >-
+          An O-H on the middle carbon, the "hydroxy" in its chemical name,
+          2-hydroxypropane-1,2,3-tricarboxylic acid.
+        from: standard chemistry (its IUPAC name).
+  limonene:
+    parts:
+      - id: ring
+        rule: ring-system
+        expect: {atoms: 6}
+        label: The ring
+        sentence: >-
+          A ring of six carbons with one double bond. Limonene's ten carbons are two five-carbon
+          isoprene units, as in every monoterpene.
+        from: standard chemistry (monoterpenes are C10, two isoprene units).
+      - id: isopropenyl
+        smarts: "[CX3](=[CH2])[CH3]"
+        bonds: touching
+        expect: {matches: 1}
+        label: The isopropenyl group
+        sentence: >-
+          A short branch with its own double bond. The ring carbon it sits on holds four different
+          groups, so limonene has two mirror-image forms; orange peel's is d-limonene.
+        from: standard chemistry ((R)-(+)-limonene in citrus peel oil).
+  menthol:
+    parts:
+      - id: hydroxyl
+        smarts: "[CX4][OX2H]"
+        light: [1]
+        bonds: touching
+        expect: {matches: 1}
+        label: The hydroxyl group
+        sentence: >-
+          An O-H on the ring, the "ol" in menthol, which makes it an alcohol.
+        from: standard chemistry.
+      - id: ring
+        rule: ring-system
+        expect: {atoms: 6}
+        label: The ring
+        sentence: >-
+          A ring of six carbons with no double bond. Three of its carbons each hold four
+          different groups, so menthol has eight forms, and peppermint makes mainly one,
+          (-)-menthol.
+        from: standard chemistry ((1R,2S,5R)-menthol in peppermint oil).
+      - id: isopropyl
+        smarts: "[CH1;!R]([CH3])([CH3])[C;R]"
+        light: [0, 1, 2]
+        bonds: touching
+        expect: {matches: 1}
+        label: The isopropyl group
+        sentence: >-
+          A branched three-carbon arm beside the O-H.
+        from: standard chemistry.
+  camphor:
+    parts:
+      - id: ketone
+        smarts: "[#6][CX3](=O)[#6]"
+        light: [1, 2]
+        expect: {matches: 1}
+        label: The ketone group
+        sentence: >-
+          A C=O inside the cage, the "one" in its chemical name,
+          1,7,7-trimethylbicyclo[2.2.1]heptan-2-one.
+        from: standard chemistry (its IUPAC name).
+      - id: cage
+        rule: ring-system
+        expect: {atoms: 7}
+        label: The bridged cage
+        sentence: >-
+          Two rings bridged into a compact cage. Camphor is a waxy solid that slowly turns
+          straight to vapour at room temperature.
+        from: standard chemistry (camphor sublimes).
+      - id: methyl-groups
+        smarts: "[CH3]"
+        bonds: touching
+        expect: {matches: 3}
+        label: The three methyl groups
+        sentence: >-
+          Three methyl groups, the "trimethyl" in its chemical name.
+        from: standard chemistry (its IUPAC name).
+  maltol:
+    parts:
+      - id: ring
+        rule: ring-system
+        expect: {atoms: 6}
+        label: The pyranone ring
+        sentence: >-
+          A six-membered ring holding one oxygen, with a C=O on it: a pyranone.
+        from: standard chemistry.
+      - id: hydroxyl-carbonyl
+        smarts: "[OX2H][#6]~[#6]=[OX1]"
+        expect: {matches: 1}
+        label: The O-H beside the C=O
+        sentence: >-
+          The O-H and the C=O sit side by side, so the two oxygens can hold a metal ion between
+          them, which is how maltol binds iron.
+        from: standard chemistry (maltol chelates iron; ferric maltol).
+      - id: methyl
+        smarts: "[CH3]"
+        bonds: touching
+        expect: {matches: 1}
+        label: The methyl group
+        sentence: >-
+          One methyl group, the "methyl" in its chemical name, 3-hydroxy-2-methyl-4-pyranone.
+        from: standard chemistry (its IUPAC name).
+  furaneol:
+    parts:
+      - id: ring
+        rule: ring-system
+        expect: {atoms: 5}
+        label: The furanone ring
+        sentence: >-
+          A five-membered ring holding one oxygen, with a C=O on it: a furanone.
+        from: standard chemistry.
+      - id: enol
+        smarts: "[OX2H][CX3]=[CX3]"
+        light: [0, 1]
+        expect: {matches: 1}
+        label: The enol O-H
+        sentence: >-
+          An O-H on a double-bonded carbon, an enol: the "4-hydroxy" in its chemical name.
+        from: standard chemistry (4-hydroxy-2,5-dimethyl-3(2H)-furanone).
+      - id: methyl-groups
+        smarts: "[CH3]"
+        bonds: touching
+        expect: {matches: 2}
+        label: The two methyl groups
+        sentence: >-
+          Two methyl groups, the "2,5-dimethyl" in its chemical name.
+        from: standard chemistry (its IUPAC name).
+  xylitol:
+    parts:
+      - id: hydroxyls
+        smarts: "[OX2H]"
+        bonds: touching
+        expect: {matches: 5}
+        label: The five hydroxyl groups
+        sentence: >-
+          Five O-H groups, one on each carbon of a five-carbon chain, the pattern of a sugar
+          alcohol. Erythritol has the same pattern, one carbon shorter.
+        from: standard chemistry; PubChem's structures.
+  erythritol:
+    parts:
+      - id: hydroxyls
+        smarts: "[OX2H]"
+        bonds: touching
+        expect: {matches: 4}
+        label: The four hydroxyl groups
+        sentence: >-
+          Four O-H groups, one on each carbon of a four-carbon chain, the pattern of a sugar
+          alcohol. Xylitol has the same pattern, one carbon longer.
+        from: standard chemistry; PubChem's structures.
+  sodium-bicarbonate:
+    parts:
+      - id: o-h
+        smarts: "[OX2H]"
+        bonds: touching
+        expect: {matches: 1}
+        label: The hydrogen it keeps
+        sentence: >-
+          The one O-H: where washing soda has a second sodium, baking soda keeps this hydrogen.
+        from: >-
+          standard chemistry; NaHCO3 against Na2CO3, as the baking soda vs washing soda page
+          says.
+  sodium-carbonate:
+    parts:
+      - id: charged-oxygens
+        smarts: "[OX1-]"
+        bonds: touching
+        expect: {matches: 2}
+        label: The two charged oxygens
+        sentence: >-
+          Two oxygens each carrying a negative charge, each balanced by a sodium ion. Baking soda
+          has a hydrogen on one of them.
+        from: >-
+          standard chemistry; NaHCO3 against Na2CO3, as the baking soda vs washing soda page
+          says.

@@ -394,16 +394,19 @@ def _with_frame(svg: str, frame) -> str:
     return svg
 
 
-def pair_key(a: dict, b: dict, caption, override) -> str:
+def pair_key(a: dict, b: dict, caption, override, stereo: dict | None = None) -> str:
+    # A curated three-dimensional mark (phase 5B) joins the key only on a pair that has one, so
+    # every other pair's key is what phase 5A made it.
+    extra = [json.dumps(stereo, sort_keys=True, ensure_ascii=False)] if stereo else []
     return _sha(PAIRS_RECIPE, a["slug"], b["slug"], geometry_sha(a.get("structure_svg") or ""),
-                a.get("isomeric_smiles"), b.get("isomeric_smiles"), caption, override)
+                a.get("isomeric_smiles"), b.get("isomeric_smiles"), caption, override, *extra)
 
 
 def _heavy(mol) -> int:
     return sum(1 for a in mol.GetAtoms() if a.GetAtomicNum() > 1 and a.GetDegree() > 0)
 
 
-def draw_pair(a: dict, b: dict) -> dict:
+def draw_pair(a: dict, b: dict, stereo: dict | None = None) -> dict:
     """One pair's drawings (see the module docstring). ``mode`` "aligned" carries the second
     molecule's drawing in the first's frame (``b_svg``) and, where the difference is small, the
     layers that mark it on both; ``mode`` "shipped" means the page shows the two shipped
@@ -460,6 +463,8 @@ def draw_pair(a: dict, b: dict) -> dict:
     lit_b, bonds_b = _difference(mb, set(amap.values()))
     n_extra = (len([i for i in lit_a if i not in amap])
                + len([j for j in lit_b if j not in amap.values()]))
+    if stereo:
+        return _stereo_mark(out, stereo, ma, mb, amap, n_extra, rd, pos_b)
     if not 1 <= n_extra <= HIGHLIGHT_MAX_ATOMS:
         out["reason"] = (f"aligned; {n_extra} atoms differ, " +
                          ("none to mark" if not n_extra else "too many to mark as one group"))
@@ -476,6 +481,155 @@ def draw_pair(a: dict, b: dict) -> dict:
     return out
 
 
+def _stereo_mark(out: dict, spec: dict, ma, mb, amap: dict, n_extra: int, rd, pos_b) -> dict:
+    """A curated mark for a pair whose two molecules have the same atoms and bonds and differ only
+    in their three-dimensional arrangement (the common-core search ignores stereo, so it finds no
+    difference to mark). The atoms are chosen by the seed's pattern, matched on both molecules,
+    never by atom number; the build stops unless the pattern lights the same atoms on both sides
+    of the core map, the expected number of times."""
+    if n_extra:
+        raise DrawingSeedError(f"a three-dimensional mark is for a pair whose atoms all match; "
+                               f"{n_extra} atoms differ here")
+    sides = []
+    for mol in (ma, mb):
+        atoms, bonds, n = _match(mol, spec)
+        exp = (spec.get("expect") or {}).get("matches")
+        if not atoms or (exp is not None and n != exp):
+            raise DrawingSeedError(f"three-dimensional mark expects {exp} match(es), finds {n}")
+        sides.append((atoms, bonds))
+    (lit_a, bonds_a), (lit_b, bonds_b) = sides
+    if sorted(amap[i] for i in lit_a) != lit_b:
+        raise DrawingSeedError("the three-dimensional mark lights different atoms on the two sides")
+    out.update(highlight=True, extra_atoms=0, stereo=True, a_atoms=lit_a, b_atoms=lit_b,
+               reason="aligned; the same atoms, marked where their arrangement in space differs",
+               a_layer=layer(rd.pos, lit_a, bonds_a, rd.scale_px, "mf-diff"),
+               b_layer=layer(pos_b, lit_b, bonds_b, rd.scale_px, "mf-diff"))
+    return out
+
+
+# ── Captions by rule ─────────────────────────────────────────────────────────────────────────
+# What a highlighted pair's caption says, generated from the computed difference wherever a rule
+# can say it truthfully (tests/test_drawings.py holds every caption the seed does not list as
+# curated to this function's text). Substructure facts only: no layout, so any machine agrees.
+_NUMBER = {1: "One", 2: "Two", 3: "Three", 4: "Four"}
+_HALOGEN = {9: "fluorine", 17: "chlorine", 35: "bromine", 53: "iodine"}
+
+
+def _fragments(mol, core: set[int]) -> list[tuple[list[int], int, int]]:
+    """Connected groups of atoms outside the core: (atoms, the core atom they hang on, the order
+    of that bond). None when a group hangs on two core atoms (a ring difference, not a group)."""
+    iso = _isolated(mol)
+    extra = {a.GetIdx() for a in mol.GetAtoms()
+             if a.GetIdx() not in core and a.GetIdx() not in iso and a.GetAtomicNum() > 1}
+    out, seen = [], set()
+    for start in sorted(extra):
+        if start in seen:
+            continue
+        comp, stack = set(), [start]
+        while stack:
+            i = stack.pop()
+            if i in comp:
+                continue
+            comp.add(i)
+            stack += [n.GetIdx() for n in mol.GetAtomWithIdx(i).GetNeighbors() if n.GetIdx() in extra]
+        seen |= comp
+        links = [(n.GetIdx(), mol.GetBondBetweenAtoms(i, n.GetIdx()).GetBondTypeAsDouble())
+                 for i in comp for n in mol.GetAtomWithIdx(i).GetNeighbors() if n.GetIdx() in core]
+        if len(links) != 1:
+            return None
+        out.append((sorted(comp), links[0][0], links[0][1]))
+    return out
+
+
+def _name(mol, atoms: list[int], attach: int, order: float) -> str | None:
+    if len(atoms) == 1:
+        at = mol.GetAtomWithIdx(atoms[0])
+        if at.GetAtomicNum() in _HALOGEN:
+            return _HALOGEN[at.GetAtomicNum()]
+        if at.GetAtomicNum() == 6 and at.GetTotalNumHs() == 3:
+            return "methyl group"
+        if at.GetAtomicNum() == 8 and order == 1 and at.GetTotalNumHs() == 1:
+            return "hydroxyl group"
+        if at.GetAtomicNum() == 8 and order == 2:
+            c = mol.GetAtomWithIdx(attach)
+            if sum(n.GetAtomicNum() == 6 for n in c.GetNeighbors()) == 2:
+                return "ketone"
+        return None
+    from rdkit import Chem
+    smi = Chem.MolFragmentToSmiles(mol, atomsToUse=atoms, canonical=True, isomericSmiles=False)
+    return {"CC": "ethyl group", "CCO": "ethoxy group", "CC=O": "acetyl group"}.get(smi)
+
+
+def _mid(title: str) -> str:
+    """A molecule's title inside a sentence: "Isopropyl alcohol" -> "isopropyl alcohol"; an
+    acronym or a name with a capital after its first letter stays as it is."""
+    return title[0].lower() + title[1:] if title[1:2].islower() and title[1:].islower() else title
+
+
+def _cap(s: str) -> str:
+    return s[0].upper() + s[1:]
+
+
+def _a(noun: str) -> str:
+    return ("an " if noun[0] in "aeiou" else "a ") + noun
+
+
+def _chain(mol, atoms: list[int]) -> bool:
+    return all(mol.GetAtomWithIdx(i).GetAtomicNum() == 6 and not mol.GetAtomWithIdx(i).IsInRing()
+               and mol.GetAtomWithIdx(i).GetHybridization().name == "SP3" for i in atoms)
+
+
+def caption_rule(a: dict, b: dict, entry: dict) -> str | None:
+    """The caption a rule can write for a highlighted pair, or None when no rule says it truthfully
+    (the seed then carries a curated one). Reads the two records and the pair's core map only."""
+    from rdkit import Chem
+
+    if not entry.get("highlight") or entry.get("stereo"):
+        return None
+    ma, mb = Chem.MolFromSmiles(a["isomeric_smiles"]), Chem.MolFromSmiles(b["isomeric_smiles"])
+    amap = {i: j for i, j in entry["core_map"]}
+    inv = {j: i for i, j in amap.items()}
+    fa, fb = _fragments(ma, set(amap)), _fragments(mb, set(inv))
+    if fa is None or fb is None:
+        return None
+    ta, tb = _mid(a["title"]), _mid(b["title"])
+    # a group on each side at the same core atom: one replaces the other
+    swaps, only_a, only_b = [], list(fa), list(fb)
+    for f in fa:
+        g = next((g for g in fb if g[1] == amap.get(f[1])), None)
+        if g:
+            swaps.append((f, g))
+            only_a.remove(f)
+            only_b.remove(g)
+    sites = len(swaps) + len(only_a) + len(only_b)
+    if sites == 1 and swaps:
+        (f, g), = swaps
+        x, y = _name(ma, *f), _name(mb, *g)
+        return f"{_cap(ta)} has {_a(x)} where {tb} has {_a(y)}." if x and y else None
+    if sites == 1:
+        mol, other, (atoms, at, order), m2 = ((ma, mb, only_a[0], amap) if only_a
+                                             else (mb, ma, only_b[0], inv))
+        end = other.GetAtomWithIdx(m2[at])
+        if _chain(mol, atoms) and end.GetAtomicNum() == 6 and end.GetDegree() == 1:
+            n = len(atoms)
+            return f"{_NUMBER[n]} carbon{'s' if n > 1 else ''} longer." if n in _NUMBER else None
+        x = _name(mol, atoms, at, order)
+        if x in _HALOGEN.values():
+            t1, t2 = (ta, tb) if only_a else (tb, ta)
+            return f"{_cap(t1)} has {_a(x)} where {t2} has a hydrogen."
+        return f"One {x} apart." if x else None
+    if swaps or sites not in _NUMBER:
+        return None
+    sides = []
+    for mol, frags, title in ((ma, only_a, ta), (mb, only_b, tb)):
+        names = [_name(mol, *f) for f in frags]
+        if None in names:
+            return None
+        if names:
+            sides.append(" and ".join(_a(n) for n in names) + f" on {title}")
+    return f"{_NUMBER[sites]} differences: " + ", and ".join(sides) + "."
+
+
 def compile_compare_drawings(molecules: list[dict], comparisons: dict[str, dict],
                              prior: dict | None = None, seed: dict | None = None) -> dict:
     """``compare_drawings.json``: one entry per /vs pair, carried by key (see ``pair_key``)."""
@@ -483,9 +637,11 @@ def compile_compare_drawings(molecules: list[dict], comparisons: dict[str, dict]
     by_slug = {m["slug"]: m for m in molecules}
     captions = seed.get("captions") or {}
     overrides = seed.get("shipped") or {}
+    stereo_marks = seed.get("stereo") or {}
     from .relationships import load_comparisons
     seeded = {k.replace("/", "-vs-") for k in load_comparisons()}
-    unknown = sorted((set(captions) | set(overrides)) - seeded)
+    unknown = sorted((set(captions) | set(overrides) | set(stereo_marks)
+                      | set(seed.get("curated") or {})) - seeded)
     if unknown:
         raise DrawingSeedError(f"compare_drawings.yaml names pairs comparisons.yaml does not: {unknown}")
     old = (prior or {}).get("pairs") or {}
@@ -495,7 +651,8 @@ def compile_compare_drawings(molecules: list[dict], comparisons: dict[str, dict]
         c = comparisons[slug]
         a, b = by_slug[c["a"]], by_slug[c["b"]]
         caption, override = captions.get(slug), overrides.get(slug)
-        key = pair_key(a, b, caption, override)
+        stereo = stereo_marks.get(slug)
+        key = pair_key(a, b, caption, override, stereo)
         prev = old.get(slug)
         if prev and prev.get("key") == key:
             entry = dict(prev)
@@ -511,7 +668,13 @@ def compile_compare_drawings(molecules: list[dict], comparisons: dict[str, dict]
             body = {"mode": "shipped", "reason": f"held to the shipped drawings: {override}",
                     "highlight": False}
         else:
-            body = draw_pair(a, b)
+            try:
+                body = draw_pair(a, b, stereo)
+            except DrawingSeedError as e:
+                raise DrawingSeedError(f"{slug}: {e}") from None
+            if stereo and not body.get("stereo"):
+                raise DrawingSeedError(f"{slug}: a three-dimensional mark needs an aligned pair; "
+                                       f"this one is {body['mode']} ({body['reason']})")
         if caption and not body.get("highlight"):
             raise DrawingSeedError(f"{slug}: a caption ({caption!r}) needs a highlighted pair; "
                                    f"this one is {body['mode']} ({body['reason']})")
@@ -598,6 +761,39 @@ def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = Non
         made += 1
     log.info("  repeat units: %d (%d drawn this run)", len(units), made)
     return made
+
+
+# House rules for the drawing seeds' text, the same as a door's (transform/doors.py; the web's
+# lib/copy-rules.ts): no em or en dash, no advice or dosing word, no completeness phrase, no LD50,
+# no "inferred"; plus lengths, and a sentence or caption ends with a full stop. The claim rule is
+# claims.check_lines (kind `part`).
+TEXT_LENGTHS = {"label": (6, 40), "sentence": (30, 280), "from": (10, 240), "caption": (15, 110)}
+
+
+def text_problems(items: list[tuple[str, str]] | None = None) -> list[str]:
+    from .doors import ADVICE, COMPLETENESS, DASH, NEW_WRITING_ADVICE
+    out = []
+    for key, text in (strings() if items is None else items):
+        kind = "caption" if key.startswith("caption.") else key.rsplit(".", 1)[-1]
+        if DASH.search(text):
+            out.append(f"{key}: an em or en dash: {text!r}")
+        if ADVICE.search(text) or any(re.search(p, text, re.IGNORECASE) for p in NEW_WRITING_ADVICE):
+            out.append(f"{key}: reads as advice or dosing: {text!r}")
+        low = text.lower()
+        if any(p in low for p in COMPLETENESS) or "ld50" in low or "inferred" in low:
+            out.append(f"{key}: a completeness phrase, an LD50 or 'inferred': {text!r}")
+        lo, hi = TEXT_LENGTHS.get(kind, (1, 240))
+        if not lo <= len(text) <= hi:
+            out.append(f"{key}: {len(text)} characters, outside {lo} to {hi}: {text!r}")
+        if kind in ("sentence", "caption") and not text.endswith("."):
+            out.append(f"{key}: does not end with a full stop: {text!r}")
+    return out
+
+
+def check_text() -> None:
+    problems = text_problems()
+    if problems:
+        raise DrawingSeedError("drawing seed text breaks a house rule:\n  " + "\n  ".join(problems))
 
 
 def strings(parts: Path = PARTS_YAML, compare: Path = COMPARE_YAML,
