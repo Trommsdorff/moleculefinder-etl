@@ -1,9 +1,8 @@
 # The household cleaners door (build plan everyday chemistry 2026-11, phase 4). A NEW group page,
-# /whats-in/household-cleaners, seeded dark until phase 7. We hold no cleaning-product labels, so it
+# /whats-in/household-cleaners, seeded dark in phase 4, live: true from phase 7 (built 2026-11-13). We hold no cleaning-product labels, so it
 # gathers the curated household cleaners list behind /in/household-cleaner. Format: see coffee.yaml.
 slug: household-cleaners
-page: {group: household-cleaners, live: false}
-interim: {hub: household-cleaner}
+page: {group: household-cleaners, live: true}
 name: Household cleaners
 page_title: "What's in household cleaners: ammonia, bleach, peroxide, sodas"
 description: "What ammonia, bleach and hydrogen peroxide each do when they clean, and how baking soda, washing soda and caustic soda differ in how strongly alkaline each is."

@@ -42,9 +42,11 @@ page: coffee, bread, citrus); three are new group pages (``/whats-in/<slug>``: t
 sugar and sweeteners, household cleaners). A group is a source type beside the PFAS class: its
 molecule list is its chain, it must hold at least ``products.MIN_MOLECULES`` molecules (the same
 three-molecule gate), and it lists its ``members``, the label pages and lists it gathers. The groups
-are seeded ``live: false``: they are in doors.json and nowhere else (not products.json, the search
-index or the sitemap) until phase 7 flips them. A dark door names ``interim``, the existing page its
-home card links to until then.
+were seeded ``live: false`` (in doors.json and nowhere else) and phase 7 (2026-11-13) set them
+``live: true``: the web renders a live group's page from doors.json (never a products.json record),
+puts it in its sitemap, search index and IndexNow enumeration, and the export adds its slug to the
+products ledger (``products_hold.published``), so a later removal must answer 410. A dark door
+names ``interim``, the existing page its home card links to until it is live.
 
 **In-place doors keep every molecule.** For a door on an existing product page, the molecules its
 stops show plus ``also`` must equal that page's list exactly, so the upgraded page loses nothing; a

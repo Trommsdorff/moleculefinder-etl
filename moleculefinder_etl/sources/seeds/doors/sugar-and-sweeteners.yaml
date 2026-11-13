@@ -1,11 +1,10 @@
 # The sugar and sweeteners door (build plan everyday chemistry 2026-11, phase 4). A NEW group page,
-# /whats-in/sugar-and-sweeteners, seeded dark until phase 7. Format: see coffee.yaml and transform/doors.py.
+# /whats-in/sugar-and-sweeteners, seeded dark in phase 4, live: true from phase 7 (built 2026-11-13). Format: see coffee.yaml and transform/doors.py.
 # /whats-in/table-sugar answers 410 since phase 2 (sucrose alone, under the gate); the table sugar list
 # lives on as /in/table-sugar, which is the member here. Every sweetness is the sourced value
 # (sweetness.yaml, SEO run 1), each with its source.
 slug: sugar-and-sweeteners
-page: {group: sugar-and-sweeteners, live: false}
-interim: {hub: tabletop-sweetener}
+page: {group: sugar-and-sweeteners, live: true}
 name: Sugar and sweeteners
 page_title: "What's in sugar and sweeteners: sucrose to sucralose"
 description: "Sucrose sets the sweetness scale at 1. Aspartame, sucralose and stevioside are hundreds of times sweeter; xylitol and erythritol are one carbon apart."

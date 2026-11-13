@@ -169,11 +169,17 @@ def read_published(path: Path | None = None) -> dict[str, list[str]]:
 
 
 def published(previous: dict[str, list[str]] | None, products: list[dict] | None,
-              pairs: list[dict] | None) -> dict[str, list[str]]:
+              pairs: list[dict] | None, doors: dict | None = None) -> dict[str, list[str]]:
     """The ledger: every product and comparison slug ever published, the previous ledger's and
-    this snapshot's, sorted. It never shrinks; a removal is answered by a 410, not by forgetting."""
+    this snapshot's, sorted. It never shrinks; a removal is answered by a 410, not by forgetting.
+
+    A live door group page (everyday chemistry phase 7: /whats-in/medicine-cabinet,
+    /whats-in/sugar-and-sweeteners, /whats-in/household-cleaners, rendered from doors.json, never a
+    products.json record) is a /whats-in/ page like any product, so its slug joins ``products``
+    once ``doors`` (``transform/doors.compile_doors``) marks it live; a dark group joins nothing."""
     previous = previous or {}
+    groups = {d["slug"] for d in (doors or {}).get("doors") or [] if d.get("kind") == "group" and d.get("live")}
     return {
-        "products": sorted(set(previous.get("products") or []) | {p["slug"] for p in products or []}),
+        "products": sorted(set(previous.get("products") or []) | {p["slug"] for p in products or []} | groups),
         "pairs": sorted(set(previous.get("pairs") or []) | {p["slug"] for p in pairs or []}),
     }

@@ -1,11 +1,10 @@
 # The medicine cabinet door (build plan everyday chemistry 2026-11, phase 4; rulings a and h). A NEW group
-# page, /whats-in/medicine-cabinet, seeded dark until phase 7. Format: see coffee.yaml and transform/doors.py.
+# page, /whats-in/medicine-cabinet, seeded dark in phase 4, live: true from phase 7 (built 2026-11-13). Format: see coffee.yaml and transform/doors.py.
 # This door shows what each label states (its active ingredients, their purpose and strength, read from
 # DailyMed) and how each molecule works, never how much to take: acetaminophen's overdose sentence and the
 # ibuprofen editorial's redosing sentence are not used. `labels` rows are the label's own words.
 slug: medicine-cabinet
-page: {group: medicine-cabinet, live: false}
-interim: {hub: pain-and-fever}
+page: {group: medicine-cabinet, live: true}
 name: The medicine cabinet
 page_title: "What's in the medicine cabinet: Tylenol, Advil, NyQuil, Vicks"
 description: "The active ingredients on Tylenol, Advil, NyQuil and Vicks VapoRub, as each label states them, and how acetaminophen, ibuprofen and menthol work."

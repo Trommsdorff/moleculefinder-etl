@@ -592,7 +592,7 @@ def stage_export(settings: Settings) -> Path:
     pairs = (json.loads(PRODUCT_PAIRS_STAGED.read_text())
              if staged is not None and PRODUCT_PAIRS_STAGED.exists() else None)
     # The ledger of every /whats-in/ slug ever published (gate hold, 2026-11-09): never shrinks.
-    published = (products_hold.published(products_hold.read_published(), staged, pairs)
+    published = (products_hold.published(products_hold.read_published(), staged, pairs, door_data)
                  if staged is not None else None)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),

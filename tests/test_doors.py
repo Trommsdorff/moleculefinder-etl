@@ -2,7 +2,7 @@
 
 Two halves. The committed seeds against the committed snapshot: every reference resolves, every
 requires holds, each stop's mark is the one its list's own seed holds, an in-place door keeps every
-molecule its page lists, the groups are dark with an interim link, and doors.json is what the
+molecule its page lists, the groups are live (phase 7) with no interim, and doors.json is what the
 compiler writes. Then the build stops when a fact fails: each kind of `requires:` broken on purpose
 (the label drops the molecule, a quoted line changes, a pair loses its page, a formula moves), and
 each house rule (a dash, an advice word, a completeness phrase, an LD50, the hangover wording, a
@@ -62,26 +62,43 @@ def test_the_six_doors_in_the_home_pages_order():
         "Coffee", "The medicine cabinet", "Bread", "Sugar and sweeteners", "Household cleaners", "Citrus"]
 
 
-def test_three_in_place_doors_are_live_and_three_groups_are_dark_with_an_interim_link():
+def test_all_six_doors_are_live_and_every_card_links_its_own_page():
+    # Phase 7 (2026-11-13): the three group seeds are live: true with no interim, so each home card
+    # follows the door to its own page (the web reads card.href and decides nothing).
     for slug in ("coffee", "bread", "citrus"):
         d = BY[slug]
         assert d["kind"] == "product" and d["live"] and d["interim"] is None
         assert d["card"]["href"] == f"/whats-in/{slug}"
-    interim = {"medicine-cabinet": "/in/pain-and-fever", "sugar-and-sweeteners": "/in/tabletop-sweetener",
-               "household-cleaners": "/in/household-cleaner"}
-    for slug, href in interim.items():
+    for slug in doors.GROUPS:
         d = BY[slug]
-        assert d["kind"] == "group" and not d["live"]
-        assert d["href"] == f"/whats-in/{slug}" and d["card"]["href"] == href == d["interim"]["href"]
+        assert d["kind"] == "group" and d["live"] and d["interim"] is None
+        assert d["href"] == d["card"]["href"] == f"/whats-in/{slug}"
+        assert "interim" not in SEEDS[slug]
 
 
-def test_the_dark_groups_are_nowhere_but_doors_json():
+def test_the_live_groups_are_no_product_record_and_join_the_ledger():
+    # A group page renders from doors.json, never from products.json (so no molecule page lists it under
+    # "Found in these products"), and once live its slug is in the products ledger, so a later removal
+    # must answer 410 through the web's lib/gone.ts.
     prods = {p["slug"] for p in INPUTS[3]}
     ledger = json.loads((SNAP / "products_published.json").read_text())
     for slug in doors.GROUPS:
         assert slug not in prods
-        assert slug not in json.dumps(ledger)
+        assert slug in ledger["products"]
         assert not (SNAP / "molecules" / f"{slug}.json").exists()
+        assert all(slug not in json.dumps(m.get("products") or []) for m in INPUTS[0])
+
+
+def test_the_ledger_takes_a_live_group_and_never_a_dark_one():
+    from moleculefinder_etl.transform import products_hold
+    out = products_hold.published({"products": ["coffee"], "pairs": []}, [{"slug": "bread"}], [], COMPILED)
+    assert set(doors.GROUPS) <= set(out["products"]) and {"coffee", "bread"} <= set(out["products"])
+    dark = copy.deepcopy(COMPILED)
+    for d in dark["doors"]:
+        d["live"] = d["kind"] == "product"
+    out = products_hold.published({"products": ["coffee"], "pairs": []}, [], [], dark)
+    assert out["products"] == ["coffee"]
+    assert products_hold.published(None, [], [], None)["products"] == []
 
 
 def test_the_committed_doors_json_is_what_the_compiler_writes():
@@ -363,8 +380,14 @@ def test_the_lede_count_comes_from_the_data():
 
 def test_a_live_door_with_an_interim_or_a_dark_door_without_one_stops_the_build():
     seeds = copy.deepcopy(SEEDS)
-    del seeds["medicine-cabinet"]["interim"]
+    seeds["medicine-cabinet"]["page"]["live"] = False
     _fails("a dark door names the existing page", seeds=seeds)
+    seeds["medicine-cabinet"]["interim"] = {"hub": "pain-and-fever"}
+    dark = _compile(seeds=seeds)["doors"][1]
+    assert not dark["live"] and dark["card"]["href"] == "/in/pain-and-fever"
+    seeds = copy.deepcopy(SEEDS)
+    seeds["sugar-and-sweeteners"]["interim"] = {"hub": "tabletop-sweetener"}
+    _fails("interim is for a dark door", seeds=seeds)
     seeds = copy.deepcopy(SEEDS)
     seeds["coffee"]["interim"] = {"hub": "coffee"}
     _fails("interim is for a dark door", seeds=seeds)
