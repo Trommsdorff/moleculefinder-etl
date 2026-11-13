@@ -71,7 +71,7 @@ def pair_block(slug: str, note: str = "") -> str:
     cap = f"<p class='cap'>{E(p['caption'])}</p>" if p.get("caption") else ""
     how = "curated" if slug in (CSEED.get("curated") or {}) else "by rule"
     meta = (f"<p class='note'><code>/vs/{slug}</code> · core {p.get('core')} atoms"
-            + (f" · {p.get('extra_atoms')} atoms differ" if p.get("highlight") and not p.get("stereo") else "")
+            + (f" · {p.get('extra_atoms')} atom{'s' if p.get('extra_atoms') != 1 else ''} differ{'' if p.get('extra_atoms') != 1 else 's'}" if p.get("highlight") and not p.get("stereo") else "")
             + (f" · caption {how}" if p.get("caption") else "")
             + (f" · shared frame {p['frame']}" if p.get("frame") else "") + "</p>")
     answer = COMPS.get(slug, {}).get("answer")
@@ -319,6 +319,7 @@ def main() -> None:
         ("Acetal, hemiacetal (new, before ether)", "A sugar's linking carbon, two oxygens on one carbon, read as two ethers (sucrose, the glycosides, amylose). Ether now skips an acetal carbon."),
         ("Aldehyde (narrowed)", "Formic acid's and benfotiamine's formamide H-C(=O) read as an aldehyde; the C=O carbon may no longer carry an O or N."),
         ("Phenol (narrowed)", "Maltol's O-H, on a pyranone ring RDKit calls aromatic, read as a phenol; the O-H must sit on a benzene ring."),
+        ("Phosphate (narrowed)", "Glyphosate, fosfomycin, phosphocreatine and remdesivir read as phosphates; their phosphorus is bonded to a carbon or a nitrogen. The sentence says four oxygens, so the rule now needs four."),
         ("Halogen (narrowed)", "Bleach's and cisplatin's chlorine read as an organic halogen; the halogen must be bonded to carbon."),
         ("Benzene ring and ring system", "A benzene ring fused to another ring now belongs to the ring system, so the ring system never repeats the benzene ring part (indoles, benzodiazepines, the steroids' aromatic ring)."),
     ]

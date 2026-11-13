@@ -340,6 +340,51 @@ starch vs cellulose page using the repeat units); the web: render a part layer u
 `unread` record; the IndexNow ignore entries; `npm run sync-data`; the review page; the deploy on
 Garrett's word (ETL `main`, then web `main`).
 
+## 9. Phase 5B, what it added (2026-11-12)
+
+The content, the first web use and the review page (`moleculefinder-web/docs/design/phase-5-review-2026-11.html`).
+
+- **Every default rule has a label, a sentence and `from`** (standard chemistry), one sentence per rule, written to be
+  true of every molecule the rule matches. 24 default rules now (14 in 5A): the contact sheet's misreadings fixed most
+  specific first, new rules epoxide, barbiturate ring, imide, urea, carbamate, lactone, sulfonamide, guanidine, acetal,
+  hemiacetal; ester, amide, aldehyde, amine, phenol, phosphate, halogen and ether narrowed by their own `smarts:` (the
+  `/in` hubs keep `categories.FUNCTIONAL_GROUPS` untouched); a benzene ring fused to another ring belongs to the ring
+  system (`[c;R1]` six-ring), so the ring system never repeats the benzene ring part. The table of what changed is at
+  the top of `structure_parts.yaml`. Result: 718 molecules with parts, 193 none, 4 unread.
+- **Curated parts** for caffeine (unchanged) and the door chains' stop molecules: adenosine, theobromine,
+  acetaminophen, ibuprofen, dextromethorphan, doxylamine, menthol, camphor, ethanol, maltol, furaneol, sucrose,
+  aspartame, sucralose, stevioside, xylitol, erythritol, sodium bicarbonate, sodium carbonate, vitamin C, citric acid,
+  limonene. Each with `expect`, a sentence and its basis. No parts, on purpose: ammonia, hydrogen peroxide, sodium
+  hypochlorite, sodium hydroxide (one or two atoms, or lone ions), gluten, starch and cellulose.
+- **Text house rules** (`drawings.check_text`, at the start of `stage_transform`): no em or en dash, no advice or dosing
+  word, no completeness phrase, no LD50, no "inferred", lengths, a full stop. The claim rule as before (kind `part`).
+- **Captions for all 31 highlighted pairs.** `drawings.caption_rule` writes a caption from the computed difference (a
+  methyl, a hydroxyl, a halogen in place of a hydrogen, N carbons longer, X where Y, "Two differences: ...") from
+  substructure facts only, so any machine agrees. The seed holds every caption; a test holds each one not listed under
+  `curated:` to the rule's text, and each curated one says why. 19 by rule, 12 curated (5 the rule cannot phrase, 7
+  three-dimensional marks).
+- **Three-dimensional marks (the one engine change):** `stereo:` in `compare_drawings.yaml`, a pattern matched on both
+  molecules, which must light the same atoms on both sides of the core map. Seven pairs differ only in arrangement in
+  space: armodafinil/modafinil, betamethasone/dexamethasone, dexmethylphenidate/methylphenidate,
+  escitalopram/citalopram, eszopiclone/zopiclone, isotretinoin/tretinoin, levocetirizine/cetirizine (the two salt pairs
+  also have no differing atom, but their difference is ions). The mark joins the pair's key only when present, so no
+  other key moved.
+- **Found and fixed: a layout can flip a double bond.** In a flat drawing the coordinates are the cis or trans
+  geometry; tretinoin laid out on isotretinoin's core came out cis. `drawings._double_bonds_kept` now refuses any such
+  layout (the pair falls back to its two shipped drawings), and a three-dimensional mark can sit on the two shipped
+  drawings (`drawings: shipped`), each layer placed from that drawing's own proven reading
+  (`_stereo_mark_shipped`). Isotretinoin vs tretinoin is the only pair affected (every other aligned pair checked).
+  So a pair entry may now be `mode: shipped` WITH `a_layer` and `b_layer`: the page composes each onto the record's own
+  `structure_svg`.
+- **Counts:** 147 pairs: aligned 44, aligned and highlighted 30, shipped 72, shipped and highlighted 1.
+- **The web** (`lib/drawings.ts`): `composeLayer` and `withFrame`, the web's one copy of `compose` and the frame,
+  held to the ETL's own bytes by `lib/fixtures/drawings-compose.json` (written by `scripts/compose_fixture.py`). The home
+  page's Compare two molecules is the first and only place that renders a pair; parts and repeat units are not rendered
+  anywhere yet (phases 7, 8, 9).
+- **Monday's acceptance** (the first weekly run after the deploy): `structure parts: 718 carried, 0 made, 193 with no
+  part, 4 drawings unreadable`; `repeat units: 2 (0 drawn this run)`; `compare drawings: 147 pairs (aligned 44,
+  aligned+highlight 30, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`.
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under

@@ -945,6 +945,53 @@ deploy). The plan named Fable for it; the session ran on Opus 5.5. Branch `drawi
 - **Before any deploy (5B):** the web's IndexNow delta must ignore `structure_parts`, `structure_repeat_unit` and
   `compare_drawings.json` before or with the sync, or every molecule page resubmits.
 
+## Phase 5B, the drawing content (2026-11-12): BUILT on `drawing-recipes-2026-11`, not pushed (code `6999ddc` + `00cf7e8`, data `ba4a2b1` + `0e34e01`)
+Build plan everyday chemistry, phase 5B (content, the web's first use, the review page; the deploy waits for Garrett's
+approval of `../moleculefinder-web/docs/design/phase-5-review-2026-11.html`). Garrett's rulings on 5A (2026-11-12): the four
+unreadable drawings (aldosterone, chitosan, insulin, inulin) are not redrawn; 5A's results accepted. Full guide, section 9
+of `docs/DRAWING-RECIPES.md`.
+- **Parts:** 24 default rules (14 in 5A), each with a label, one sentence and `from` (standard chemistry), written true of
+  every match; rules fixed most specific first from the contact sheet: epoxide (scopolamine read as ether), barbiturate ring
+  (pentobarbital, amobarbital read as amide), imide and urea (phenytoin, buspirone, carbamazepine), carbamate (12 read as
+  ester), lactone, sulfonamide (12 read as amine), guanidine, acetal and hemiacetal (glycosidic carbons read as ethers);
+  ester, amide, aldehyde (formic acid, a formamide), amine, phenol (maltol), phosphate (glyphosate, fosfomycin,
+  phosphocreatine, remdesivir are not phosphates), halogen (bleach, cisplatin) and ether narrowed by their own SMARTS; a
+  fused benzene ring belongs to the ring system, so the ring system never repeats the benzene ring part. The `/in` hubs'
+  `categories.FUNCTIONAL_GROUPS` untouched. **718 molecules show parts (1,734 parts; 414 three, 188 two, 116 one), 193
+  none, 4 unread;** 23 with curated parts: caffeine (unchanged) and the door chains' stop molecules (adenosine, theobromine,
+  acetaminophen, ibuprofen, dextromethorphan, doxylamine, menthol, camphor, ethanol, maltol, furaneol, sucrose, aspartame,
+  sucralose, stevioside, xylitol, erythritol, sodium bicarbonate, sodium carbonate, vitamin C, citric acid, limonene).
+  Without parts on purpose: ammonia, hydrogen peroxide, sodium hypochlorite, sodium hydroxide, gluten, starch, cellulose.
+- **Text rules:** `drawings.check_text()` at the start of `stage_transform` (no dash, no advice word, no completeness phrase,
+  no LD50, no "inferred", lengths, a full stop) beside the claim rule (kind `part`; no new claims_allowed entry).
+- **Captions, all 31 highlighted pairs:** `drawings.caption_rule` writes them from the computed difference (substructure
+  facts, no layout); 19 by rule, 12 curated with the reason under `curated:` (erythritol/allulose, hyoscine
+  butylbromide/scopolamine, nicotinamide/niacin, prednisone/dexamethasone, xylitol/erythritol, and the seven 3D marks); a
+  test holds every other caption to the rule.
+- **Three-dimensional marks (the one engine change):** `stereo:` in `compare_drawings.yaml`, a pattern matched on both
+  molecules that must light the same atoms across the core map; joins the pair's key only when present. Seven pairs:
+  armodafinil/modafinil, betamethasone/dexamethasone (C16's methyl), dexmethylphenidate/methylphenidate,
+  escitalopram/citalopram, eszopiclone/zopiclone, isotretinoin/tretinoin, levocetirizine/cetirizine.
+- **Found and fixed, a 5A fault:** pinning the second molecule to the first's core can draw a double bond the wrong way
+  round (tretinoin laid out on isotretinoin came out cis; checked every aligned pair, the only one). `_double_bonds_kept`
+  refuses such a layout; isotretinoin vs tretinoin shows its two shipped drawings, each marked from its own reading
+  (`drawings: shipped`, `_stereo_mark_shipped`). **147 pairs: aligned 44, aligned+highlight 30, shipped 72,
+  shipped+highlight 1.**
+- **Vitamin C (live copy):** "humans, apes, monkeys and guinea pigs cannot" (lemurs can); 189 characters, title
+  unchanged; the citrus door re-pinned (`49ba2ef87e15`).
+- **Checks:** every 5A proof passes (two counts updated for the new pairs: 74 aligned, the mode table; the dot test now
+  also places a chain-end double-bond carbon midway between its two lines, as RDKit does); suite **1,154 passed, 1
+  skipped**; ruff 130 (= main); pinned build (`sync-inputs` f69fd345c58bfa08, keys blanked) 0 POSTs, twice byte-identical;
+  every `structure_svg` byte for byte unchanged; against 5A the snapshot changes by `structure_parts` (726 files), vitamin
+  C's line and description, the line's quote in doors.json and worlds.json, and compare_drawings.json (30 pairs made: 23
+  captions, 7 marks).
+- **Scripts:** `scripts/compose_fixture.py` writes the web's proof fixture (`lib/fixtures/drawings-compose.json`);
+  `scripts/phase5_review.py --shots DIR --checks FILE` writes the review page from the snapshot.
+- **Deploy (Garrett's word, after he approves the review page), before Monday 2026-11-16's weekly run:** ETL `main`, then
+  web `main`. Monday's acceptance: `structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable`,
+  `repeat units: 2 (0 drawn this run)`, `compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72,
+  shipped+highlight 1); 147 carried, 0 repainted, 0 made`.
+
 ## Phase 4, door seeds (2026-11-10): DEPLOYED 2026-11-10 with Garrett's rulings (ETL `be2ed30`; code `557077d`, data `2dbbd3d`)
 **Garrett approved the review page on 2026-11-10 with rulings; applied and DEPLOYED the same day about 15:44 UTC on his word.** Rulings: bread re-ordered around what makes bread bread (starch; cellulose, unmarked, with its note; gluten; ethanol, formed by fermentation, "Made by the yeast as the dough rises; most bakes off"; the smell, maltol and furaneol; then also in the loaf, the other six; maltodextrin leaves the stops for starch's Read more as the maltodextrin vs starch answer line and link; card line, lede and headings rewritten); doxylamine's line stays; dextromethorphan's stop accepted; the bleach and ammonia sentence stays in Read more; coffee keeps the half-life sentence and theobromine's stop gains, in its first layer, "Dogs clear theobromine far more slowly than people do, which is why chocolate is dangerous to them." (a new stop field, `note`: one sentence of new writing, 40 to 160, house rules, claim corpus); the added members stay. **Four line fixes (live copy):** the baking soda vs washing soda sentence now reads Garrett's wording ("both sodium salts of carbonic acid, NaHCO3 against Na2CO3: washing soda has a second sodium where baking soda keeps a hydrogen..."); vitamin C's line "Vitamin C, the nutrient whose absence causes scurvy. Dogs, cats and nearly all other mammals make their own, but humans, other primates and guinea pigs cannot, so ours has to come from food." (190, also its description; title unchanged; "nearly all other mammals" rather than "most animals": no claim word and true, since most bony fish cannot make it either); limonene "makes up most of citrus peel oil" (claims_allowed entry, science); ammonia's "Dissolved in water, ammonia is alkaline, which breaks up grease, and it evaporates completely, which is why it leaves glass without streaks." placed as a sixth sentence of the ammonia vs bleach paragraph (so the door quotes it by reference and ammonia joins what_it_does, 22 entries); every door reference re-pinned. **Asked in the session:** that placement shows on `/vs/ammonia-vs-sodium-hypochlorite`, and the IndexNow dry run listed 15 URLs that missed `/roam/citrus` (a world page was fingerprinted on its summary only, not the roster lines it shows); Garrett chose to fix the gap first: `scripts/indexnow-urls.mjs` now fingerprints a world over its detail too, with a test that fails on the old script. **Checks:** ETL 1,125 passed, 1 skipped; ruff 130 (= main); pinned build (f69fd345c58bfa08, keys blanked) twice byte-identical, 0 POSTs; the snapshot changed only by doors.json, the three paragraphs, vitamin C's line and description, ammonia's what_it_does and the Citrus world's quote of the line; 281 door strings clean. Web: verify-snapshot OK, typecheck clean, `npm test` 258 + 21 skipped with no build (CI runs `npm test`, whose pretest regenerates the embed cards; bare `npx vitest run` read stale cards), build 3,091, 279 on the build, sitemap 1,711. Against a build of main (one saved news feed): visible changes only on `/m/ascorbic-acid`, the five food pages that quote it (`/whats-in/citrus`, `fruit`, `chili-peppers`, `romaine-lettuce`, `bullens-pilsnerkorv`), `/roam/citrus`'s world panel, its embed card, and the three /vs paragraphs; titles, descriptions and answer lines unchanged elsewhere. **Deployed:** no other branch waiting, origin unmoved; ETL `main` 4c635a7 -> `be2ed30` (`557077d` code, `2dbbd3d` data, `be2ed30` review page; pushed 15:42:51 UTC, deploys nothing), web `main` c6102f3 -> `9e99180` (`96cc354` sync, `d035a97` review page, `9e99180` the IndexNow fix; pushed 15:43:04, no news run in progress); GitHub deployment `7686722754` Production success 15:44:12. **IndexNow** run 42847461230: 1,711 -> 1,711, 0 new, 16 changed (the 10 changed pages plus 5 label pages and `/vs/citric-acid-vs-ascorbic-acid` fingerprinted on vitamin C's record), 16 submitted and 16 accepted, audit exact, `indexnow-last` -> `9e99180`. **Live:** the new lines on `/m/ascorbic-acid` (title unchanged) and the three /vs pages; `/whats-in/medicine-cabinet`, `sugar-and-sweeteners`, `household-cleaners` 404 and absent from the sitemap and the search index; `/`, `/whats-in/coffee`, `/whats-in/bread` identical in visible text to the main build, `/whats-in/citrus` identical but for vitamin C's line; all 200 with 0 console errors and 0 failed requests (headless Brave); sitemap 1,711. `.next` deleted (434 MB); `df -h /` 396 GiB free at the start, 391 before the deletion, 392 after. **For phase 6/7:** a stop may carry `note` (render under its text, first layer); bread has six stops, "Also in the loaf" last; `scripts/frozen-text.mjs` still needs its phase 2 `EXPECTED` cleared, and vitamin C's description is now part of the baseline.
 Build plan everyday chemistry (`../BUILD-PLAN-everyday-chemistry-2026-11.md`), phase 4, with Garrett's ruling of 2026-11-10 (the web
