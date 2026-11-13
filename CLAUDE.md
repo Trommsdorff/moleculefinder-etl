@@ -896,6 +896,74 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Drawing guard (2026-11-13): every drawing checked against what shipped, before the load and the export (code `6558fe6`)
+**Garrett's ruling (2026-11-13): close the gap found at the phase 5 deploy before Monday 2026-11-16's run, at the root, and
+deploy it on his word (given in the brief).** Branch `drawing-guard-2026-11` from `main` `92068ba` (fetched; origin unmoved at
+`0005fbe`; no other branch waiting in either repo), after `mfetl sync-inputs` (f69fd345c58bfa08). ETL only; no web change.
+Full guide: `docs/DRAWING-RECIPES.md` section 10.
+- **The gap.** The weekly run's only check on the drawings was the web's `lib/drawings.test.ts` (caffeine's parts, the
+  caffeine and theobromine pair, acetone vs ethyl acetate's frame). Any other part layer, pair drawing or repeat unit made
+  again on the Linux runner merged unseen, and the counts were only in the step log.
+- **What it checks** (`transform/drawing_guard.py`, called in `pipeline._preflight` right after the pairs compile, so before
+  the Supabase load and before anything is written): EVERY `structure_svg`, every part layer in `structure_parts`, every pair
+  in `compare_drawings.json`, every `structure_repeat_unit`, against the snapshot on disk, which is what shipped. It compares
+  bytes only: it reads, lays out and draws nothing, so it changes no output (a test makes every such call raise).
+- **What it allows**, each entry listed by name with its reason: an output carried byte for byte (not listed); a palette
+  repaint (only colours, the palette field moving to the current recipe); a new molecule, pair or repeat unit; a key that moved
+  with a named input (the recipe version, a SMILES, the drawing it rests on, itself checked under its own key); a key that moved
+  with only a seed's WORDS (a caption, a part's label, sentence or `from`, a repeat unit's label) and every drawn byte as
+  shipped. A molecule or pair that leaves is listed "removed".
+- **What stops the run:** (1) any changed output under an unchanged key; (2) an output carried under an unchanged key although
+  an input its key covers moved (its drawing or SMILES), and isotretinoin vs tretinoin's mark on tretinoin's SHIPPED drawing if
+  that drawing moves (the pair's key does not cover it; bump `PAIRS_RECIPE`); (3) a key that moved with none of those inputs
+  moving: the Linux shape (the parts key holds which atoms RDKit's patterns match, and a remade layer comes from reading the
+  drawing on that machine). Only (3) has a release valve, `MFETL_DRAWING_SEEDS_CHANGED=1`, for a build on the Mac that carries
+  a deliberate change to a seed's PATTERNS committed with its data (5B's SMARTS changes would have needed it; a words-only
+  change does not). `etl.yml` never sets it; a test holds that.
+- **What a stop looks like:** the `mfetl all` step fails with `DrawingChanged: refusing to export: N drawing(s) changed with
+  nothing to explain it.` and one line per entry, `<slug> (structure parts|compare drawing|structure drawing|repeat unit):
+  <why> (<the fields that differ>)`; `drawing STOPPED:` log lines and an `::error` annotation each; the summary page's Drawings
+  section opens with **STOPPED (N)**. Nothing is loaded or written, the failed-run heartbeat resets the tree, no data PR opens,
+  the alarm opens the refresh-failure issue (or comments "Failed again") with the Drawings block in it, and the live site keeps
+  last week's data. What to do: section 10 of the guide (do not re-run; never set the flag in the workflow).
+- **The summary page.** The export's preflight writes a "Drawings" section to `$GITHUB_STEP_SUMMARY`: four lines, then every
+  drawing made or remade with its reason, or "Made or remade this run: none." `etl.yml`: `MFETL_DRAWINGS_REPORT=${{
+  runner.temp }}/drawings.json` on the `mfetl all` step (outside the repository: never committed, not in the inputs artifact);
+  a `Count drawings` step (`if: always()`, before the commit) reads it into the job output `drawings`, which the all-clear
+  `Summary`, the alarm's summary, its issue body and its "Failed again" comment print in a code block ("unknown: the run failed
+  before the drawing guard ran" when it did). The step keeps its name, `Run mfetl all --target 10000`, and its log keeps the
+  recipes' own lines (`repeat units: 2 (0 drawn this run)` included); the summary's parts and pairs lines are those log lines
+  character for character (tested), the structure drawings line is new, the repeat units line adds carried and repainted.
+- **Tests** (`tests/test_drawing_guard.py`, 26): Monday's four lines on the committed snapshot; the recipes' log lines; no
+  drawing call; a changed part layer, pair drawing, structure drawing, repeat unit, caption or unread note under an unchanged
+  key stops, named; a new molecule and pair, a corrected SMILES, three recipe bumps, a palette repaint, words-only edits pass
+  and are listed; a repaint that moved a coordinate, a layer moved with its words, a key-only move, a part set gained or lost,
+  the second-drawing mark stop; the flag (and its env var); a leaving molecule; the refusal before the database (0 requests,
+  0 clients) and with the snapshot untouched; the summary page, report and annotations; the workflow wiring, its Count step's
+  shell, the all-clear and alarm text, no flag anywhere. Mutation-checked: stops disabled, 15 fail; the refusal taken out of
+  the preflight, 3 fail.
+- **Checks (keys blanked):** suite **1,180 passed, 1 skipped** (1,154 + 26); ruff **130**, findings identical to main's by rule
+  and file. Pinned build three times, exit 0, 0 PubChem POSTs, `data/` identical to `main` (`git diff` empty), the 952 files
+  under `data/snapshots` and `data/seed` byte-identical across the three, each logging Monday's four lines. Web: `npm run
+  sync-data` moved nothing; no web change, no web push.
+- **Proved on the real build** (pinned, keys blanked). (1) `mfetl all` with caffeine's methyl-groups layer and caffeine vs
+  theobromine's second drawing each moved 1 px right after their recipes made them, keys untouched (a scratch runner wrapping
+  the two recipe functions; no repository file edited): exit 1, `caffeine (structure parts): changed under an unchanged key
+  (parts[methyl-groups].layer)` and `caffeine-vs-theobromine (compare drawing): changed under an unchanged key (b_svg)`; the
+  summary page opened "STOPPED (2)" and counted 717 carried, 1 made and 146 carried, 1 made (the recipe's own log line still
+  said 718 carried: the guard measures the output); `data/snapshots` byte for byte unchanged. (2) The Linux shape: the shipped
+  key of caffeine's parts and of that pair changed in the two snapshot files, then the plain `mfetl all`: the run made both
+  again on this Mac and stopped, each "remade with its recipe, SMILES and drawing unchanged (only the key moved)", writing
+  nothing; both files restored with `git checkout`, and a third build was byte-identical to the first two.
+- **MONDAY 2026-11-16, THE ACCEPTANCE (supersedes 5B's "in the log, not on the summary page").** The `etl` run's summary page,
+  `run` job, section "Drawings", exactly:
+  `structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing`;
+  `structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable`;
+  `compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`;
+  `repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)`;
+  then **"Made or remade this run: none."** The all-clear job's summary carries the same block in a code block. A molecule or
+  pair new that week adds its own lines, each "new". A STOPPED section means the run refused: section 10 of the guide.
+
 ## Phase 5A, the drawing engine (2026-11-12): DEPLOYED 2026-11-13 with 5B (ETL `0005fbe`; code `db70373`, data `8b400d3`)
 **Deployed with 5B (next section), 2026-11-13.** The acceptance counts below are 5A's; 5B's rules and pairs changed them, and
 **the counts Monday 2026-11-16 must show are in 5B's section** (718 carried; 147 pairs, aligned 44, aligned+highlight 30,
@@ -974,7 +1042,9 @@ molecule page first shows parts. Not done here.
   43346173116: 0 new, 14 changed, 0 removed, 14 submitted and 14 accepted, audit exact. Live: the home page's Compare two
   molecules card shows the aligned pair with its amber marks and caption; vitamin C's new line, title unchanged; every other
   checked page identical to before the push. Full live record: the web CLAUDE.md.
-- **MONDAY 2026-11-16, THE ACCEPTANCE (the first weekly run on this code).** Where to read it: the `etl` run (schedule, 06:00
+- **MONDAY 2026-11-16, THE ACCEPTANCE (the first weekly run on this code).** *Superseded the same day by the drawing guard
+  (above): the lines are now on the run's summary page and a change nothing explains stops the run; read that section's
+  acceptance.* Where to read it: the `etl` run (schedule, 06:00
   UTC), job `run`, step `Run mfetl all --target 10000`. The three lines are in that step's LOG, not on the run's summary page
   (`$GITHUB_STEP_SUMMARY` carries only the held Wikidata, held product and unmarked presence lines):
   `gh run view <id> --repo Trommsdorff/moleculefinder-etl --log | grep -E 'structure parts|repeat units|compare drawings'`.
@@ -1001,7 +1071,7 @@ molecule page first shows parts. Not done here.
   recorded `unread`) and needs only a note. If the inputs are identical, the key depends on the platform: fix it on a branch,
   restore the shipped entries, and deploy on Garrett's word, before phase 7 renders any part. (3) While a PR is held the live
   site keeps last week's data (week 46, aspirin, on the home page).
-- **For Garrett (recommended, not built):** a guard so the run's own check holds the PR on ANY such change: the ETL writes the
+- **For Garrett (recommended; BUILT the same day as the drawing guard, above):** a guard so the run's own check holds the PR on ANY such change: the ETL writes the
   three lines to the run summary and fails before its commit when it makes or repaints an entry the previous snapshot had
   with the same drawing and SMILES. An ETL push deploys nothing, so it can go in before Monday on his word.
 

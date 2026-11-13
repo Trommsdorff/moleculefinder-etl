@@ -310,7 +310,8 @@ second run, byte-identical.
 
 **What the first weekly run after deploy must show** (the acceptance). *Superseded by 5B: the counts Monday 2026-11-16
 must show are in section 9, and where to read them, what holds the data PR and what to do if they differ are in the
-CLAUDE.md, "Phase 5B", recorded at the deploy of 2026-11-13. 5A's own counts, for the record:*
+CLAUDE.md, "Phase 5B", recorded at the deploy of 2026-11-13. Since the drawing guard (section 10, 2026-11-13)
+the counts are on the run's summary page and a change nothing explains stops the run. 5A's own counts, for the record:*
 
 - `structure parts: 719 carried, 0 made, 192 with no part, 4 drawings unreadable`
 - `repeat units: 2 (0 drawn this run)`
@@ -319,7 +320,7 @@ CLAUDE.md, "Phase 5B", recorded at the deploy of 2026-11-13. 5A's own counts, fo
   and no `structure_svg`, unless a molecule or pair is new.
 
 Any "made" count above 0 with no new molecule or pair is a key that differs on Linux. Stop and
-compare that key's inputs.
+compare that key's inputs. (Since 2026-11-13 the drawing guard, section 10, stops the run itself.)
 
 ## 7. What 5B must not touch
 
@@ -386,6 +387,85 @@ The content, the first web use and the review page (`moleculefinder-web/docs/des
 - **Monday's acceptance** (the first weekly run after the deploy): `structure parts: 718 carried, 0 made, 193 with no
   part, 4 drawings unreadable`; `repeat units: 2 (0 drawn this run)`; `compare drawings: 147 pairs (aligned 44,
   aligned+highlight 30, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`.
+
+## 10. The drawing guard (2026-11-13)
+
+Found at the phase 5 deploy: the weekly run held its data PR only if caffeine's parts, the home
+page's caffeine and theobromine pair or acetone vs ethyl acetate's framed drawing moved (the web's
+`lib/drawings.test.ts`). Any other part layer, pair drawing or repeat unit could be made again on the
+Linux runner and merge unseen. Garrett's ruling (2026-11-13): close it at the root, before Monday.
+Code: `moleculefinder_etl/transform/drawing_guard.py`; tests: `tests/test_drawing_guard.py` (26).
+
+**What it checks: every drawing output, not a sample,** against the snapshot on disk, which is what is
+shipped (in the weekly run, the checkout of `main`): every `structure_svg` (with `structure_svg_key`),
+every part layer in `structure_parts`, every pair in `compare_drawings.json`, every
+`structure_repeat_unit`. It runs in `pipeline._preflight`, after the pairs are compiled, so before the
+Supabase load and before anything is written. It only compares bytes: it reads, lays out and draws
+nothing (a test makes every such call raise and runs it), so it changes no output.
+
+**The rule, per entry:**
+
+| case | verdict |
+|---|---|
+| key unchanged, output byte for byte the shipped one | carried |
+| key unchanged, only the palette moved to the current recipe and only the drawing's colours with it (a pair's `b_svg`, a repeat unit's `svg`) | allowed, listed "repainted" |
+| key unchanged, anything else differs | **STOP** "changed under an unchanged key (the fields)" |
+| key unchanged, but an input the key covers moved (a part set's drawing or SMILES, a pair's first drawing or either SMILES, a drawing's SMILES) | **STOP** "kept under an unchanged key although ... moved" |
+| a pair marked on the second molecule's SHIPPED drawing (`mode: shipped` with `b_layer`: isotretinoin vs tretinoin) whose second drawing moved while the pair's key held (the key does not cover it) | **STOP**; bump `PAIRS_RECIPE` to make it again |
+| new molecule, new pair, a repeat unit added in its seed | allowed, listed "new" |
+| key moved with a named input: the recipe version, a SMILES, the drawing it rests on (itself checked by its own key) | allowed, listed "remade"/"redrawn" with the reason |
+| key moved and only a seed's WORDS differ (a caption; a part's label, sentence or `from`; a repeat unit's label), every drawn byte as shipped | allowed, listed "only its words ... changed" |
+| key moved with none of the above moving (the parts key holds which atoms the patterns match, and a remade layer comes from reading the drawing on that machine) | **STOP** "remade with its recipe, SMILES and drawing unchanged (what differs)" |
+| a molecule or pair that left the catalog | listed "removed" |
+
+**The one release valve:** `MFETL_DRAWING_SEEDS_CHANGED=1` on a build on the Mac that carries a
+deliberate change to a drawing seed's PATTERNS (a SMARTS rule in `structure_parts.yaml`, a pair's
+`shipped:` or `stereo:` entry, a repeat unit's linkage pattern), committed with its data. It allows only
+the last STOP row, and lists each entry with the flag. It never excuses a change under an unchanged
+key. The weekly workflow never sets it (a test holds that), so on Monday such a seed committed without
+its data stops the run. 5B's rule changes would have needed it; a words-only change does not.
+
+**What a stop looks like.** The `mfetl all` step fails with `DrawingChanged: refusing to export: N
+drawing(s) changed with nothing to explain it.` and one line per entry; the log has `drawing STOPPED:
+<slug> (structure parts|compare drawing|structure drawing|repeat unit): <why>`; on GitHub each is an
+`::error` annotation and the run's summary page opens its Drawings section with **STOPPED (N)** and the
+entries. Nothing is loaded into Supabase and nothing is written; the failed-run heartbeat resets the
+tree; the `alarm` job opens (or comments on) the refresh-failure issue with the Drawings block in its
+body; no data PR is opened, so the live site keeps last week's data.
+
+**What to do on a stop.** Do not re-run the job (it would stop again) and do not set the flag in the
+workflow. Compare the entries named with the shipped snapshot: a STOP on Monday with no seed change is
+this machine computing a key or a layer differently (the platform); fix the recipe on a branch so the
+key no longer depends on it, restore the shipped entries, and deploy on Garrett's word. A seed changed
+without its data: build on the Mac with the flag, commit the data, push.
+
+**Where the counts are.** The run's summary page (the `run` job), section "Drawings": four lines, then
+every drawing made or remade with its reason (or "none"). The same block, as plain text, in the
+`all-clear` job's summary, the `alarm` job's summary, the alarm issue's body and its "Failed again"
+comment (`Count drawings` step, from `$MFETL_DRAWINGS_REPORT` under `runner.temp`, never committed).
+The parts and pairs lines are the recipes' own log lines character for character (a test holds that);
+the structure drawings line is new, and the repeat units line now counts carried and repainted.
+
+**Monday 2026-11-16's summary page must show exactly:**
+
+- `structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing`
+- `structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable`
+- `compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`
+- `repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)`
+- **Made or remade this run: none.**
+
+(A new molecule or pair that week adds its own lines, each named "new".) The step log keeps the
+recipes' lines as before, `repeat units: 2 (0 drawn this run)` included.
+
+**Proved on the real build (2026-11-13, pinned f69fd345c58bfa08, keys blanked).** (1) `mfetl all` with
+caffeine's methyl-groups layer and caffeine vs theobromine's second drawing each moved 1 px right after
+their recipes made them, keys untouched: exit 1, `caffeine (structure parts): changed under an
+unchanged key (parts[methyl-groups].layer)` and `caffeine-vs-theobromine (compare drawing): changed
+under an unchanged key (b_svg)`, the summary page and report as above, `data/snapshots` byte for byte
+unchanged. (2) The Linux shape: the shipped key of caffeine's parts and of that pair changed in the
+snapshot files, then the plain `mfetl all`: the run made both again on this Mac and stopped, each
+"remade with its recipe, SMILES and drawing unchanged (only the key moved)", writing nothing; the two
+files restored, a third build byte-identical to the first two.
 
 ## Seeing a layer
 
