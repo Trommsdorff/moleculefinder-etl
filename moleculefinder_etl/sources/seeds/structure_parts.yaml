@@ -49,6 +49,8 @@ max_parts: 3
 #   amine         own SMARTS: no sulfonamide nitrogen, no guanidine or amidine nitrogen.
 #   phenol        own SMARTS: the O-H sits on a benzene ring (maltol's O-H, on a pyranone ring
 #                 RDKit calls aromatic, read as "phenol").
+#   phosphate     own SMARTS: all four of the phosphorus's neighbours are oxygens (glyphosate's and
+#                 fosfomycin's phosphorus is bonded to a carbon: a phosphonate, not a phosphate).
 #   halogen       own SMARTS: bonded to carbon (bleach's chlorine, bonded to oxygen, is not an
 #                 organic halogen).
 #   benzene-ring  own SMARTS: a benzene ring that stands alone (each atom in one ring). A benzene
@@ -130,7 +132,7 @@ defaults:
       give, and it resists oxidation better than an aldehyde.
     from: standard chemistry.
   - id: phosphate
-    group: phosphates
+    smarts: "[PX4](=[OX1])([OX2,OX1-])([OX2,OX1-])[OX2,OX1-]"
     label: The phosphate group
     sentence: >-
       A phosphorus atom bonded to four oxygens. Living cells use phosphate groups to carry energy,
@@ -679,7 +681,8 @@ molecules:
           straight to vapour at room temperature.
         from: standard chemistry (camphor sublimes).
       - id: methyl-groups
-        smarts: "[CH3]"
+        smarts: "[CH3]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 3}
         label: The three methyl groups
@@ -704,7 +707,8 @@ molecules:
           them, which is how maltol binds iron.
         from: standard chemistry (maltol chelates iron; ferric maltol).
       - id: methyl
-        smarts: "[CH3]"
+        smarts: "[CH3]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 1}
         label: The methyl group
@@ -729,7 +733,8 @@ molecules:
           An O-H on a double-bonded carbon, an enol: the "4-hydroxy" in its chemical name.
         from: standard chemistry (4-hydroxy-2,5-dimethyl-3(2H)-furanone).
       - id: methyl-groups
-        smarts: "[CH3]"
+        smarts: "[CH3]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 2}
         label: The two methyl groups
@@ -739,7 +744,8 @@ molecules:
   xylitol:
     parts:
       - id: hydroxyls
-        smarts: "[OX2H]"
+        smarts: "[OX2H]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 5}
         label: The five hydroxyl groups
@@ -750,7 +756,8 @@ molecules:
   erythritol:
     parts:
       - id: hydroxyls
-        smarts: "[OX2H]"
+        smarts: "[OX2H]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 4}
         label: The four hydroxyl groups
@@ -761,7 +768,8 @@ molecules:
   sodium-bicarbonate:
     parts:
       - id: o-h
-        smarts: "[OX2H]"
+        smarts: "[OX2H]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 1}
         label: The hydrogen it keeps
@@ -773,7 +781,8 @@ molecules:
   sodium-carbonate:
     parts:
       - id: charged-oxygens
-        smarts: "[OX1-]"
+        smarts: "[OX1-]-[#6]"
+        light: [0]
         bonds: touching
         expect: {matches: 2}
         label: The two charged oxygens

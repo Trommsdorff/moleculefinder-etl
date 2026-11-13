@@ -434,6 +434,8 @@ def draw_pair(a: dict, b: dict, stereo: dict | None = None) -> dict:
     if n_core < ALIGN_MIN_ATOMS or n_core < ALIGN_MIN_SHARE * larger:
         return shipped(f"the common core, {n_core} of {larger} atoms, is too small to align on",
                        core=n_core)
+    if stereo and stereo.get("drawings") == "shipped":
+        return _stereo_mark_shipped(stereo, a, b, ma, mb, amap, n_core)
     rd = reading_for(a)
     if rd is None or not rd.scale_px:
         return shipped("the first drawing's atom positions are not proven", core=n_core)
@@ -441,6 +443,14 @@ def draw_pair(a: dict, b: dict, stereo: dict | None = None) -> dict:
     coord_map = {j: Point2D(rd.pos[i][0] * k, -rd.pos[i][1] * k) for i, j in amap.items()}
     mb2 = Chem.Mol(mb)
     rdDepictor.Compute2DCoords(mb2, coordMap=coord_map, canonOrient=False)
+    # Phase 5B: in a flat drawing the coordinates themselves say cis or trans, so pinning the second
+    # molecule to the first's core can draw a double bond the wrong way round (tretinoin laid out
+    # on isotretinoin came out cis). Then the pair shows its two shipped drawings.
+    if not _double_bonds_kept(mb, mb2):
+        if stereo:
+            return _stereo_mark_shipped(stereo, a, b, ma, mb, amap, n_core)
+        return shipped("aligning would draw a double bond of the second molecule the wrong way "
+                       "round", core=n_core)
     big = (CANVAS[0] * 4, CANVAS[1] * 4)
     svg, d = structures.draw(mb2, *big, fixed_bond_px=rd.scale_px / 1.5, flag_close_contacts=False)
     drawn = {j: (d.GetDrawCoords(j).x, d.GetDrawCoords(j).y) for j in range(mb2.GetNumAtoms())}
@@ -481,7 +491,8 @@ def draw_pair(a: dict, b: dict, stereo: dict | None = None) -> dict:
     return out
 
 
-def _stereo_mark(out: dict, spec: dict, ma, mb, amap: dict, n_extra: int, rd, pos_b) -> dict:
+def _stereo_mark(out: dict, spec: dict, ma, mb, amap: dict, n_extra: int, rd, pos_b,
+                 scale_b: float | None = None) -> dict:
     """A curated mark for a pair whose two molecules have the same atoms and bonds and differ only
     in their three-dimensional arrangement (the common-core search ignores stereo, so it finds no
     difference to mark). The atoms are chosen by the seed's pattern, matched on both molecules,
@@ -503,7 +514,43 @@ def _stereo_mark(out: dict, spec: dict, ma, mb, amap: dict, n_extra: int, rd, po
     out.update(highlight=True, extra_atoms=0, stereo=True, a_atoms=lit_a, b_atoms=lit_b,
                reason="aligned; the same atoms, marked where their arrangement in space differs",
                a_layer=layer(rd.pos, lit_a, bonds_a, rd.scale_px, "mf-diff"),
-               b_layer=layer(pos_b, lit_b, bonds_b, rd.scale_px, "mf-diff"))
+               b_layer=layer(pos_b, lit_b, bonds_b, scale_b or rd.scale_px, "mf-diff"))
+    return out
+
+
+def _double_bonds_kept(mol, laid_out) -> bool:
+    """True when the 2D coordinates of ``laid_out`` draw every stereo double bond of ``mol`` (cis or
+    trans, E or Z) as ``mol`` declares it."""
+    from rdkit import Chem
+
+    want = Chem.Mol(mol)
+    Chem.AssignStereochemistry(want, cleanIt=True, force=True)
+    declared = {b.GetIdx(): b.GetStereo() for b in want.GetBonds()
+                if b.GetBondType() == Chem.BondType.DOUBLE and b.GetStereo() != Chem.BondStereo.STEREONONE}
+    if not declared:
+        return True
+    got = Chem.Mol(laid_out)
+    for bd in got.GetBonds():
+        if bd.GetBondType() == Chem.BondType.DOUBLE:
+            bd.SetStereo(Chem.BondStereo.STEREONONE)
+    Chem.DetectBondStereochemistry(got)
+    Chem.AssignStereochemistry(got, cleanIt=True, force=True)
+    return all(got.GetBondWithIdx(i).GetStereo() == s for i, s in declared.items())
+
+
+def _stereo_mark_shipped(spec: dict, a: dict, b: dict, ma, mb, amap: dict, n_core: int) -> dict:
+    """The three-dimensional mark on the two SHIPPED drawings, each layer placed from that drawing's
+    own proven reading: for a pair that cannot be aligned without drawing a double bond the wrong way
+    round (isotretinoin and tretinoin)."""
+    ra, rb = reading_for(a), reading_for(b)
+    if ra is None or rb is None:
+        raise DrawingSeedError("a three-dimensional mark on the shipped drawings needs both drawings' "
+                               "atom positions proven")
+    out = {"mode": "shipped", "core": n_core, "core_map": sorted([i, j] for i, j in amap.items()),
+           "frame": None, "b_svg": None}
+    out = _stereo_mark(out, spec, ma, mb, amap, 0, ra, rb.pos, scale_b=rb.scale_px)
+    out["reason"] = ("the two shipped drawings (aligning them would draw a double bond the wrong way "
+                     "round); the same atoms, marked where their arrangement in space differs")
     return out
 
 
@@ -673,7 +720,7 @@ def compile_compare_drawings(molecules: list[dict], comparisons: dict[str, dict]
             except DrawingSeedError as e:
                 raise DrawingSeedError(f"{slug}: {e}") from None
             if stereo and not body.get("stereo"):
-                raise DrawingSeedError(f"{slug}: a three-dimensional mark needs an aligned pair; "
+                raise DrawingSeedError(f"{slug}: a three-dimensional mark found no pair to mark; "
                                        f"this one is {body['mode']} ({body['reason']})")
         if caption and not body.get("highlight"):
             raise DrawingSeedError(f"{slug}: a caption ({caption!r}) needs a highlighted pair; "

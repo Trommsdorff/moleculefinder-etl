@@ -15,7 +15,8 @@
 #             differ only in their arrangement in space (the common-core search ignores stereo,
 #             so it finds nothing to mark). The mark is a pattern matched on BOTH molecules,
 #             never atom numbers: smarts, light (pattern atoms to light), bonds (within or
-#             touching), expect {matches: N}. The build stops unless it lights the same atoms on
+#             touching), expect {matches: N}, and `drawings: shipped` to mark the two shipped
+#             drawings instead of an aligned pair. The build stops unless it lights the same atoms on
 #             both sides of the core map. Phase 5B's one engine change (drawings._stereo_mark).
 #   shipped:  {pair: the reason}           holds a pair to its two shipped drawings whatever the
 #             rule finds (for a pair whose aligned drawing reads worse than the two apart).
@@ -43,7 +44,7 @@ captions:
   # curated (the reasons are under `curated:`)
   erythritol-vs-allulose: "Allulose is two carbons longer, with a ketone."
   hyoscine-butylbromide-vs-scopolamine: "A butyl group added on the nitrogen, which then carries a positive charge."
-  nicotinamide-vs-niacin: "Nicotinamide has NH2 where niacin has OH: an amide in place of an acid."
+  nicotinamide-vs-niacin: "Nicotinamide has NH2 where nicotinic acid has OH: an amide in place of an acid."
   prednisone-vs-dexamethasone: "Three differences: dexamethasone has a hydroxyl where prednisone has a ketone, plus a methyl and a fluorine."
   xylitol-vs-erythritol: "Xylitol is one carbon longer, with one more hydroxyl group."
   # the three-dimensional marks (`stereo:` below)
@@ -101,6 +102,11 @@ stereo:
     bonds: within
     expect: {matches: 1}
   isotretinoin-vs-tretinoin:        # the C13=C14 double bond, cis in one and trans in the other
+    # On the two SHIPPED drawings: laid out on isotretinoin's core, tretinoin's own coordinates
+    # would draw that double bond cis (in a flat drawing the coordinates are the geometry), so each
+    # drawing carries the mark from its own proven reading. The build also refuses that layout
+    # for any pair (drawings._double_bonds_kept).
+    drawings: shipped
     smarts: "[CX3;!R]([CH3])=[CH1][CX3](=O)[OX2H]"
     light: [0, 2]
     expect: {matches: 1}

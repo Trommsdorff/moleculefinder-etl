@@ -260,7 +260,7 @@ def test_every_aligned_pair_puts_the_core_on_the_same_pixels(by_slug, pairs):
                 assert max(math.dist(u, v) for u, v in zip(ga[i], gb[j])) <= D.ALIGN_TOLERANCE_PX, (slug, i, j)
                 checked += 1
         n_pairs += 1
-    assert n_pairs == 75
+    assert n_pairs == 74   # phase 5A's 75, less isotretinoin vs tretinoin, now its shipped drawings (5B)
     assert checked >= 0.9 * core_total, (checked, core_total)
 
 
@@ -284,8 +284,9 @@ def test_the_pair_counts(pairs):
         k = p["mode"] + ("+highlight" if p["highlight"] else "")
         modes[k] = modes.get(k, 0) + 1
     assert len(pairs["pairs"]) == 147
-    # phase 5A: 24 highlighted, 51 aligned; phase 5B adds the seven three-dimensional marks
-    assert modes == {"aligned+highlight": 31, "aligned": 44, "shipped": 72}
+    # phase 5A: 24 highlighted, 51 aligned; phase 5B adds the seven three-dimensional marks, one of
+    # them (isotretinoin vs tretinoin) on the two shipped drawings
+    assert modes == {"aligned+highlight": 30, "aligned": 44, "shipped": 72, "shipped+highlight": 1}
     assert sum(1 for p in pairs["pairs"].values() if p.get("stereo")) == 7
 
 
@@ -548,8 +549,6 @@ def test_a_pair_that_differs_only_in_space_is_marked_on_both(by_slug, pairs):
     salts = {"calcium-carbonate-vs-sodium-bicarbonate", "sodium-bicarbonate-vs-sodium-carbonate"}
     found = set()
     for slug, p in pairs["pairs"].items():
-        if p["mode"] != "aligned" or p.get("extra_atoms") not in (0, None):
-            continue
         if p.get("stereo"):
             found.add(slug)
             core = dict(map(tuple, p["core_map"]))
@@ -561,7 +560,7 @@ def test_a_pair_that_differs_only_in_space_is_marked_on_both(by_slug, pairs):
                 bonds = [str(b.GetStereo()) for b in at.GetBonds()]
                 return (str(at.GetChiralTag()), sorted(bonds))
             assert any(stereo_of(ma, i) != stereo_of(mb, core[i]) for i in p["a_atoms"]), slug
-        elif p["reason"].startswith("aligned; 0 atoms differ"):
+        elif p["mode"] == "aligned" and p["reason"].startswith("aligned; 0 atoms differ"):
             assert slug in salts, slug
     assert found == set(D.load_compare_seed()["stereo"])
     assert "betamethasone-vs-dexamethasone" in found
@@ -572,3 +571,26 @@ def test_vitamin_c_says_apes_and_monkeys(by_slug):
     assert "humans, apes, monkeys and guinea pigs cannot" in rec["why_it_matters"]["text"]
     assert "other primates" not in json.dumps(rec) and rec["title"] == "Vitamin C"
     assert 100 <= len(rec["description"]) <= 200
+
+
+def test_a_layout_that_would_flip_a_double_bond_is_refused(by_slug, pairs):
+    """In a flat drawing the coordinates are the cis or trans geometry, so the second molecule laid
+    out on the first's core can draw a double bond the wrong way round: tretinoin (all trans) laid out
+    on isotretinoin (13-cis) came out cis. That pair now shows its two shipped drawings, each marked
+    from its own reading; the build refuses such a layout for any pair."""
+    from rdkit.Chem import rdDepictor
+    iso, tre = (Chem.MolFromSmiles(by_slug[s]["isomeric_smiles"]) for s in ("isotretinoin", "tretinoin"))
+    own = Chem.Mol(tre)
+    rdDepictor.Compute2DCoords(own)
+    assert D._double_bonds_kept(tre, own)
+    iso2 = Chem.Mol(iso)
+    rdDepictor.Compute2DCoords(iso2)
+    pinned = Chem.Mol(tre)
+    pinned.RemoveAllConformers()
+    pinned.AddConformer(Chem.Conformer(iso2.GetConformer()), assignId=True)
+    assert not D._double_bonds_kept(tre, pinned)
+    p = pairs["pairs"]["isotretinoin-vs-tretinoin"]
+    assert (p["mode"], p["highlight"], p["stereo"], p["b_svg"]) == ("shipped", True, True, None)
+    for side, slug in (("a", "isotretinoin"), ("b", "tretinoin")):
+        composed = D.compose(by_slug[slug]["structure_svg"], p[f"{side}_layer"])
+        assert D.strip(composed, p[f"{side}_layer"]) == by_slug[slug]["structure_svg"]
