@@ -896,7 +896,13 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
-## Drawing guard (2026-11-13): every drawing checked against what shipped, before the load and the export (code `6558fe6`)
+## Drawing guard (2026-11-13): every drawing checked against what shipped, before the load and the export. DEPLOYED 2026-11-13 (ETL `d669d76`; code `6558fe6`)
+**DEPLOYED 2026-11-13 about 12:39 UTC on Garrett's word (given in the brief).** ETL `main` 0005fbe -> `d669d76` (`92068ba` the
+waiting phase 5 notes, `6558fe6` code, `d669d76` records), pushed 12:38:52 UTC; no other branch was waiting in either repo
+(web `indexnow-dataset-2026-10` is in `main` by patch). **The push started no workflow:** `etl.yml` runs only on its Monday
+cron or a dispatch, `news.yml` and `watchdog.yml` only on their crons (neither commits here), and `migrations.yml`'s push
+trigger is path-filtered to the migrations, which this push did not touch; the Actions API listed 0 runs for `d669d76`.
+**Not dispatched by hand:** Monday's scheduled run is the acceptance. Web not pushed (nothing to push: the sync moved nothing).
 **Garrett's ruling (2026-11-13): close the gap found at the phase 5 deploy before Monday 2026-11-16's run, at the root, and
 deploy it on his word (given in the brief).** Branch `drawing-guard-2026-11` from `main` `92068ba` (fetched; origin unmoved at
 `0005fbe`; no other branch waiting in either repo), after `mfetl sync-inputs` (f69fd345c58bfa08). ETL only; no web change.
