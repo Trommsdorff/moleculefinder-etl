@@ -24,6 +24,9 @@ jobs:
       # How many live product pages this run held (gate hold 2026-11-09, transform/products_hold.py),
       # for the same summaries. "unknown" when the run failed before the transform stage.
       products_held:     ${{ steps.products_held.outputs.count }}
+      # The drawing guard's block (2026-11-13, transform/drawing_guard.py): the count lines, and every
+      # drawing made or remade, or the stop, for the same summaries and the alarm issue.
+      drawings:          ${{ steps.drawings.outputs.summary }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -39,6 +42,8 @@ jobs:
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GITHUB_SHA:           ${{ github.sha }}
+          # Outside the repository, so it is never committed and never part of the inputs artifact.
+          MFETL_DRAWINGS_REPORT: ${{ runner.temp }}/drawings.json
       # A CHANGED Wikidata value ships only once it is 7 days old (trust run 8). The seed stage
       # writes every held change to data/seed/wikidata_held.json (committed below) and to this
       # run's summary, one line each; this counts them for the downstream jobs' summaries.
@@ -69,6 +74,32 @@ jobs:
           fi
           echo "count=${count}" >> "$GITHUB_OUTPUT"
           echo "Product pages held this run: ${count}"
+      # THE DRAWING GUARD (2026-11-13, transform/drawing_guard.py). Every structure drawing, part
+      # layer, compare pair and repeat unit is compared with the shipped snapshot before the load: an
+      # output that changed under an unchanged key, or one made again with no input moving, stops the
+      # run there (the alarm below opens its issue; the live site keeps last week's data). The counts
+      # and the name of every drawing made or remade are on this run's summary page; this reads the
+      # same block for the all-clear and alarm summaries. "unknown" when the run failed before it.
+      # NEVER set MFETL_DRAWING_SEEDS_CHANGED in this workflow: it is for a build on the Mac that
+      # carries a deliberate change to a drawing seed, committed with its data.
+      - name: Count drawings
+        id: drawings
+        if: always()
+        env:
+          REPORT: ${{ runner.temp }}/drawings.json
+        run: |
+          if [ -s "$REPORT" ]; then
+            text=$(jq -r .text "$REPORT")
+          else
+            text="unknown: the run failed before the drawing guard ran"
+          fi
+          {
+            echo "summary<<MFETL_DRAWINGS_END"
+            echo "$text"
+            echo "MFETL_DRAWINGS_END"
+          } >> "$GITHUB_OUTPUT"
+          echo "Drawings this run:"
+          echo "$text"
       - name: commit snapshot
         id: commit
         run: |
@@ -454,9 +485,18 @@ jobs:
         env:
           HELD: ${{ needs.run.outputs.wikidata_held }}
           PRODUCTS_HELD: ${{ needs.run.outputs.products_held }}
+          DRAWINGS: ${{ needs.run.outputs.drawings }}
         run: |
           echo "All clear. Wikidata changes held this run (shipped once 7 days old): ${HELD:-unknown}. Each is listed in the run job's summary and in data/seed/wikidata_held.json." >> "$GITHUB_STEP_SUMMARY"
           echo "Product pages held live this run (a person fixes or removes each row in products.yaml): ${PRODUCTS_HELD:-unknown}. Each is listed in the run job's summary and in data/seed/products_held.json." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo ""
+            echo "Drawings this run, every one checked against the shipped snapshot (the run job's summary lists every name):"
+            echo ""
+            echo '```'
+            echo "${DRAWINGS:-unknown}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   # ── FAILURE ALARM (added 2026-08-08) — see watchdog.yml for the network view.
   # A separate job, not `if: failure()` on a step: a step-level guard cannot run
@@ -481,12 +521,27 @@ jobs:
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           HELD: ${{ needs.run.outputs.wikidata_held }}
           PRODUCTS_HELD: ${{ needs.run.outputs.products_held }}
+          DRAWINGS: ${{ needs.run.outputs.drawings }}
         run: |
           echo "Run failed. Wikidata changes held this run: ${HELD:-unknown}. Product pages held this run: ${PRODUCTS_HELD:-unknown}." >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+          {
+            echo ""
+            echo "Drawings this run (the drawing guard; a STOPPED line names each drawing that changed with nothing to explain it):"
+            echo ""
+            echo '```'
+            echo "${DRAWINGS:-unknown}"
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
           existing=$(gh issue list --label refresh-failure --state open \
                        --limit 1 --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "Failed again: $RUN (Wikidata changes held: ${HELD:-unknown}; product pages held: ${PRODUCTS_HELD:-unknown})"
+            gh issue comment "$existing" --body "Failed again: $RUN (Wikidata changes held: ${HELD:-unknown}; product pages held: ${PRODUCTS_HELD:-unknown})
+
+          Drawings this run:
+
+          \`\`\`
+          ${DRAWINGS:-unknown}
+          \`\`\`"
             exit 0
           fi
           gh label create refresh-failure --color B60205 \
@@ -502,6 +557,13 @@ jobs:
 
           Wikidata changes held this run (they ship once 7 days old): ${HELD:-unknown}.
           Product pages held live this run (see data/seed/products_held.json): ${PRODUCTS_HELD:-unknown}.
+
+          Drawings this run (the drawing guard, transform/drawing_guard.py; a STOPPED line names
+          each drawing that changed with nothing to explain it, and nothing was exported):
+
+          \`\`\`
+          ${DRAWINGS:-unknown}
+          \`\`\`
 
           If the data PR's check failed: re-running a failed check on the data PR
           reuses the old merge and cannot pick up a fix on main; close and reopen

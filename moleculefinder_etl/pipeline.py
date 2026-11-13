@@ -26,7 +26,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
-from .transform import presence, claims, doors, drawings
+from .transform import presence, claims, doors, drawings, drawing_guard
 from .transform import wikidata_age
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
@@ -170,6 +170,40 @@ def _report_presence_unmarked(unmarked: list[dict]) -> None:
                         "sources/seeds/presence_wikidata.yaml.\n\n")
                 f.writelines(f"- {line}\n" for line in lines)
                 f.write("\n")
+
+
+# The drawing guard's report for the workflow (2026-11-13): the weekly run sets this to a file outside
+# the repository, and a later step reads it into the all-clear and alarm summaries.
+DRAWINGS_REPORT_ENV = "MFETL_DRAWINGS_REPORT"
+
+
+def _report_drawings(verdict: drawing_guard.Verdict, *, summary: bool) -> None:
+    """The drawing guard's verdict (2026-11-13, ``transform/drawing_guard.py``): the four count lines
+    in the log; the plain block in ``$MFETL_DRAWINGS_REPORT`` when it is set (the weekly workflow reads
+    it into the all-clear and alarm summaries and the alarm issue); and, with ``summary``, every
+    drawing made or remade in the log and on GitHub Actions a notice each and the Drawings section of
+    the run's summary page. A stop is reported in full whatever ``summary`` says, before the refusal."""
+    for line in verdict.lines:
+        log.info("  drawings: %s", line)
+    path = os.getenv(DRAWINGS_REPORT_ENV)
+    if path:
+        Path(path).write_text(json.dumps({"stopped": verdict.stopped, "text": verdict.text()},
+                                         ensure_ascii=False) + "\n")
+    if not (summary or verdict.stopped):
+        return
+    for line in verdict.made:
+        log.info("  drawing made: %s", line)
+    for line in verdict.stops:
+        log.error("  drawing STOPPED: %s", line)
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        for line in verdict.stops:
+            print(f"::error title=Drawing changed with nothing to explain it::{line}", flush=True)
+        for line in verdict.made:
+            print(f"::notice title=Drawing made or remade::{line}", flush=True)
+        step_summary = os.getenv("GITHUB_STEP_SUMMARY")
+        if step_summary:
+            with open(step_summary, "a", encoding="utf-8") as f:
+                f.write(verdict.markdown())
 
 
 # ── Stage 1: fetch ───────────────────────────────────────────────────────────
@@ -477,6 +511,11 @@ def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict
     catalog, each raises on a bad reference), then ``snapshot_guard.check`` (a
     placeholder summary, a nulled LD50 or a swapped Wikidata QID). ``stage_export`` passes
     ``guard=False`` only because ``snapshot_export.export`` runs the same guard itself.
+
+    The drawing guard (2026-11-13, ``transform/drawing_guard.py``) runs in both calls, after the
+    pairs are compiled: every structure drawing, part layer, compare pair and repeat unit against the
+    shipped snapshot. The export's call (``guard=False``) also writes the Drawings section of the
+    run's summary page; the load's call reports only a stop.
     """
     boards = {slug: leaderboards.rank(slug, molecules) for slug in leaderboards.BOARDS}
     # A line whose claim rests on our own data (claims_allowed.yaml, basis data) must still be true of
@@ -498,6 +537,11 @@ def _preflight(molecules: list[dict], *, guard: bool = True) -> tuple[dict, dict
     prior_pairs = SNAPSHOTS / snapshot_export.COMPARE_DRAWINGS
     compare = drawings.compile_compare_drawings(
         molecules, comparisons, json.loads(prior_pairs.read_text()) if prior_pairs.exists() else None)
+    # Every drawing output against what shipped: a change under an unchanged key, or a key that moved
+    # with no input moving, stops the run here, naming each entry, before the load and the export.
+    verdict = drawing_guard.check(molecules, compare, SNAPSHOTS)
+    _report_drawings(verdict, summary=not guard)
+    drawing_guard.enforce(verdict)
     if guard:
         snapshot_guard.check(molecules, SNAPSHOTS)
     return boards, comparisons, queue, door_data, compare
