@@ -896,7 +896,10 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
-## Phase 5A, the drawing engine (2026-11-12): BUILT, not pushed (code `db70373`, data `8b400d3`)
+## Phase 5A, the drawing engine (2026-11-12): DEPLOYED 2026-11-13 with 5B (ETL `0005fbe`; code `db70373`, data `8b400d3`)
+**Deployed with 5B (next section), 2026-11-13.** The acceptance counts below are 5A's; 5B's rules and pairs changed them, and
+**the counts Monday 2026-11-16 must show are in 5B's section** (718 carried; 147 pairs, aligned 44, aligned+highlight 30,
+shipped 72, shipped+highlight 1).
 Build plan everyday chemistry, phase 5A (the plan's phase 5 split in two: 5A the engine, 5B the content, the web and the
 deploy). The plan named Fable for it; the session ran on Opus 5.5. Branch `drawing-recipes-2026-11` from `main` `4ca1f10`
 (fetched; origin had nothing new), after `mfetl sync-inputs` (f69fd345c58bfa08). **Full guide for 5B:
@@ -945,7 +948,64 @@ deploy). The plan named Fable for it; the session ran on Opus 5.5. Branch `drawi
 - **Before any deploy (5B):** the web's IndexNow delta must ignore `structure_parts`, `structure_repeat_unit` and
   `compare_drawings.json` before or with the sync, or every molecule page resubmits.
 
-## Phase 5B, the drawing content (2026-11-12): BUILT on `drawing-recipes-2026-11`, not pushed (code `6999ddc` + `00cf7e8`, data `ba4a2b1` + `0e34e01`)
+## Phase 5B, the drawing content (2026-11-12): DEPLOYED 2026-11-13 with Garrett's rulings (ETL `0005fbe`, web `ce761cb`; code `6999ddc` + `00cf7e8`, data `ba4a2b1` + `0e34e01`)
+**Approved and DEPLOYED 2026-11-13 about 01:36 UTC on Garrett's word. His rulings on the review page (2026-11-13), all as
+recommended:** (1) the 24 rule labels and sentences, the 53 curated parts and the 31 pair captions approved as written (read
+against the chemistry, the starch and cellulose reading of each wedge and hash included; nothing corrected); (2) the two salt
+pairs (calcium carbonate vs sodium bicarbonate, sodium bicarbonate vs sodium carbonate) stay aligned with nothing marked; (3)
+the seven door-chain molecules without parts (ammonia, hydrogen peroxide, sodium hypochlorite, sodium hydroxide, gluten,
+starch, cellulose) stay without them. **Recorded for later (the plan's phase 8):** the amine rule covers a nitrogen with one
+or two hydrogens only (`[NX3;H2,H1;...]`), so a tertiary amine (diphenhydramine's or amitriptyline's nitrogen) is not offered
+as a part by rule; a tertiary amine rule with its own label and sentence, reviewed like the others, is to be settled when the
+molecule page first shows parts. Not done here.
+- **Checks (keys blanked).** `git fetch`: origin unmoved in both repos (ETL `be2ed30`, web `d84e200`), no rebase; no other
+  branch waiting (web `indexnow-dataset-2026-10` is in `main` by patch, `git cherry`); `mfetl sync-inputs` f69fd345c58bfa08.
+  Suite 1,154 passed, 1 skipped (the dataset skip), the 29 drawing tests (every 5A proof) among them; ruff 130 (=
+  `origin/main`). Pinned build (`mfetl all --target 10000`) twice: exit 0, 0 PubChem POSTs, `git status` clean after each, all
+  937 snapshot files byte-identical between the runs, both logging the three acceptance lines below; all 896 `structure_svg`
+  and their keys byte for byte `origin/main`'s. Web: `npm run sync-data` moved nothing; `rm -rf .next`, verify-snapshot OK,
+  typecheck clean, `npm test` 299 passed and 26 skipped with no build; build 3,092; 325 passed on the build; built sitemap
+  1,712; only the home page's HTML carries a drawing layer; frozen text against a build of `main` (one saved news feed for
+  both): exactly vitamin C's description, og:description and twitter:description; IndexNow dry run against live `d84e200`:
+  1,712 -> 1,712, 0 new, 14 changed, 0 removed; Lighthouse budget (15 URLs) passed with no warning. Numbers in the web
+  CLAUDE.md.
+- **Deployed:** ETL `main` be2ed30 -> `0005fbe` (pushed 01:34:53 UTC; no workflow ran), then web `main` d84e200 -> `ce761cb`
+  (pushed 01:35:08; no news run in progress), GitHub deployment `7754634663` Production success 01:36:26. IndexNow run
+  43346173116: 0 new, 14 changed, 0 removed, 14 submitted and 14 accepted, audit exact. Live: the home page's Compare two
+  molecules card shows the aligned pair with its amber marks and caption; vitamin C's new line, title unchanged; every other
+  checked page identical to before the push. Full live record: the web CLAUDE.md.
+- **MONDAY 2026-11-16, THE ACCEPTANCE (the first weekly run on this code).** Where to read it: the `etl` run (schedule, 06:00
+  UTC), job `run`, step `Run mfetl all --target 10000`. The three lines are in that step's LOG, not on the run's summary page
+  (`$GITHUB_STEP_SUMMARY` carries only the held Wikidata, held product and unmarked presence lines):
+  `gh run view <id> --repo Trommsdorff/moleculefinder-etl --log | grep -E 'structure parts|repeat units|compare drawings'`.
+  Unless a molecule or a pair is new that week they must read exactly:
+  `structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable`;
+  `repeat units: 2 (0 drawn this run)`;
+  `compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`.
+  And the web data PR must not touch `compare_drawings.json` and must change no `structure_svg`, `structure_svg_key`,
+  `structure_parts` or `structure_repeat_unit` in any molecule file (read the PR's file list; diff those four fields against
+  `main`).
+- **What holds the data PR, found at this deploy (it is narrower than the brief assumed).** The run's own check is the web
+  repo's `ci / verify`, whose `lib/drawings.test.ts` pins by sha256 (`lib/fixtures/drawings-compose.json`) caffeine's three
+  parts, the caffeine and theobromine pair's two drawings (the home page card) and acetone vs ethyl acetate's framed first
+  drawing. If any of those bytes move, `verify` fails, `sync-web` leaves the PR open and fails, nothing deploys, and the
+  `alarm` job opens the refresh-failure issue. **Any other part set or pair the run makes or changes is NOT held: the PR
+  merges.** Nothing on the site renders those yet (the home card is the only drawing layer anywhere, and it is pinned;
+  IndexNow ignores `structure_parts` and `structure_repeat_unit`), so nothing visible would move, but the acceptance would
+  fail silently. No step fails on a `made` count.
+- **If the lines differ:** a `made` or `repainted` above 0 with no new molecule or pair is a key that differs on Linux or an
+  input that moved upstream. (1) Do not re-run the job, and do not merge a held PR by hand (a re-run replays the old merge;
+  close and reopen the PR after a fix). (2) Compare the run's commit (`etl: refresh 2026-11-16`) with `0005fbe`: list the
+  molecules and pairs whose key moved, and compare each key's inputs (the drawing's geometry, `isomeric_smiles`, the matched
+  parts, the seeds). If a SMILES or drawing moved upstream, the new entry is legitimate (made from a proven reading, or
+  recorded `unread`) and needs only a note. If the inputs are identical, the key depends on the platform: fix it on a branch,
+  restore the shipped entries, and deploy on Garrett's word, before phase 7 renders any part. (3) While a PR is held the live
+  site keeps last week's data (week 46, aspirin, on the home page).
+- **For Garrett (recommended, not built):** a guard so the run's own check holds the PR on ANY such change: the ETL writes the
+  three lines to the run summary and fails before its commit when it makes or repaints an entry the previous snapshot had
+  with the same drawing and SMILES. An ETL push deploys nothing, so it can go in before Monday on his word.
+
+The build record (2026-11-12):
 Build plan everyday chemistry, phase 5B (content, the web's first use, the review page; the deploy waits for Garrett's
 approval of `../moleculefinder-web/docs/design/phase-5-review-2026-11.html`). Garrett's rulings on 5A (2026-11-12): the four
 unreadable drawings (aldosterone, chitosan, insulin, inulin) are not redrawn; 5A's results accepted. Full guide, section 9

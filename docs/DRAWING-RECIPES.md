@@ -308,7 +308,9 @@ It passes, so no machine-dependent code runs for any carried output, and the pla
 one. The pinned build on this Mac also carried all 719 part sets, 147 pairs and 2 repeat units on its
 second run, byte-identical.
 
-**What the first weekly run after deploy must show** (the acceptance):
+**What the first weekly run after deploy must show** (the acceptance). *Superseded by 5B: the counts Monday 2026-11-16
+must show are in section 9, and where to read them, what holds the data PR and what to do if they differ are in the
+CLAUDE.md, "Phase 5B", recorded at the deploy of 2026-11-13. 5A's own counts, for the record:*
 
 - `structure parts: 719 carried, 0 made, 192 with no part, 4 drawings unreadable`
 - `repeat units: 2 (0 drawn this run)`
