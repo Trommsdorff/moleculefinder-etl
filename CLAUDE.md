@@ -896,6 +896,55 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Phase 5A, the drawing engine (2026-11-12): BUILT, not pushed (code `db70373`, data `8b400d3`)
+Build plan everyday chemistry, phase 5A (the plan's phase 5 split in two: 5A the engine, 5B the content, the web and the
+deploy). The plan named Fable for it; the session ran on Opus 5.5. Branch `drawing-recipes-2026-11` from `main` `4ca1f10`
+(fetched; origin had nothing new), after `mfetl sync-inputs` (f69fd345c58bfa08). **Full guide for 5B:
+`docs/DRAWING-RECIPES.md`.** Nothing renders it yet; no web change.
+- **The rule: nothing redraws a shipped structure.** All 896 `structure_svg` byte for byte as shipped
+  (`tests/fixtures/shipped-drawings-2026-11-12.json`; a drawing may change only with its own key).
+- **Atom positions are read from the shipped SVG and proven per drawing** (`transform/svg_geometry.py`): skeleton atoms
+  where their bond lines meet (exact to 0.1 px), labelled atoms on their bond axes, hash ends, the stereo hydrogens rebuilt
+  as drawn; refined against a redraw by the shipped recipe. Proofs: `identical` (this Mac draws the SMILES byte for byte as
+  shipped) 490; `read` (a redraw from the read positions is the shipped drawing path for path within 0.35 px) 384;
+  `read-anchors` (every atom's own marks match; only a bond decoration differs by RDKit release) 17; unproven 5
+  (aldosterone, chitosan, insulin, inulin; sodium iodide has no bond). Against RDKit's own positions on the 397 bonded
+  drawings where the truth is known and the SVG-only reading proves itself: worst 0.15 px. **Nothing redrawn**: the four
+  bonded unproven drawings carry no highlight, recorded under their key (`unread`) so no machine retries them. A redraw
+  needs a separate proof of positions (RDKit refits any drawing to the canvas), so positions always come from the matching
+  redraw's own drawer.
+- **Parts** (`structure_parts` on each record; `sources/seeds/structure_parts.yaml`): SMARTS rules, never atom numbers; the
+  13 `/in` functional groups plus the ring system, most specific first, at most three; caffeine's three curated parts from
+  the approved mockup verbatim (xanthine core, three methyl groups, carbonyl oxygens). Each part is one amber `#E9A23B`
+  path layered UNDER the one shipped drawing (`drawings.compose`); removed, the drawing is the shipped one path for path.
+  719 molecules with parts (417 three, 198 two, 104 one), 192 none, 4 unread; default labels and sentences null (5B).
+  Part text is in the claim corpus as kind `part` (caffeine's "only accept them": an `ordinary` entry).
+- **Pairs** (`data/snapshots/compare_drawings.json`; captions in `compare_drawings.yaml`): RDKit MCS core; align when the
+  core has 3+ atoms and 40%+ of the larger molecule; the first keeps its shipped drawing, the second is laid out with its
+  core pinned to the first's read positions and drawn at the first's scale (a shared `frame` viewBox when it reaches past
+  400 by 300: 31 pairs); highlight when 1 to 4 atoms differ; molecules over 120 heavy atoms are not searched (a size rule,
+  not a timeout). **147 pairs: 24 aligned and highlighted, 51 aligned, 72 shipped** (59 core too small, 7 no drawing, 5
+  too large, 1 no core). Caffeine vs theobromine: aligned, both ring systems on the same pixels, caffeine's extra methyl
+  and its N and theobromine's N-H nitrogen marked, "One methyl group apart."
+- **Repeat units** (`structure_repeat_unit`; `repeat_units.yaml`): starch alpha-1,4 and cellulose beta-1,4, "Two units of
+  the chain", derived from the catalog's maltose and proven by a chiral pattern cut from it (a CIP check got starch's
+  internal linkage backwards first; the maltose test caught it). Both drawings share one layout to the pixel. Which other
+  polymers suit one: the guide (gluten does not: a mixture of proteins).
+- **Keys** (`PARTS_RECIPE`, `PAIRS_RECIPE`, `REPEAT_RECIPE` 2026-11-12.1): over the drawing's colour-free geometry, the
+  SMILES, the seeds; carried byte for byte; a palette change repaints the new drawings (`palette` field); only a version
+  bump draws again.
+- **Two machines:** no Linux runtime here and no push allowed, so no Linux build. `test_a_run_with_current_keys_never_reads_
+  lays_out_or_draws` patches every platform-dependent call to raise and re-runs the three recipes against the committed
+  snapshot: all byte for byte. **Monday's acceptance:** `structure parts: 719 carried, 0 made, 192 with no part, 4 drawings
+  unreadable`, `repeat units: 2 (0 drawn this run)`, `compare drawings: ... 147 carried, 0 repainted, 0 made`.
+- **Checks:** 1,146 passed, 1 skipped (1,125 + 21 in `tests/test_drawings.py`); ruff 130 (= main). Pinned build (keys
+  blanked) exit 0, 0 PubChem POSTs; carried twice byte-identical and made from `HEAD`'s snapshot again byte-identical; the
+  snapshot changes only by the two fields on the 915 molecule files (each, with them removed, byte for byte `HEAD`) and the
+  new `compare_drawings.json`; meta.json and canon.parquet unchanged. Growth about 1.1 MB in molecule files (a layer is
+  271 bytes at the median) plus 0.9 MB.
+- **Before any deploy (5B):** the web's IndexNow delta must ignore `structure_parts`, `structure_repeat_unit` and
+  `compare_drawings.json` before or with the sync, or every molecule page resubmits.
+
 ## Phase 4, door seeds (2026-11-10): DEPLOYED 2026-11-10 with Garrett's rulings (ETL `be2ed30`; code `557077d`, data `2dbbd3d`)
 **Garrett approved the review page on 2026-11-10 with rulings; applied and DEPLOYED the same day about 15:44 UTC on his word.** Rulings: bread re-ordered around what makes bread bread (starch; cellulose, unmarked, with its note; gluten; ethanol, formed by fermentation, "Made by the yeast as the dough rises; most bakes off"; the smell, maltol and furaneol; then also in the loaf, the other six; maltodextrin leaves the stops for starch's Read more as the maltodextrin vs starch answer line and link; card line, lede and headings rewritten); doxylamine's line stays; dextromethorphan's stop accepted; the bleach and ammonia sentence stays in Read more; coffee keeps the half-life sentence and theobromine's stop gains, in its first layer, "Dogs clear theobromine far more slowly than people do, which is why chocolate is dangerous to them." (a new stop field, `note`: one sentence of new writing, 40 to 160, house rules, claim corpus); the added members stay. **Four line fixes (live copy):** the baking soda vs washing soda sentence now reads Garrett's wording ("both sodium salts of carbonic acid, NaHCO3 against Na2CO3: washing soda has a second sodium where baking soda keeps a hydrogen..."); vitamin C's line "Vitamin C, the nutrient whose absence causes scurvy. Dogs, cats and nearly all other mammals make their own, but humans, other primates and guinea pigs cannot, so ours has to come from food." (190, also its description; title unchanged; "nearly all other mammals" rather than "most animals": no claim word and true, since most bony fish cannot make it either); limonene "makes up most of citrus peel oil" (claims_allowed entry, science); ammonia's "Dissolved in water, ammonia is alkaline, which breaks up grease, and it evaporates completely, which is why it leaves glass without streaks." placed as a sixth sentence of the ammonia vs bleach paragraph (so the door quotes it by reference and ammonia joins what_it_does, 22 entries); every door reference re-pinned. **Asked in the session:** that placement shows on `/vs/ammonia-vs-sodium-hypochlorite`, and the IndexNow dry run listed 15 URLs that missed `/roam/citrus` (a world page was fingerprinted on its summary only, not the roster lines it shows); Garrett chose to fix the gap first: `scripts/indexnow-urls.mjs` now fingerprints a world over its detail too, with a test that fails on the old script. **Checks:** ETL 1,125 passed, 1 skipped; ruff 130 (= main); pinned build (f69fd345c58bfa08, keys blanked) twice byte-identical, 0 POSTs; the snapshot changed only by doors.json, the three paragraphs, vitamin C's line and description, ammonia's what_it_does and the Citrus world's quote of the line; 281 door strings clean. Web: verify-snapshot OK, typecheck clean, `npm test` 258 + 21 skipped with no build (CI runs `npm test`, whose pretest regenerates the embed cards; bare `npx vitest run` read stale cards), build 3,091, 279 on the build, sitemap 1,711. Against a build of main (one saved news feed): visible changes only on `/m/ascorbic-acid`, the five food pages that quote it (`/whats-in/citrus`, `fruit`, `chili-peppers`, `romaine-lettuce`, `bullens-pilsnerkorv`), `/roam/citrus`'s world panel, its embed card, and the three /vs paragraphs; titles, descriptions and answer lines unchanged elsewhere. **Deployed:** no other branch waiting, origin unmoved; ETL `main` 4c635a7 -> `be2ed30` (`557077d` code, `2dbbd3d` data, `be2ed30` review page; pushed 15:42:51 UTC, deploys nothing), web `main` c6102f3 -> `9e99180` (`96cc354` sync, `d035a97` review page, `9e99180` the IndexNow fix; pushed 15:43:04, no news run in progress); GitHub deployment `7686722754` Production success 15:44:12. **IndexNow** run 42847461230: 1,711 -> 1,711, 0 new, 16 changed (the 10 changed pages plus 5 label pages and `/vs/citric-acid-vs-ascorbic-acid` fingerprinted on vitamin C's record), 16 submitted and 16 accepted, audit exact, `indexnow-last` -> `9e99180`. **Live:** the new lines on `/m/ascorbic-acid` (title unchanged) and the three /vs pages; `/whats-in/medicine-cabinet`, `sugar-and-sweeteners`, `household-cleaners` 404 and absent from the sitemap and the search index; `/`, `/whats-in/coffee`, `/whats-in/bread` identical in visible text to the main build, `/whats-in/citrus` identical but for vitamin C's line; all 200 with 0 console errors and 0 failed requests (headless Brave); sitemap 1,711. `.next` deleted (434 MB); `df -h /` 396 GiB free at the start, 391 before the deletion, 392 after. **For phase 6/7:** a stop may carry `note` (render under its text, first layer); bread has six stops, "Also in the loaf" last; `scripts/frozen-text.mjs` still needs its phase 2 `EXPECTED` cleared, and vitamin C's description is now part of the baseline.
 Build plan everyday chemistry (`../BUILD-PLAN-everyday-chemistry-2026-11.md`), phase 4, with Garrett's ruling of 2026-11-10 (the web

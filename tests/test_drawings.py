@@ -326,6 +326,10 @@ def test_starch_is_alpha_and_cellulose_beta_and_nothing_else_differs(by_slug):
         assert sorted(mol.GetAtomWithIdx(i).GetSymbol() for i in u["linkage_atoms"]) == ["C", "C", "O"]
         assert u["layer"].startswith("<path class='mf-linkage'")
     assert not by_slug["starch"].get("structure_svg") and not by_slug["cellulose"].get("structure_svg")
+    # one layout: every skeleton atom on the same pixel, so side by side only the linkage differs
+    ex = [G.exact_points(u["svg"], G.drawing_mol(Chem.MolFromSmiles(u["smiles"]), u["svg"])) for u in (st, ce)]
+    assert len(ex[0].keys() & ex[1].keys()) >= 10
+    assert all(math.dist(ex[0][i], ex[1][i]) <= 0.1 for i in ex[0].keys() & ex[1].keys())
 
 
 def test_the_starch_unit_is_the_catalogs_own_maltose(by_slug):
