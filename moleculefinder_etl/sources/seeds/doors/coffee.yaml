@@ -93,7 +93,7 @@ where_next:
   - go: "Compare caffeine and theobromine"
     to: {pair: caffeine-vs-theobromine}
     pair_drawing: caffeine-vs-theobromine
-    line: "One methyl group apart: see what that one group changes."
+    line: "See what that one group changes."
     requires:
       - formula_delta: {a: caffeine, b: theobromine, delta: CH2}
       - says: {ref: {answer: caffeine-vs-theobromine, pin: "efb338bb9b33"}, words: "three methyl groups and theobromine two"}
