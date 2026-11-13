@@ -896,7 +896,9 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
-## Phase 7, the door pages go live (2026-11-13): BUILT on `door-pages-2026-11`, NOT pushed (code `1374fda`, data `b5f2c0a`)
+## Phase 7, the door pages go live (2026-11-13): DEPLOYED 2026-11-13 (code `1374fda`, data `b5f2c0a`, the ruling `eca7bab`)
+**DEPLOYED 2026-11-13 on Garrett's word, ETL `main` 5dac67f -> `eca7bab` (22:55:04 UTC, then web `main`; no workflow started).** His ruling on the review page added one ETL change: coffee's Where next card line is now "See what that one group changes." (`sources/seeds/doors/coffee.yaml`), so it no longer repeats the pair's caption "One methyl group apart." (commit `eca7bab`, seed and doors.json together). Checks: 1,181 passed, 1 skipped; ruff 130 (= main); pinned build (sync-inputs f69fd345c58bfa08, keys blanked) twice, 974 files byte-identical, 0 POSTs, only that line in doors.json moved; drawing guard nothing made or remade (896 carried, 718 parts carried, 147 pairs carried, 2 repeat units carried). Full deploy record, the web changes and the live checks: the company CLAUDE.md and the web CLAUDE.md, "Phase 7". **Monday 2026-11-16's run:** the Drawings section exactly as in the drawing guard's acceptance below ("Made or remade this run: none."), sitemap 1,715 on the web side, doors.json unchanged unless a label moves, the ledger keeps the three group slugs.
+The build record:
 Build plan everyday chemistry, phase 7 (the web renders the six door pages; this repo's half is small). **Waiting for
 Garrett's approval of the review page** (`../moleculefinder-web/docs/design/phase-7-review-2026-11.html`); then ETL `main`,
 then web `main`, on his word, clear of the news cron and of Monday's 06:00 UTC run.
