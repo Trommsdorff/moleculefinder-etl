@@ -896,6 +896,30 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Phase 7, the door pages go live (2026-11-13): BUILT on `door-pages-2026-11`, NOT pushed (code `1374fda`, data `b5f2c0a`)
+Build plan everyday chemistry, phase 7 (the web renders the six door pages; this repo's half is small). **Waiting for
+Garrett's approval of the review page** (`../moleculefinder-web/docs/design/phase-7-review-2026-11.html`); then ETL `main`,
+then web `main`, on his word, clear of the news cron and of Monday's 06:00 UTC run.
+- **The three group seeds are live** (`sources/seeds/doors/{medicine-cabinet,sugar-and-sweeteners,household-cleaners}.yaml`:
+  `page: {group: <slug>, live: true}`, `interim` removed; the compiler refuses an interim on a live door). doors.json: each
+  group's `live` true, `interim` null, `card.href` its own page (`/whats-in/medicine-cabinet`, `/whats-in/sugar-and-sweeteners`,
+  `/whats-in/household-cleaners`), so the home cards follow with no web change. Nothing else in doors.json moved.
+- **A live group joins the products ledger** (`transform/products_hold.published(previous, products, pairs, doors)`; the
+  pipeline passes `door_data`): its slug is added to `products` in `products_published.json`, so a later removal must answer
+  410 through the web's `lib/gone.ts` (the web's `lib/gone.test.ts` counts live group pages). A group is never a products.json
+  record (no molecule page lists it under "Found in these products"); the web renders it from doors.json alone.
+- **Tests** (`tests/test_doors.py`): all six live with each card on its own page; the live groups are no product record and
+  are in the ledger; the ledger takes a live group and never a dark one; a dark door still needs an interim and a live one may
+  not carry one. Suite **1,181 passed, 1 skipped** (main 1,180); ruff **130** (= main).
+- **Pinned build** (`sync-inputs` f69fd345c58bfa08, keys blanked) twice, **byte-identical** (974 files under `data/` outside
+  the raw cache), 0 PubChem POSTs; the snapshot changed exactly `doors.json` (the three groups' `live`, `interim`, `card.href`)
+  and `products_published.json` (+3 slugs). **The drawing guard reported nothing made or remade:** `structure drawings: 896
+  carried, 0 repainted, 0 drawn, 19 with no drawing`; `structure parts: 718 carried, 0 made, 193 with no part, 4 drawings
+  unreadable`; `compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); 147 carried, 0
+  repainted, 0 made`; `repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)`; doors: all six live.
+- **The weekly run** compiles the live groups exactly as before; a failed `requires:` still stops the run before the load.
+  Monday 2026-11-16's data PR should carry no doors.json change (unless a label moves) and the ledger keeps the three slugs.
+
 ## Drawing guard (2026-11-13): every drawing checked against what shipped, before the load and the export. DEPLOYED 2026-11-13 (ETL `d669d76`; code `6558fe6`)
 **DEPLOYED 2026-11-13 about 12:39 UTC on Garrett's word (given in the brief).** ETL `main` 0005fbe -> `d669d76` (`92068ba` the
 waiting phase 5 notes, `6558fe6` code, `d669d76` records), pushed 12:38:52 UTC; no other branch was waiting in either repo
