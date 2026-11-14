@@ -1,0 +1,68 @@
+# The words for each GHS hazard statement code (phase 3A, 2026-11-14; plan, phase 3: "the hazard
+# statements' words"). Source: the US Hazard Communication Standard, 29 CFR 1910.1200, Appendix C
+# (Allocation of Label Elements, Mandatory), as amended 2024 (89 FR 44144) and corrected (FR Docs
+# 2024-23144 and 2026-00147). A US government work, public domain (registry key osha_hcs). Read 2026-11-14 from
+# OSHA's own text of Appendix C (osha.gov/laws-regs/regulations/standardnumber/1910/1910.1200AppC); the
+# eCFR and the Federal Register print the C.4 tables as images.
+#
+# The H codes are the GHS's numbering (UN GHS, Annex 3), which the HCS does not print: each code here
+# names the HCS table and the hazard class and category it belongs to, and the words are the HCS's
+# statement for that class and category, character for character, without the italic qualifiers a
+# label preparer fills in ("state all organs affected", "state route of exposure").
+#
+# Not here, so shown as the code alone: the codes the HCS does not adopt. H303, H313 and H333 (acute
+# toxicity, category 5), H305 (aspiration, category 2), H316 (mild skin irritation) and the aquatic
+# hazards H400 to H413 (environmental hazards are not OSHA's to regulate). Checked in the session
+# against the wording PubChem's depositors carry for every code: identical but for PubChem's own
+# typing ("Highly Flammable", "strong Oxidizer", "May causes damage") and the HCS's comma in H260.
+statements:
+  H220: {text: "Extremely flammable gas", hcs: "C.4.15", class: "Flammable gases, Category 1A"}
+  H221: {text: "Flammable gas", hcs: "C.4.15", class: "Flammable gases, Categories 1B and 2"}
+  H224: {text: "Extremely flammable liquid and vapor", hcs: "C.4.19", class: "Flammable liquids, Category 1"}
+  H225: {text: "Highly flammable liquid and vapor", hcs: "C.4.19", class: "Flammable liquids, Category 2"}
+  H226: {text: "Flammable liquid and vapor", hcs: "C.4.19", class: "Flammable liquids, Category 3"}
+  H227: {text: "Combustible liquid", hcs: "C.4.19", class: "Flammable liquids, Category 4"}
+  H228: {text: "Flammable solid", hcs: "C.4.20", class: "Flammable solids, Categories 1 and 2"}
+  H241: {text: "Heating may cause a fire or explosion", hcs: "C.4.21", class: "Self-reactive substances and mixtures, Type B (and organic peroxides, C.4.28)"}
+  H242: {text: "Heating may cause a fire", hcs: "C.4.21", class: "Self-reactive substances and mixtures, Types C to F (and organic peroxides, C.4.28)"}
+  H250: {text: "Catches fire spontaneously if exposed to air", hcs: "C.4.22", class: "Pyrophoric liquids (and pyrophoric solids, C.4.23), Category 1"}
+  H251: {text: "Self-heating; may catch fire", hcs: "C.4.24", class: "Self-heating substances and mixtures, Category 1"}
+  H252: {text: "Self-heating in large quantities; may catch fire", hcs: "C.4.24", class: "Self-heating substances and mixtures, Category 2"}
+  H260: {text: "In contact with water releases flammable gases, which may ignite spontaneously", hcs: "C.4.25", class: "Substances which, in contact with water, emit flammable gases, Category 1"}
+  H261: {text: "In contact with water releases flammable gas", hcs: "C.4.25", class: "Substances which, in contact with water, emit flammable gases, Categories 2 and 3"}
+  H270: {text: "May cause or intensify fire; oxidizer", hcs: "C.4.17", class: "Oxidizing gases, Category 1"}
+  H271: {text: "May cause fire or explosion; strong oxidizer", hcs: "C.4.26", class: "Oxidizing liquids (and oxidizing solids, C.4.27), Category 1"}
+  H272: {text: "May intensify fire; oxidizer", hcs: "C.4.26", class: "Oxidizing liquids (and oxidizing solids, C.4.27), Categories 2 and 3"}
+  H280: {text: "Contains gas under pressure; may explode if heated", hcs: "C.4.18", class: "Gases under pressure: compressed, liquefied or dissolved gas"}
+  H281: {text: "Contains refrigerated gas; may cause cryogenic burns or injury", hcs: "C.4.18", class: "Gases under pressure: refrigerated liquefied gas"}
+  H290: {text: "May be corrosive to metals", hcs: "C.4.29", class: "Corrosive to metals, Category 1"}
+  H300: {text: "Fatal if swallowed", hcs: "C.4.1", class: "Acute toxicity, oral, Categories 1 and 2"}
+  H301: {text: "Toxic if swallowed", hcs: "C.4.1", class: "Acute toxicity, oral, Category 3"}
+  H302: {text: "Harmful if swallowed", hcs: "C.4.1", class: "Acute toxicity, oral, Category 4"}
+  H304: {text: "May be fatal if swallowed and enters airways", hcs: "C.4.13", class: "Aspiration hazard, Category 1"}
+  H310: {text: "Fatal in contact with skin", hcs: "C.4.2", class: "Acute toxicity, dermal, Categories 1 and 2"}
+  H311: {text: "Toxic in contact with skin", hcs: "C.4.2", class: "Acute toxicity, dermal, Category 3"}
+  H312: {text: "Harmful in contact with skin", hcs: "C.4.2", class: "Acute toxicity, dermal, Category 4"}
+  H314: {text: "Causes severe skin burns and eye damage", hcs: "C.4.4", class: "Skin corrosion/irritation, Category 1 (1A to 1C)"}
+  H315: {text: "Causes skin irritation", hcs: "C.4.4", class: "Skin corrosion/irritation, Category 2"}
+  H317: {text: "May cause an allergic skin reaction", hcs: "C.4.7", class: "Sensitization, skin, Category 1 (1A and 1B)"}
+  H318: {text: "Causes serious eye damage", hcs: "C.4.5", class: "Eye damage/irritation, Category 1"}
+  H319: {text: "Causes serious eye irritation", hcs: "C.4.5", class: "Eye damage/irritation, Category 2A"}
+  H320: {text: "Causes eye irritation", hcs: "C.4.5", class: "Eye damage/irritation, Category 2B"}
+  H330: {text: "Fatal if inhaled", hcs: "C.4.3", class: "Acute toxicity, inhalation, Categories 1 and 2"}
+  H331: {text: "Toxic if inhaled", hcs: "C.4.3", class: "Acute toxicity, inhalation, Category 3"}
+  H332: {text: "Harmful if inhaled", hcs: "C.4.3", class: "Acute toxicity, inhalation, Category 4"}
+  H334: {text: "May cause allergy or asthma symptoms or breathing difficulties if inhaled", hcs: "C.4.6", class: "Sensitization, respiratory, Category 1 (1A and 1B)"}
+  H335: {text: "May cause respiratory irritation", hcs: "C.4.11", class: "Specific target organ toxicity, single exposure, Category 3 (respiratory tract irritation)"}
+  H336: {text: "May cause drowsiness or dizziness", hcs: "C.4.11", class: "Specific target organ toxicity, single exposure, Category 3 (narcotic effects)"}
+  H340: {text: "May cause genetic defects", hcs: "C.4.8", class: "Germ cell mutagenicity, Categories 1A and 1B"}
+  H341: {text: "Suspected of causing genetic defects", hcs: "C.4.8", class: "Germ cell mutagenicity, Category 2"}
+  H350: {text: "May cause cancer", hcs: "C.4.9", class: "Carcinogenicity, Categories 1A and 1B"}
+  H351: {text: "Suspected of causing cancer", hcs: "C.4.9", class: "Carcinogenicity, Category 2"}
+  H360: {text: "May damage fertility or the unborn child", hcs: "C.4.10", class: "Reproductive toxicity, Categories 1A and 1B"}
+  H361: {text: "Suspected of damaging fertility or the unborn child", hcs: "C.4.10", class: "Reproductive toxicity, Category 2"}
+  H362: {text: "May cause harm to breast-fed children", hcs: "C.4.10", class: "Reproductive toxicity, effects on or via lactation"}
+  H370: {text: "Causes damage to organs", hcs: "C.4.11", class: "Specific target organ toxicity, single exposure, Category 1"}
+  H371: {text: "May cause damage to organs", hcs: "C.4.11", class: "Specific target organ toxicity, single exposure, Category 2"}
+  H372: {text: "Causes damage to organs through prolonged or repeated exposure", hcs: "C.4.12", class: "Specific target organ toxicity, repeated exposure, Category 1"}
+  H373: {text: "May cause damage to organs through prolonged or repeated exposure", hcs: "C.4.12", class: "Specific target organ toxicity, repeated exposure, Category 2"}

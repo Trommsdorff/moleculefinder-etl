@@ -80,3 +80,18 @@
 # Phase 8 review (Garrett, 2026-11-14): gold's synonym line read "Also called Aurum Metallicum". Its
 # entry here was replaced in phase 10 by a rule, assemble.latin_pharmacy_name, which keeps every Latin
 # remedy and pharmacopoeia label name off the line (Garrett's ruling: by rule, not one element at a time).
+# Phase 3A (2026-11-14, Garrett's ruling on the phase 10 review): the names that moved up a line when
+# phase 10's rule took the Latin remedy names off, each read by hand. Removed: product-label names
+# that no one uses for the substance, and one misspelling. Kept: medicine brands (calcium gluconate's
+# Glucobiogen and Neocalglucon, ursodiol's Actigall), and real chemistry names (carbonyl, lactate,
+# Mefenaminsäure, sodium ethanoate). Plus one Wikidata alias on a one-element record.
+- name: S-WAT
+  why: a product sold under that name (a sulfite preservative), listed by PubChem as a synonym of sodium sulfite, not a name for the substance
+- name: Sulftech
+  why: a product sold under that name, listed by PubChem as a synonym of sodium sulfite, not a name for the substance
+- name: Evits
+  why: a product label name listed by PubChem as a synonym of phosphoric acid, not a name for the substance
+- name: Paratartaric aicd
+  why: paratartaric acid misspelt in PubChem's list ("aicd"); racemic tartaric acid, already on the search list spelt correctly
+- name: Tatum-T
+  why: a copper IUD's brand, listed as an alias of copper (Q753) on Wikidata; a device that contains copper, not a name for the element

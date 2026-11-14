@@ -1,0 +1,65 @@
+# Where an element's symbol comes from (Garrett's ruling on the phase 10 review, 2026-11-15; built in
+# phase 3A, 2026-11-14). Eleven symbols are not the letters of the English name. Each comes from an
+# older name: the Latin (or Latinised) name for nine, the German-derived wolfram for tungsten, and
+# the Latinised Greek hydrargyrum ("water silver") for mercury. Shown on the element's page as one
+# short line under its other names, kind Editorial, source MoleculeFinder curated.
+#
+# Each entry: the symbol (must be the record's formula), the name it comes from (written as the
+# line writes it), the line (must name both and end with a full stop) and its basis (`from`).
+# assemble.attach_symbol_origins reads this; a slug missing from the catalog stops the build.
+elements:
+  sodium:
+    symbol: Na
+    name: natrium
+    line: "Its symbol, Na, comes from natrium, its Latin name."
+    from: standard chemistry; Berzelius took the symbols from the Latin names (1813 to 1814).
+  potassium:
+    symbol: K
+    name: kalium
+    line: "Its symbol, K, comes from kalium, its Latin name."
+    from: standard chemistry; Berzelius took the symbols from the Latin names (1813 to 1814).
+  iron:
+    symbol: Fe
+    name: ferrum
+    line: "Its symbol, Fe, comes from ferrum, its Latin name."
+    from: standard chemistry; the Latin word for iron.
+  copper:
+    symbol: Cu
+    name: cuprum
+    line: "Its symbol, Cu, comes from cuprum, its Latin name."
+    from: standard chemistry; the Latin word for copper, after Cyprus, where the Romans mined it.
+  silver:
+    symbol: Ag
+    name: argentum
+    line: "Its symbol, Ag, comes from argentum, its Latin name."
+    from: standard chemistry; the Latin word for silver.
+  tin:
+    symbol: Sn
+    name: stannum
+    line: "Its symbol, Sn, comes from stannum, its Latin name."
+    from: standard chemistry; the Latin word for tin.
+  antimony:
+    symbol: Sb
+    name: stibium
+    line: "Its symbol, Sb, comes from stibium, its Latin name."
+    from: standard chemistry; the Latin name of the mineral stibnite, antimony sulfide.
+  tungsten:
+    symbol: W
+    name: wolfram
+    line: "Its symbol, W, comes from wolfram, its name in German and several other languages."
+    from: standard chemistry; wolfram, after the ore wolframite, is the element's name in German, Swedish and other languages.
+  gold:
+    symbol: Au
+    name: aurum
+    line: "Its symbol, Au, comes from aurum, its Latin name."
+    from: standard chemistry; the Latin word for gold.
+  mercury:
+    symbol: Hg
+    name: hydrargyrum
+    line: "Its symbol, Hg, comes from hydrargyrum, its Latinised Greek name, meaning water silver."
+    from: standard chemistry; hydrargyrum is the Latin form of the Greek hydrargyros, water silver.
+  lead:
+    symbol: Pb
+    name: plumbum
+    line: "Its symbol, Pb, comes from plumbum, its Latin name."
+    from: standard chemistry; the Latin word for lead, also the root of plumbing.

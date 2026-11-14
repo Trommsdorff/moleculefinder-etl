@@ -354,7 +354,7 @@ def test_every_committed_drawing_is_in_its_table_colours_and_current():
             continue
         drawn += 1
         assert "#000000" not in svg.upper(), rec["slug"]
-        mol = Chem.MolFromSmiles(rec["isomeric_smiles"])
+        mol = Chem.MolFromSmiles(structures.drawn_smiles(rec))
         flags = 0
         for m in _ATOM_TAG.finditer(svg):
             if _is_flag(m.group(0)):
@@ -365,6 +365,7 @@ def test_every_committed_drawing_is_in_its_table_colours_and_current():
             assert {c.upper() for c in _HEX.findall(m.group(0))} == {structures.atom_hex(z).upper()}, \
                 (rec["slug"], z)
         flagged += flags > 0
-        assert rec["structure_svg_key"] == structures.svg_key(rec["isomeric_smiles"]), rec["slug"]
+        # Phase 3A: keyed by the SMILES the drawing is drawn from (a sugar's ring, structure_display.yaml).
+        assert rec["structure_svg_key"] == structures.svg_key(structures.drawn_smiles(rec)), rec["slug"]
     assert drawn > 800
     assert flagged == 14

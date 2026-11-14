@@ -42,7 +42,8 @@ captions:
   oxycodone-vs-hydrocodone: "One hydroxyl group apart."
   palmitic-acid-vs-stearic-acid: "Two carbons longer."
   # curated (the reasons are under `curated:`)
-  erythritol-vs-allulose: "Allulose is two carbons longer, with a ketone."
+  # erythritol-vs-allulose: its caption ("Allulose is two carbons longer, with a ketone.") left in phase 3A
+  # (2026-11-14): allulose is drawn as its ring, so the pair shows the two drawings, nothing marked.
   hyoscine-butylbromide-vs-scopolamine: "A butyl group added on the nitrogen, which then carries a positive charge."
   nicotinamide-vs-niacin: "Nicotinamide has NH2 where nicotinic acid has OH: an amide in place of an acid."
   prednisone-vs-dexamethasone: "Three differences: dexamethasone has a hydroxyl where prednisone has a ketone, plus a methyl and a fluorine."
@@ -56,7 +57,6 @@ captions:
   dexmethylphenidate-vs-methylphenidate: "The same atoms; at the two marked carbons dexmethylphenidate is one form, methylphenidate a mix."
   isotretinoin-vs-tretinoin: "The same atoms; the marked double bond is cis in isotretinoin and trans in tretinoin."
 curated:
-  erythritol-vs-allulose: "the added piece is a chain carbon with a C=O plus a CH2OH, which the rule has no name for."
   hyoscine-butylbromide-vs-scopolamine: "the common core maps scopolamine's N-methyl onto the butyl chain, so the rule would read a propyl and a methyl; the true difference is one butyl on the nitrogen."
   nicotinamide-vs-niacin: "NH2 against OH on a C=O is an amide against an acid, which the rule's group names do not say."
   prednisone-vs-dexamethasone: "three sites, one of them a swap, which the rule does not phrase."

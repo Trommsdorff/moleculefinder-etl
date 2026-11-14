@@ -179,6 +179,18 @@ SOURCES: dict[str, dict] = {
            ("usgs_cerc", "USGS Columbia Environmental Research Center"),
            ("usda_aphis", "USDA APHIS Chemical Effects Database"),
        )},
+    # The words for each hazard statement code (phase 3A, 2026-11-14): the US Hazard Communication
+    # Standard, 29 CFR 1910.1200, Appendix C (Allocation of Label Elements), as amended 2024 (89 FR
+    # 44144). A US government work (17 U.S.C. 105). Chosen over the EU CLP Regulation's Annex III (reuse
+    # with acknowledgement) and the UN GHS itself (United Nations copyright) because it is public domain
+    # and is the wording a US label carries. It has no aquatic hazards (H400 to H413, EPA's remit, not
+    # OSHA's) and no acute toxicity category 5 (H303, H313, H333): those codes stay codes.
+    # The seed is seeds/hazard_statements.yaml (each code with its Appendix C table and category).
+    "osha_hcs": {"name": "US OSHA Hazard Communication Standard (29 CFR 1910.1200, Appendix C)",
+                 "license": "US Government Public Domain", "licence_class": "public_domain",
+                 "license_url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.1200AppC",
+                 "homepage": "https://www.ecfr.gov/current/title-29/section-1910.1200",
+                 "commercial_ok": True, "attribution_required": False},
     # T3DB's downloads page: "Use and re-distribution of the data, in whole or in part, for
     # commercial purposes requires explicit permission of the authors."
     "t3db":     dict(name="Toxin and Toxin Target Database (T3DB)",
@@ -244,7 +256,7 @@ BLOCKED: frozenset[str] = frozenset({
 SHORT_NAMES: dict[str, str] = {
     "ema": "EMA", "mhra": "MHRA", "hsdb": "HSDB", "t3db": "T3DB", "echa": "ECHA",
     "eu_clp": "EU CLP Regulation", "hcis": "Safe Work Australia", "nite": "NITE",
-    "cas_registry": "CAS Registry", "fda_unii": "FDA UNII", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
+    "cas_registry": "CAS Registry", "fda_unii": "FDA UNII", "osha_hcs": "US OSHA Hazard Communication Standard", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
     "niosh": "NIOSH", "atsdr": "ATSDR", "fda_ltkb": "FDA LTKB", "lactmed": "LactMed",
     "fda": "FDA", "mesh": "MeSH", "efsa": "EFSA", "dragomir_2025": "Dragomir et al. 2025",
     "weber_2025": "Weber et al. 2025", "saraiva_2020": "Saraiva et al. 2020", "gourineni_2018": "Gourineni et al. 2018",

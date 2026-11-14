@@ -245,7 +245,7 @@ def reading_for(rec: dict):
     positions no proof holds for; ``svg_geometry.read_positions``). Cached by drawing."""
     from rdkit import Chem
 
-    svg, smi = rec.get("structure_svg"), rec.get("isomeric_smiles")
+    svg, smi = rec.get("structure_svg"), structures.drawn_smiles(rec)
     if not svg or not smi:
         return None
     k = _sha(geometry_sha(svg), smi)
@@ -260,7 +260,7 @@ def reading_for(rec: dict):
 
 
 def parts_key(rec: dict, parts: list[dict]) -> str:
-    return _sha(PARTS_RECIPE, geometry_sha(rec["structure_svg"]), rec["isomeric_smiles"],
+    return _sha(PARTS_RECIPE, geometry_sha(rec["structure_svg"]), structures.drawn_smiles(rec),
                 json.dumps(parts, sort_keys=True, ensure_ascii=False))
 
 
@@ -277,7 +277,7 @@ def attach_structure_parts(records: list[dict], prior: dict[int, dict] | None = 
     prior = prior or {}
     counts = {"carried": 0, "made": 0, "none": 0, "unreadable": 0}
     for rec in records:
-        svg, smi = rec.get("structure_svg"), rec.get("isomeric_smiles")
+        svg, smi = rec.get("structure_svg"), structures.drawn_smiles(rec)
         if not svg or not smi:
             rec["structure_parts"] = None
             counts["none"] += 1
@@ -399,7 +399,7 @@ def pair_key(a: dict, b: dict, caption, override, stereo: dict | None = None) ->
     # every other pair's key is what phase 5A made it.
     extra = [json.dumps(stereo, sort_keys=True, ensure_ascii=False)] if stereo else []
     return _sha(PAIRS_RECIPE, a["slug"], b["slug"], geometry_sha(a.get("structure_svg") or ""),
-                a.get("isomeric_smiles"), b.get("isomeric_smiles"), caption, override, *extra)
+                structures.drawn_smiles(a), structures.drawn_smiles(b), caption, override, *extra)
 
 
 def _heavy(mol) -> int:
@@ -420,7 +420,7 @@ def draw_pair(a: dict, b: dict, stereo: dict | None = None) -> dict:
 
     if not a.get("structure_svg") or not b.get("structure_svg"):
         return shipped("one of the two has no drawing")
-    ma, mb = Chem.MolFromSmiles(a["isomeric_smiles"]), Chem.MolFromSmiles(b["isomeric_smiles"])
+    ma, mb = Chem.MolFromSmiles(structures.drawn_smiles(a)), Chem.MolFromSmiles(structures.drawn_smiles(b))
     if max(_heavy(ma), _heavy(mb)) > ALIGN_MAX_ATOMS:
         return shipped(f"too large to align ({max(_heavy(ma), _heavy(mb))} atoms; the rule "
                        f"stops at {ALIGN_MAX_ATOMS})")
@@ -633,7 +633,7 @@ def caption_rule(a: dict, b: dict, entry: dict) -> str | None:
 
     if not entry.get("highlight") or entry.get("stereo"):
         return None
-    ma, mb = Chem.MolFromSmiles(a["isomeric_smiles"]), Chem.MolFromSmiles(b["isomeric_smiles"])
+    ma, mb = Chem.MolFromSmiles(structures.drawn_smiles(a)), Chem.MolFromSmiles(structures.drawn_smiles(b))
     amap = {i: j for i, j in entry["core_map"]}
     inv = {j: i for i, j in amap.items()}
     fa, fb = _fragments(ma, set(amap)), _fragments(mb, set(inv))
@@ -704,7 +704,7 @@ def compile_compare_drawings(molecules: list[dict], comparisons: dict[str, dict]
         if prev and prev.get("key") == key:
             entry = dict(prev)
             if entry.get("b_svg") and entry.get("palette") != structures.RECIPE_VERSION:
-                entry["b_svg"] = structures.recolour(entry["b_svg"], b["isomeric_smiles"])
+                entry["b_svg"] = structures.recolour(entry["b_svg"], structures.drawn_smiles(b))
                 entry["palette"] = structures.RECIPE_VERSION
                 counts["repainted"] += 1
             else:

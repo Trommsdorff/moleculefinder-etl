@@ -6,7 +6,12 @@ text leaves — PubChem carries them as pictogram image URLs in `Markup` nodes
 (e.g. ``.../images/ghs/GHS07.svg``), so we walk those separately.
 """
 from __future__ import annotations
+import functools
 import re
+
+import yaml
+
+from ..config import SEEDS_DIR
 from ..sources import registry
 from .confidence import label_for
 from .toxicity import _iter_information, _iter_strings
@@ -67,3 +72,44 @@ def parse_ghs(pug_view: dict | None, *, withheld: list | None = None) -> dict | 
     signal = "Danger" if "Danger" in signals else ("Warning" if "Warning" in signals else None)
     return {"signal_word": signal, "pictograms": sorted(pictos),
             "h_statements": sorted(hcodes), "confidence": label_for("ghs"), "sources": sorted(used)}
+
+
+# ── The words for each code (phase 3A, 2026-11-14) ────────────────────────────────────────────
+# The molecule page showed bare codes ("H302") because no source for the wording was registered.
+# The words come from the US Hazard Communication Standard (registry key osha_hcs, public domain),
+# keyed by code in seeds/hazard_statements.yaml. A code the standard has no words for (the aquatic
+# hazards, acute toxicity category 5) is left out of ``h_wording`` and stays a code on the page.
+# The classification itself, its codes, signal word, pictograms and sources, is untouched.
+HAZARD_STATEMENTS = SEEDS_DIR / "hazard_statements.yaml"
+WORDING_SOURCE = "osha_hcs"
+
+
+@functools.lru_cache(maxsize=1)
+def hazard_wording() -> dict[str, str]:
+    """code -> the standard's words, from the seed. A malformed entry stops the build."""
+    data = yaml.safe_load(HAZARD_STATEMENTS.read_text()) or {}
+    out, problems = {}, []
+    for code, e in (data.get("statements") or {}).items():
+        text = str((e or {}).get("text") or "").strip()
+        if not _HCODE.fullmatch(str(code)) or not text or not (e or {}).get("hcs") or not (e or {}).get("class"):
+            problems.append(f"{code}: needs an H code, text, hcs and class")
+        elif "—" in text or "–" in text:
+            problems.append(f"{code}: a dash in the text")
+        else:
+            out[str(code)] = text
+    if problems:
+        raise SystemExit(f"{HAZARD_STATEMENTS.name}: " + "; ".join(problems))
+    return out
+
+
+def with_wording(ghs: dict | None) -> dict | None:
+    """A copy of the hazard label with ``h_wording`` ({code: words}, only the codes the standard
+    words) and ``h_wording_source``, or the label as it is when none of its codes has words."""
+    if not ghs:
+        return ghs
+    words = hazard_wording()
+    worded = {c: words[c] for c in ghs.get("h_statements") or [] if c in words}
+    if not worded:
+        return ghs
+    registry.assert_not_blocked(WORDING_SOURCE)
+    return {**ghs, "h_wording": worded, "h_wording_source": WORDING_SOURCE}

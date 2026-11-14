@@ -1,0 +1,66 @@
+# Display structures (phase 3A, 2026-11-14; plan, phase 3: "the sugars drawn as rings").
+#
+# A record's identifiers (SMILES, InChI, formula, weight, CID and every computed property) are
+# PubChem's record of the substance and never change here. For a sugar PubChem's record is the open
+# chain, while in water the sugar is almost entirely a ring, and the site's own text describes the
+# ring. An entry here gives the SMILES the DRAWING is drawn from (structures.drawn_smiles): the
+# structure drawing, its parts and its comparison drawings. It is a keyed display structure under
+# docs/DRAWING-RECIPES.md: the drawing's key moves with this SMILES, and the drawing guard lists the
+# molecule as redrawn with this file named as the reason. Nothing else on the record moves.
+#
+# Each entry, checked at every build (assemble.structure_display_for), stops the build if it fails:
+#   smiles  the ring form, PubChem's isomeric SMILES for `cid`. It must have the record's formula,
+#           and opening its ring at the anomeric carbon (the ring C bearing both the ring O and an
+#           OH) must give the record's own isomeric SMILES, stereo included: the same sugar.
+#   form    the ring form's name, as the page's notes say it.
+#   cid     the PubChem compound of that ring form. Its 3D conformer is the page's 3D model, so the
+#           3D never shows the open chain beside a ring drawing.
+#   has_3d  whether PubChem has a 3D conformer for `cid` (read 2026-11-14: Volume3D present).
+#   line    the sentence the page's notes give for the drawing.
+#   basis   which ring and why that one (not shown on the site).
+#
+# Checked and left alone (already drawn as rings from PubChem's own record): glucose, galactose
+# (pyranoses), ribose (a pyranose, as it mostly is in water), deoxyribose (a furanose), and the
+# disaccharides. Not sugars that can close a ring: dihydroxyacetone (a three-carbon ketose), the
+# sugar alcohols (no carbonyl) and gluconic acid (an acid). Mannose and xylose are not in the
+# catalog. Carboxymethyl cellulose is a polymer whose PubChem record is a fragment pair; not a
+# sugar's drawing, reported for a later ruling, not changed here.
+molecules:
+  fructose:
+    smiles: "C([C@@H]1[C@H]([C@@H](C(O1)(CO)O)O)O)O"
+    form: D-fructofuranose
+    cid: 439163
+    has_3d: true
+    line: >-
+      Drawn as a ring, as fructose is in water: D-fructofuranose, the five-membered ring that
+      sucrose is built from. The SMILES and identifiers are PubChem's open-chain record of the
+      same sugar.
+    basis: >-
+      In water, under 1 percent of fructose is the open keto chain PubChem's record (CID 5984)
+      draws; the rest is a ring. The site's own text describes the five-membered ring: the frozen
+      glucose vs fructose answer line ("glucose forms a six-membered ring and fructose a
+      five-membered one") and sucrose's curated part "The fructose ring" (a five-membered ring of
+      four carbons and one oxygen). It is also the ring fructose has inside sucrose, and this
+      drawing matches sucrose's fructose unit atom for atom (tests/test_structure_display.py). In
+      water at room temperature the six-membered beta-pyranose is in fact the larger share (about
+      70 percent, against about 30 percent for the two five-membered forms; Angyal, Adv. Carbohydr.
+      Chem. Biochem. 42, 1984), so the six-membered ring would be standard too; the five-membered
+      one is chosen because the page's text and sucrose describe it. The anomeric carbon is left
+      unspecified (alpha and beta interconvert in water), as PubChem's own records of D-glucose,
+      galactose and ribose, which the catalog draws, leave it.
+  allulose:
+    smiles: "C([C@@H]1[C@H]([C@H](C(O1)(CO)O)O)O)O"
+    form: D-psicofuranose
+    cid: 11378852
+    has_3d: true
+    line: >-
+      Drawn as a ring, as allulose is in water: D-psicofuranose, the five-membered ring, drawn as
+      fructose is. The SMILES and identifiers are PubChem's open-chain record of the same sugar.
+    basis: >-
+      Allulose is D-psicose, the C3 epimer of fructose: the same atoms with one OH turned the other
+      way. In water almost none of it is the open keto chain PubChem's record (CID 90008) draws; it
+      is a mix of five- and six-membered rings in roughly equal parts, the five-membered alpha ring
+      the commonest single form (Angyal, Adv. Carbohydr. Chem. Biochem. 42, 1984). The five-membered
+      ring is chosen so that allulose is drawn as fructose is and the two differ on the page by the
+      one OH that differs. Its own page's text names no ring. The anomeric carbon is left
+      unspecified, as for fructose.

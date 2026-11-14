@@ -17,6 +17,7 @@ import yaml
 
 from .confidence import label_for
 from . import names, slugs, categories, hooks, structures, similarity, families, buckets, toxicity
+from . import ghs as ghs_wording
 from ..config import SEEDS_DIR
 from ..sources import registry
 from ..sources.registry import LicenceRuleError, assert_not_blocked
@@ -357,6 +358,90 @@ def _uses_name(text: str, name: str) -> bool:
     """``name`` appears in ``text`` as a whole word or phrase, in any case: "baking soda" is in
     "Baking soda. It releases...", and "tea" is not in "steam"."""
     return re.search(rf"(?<![^\W\d_]){re.escape(name)}(?![^\W\d_])", text, re.IGNORECASE) is not None
+
+
+# ── One-element records (Garrett's ruling on the phase 10 review, 2026-11-15; built in phase 3A) ──
+# On a record whose formula is one element (Fe, I2, O3), PubChem's synonym list is mostly the names
+# of products that contain the element, indexed from their labels: bismuth "Colitis", polonium "Mens
+# external delayed", iron "Ancor B, Ferrovac E". No rule tells them from a medicine's brand, so the
+# "Also called" line on such a record uses Wikidata's names only, as the Short answers already do
+# (Garrett, 2026-10-21). One exception keeps the frozen titles where they are: a PubChem name the
+# page's own description or curated line uses as a whole word stays ("Chrome" under chromium,
+# whose description speaks of chrome plating and whose title carries it). It applies to no other
+# element today. Runs after attach_descriptions (the descriptions never read this line) and
+# before attach_title_synonyms (which reads it).
+_ONE_ELEMENT = re.compile(r"[A-Z][a-z]?\d*")
+
+
+def one_element(rec: dict) -> bool:
+    """True when the record's formula is a single element, with or without a count (Fe, I2, O3)."""
+    return bool(_ONE_ELEMENT.fullmatch(rec.get("molecular_formula") or ""))
+
+
+def apply_one_element_names(records: list[dict]) -> int:
+    """Narrow every one-element record's ``display_synonyms`` to its Wikidata names, plus a PubChem
+    name its own description or curated line uses. Returns how many lines changed."""
+    changed = 0
+    for rec in records:
+        if not one_element(rec):
+            continue
+        texts = [rec.get("description"), (rec.get("why_it_matters") or {}).get("text")]
+        wd = list(rec.get("wikidata_names") or [])
+        own = {n.casefold() for n in wd}
+        kept = [n for n in rec.get("display_synonyms") or []
+                if n.casefold() not in own and any(_uses_name(t, n) for t in texts if t)]
+        line = (wd + kept)[:DISPLAY_SYNONYMS_MAX]
+        if line != rec.get("display_synonyms"):
+            changed += 1
+        rec["display_synonyms"] = line
+    return changed
+
+
+# ── Where an element's symbol comes from (Garrett, 2026-11-15; phase 3A) ──────────────────────
+# Eleven symbols are not the English name's letters: Na from natrium, Fe from ferrum, W from wolfram.
+# A small curated seed (seeds/element_symbols.yaml) gives each one's source name, shown as a short
+# line on the element's page; kind Editorial, source MoleculeFinder curated.
+ELEMENT_SYMBOLS = SEEDS_DIR / "element_symbols.yaml"
+
+
+@functools.lru_cache(maxsize=1)
+def element_symbols() -> dict:
+    """slug -> {symbol, name, line} from the seed; each line must name its symbol and its name."""
+    if not ELEMENT_SYMBOLS.exists():
+        return {}
+    data = yaml.safe_load(ELEMENT_SYMBOLS.read_text()) or {}
+    out, problems = {}, []
+    for slug, e in (data.get("elements") or {}).items():
+        sym, name, line = (str((e or {}).get(k) or "").strip() for k in ("symbol", "name", "line"))
+        if not (sym and name and line and (e or {}).get("from")):
+            problems.append(f"{slug}: needs symbol, name, line and from")
+        elif sym not in line or name not in line or not line.endswith("."):
+            problems.append(f"{slug}: the line must name {sym} and {name} and end with a full stop")
+        else:
+            out[slug] = {"symbol": sym, "name": name, "line": line}
+    if problems:
+        raise SystemExit(f"{ELEMENT_SYMBOLS.name}: " + "; ".join(problems))
+    return out
+
+
+def attach_symbol_origins(records: list[dict]) -> int:
+    """``symbol_origin`` on each seeded element record, and on no other (an absent key, not a null,
+    so the 904 other records' files do not change and IndexNow resubmits none of them). A seed entry
+    whose record is missing, or whose symbol is not the record's formula, stops the build."""
+    seed = element_symbols()
+    by_slug = {r["slug"]: r for r in records}
+    problems = []
+    for slug, e in seed.items():
+        rec = by_slug.get(slug)
+        if rec is None:
+            problems.append(f"{slug}: not in the catalog")
+        elif rec.get("molecular_formula") != e["symbol"]:
+            problems.append(f"{slug}: formula {rec.get('molecular_formula')!r} is not {e['symbol']!r}")
+        else:
+            rec["symbol_origin"] = {**e, "confidence": "from_source", "source": _src("curated")}
+    if problems:
+        raise SystemExit(f"{ELEMENT_SYMBOLS.name}: " + "; ".join(problems))
+    return len(seed)
 
 
 def attach_title_synonyms(records: list[dict], labels: dict, do_not_use=None) -> None:
@@ -947,6 +1032,43 @@ def prune_thin_categories(records: list[dict], min_members: int = MIN_HUB_MEMBER
              ", ".join(sorted(f"{k}:{s}" for k, s in dropped)[:8]))
 
 
+# ── Display structures (phase 3A, 2026-11-14) ─────────────────────────────────────────────────
+# A sugar's PubChem record is its open chain; in water it is a ring, and the site's text describes
+# the ring. seeds/structure_display.yaml gives the SMILES its drawing is drawn from, checked here to
+# be the same sugar (structures.ring_opens_to). The record's identifiers are untouched.
+STRUCTURE_DISPLAY = SEEDS_DIR / "structure_display.yaml"
+
+
+@functools.lru_cache(maxsize=1)
+def _display_seed() -> dict:
+    if not STRUCTURE_DISPLAY.exists():
+        return {}
+    return (yaml.safe_load(STRUCTURE_DISPLAY.read_text()) or {}).get("molecules") or {}
+
+
+def structure_display_for(slug: str, iso: str | None) -> dict | None:
+    """The record's ``structure_display`` ({smiles, form, cid, has_3d, line, confidence, source}) or
+    None. An entry whose ring does not open to the record's own SMILES stops the build."""
+    e = _display_seed().get(slug)
+    if not e:
+        return None
+    smiles, form, line = (str(e.get(k) or "").strip() for k in ("smiles", "form", "line"))
+    problems = []
+    if not (smiles and form and line and e.get("basis") and isinstance(e.get("cid"), int)
+            and isinstance(e.get("has_3d"), bool)):
+        problems.append("needs smiles, form, cid, has_3d, line and basis")
+    elif not iso:
+        problems.append("the record has no SMILES of its own")
+    elif not structures.ring_opens_to(smiles, iso):
+        problems.append(f"{form}'s ring does not open to the record's own SMILES {iso}: not the same sugar")
+    elif "\u2014" in line or "\u2013" in line:
+        problems.append("a dash in the line")
+    if problems:
+        raise SystemExit(f"{STRUCTURE_DISPLAY.name}: {slug}: " + "; ".join(problems))
+    return {"smiles": smiles, "form": form, "cid": e["cid"], "has_3d": e["has_3d"],
+            "line": " ".join(line.split()), "confidence": "from_source", "source": _src("curated")}
+
+
 def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
     """``structure_svg`` + the fingerprint that says when it may be reused.
 
@@ -1040,6 +1162,7 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
     if curated.get("display_name"):
         title = curated["display_name"]
     slug = slugs.unique_slug(curated.get("slug") or pref or title or f"cid-{cid}", taken)
+    display = structure_display_for(slug, iso)
 
     rec = {
         "cid": cid, "slug": slug, "title": _normalize_greek(title), "preferred_name": pref,
@@ -1064,13 +1187,17 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         # The Short answers' "What else is X called?" (run B2): the same filters, Wikidata only.
         "wikidata_names": wikidata_display_names(_normalize_greek(title), row),
         "title_synonym": None,
-        **_carried_svg(iso, prior),
+        # The drawing is drawn from the display structure when there is one (structures.drawn_smiles).
+        **_carried_svg(display["smiles"] if display else iso, prior),
+        # "structure_display" is added below only when there is one (no null key on 913 records).
         # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
-        # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D).
-        "has_3d": props.get("Volume3D") is not None,
+        # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D). With a
+        # display structure the 3D model is that ring form's conformer (its CID), read into the seed.
+        "has_3d": display["has_3d"] if display else props.get("Volume3D") is not None,
         "descriptors": _descriptors(props),
         "toxicity": list(fetched.get("toxicity") or []),
-        "ghs": fetched.get("ghs"),
+        # Phase 3A: the words for each code the US Hazard Communication Standard words (ghs.with_wording).
+        "ghs": ghs_wording.with_wording(fetched.get("ghs")),
         "properties": [], "categories": [], "hooks": [], "edges": [], "content_blocks": [],
         "half_life_hours": None,
         # The molecule's one LD50 (_apply_primary_ld50 -> toxicity.primary_ld50), which also
@@ -1092,6 +1219,8 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "batch": row.get("batch") or None,
     }
 
+    if display:
+        rec["structure_display"] = display
     if curated:
         _merge_curated(rec, curated)
 

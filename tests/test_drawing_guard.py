@@ -55,7 +55,9 @@ WORKFLOW = ROOT / ".github" / "workflows" / "etl.yml"
 MONDAY = [
     "structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing",
     "structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable",
-    ("compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); "
+    # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
+    # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).
+    ("compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); "
     "147 carried, 0 repainted, 0 made"),
     "repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)",
 ]

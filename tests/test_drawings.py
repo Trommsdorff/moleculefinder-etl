@@ -70,7 +70,7 @@ def sweep(records):
     machine draws the SMILES exactly as shipped, the reading from the SVG alone against RDKit."""
     out = {}
     for r in records:
-        svg, smi = r.get("structure_svg"), r.get("isomeric_smiles")
+        svg, smi = r.get("structure_svg"), S.drawn_smiles(r)
         if not svg:
             continue
         mol = Chem.MolFromSmiles(smi)
@@ -175,7 +175,7 @@ def test_every_dot_sits_where_the_shipped_lines_put_its_atom(records):
         sp = r.get("structure_parts")
         if not sp or not sp["parts"]:
             continue
-        mol = Chem.MolFromSmiles(r["isomeric_smiles"])
+        mol = Chem.MolFromSmiles(S.drawn_smiles(r))
         exact = G.exact_points(r["structure_svg"], G.drawing_mol(mol, r["structure_svg"]))
         # Phase 5B: a chain-end atom on a double bond (limonene's =CH2) is drawn as two parallel
         # lines either side of the bond's axis; exact_points takes one line's end, the atom sits
@@ -216,7 +216,7 @@ def test_default_parts_are_capped_and_never_the_whole_molecule(records):
         if not sp or not sp["parts"]:
             continue
         assert len(sp["parts"]) <= 3
-        mol = Chem.MolFromSmiles(r["isomeric_smiles"])
+        mol = Chem.MolFromSmiles(S.drawn_smiles(r))
         heavy = {a.GetIdx() for a in mol.GetAtoms() if a.GetAtomicNum() > 1 and a.GetDegree() > 0}
         for p in sp["parts"]:
             assert not set(p["atoms"]) >= heavy or p["confidence"] == "from_source", (r["slug"], p["id"])
@@ -247,7 +247,7 @@ def test_every_aligned_pair_puts_the_core_on_the_same_pixels(by_slug, pairs):
         if p["mode"] != "aligned":
             continue
         a, b = by_slug[p["a"]], by_slug[p["b"]]
-        ma, mb = Chem.MolFromSmiles(a["isomeric_smiles"]), Chem.MolFromSmiles(b["isomeric_smiles"])
+        ma, mb = Chem.MolFromSmiles(S.drawn_smiles(a)), Chem.MolFromSmiles(S.drawn_smiles(b))
         ea = G.exact_points(a["structure_svg"], G.drawing_mol(ma, a["structure_svg"]))
         eb = G.exact_points(p["b_svg"], G.drawing_mol(mb, p["b_svg"]))
         ga, gb = _glyphs(a["structure_svg"], ma.GetNumAtoms()), _glyphs(p["b_svg"], mb.GetNumAtoms())
@@ -286,7 +286,10 @@ def test_the_pair_counts(pairs):
     assert len(pairs["pairs"]) == 147
     # phase 5A: 24 highlighted, 51 aligned; phase 5B adds the seven three-dimensional marks, one of
     # them (isotretinoin vs tretinoin) on the two shipped drawings
-    assert modes == {"aligned+highlight": 30, "aligned": 44, "shipped": 72, "shipped+highlight": 1}
+    # phase 3A (2026-11-14): allulose and fructose drawn as their rings; erythritol vs allulose goes from
+    # aligned+highlight to shipped (a ring shares 2 atoms with a 4-carbon chain), sucrose vs fructose from
+    # shipped to aligned (fructose's ring is sucrose's own fructose unit)
+    assert modes == {"aligned+highlight": 29, "aligned": 45, "shipped": 72, "shipped+highlight": 1}
     assert sum(1 for p in pairs["pairs"].values() if p.get("stereo")) == 7
 
 
@@ -547,7 +550,7 @@ def test_every_highlighted_pair_has_a_caption_and_the_rule_wrote_all_but_the_cur
             assert rule != p["caption"], f"{slug}: the rule now says it; drop it from curated"
         else:
             assert rule == p["caption"], (slug, rule, p["caption"])
-    assert len(curated) == 12
+    assert len(curated) == 11          # phase 3A: erythritol vs allulose's caption left with its highlight
 
 
 def test_a_pair_that_differs_only_in_space_is_marked_on_both(by_slug, pairs):

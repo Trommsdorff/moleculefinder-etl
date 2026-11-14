@@ -244,6 +244,16 @@ class _Guard:
         return False
 
 
+def _smiles_moved(rec: dict, old: dict) -> str:
+    """Why a drawing's SMILES moved: the record's own SMILES, or its curated display structure
+    (phase 3A, seeds/structure_display.yaml), which is a named input like any SMILES."""
+    if rec.get("isomeric_smiles") != old.get("isomeric_smiles"):
+        return "its SMILES changed"
+    form = (rec.get("structure_display") or {}).get("form")
+    return (f"its display structure changed (structure_display.yaml: drawn as {form})" if form
+            else "its display structure was removed (structure_display.yaml)")
+
+
 # ── structure_svg ─────────────────────────────────────────────────────────────────────────────
 def _structure_svg(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
     name = f"{rec['slug']} (structure drawing)"
@@ -262,14 +272,14 @@ def _structure_svg(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
     if key == old.get("structure_svg_key"):
         if svg != was:
             g.stop(name, "changed under an unchanged key (structure_svg)")
-        elif rec.get("isomeric_smiles") != old.get("isomeric_smiles"):
+        elif structures.drawn_smiles(rec) != structures.drawn_smiles(old):
             g.stop(name, "kept under an unchanged key although its SMILES moved (the key covers it)")
         else:
             t.add("carried")
         return
-    smiles, before = rec.get("isomeric_smiles"), old.get("isomeric_smiles")
+    smiles, before = structures.drawn_smiles(rec), structures.drawn_smiles(old)
     if smiles != before:
-        why = "its SMILES changed"
+        why = _smiles_moved(rec, old)
     else:
         # The key is recipe, canvas and SMILES; the SMILES held, so the recipe moved on purpose.
         older = {structures.svg_key(smiles, recipe=r): r for r in structures.RECOLOURABLE} if smiles else {}
@@ -309,7 +319,7 @@ def _structure_parts(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
     if new is not None and prev is not None and new.get("key") == prev.get("key"):
         moved = [w for w, a, b in (("drawing", _geometry(old.get("structure_svg")),
                                     _geometry(rec.get("structure_svg"))),
-                                   ("SMILES", old.get("isomeric_smiles"), rec.get("isomeric_smiles")))
+                                   ("SMILES", structures.drawn_smiles(old), structures.drawn_smiles(rec)))
                  if a != b]
         if _bytes(new) != _bytes(prev):
             g.stop(name, "changed under an unchanged key (" + ", ".join(_differs(prev, new)) + ")")
@@ -319,8 +329,8 @@ def _structure_parts(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
         return
     what = "made" if prev is None else "dropped" if new is None else "remade"
     reasons = []
-    if rec.get("isomeric_smiles") != old.get("isomeric_smiles"):
-        reasons.append("its SMILES changed")
+    if structures.drawn_smiles(rec) != structures.drawn_smiles(old):
+        reasons.append(_smiles_moved(rec, old))
     if _geometry(rec.get("structure_svg")) != _geometry(old.get("structure_svg")):
         reasons.append("its drawing changed")
     if new is not None and prev is not None and new.get("recipe") != prev.get("recipe"):
@@ -416,7 +426,7 @@ def _pair(g: _Guard, t: _Tally, slug: str, new: dict, prev: dict | None,
                          f"pair's key did not (bump drawings.PAIRS_RECIPE to make the pair again)")
             return
         moved = [f"{new.get(side)}'s SMILES" for side, m_now, m_was in (("a", a_now, a_was), ("b", b_now, b_was))
-                 if m_now.get("isomeric_smiles") != m_was.get("isomeric_smiles")]
+                 if structures.drawn_smiles(m_now) != structures.drawn_smiles(m_was)]
         if _geometry(a_now.get("structure_svg")) != _geometry(a_was.get("structure_svg")):
             moved.append(f"{new.get('a')}'s drawing")
         if moved and _bytes(new) == _bytes(prev):
@@ -438,8 +448,8 @@ def _pair(g: _Guard, t: _Tally, slug: str, new: dict, prev: dict | None,
     if new.get("recipe") != prev.get("recipe"):
         reasons.append(f"the pairs recipe moved from {prev.get('recipe')} to {new.get('recipe')}")
     for side, mol_now, mol_was in (("a", a_now, a_was), ("b", b_now, b_was)):
-        if mol_now.get("isomeric_smiles") != mol_was.get("isomeric_smiles"):
-            reasons.append(f"{new.get(side)}'s SMILES changed")
+        if structures.drawn_smiles(mol_now) != structures.drawn_smiles(mol_was):
+            reasons.append(f"{new.get(side)}'s " + _smiles_moved(mol_now, mol_was).removeprefix("its "))
     if _geometry(a_now.get("structure_svg")) != _geometry(a_was.get("structure_svg")):
         reasons.append(f"{new.get('a')}'s drawing changed")
     if reasons:

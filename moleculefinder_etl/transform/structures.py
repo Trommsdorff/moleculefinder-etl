@@ -266,6 +266,54 @@ RECOLOURABLE: dict[str, tuple[dict[int, str], str]] = {
 }
 
 
+def drawn_smiles(rec: dict | None) -> str | None:
+    """The SMILES a record's drawing is drawn from: its curated display structure when it has one
+    (phase 3A, seeds/structure_display.yaml: a sugar drawn as the ring it is in water), else its
+    isomeric SMILES. Every drawing recipe (the structure, its parts, its pairs) and the drawing
+    guard read this, never ``isomeric_smiles`` directly; the record's identifiers stay its own."""
+    rec = rec or {}
+    return (rec.get("structure_display") or {}).get("smiles") or rec.get("isomeric_smiles")
+
+
+def ring_opened(smiles: str) -> str | None:
+    """The open chain of a cyclic sugar (a hemiacetal or hemiketal ring): the bond from the anomeric
+    carbon (a ring carbon bearing the ring oxygen and an OH) to the ring oxygen broken, that OH made
+    the C=O, the anomeric carbon's stereo dropped. Canonical isomeric SMILES, or None when the
+    molecule has not exactly one such carbon."""
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(smiles) if smiles else None
+    if mol is None:
+        return None
+    hits = mol.GetSubstructMatches(Chem.MolFromSmarts("[CX4;R]([OX2;R])[OX2H1;!R]"))
+    if len(hits) != 1:
+        return None
+    c, o_ring, o_h = hits[0]
+    rw = Chem.RWMol(mol)
+    rw.RemoveBond(c, o_ring)
+    rw.GetBondBetweenAtoms(c, o_h).SetBondType(Chem.BondType.DOUBLE)
+    rw.GetAtomWithIdx(c).SetChiralTag(Chem.ChiralType.CHI_UNSPECIFIED)
+    for i in (c, o_ring, o_h):
+        a = rw.GetAtomWithIdx(i)
+        a.SetNoImplicit(False)
+        a.SetNumExplicitHs(0)
+    Chem.SanitizeMol(rw)
+    Chem.AssignStereochemistry(rw, cleanIt=True, force=True)
+    return Chem.MolToSmiles(rw)
+
+
+def ring_opens_to(ring_smiles: str, chain_smiles: str) -> bool:
+    """True when ``ring_smiles`` is the ring form of ``chain_smiles``: same formula, and the ring
+    opened at its anomeric carbon is the chain, every stereocentre included (phase 3A)."""
+    from rdkit import Chem
+    from rdkit.Chem.rdMolDescriptors import CalcMolFormula
+
+    ring, chain = Chem.MolFromSmiles(ring_smiles or ""), Chem.MolFromSmiles(chain_smiles or "")
+    if ring is None or chain is None or CalcMolFormula(ring) != CalcMolFormula(chain):
+        return False
+    return ring_opened(ring_smiles) == Chem.MolToSmiles(chain)
+
+
 def svg_key(smiles: str, width: int = 400, height: int = 300,
             recipe: str = RECIPE_VERSION) -> str:
     """Fingerprint of everything that decides what ``svg_for`` draws.

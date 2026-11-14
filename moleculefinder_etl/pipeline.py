@@ -433,6 +433,11 @@ def stage_transform(settings: Settings) -> list[dict]:
     # assembled above, so it has to see all of them. Raises on a duplicate or a
     # sub-100-character description rather than shipping one.
     assemble.attach_descriptions(kept)
+    # Phase 3A (Garrett, 2026-11-15): a one-element record's "Also called" line from Wikidata's names
+    # only (plus a name its own text uses), and the eleven symbols' source names. After the
+    # descriptions (which never read the line), before the title's parenthetical (which does).
+    log.info("  names: %d one-element line(s) narrowed to Wikidata's names", assemble.apply_one_element_names(kept))
+    log.info("  names: %d element symbol origin(s)", assemble.attach_symbol_origins(kept))
     # The title's parenthetical: the Wikidata label where it differs from the title, else a
     # name on the synonym line that the description itself uses. After the description.
     assemble.attach_title_synonyms(kept, {int(r["cid"]): r.get("wikidata_label") for r in canon})

@@ -38,6 +38,10 @@ IMPLIED: tuple[tuple[str, str], ...] = (
     # Phase 5A (2026-11-12): the parts of a drawing, found by curated rules and drawn by RDKit, and a
     # polymer's curated repeat unit (transform/drawings.py).
     ("structure_parts", "curated"), ("structure_repeat_unit", "curated"),
+    # Phase 3A (2026-11-14): where an element's symbol comes from (seeds/element_symbols.yaml).
+    ("symbol_origin", "curated"),
+    # Phase 3A: a sugar's ring form, the SMILES its drawing is drawn from (seeds/structure_display.yaml).
+    ("structure_display", "curated"),
 )
 
 # A licence record's register (lib/registers.ts on the web) -> registry key. A record with no
@@ -99,6 +103,8 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
     if g:
         for s in g.get("sources") or [None]:
             yield f"{slug}.ghs", s
+        if g.get("h_wording"):                       # phase 3A: the words for the codes cite their own source
+            yield f"{slug}.ghs.h_wording", _key(g.get("h_wording_source"))
     if m.get("ld50_mg_per_kg") is not None:
         row = next((t for t in m.get("toxicity") or []
                     if (t.get("value_num"), t.get("species"), t.get("route"))
