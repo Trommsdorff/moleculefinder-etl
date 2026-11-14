@@ -11,13 +11,14 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 `../MoleculeFinder_Technical_Build_Plan.md` (sections 4–7). The web repo is `../moleculefinder-web/` (its own CLAUDE.md).
 
 ## Current state (update these lines; the record goes in HISTORY.md)
-- **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. Phases 1, 2, 4, 5A, 5B, 6, 7, the gate hold and
-  the drawing guard are live. Catalog 915 molecules; 424 product pages; 6 doors.
+- **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. The redesign's phases 1, 2 and 4 to 10 are all
+  live (with 5A, 5B, the gate hold and the drawing guard); phase 3 remains. Catalog 915 molecules; 424 product pages; 6 doors.
 - **Phase 8 DEPLOYED 2026-11-14** (`eb429a4`): the tertiary amine rule; the epoxide rule above both amine rules; the
   amine rule narrowed (every neighbour an sp3 carbon); gold's "Aurum Metallicum" on the do-not-use list.
-- **Phase 10 BUILT, waiting for Garrett** (`removals-2026-11`, never pushed; it carries the phase 8 records commit): no
-  Deadliest or Safest board, no `dose_poison`/`bac`/`still_in_system` hook records, Latin remedy names off the "Also
-  called" line by rule (`assemble.latin_pharmacy_name`). Record: HISTORY.md, "Phase 10". Deploys with web `main`.
+- **Phase 10 DEPLOYED 2026-11-14** (`6848793`, with web `74f2e68`): no Deadliest or Safest board, no
+  `dose_poison`/`bac`/`still_in_system` hook records, Latin remedy names off the "Also called" line by rule
+  (`assemble.latin_pharmacy_name`). Record: HISTORY.md, "Phase 10". **Next ETL phase (phase 3) also carries:** one-element
+  records' "Also called" from Wikidata's names only, the Latin symbol names (natrium ... plumbum) kept as a seed.
 - **Monday 2026-11-16** is the drawing guard's acceptance: `structure parts: 718 carried, 0 made, 193 with no part, 4
   drawings unreadable`, the other three Drawings lines unchanged (HISTORY.md, "Phase 8"); the guide is
   `docs/DRAWING-RECIPES.md` section 10.
