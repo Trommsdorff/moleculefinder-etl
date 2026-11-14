@@ -1,5 +1,4 @@
 """Per-molecule record assembly: hooks (§7.1), confidence routing, edges, filter-4."""
-import math
 import yaml
 import pytest
 
@@ -43,26 +42,22 @@ def test_identity_and_structure():
     assert "curated" not in rec                     # internal overlay stripped from the record
 
 
-# ── the caffeine still-in-your-system flagship (t½ ≈ 5 h) ────────────────────
-def test_caffeine_half_life_hook_and_property():
+# ── caffeine's half-life and serving stay as curated properties (t½ ≈ 5 h) ───
+def test_caffeine_half_life_and_serving_are_properties_with_no_calculator_hook():
+    """Phase 10 (Garrett's rulings, 2026-11-09): the still-in-the-system, dose and blood alcohol
+    hooks stop; the half-life and typical serving stay as two curated values."""
     rec = _caffeine()
-    sis = _hooks_by_type(rec)["still_in_system"]
-    assert sis["params"]["half_life_hours"] == 5.0 and sis["params"]["serving_mg"] == 95
-    assert sis["confidence"] == COMPUTED
-    # the stored input that feeds the client decay curve, labeled as a curated fact
+    assert not {"still_in_system", "dose_poison", "bac"} & set(_hooks_by_type(rec))
     hl = next(p for p in rec["properties"] if p["key"] == "half_life_hours")
     assert hl["value_num"] == 5.0 and hl["confidence"] == FROM_SOURCE
-    # sanity on the model the web app will run: one half-life ⇒ half remains
-    k = math.log(2) / sis["params"]["half_life_hours"]
-    assert math.isclose(math.exp(-k * 5.0), 0.5, rel_tol=1e-9)
+    sv = next(p for p in rec["properties"] if p["key"] == "serving_mg")
+    assert sv["value_num"] == 95 and sv["confidence"] == FROM_SOURCE
 
 
-def test_dose_poison_prefers_curated_ld50():
+def test_curated_ld50_pin_still_wins():
     rec = _caffeine()
-    dp = _hooks_by_type(rec)["dose_poison"]
-    assert dp["confidence"] == INFERRED                 # rodent → human extrapolation
-    assert dp["params"]["ld50_mg_per_kg"] == 192 and dp["params"]["species"] == "rat"
     assert rec["ld50_mg_per_kg"] == 192                 # curated choice wins over the lower 127 (mouse)
+    assert rec["ld50_species"] == "rat" and rec["ld50_route"] == "oral"
     assert rec["toxicity"][0]["value_num"] == 192       # prepended as the representative row
 
 

@@ -1,8 +1,8 @@
 """One LD50 everywhere (Garrett, 2026-09-12).
 
 The Safety panel led with the parser's first row, the lowest oral value in any species, while
-the dose hook, the Deadliest and Safest boards and the /vs tables read the oral-rat-first
-choice. 53 molecules showed one LD50 on their own page and another everywhere else:
+the dose hook, the Deadliest and Safest boards (all three removed in phase 10, 2026-11) and the /vs
+tables read the oral-rat-first choice. 53 molecules showed one LD50 on their own page and another everywhere else:
 acetaminophen's panel said 338 mg/kg in the mouse and its comparison tables 1,944 in the rat.
 These pin the one choice (toxicity.primary_ld50) and that every reader gets the same row.
 """
@@ -90,12 +90,11 @@ def _dose_hook(rec):
     return next((h for h in rec["hooks"] if h["type"] == "dose_poison"), None)
 
 
-def test_the_panel_the_hook_and_the_record_read_one_row():
+def test_the_panel_and_the_record_read_one_row():
     rec = _assemble("Acetaminophen", 1983, ACETAMINOPHEN, ACETAMINOPHEN_PROPS)
     assert (rec["ld50_mg_per_kg"], rec["ld50_route"], rec["ld50_species"]) == (1944.0, "oral", "rat")
     assert _key(rec["toxicity"][0]) == (1944.0, "oral", "rat")        # the Safety panel's first row
-    params = _dose_hook(rec)["params"]
-    assert (params["ld50_mg_per_kg"], params["route"], params["species"]) == (1944.0, "oral", "rat")
+    assert _dose_hook(rec) is None                                    # phase 10: no dose hook
     # the other five keep their order behind it
     assert [_key(r) for r in rec["toxicity"][1:]] == \
         [_key(r) for r in ACETAMINOPHEN if r["value_num"] != 1944.0]
@@ -108,7 +107,6 @@ def test_a_curated_overlay_still_pins_the_value():
     rec = _assemble("Caffeine", 2519, [_row(150.0), _row(192.0), _row(127.0, species="mouse"),
                                        _row(105.0, "iv")], CAFFEINE_PROPS, curated)
     assert _key(rec["toxicity"][0]) == (192, "oral", "rat") and rec["ld50_mg_per_kg"] == 192
-    assert _dose_hook(rec)["params"]["ld50_mg_per_kg"] == 192
 
 
 def test_an_injected_only_molecule_shows_its_ld50_but_gets_no_dose_hook():
@@ -118,11 +116,8 @@ def test_an_injected_only_molecule_shows_its_ld50_but_gets_no_dose_hook():
     assert _dose_hook(rec) is None
 
 
-def test_the_ld50_boards_rank_only_an_oral_value_and_print_the_page_value():
-    acet = _assemble("Acetaminophen", 1983, ACETAMINOPHEN, ACETAMINOPHEN_PROPS)
-    stearic = _assemble("Stearic acid", 5281, STEARIC_ACID, STEARIC_ACID_PROPS)
-    for board in ("deadliest", "safest"):
-        entries = leaderboards.rank(board, [acet, stearic])["entries"]
-        assert [e["slug"] for e in entries] == [acet["slug"]]
-        assert (entries[0]["value_num"], entries[0]["route"], entries[0]["species"]) == \
-            (1944.0, "oral", "rat")
+def test_no_board_ranks_an_ld50():
+    """Phase 10 (Garrett's rulings, 2026-11-09: no safest or deadliest rankings). The weekly run
+    must not write the Deadliest or Safest board back, and no other board may rank an LD50."""
+    assert not {"deadliest", "safest"} & set(leaderboards.BOARDS)
+    assert all(b["metric"] != "ld50_mg_per_kg" for b in leaderboards.BOARDS.values())

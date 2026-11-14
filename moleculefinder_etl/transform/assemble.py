@@ -218,7 +218,8 @@ def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms,
     ("Aluminium flake"), sits inside it ("Al"), or is within two letters of it ("aluminum" under
     Aluminium, "acyclovir" under Aciclovir). So is a name on the do-not-use list, which names
     something other than the molecule ("chamomile" under Apigenin): ``do_not_use`` is the
-    casefolded list, the seed file by default (see synonym_do_not_use). Duplicates are compared
+    casefolded list, the seed file by default (see synonym_do_not_use). So is a Latin remedy or
+    pharmacopoeia label name ("Aurum Metallicum", latin_pharmacy_name). Duplicates are compared
     case-insensitively and the first one kept. The four are counted after the filters, so a
     dropped name makes room.
     """
@@ -229,13 +230,53 @@ def display_synonyms(title: "str | None", wikidata_names, pubchem_synonyms,
     for raw in [*(wikidata_names or []), *(pubchem_synonyms or [])]:
         name = (raw or "").strip()
         key = name.casefold()
-        if not _readable_name(name) or key in seen or key in skip or _near_title(key, forms):
+        if (not _readable_name(name) or key in seen or key in skip or _near_title(key, forms)
+                or latin_pharmacy_name(name)):
             continue
         seen.add(key)
         out.append(name)
         if len(out) == DISPLAY_SYNONYMS_MAX:
             break
     return out
+
+
+# ── Latin pharmacy and remedy names (Garrett's ruling at the phase 8 deploy, 2026-11-14) ──────
+# Gold's line read "Also called Aurum Metallicum": the label name of a homeopathic remedy, which
+# PubChem lists as a synonym. Homeopathic and old pharmacopoeia labels name a substance in Latin, a
+# noun and a Latin adjective ("Argentum metallicum", "Natrum muriaticum", "Acidum citricum",
+# "Calcarea gluconica", "Carboneum oxygenisatum", "Kali iodatum") or a Latin genitive salt
+# ("Natrii sulphis", "Calcii gluconas"). Nobody calls the substance that, so such a name never
+# reaches the line under the H1, the "What else is X called?" answer or the title. The search list
+# (`synonyms`) keeps them. The rule reads the words' Latin endings, which English never uses, and
+# every word of the name must be Latin-shaped, so "fused silica" or "colloidal silica" is not one.
+# A one-word Latin form ("Silicium", "Argentum", "Tomoxetinum") is not judged by this rule: it
+# cannot be told apart from a real name by its shape ("Meldonium", "Columbium").
+_LATIN_QUALIFIER = re.compile(r"^(?:[a-z]+(?:icum|icus|osum)|crudum|purum|[a-z]*(?:od|or|ur|is|om|yd)atum"
+                              r"|acidum|alcoholum)$")
+_METALLICUM = re.compile(r"^metal+icum$")                     # and its misspellings ("Metalicum")
+_LATIN_NOUN = re.compile(r"^[a-z]+(?:um|ea|ia|ii|i|[^o]us)$")    # not "-ous": "vitreous", "diatomaceous"
+_LATIN_FEMININE_QUALIFIER = re.compile(r"^[a-z]+ica$")       # after "Calcarea" or "Magnesia" only
+_LATIN_SALT = re.compile(r"^[a-z]+(?:as|is)$")                # after a genitive: "Natrii sulphis"
+
+
+def latin_pharmacy_name(name: str) -> bool:
+    """True for a Latin remedy or pharmacopoeia label name ("Aurum Metallicum", "Natrum muriaticum",
+    "Acidum lacticum", "Calcarea gluconica", "Natrii sulphis"); see the note above."""
+    words = (name or "").casefold().replace("-", " ").split()
+    if any(_METALLICUM.match(w) for w in words):
+        return True
+    if len(words) not in (2, 3):
+        return False
+    if (any(_LATIN_QUALIFIER.match(w) for w in words)
+            and all(_LATIN_QUALIFIER.match(w) or _LATIN_NOUN.match(w) for w in words)):
+        return True
+    if len(words) == 2:
+        first, second = words
+        if first.endswith(("ea", "ia")) and _LATIN_FEMININE_QUALIFIER.match(second):
+            return True
+        if first.endswith("ii") and _LATIN_SALT.match(second):
+            return True
+    return False
 
 
 def _wikidata_names(row: dict) -> list:

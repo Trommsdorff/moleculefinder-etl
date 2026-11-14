@@ -188,7 +188,9 @@ def _glucose(by_slug: dict, boards: dict) -> str | None:
 
 
 def _nicotine(by_slug: dict, boards: dict) -> str | None:
-    hl = [h.get("params", {}).get("half_life_hours") for h in (by_slug.get("nicotine") or {}).get("hooks") or []]
+    # The curated half-life property (phase 10: the still-in-the-system hook that also carried it stopped).
+    hl = [p.get("value_num") for p in (by_slug.get("nicotine") or {}).get("properties") or []
+          if p.get("key") == "half_life_hours"]
     hl = [x for x in hl if x is not None]
     return None if hl and 1.5 <= hl[0] <= 2.5 else f"nicotine's half-life is {hl}, not about two hours"
 

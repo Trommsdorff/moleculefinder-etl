@@ -9,31 +9,9 @@ from __future__ import annotations
 
 # board slug -> display + ranking metadata
 BOARDS: dict[str, dict] = {
-    "deadliest": {
-        "title": "Deadliest",
-        "metric": "ld50_mg_per_kg",
-        "direction": "asc",  # a lower LD50 = a smaller lethal dose = deadlier
-        "unit": "mg/kg",
-        "value_label": "LD50",
-        "confidence": "from_source",
-        # The route is now shown per row (`columns`), because until 2026-09 this board
-        # claimed oral and ranked whatever route a molecule happened to have. It now
-        # ranks each molecule's one LD50 (toxicity.primary_ld50) only when that is oral
-        # (ORAL_ONLY, below), and says so on every row instead of asking the reader to
-        # trust the header.
-        "columns": ["route", "species"],
-        # Trust run 4 (2026-10-25, the agreed trust list's item 4): the framing sentence leads, so the
-        # page, its meta description and a search snippet all say first what this ranking is not.
-        "description": (
-            "A ranking of pure substances by one animal measurement, not of how dangerous "
-            "any food, drink, medicine or product is to a person. "
-            "Ranked by the lowest reported oral LD50, preferring the rat and then the "
-            "mouse so the numbers compare like with like. Every row names its route and "
-            "species. A molecule measured only by injection is not listed here, because "
-            "an injected dose is not a swallowed one. Animal data shown as neutral "
-            "science: an estimate, never a threshold to act on."
-        ),
-    },
+    # The Deadliest and Safest boards were removed in phase 10 of the everyday chemistry plan
+    # (Garrett's rulings, 2026-11-09: no safest or deadliest rankings); their addresses answer 410
+    # (web lib/gone.ts). Every LD50 stays on its molecule's page, with species, route and form.
     "sweetest": {
         "title": "Sweetest",
         "metric": "relative_sweetness",
@@ -97,22 +75,6 @@ BOARDS: dict[str, dict] = {
             "canon, the gases and small acids most of everyday chemistry is built out of."
         ),
     },
-    "safest": {
-        "title": "Safest",
-        "metric": "ld50_mg_per_kg",
-        "direction": "desc",   # a HIGHER oral LD50 = a larger dose before harm
-        "unit": "mg/kg",
-        "value_label": "LD50",
-        "confidence": "from_source",
-        "columns": ["route", "species"],
-        "description": (
-            "The Deadliest board read the other way: ranked by the HIGHEST reported oral "
-            "LD50, so the molecules that take the largest dose per kilogram of body weight "
-            "to do harm come first. Same oral-only rule and the same route and species on "
-            "every row. A high LD50 means an animal study found a large dose tolerable, "
-            "nothing more: it is not a safety rating and not advice."
-        ),
-    },
     "most-searched": {
         "title": "Most searched",
         "metric": "pageviews_monthly",
@@ -130,13 +92,6 @@ BOARDS: dict[str, dict] = {
 }
 
 
-# The LD50 boards rank each molecule's one LD50 (toxicity.primary_ld50), and only an oral one.
-# That LD50 falls back to an injected or skin value for a molecule with no oral row, which is
-# right on the molecule's own page and wrong under a heading that says oral: it would put
-# stearic acid's 21.5 mg/kg intravenous value back among the deadliest. Kept out of BOARDS,
-# whose every key is written into the board file.
-ORAL_ONLY = frozenset({"deadliest", "safest"})
-
 # Boards whose every entry names the source of its value, read from this record field.
 SOURCE_FIELDS = {"sweetest": "relative_sweetness_source"}
 
@@ -153,13 +108,8 @@ def rank(board: str, molecules: list[dict]) -> dict:
     """Return a self-describing board: its metadata plus ranked, enriched entries."""
     meta = BOARDS[board]
     key, direction = meta["metric"], meta["direction"]
-    have = [m for m in molecules if m.get(key) is not None
-            and (board not in ORAL_ONLY or m.get("ld50_route") == "oral")]
+    have = [m for m in molecules if m.get(key) is not None]
     have.sort(key=lambda m: m[key], reverse=(direction == "desc"))
-    # Extra per-row columns a board declares (the Deadliest board shows the route and
-    # species its value was measured by). Read from `ld50_route` / `ld50_species` and
-    # emitted as plain `route` / `species` so the web renders them without a mapping.
-    extra = meta.get("columns") or []
     entries = [
         {
             "rank": i + 1,
@@ -168,7 +118,6 @@ def rank(board: str, molecules: list[dict]) -> dict:
             "title": m["title"],
             "formula": m.get("molecular_formula"),
             "value_num": m[key],
-            **{c: m.get(f"ld50_{c}") for c in extra},
             # The registry key of the source that reports the value (SEO run 1: every Sweetest
             # entry names one). Kept out of BOARDS for the same reason as ORAL_ONLY.
             **({"source": m.get(SOURCE_FIELDS[board])} if board in SOURCE_FIELDS else {}),

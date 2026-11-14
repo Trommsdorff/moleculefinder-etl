@@ -38,9 +38,7 @@ def test_handmodel_absent_from_every_intrinsic_property_leaderboard():
     sweetness, so it must not appear on a board that ranks those. It is deliberately NOT
     "absent from every board", because `most-searched` (added 2026-09-05) ranks Wikipedia
     pageviews, a real measured value that collagen and starch genuinely have. Dropping
-    them from a most-searched board would be the same class of error as the Deadliest
-    board ranking an intravenous LD50 under an oral heading: a board that does not do
-    what its title says.
+    them from a most-searched board would be a board that does not do what its title says.
     """
     recs = _mixed_records()
     intrinsic = [b for b in leaderboards.BOARDS
@@ -49,8 +47,8 @@ def test_handmodel_absent_from_every_intrinsic_property_leaderboard():
         entries = leaderboards.rank(board, recs)["entries"]
         slugs = {e["slug"] for e in entries}
         assert "collagen" not in slugs and "starch" not in slugs, f"macromolecule leaked onto {board}"
-    # the real molecule still ranks where it has data (caffeine has an LD50)
-    assert any(e["slug"] == "caffeine" for e in leaderboards.rank("deadliest", recs)["entries"])
+    # the real molecule still ranks where it has data (caffeine has a molecular weight)
+    assert any(e["slug"] == "caffeine" for e in leaderboards.rank("biggest", recs)["entries"])
 
 
 def test_handmodel_ranks_on_the_attention_board():

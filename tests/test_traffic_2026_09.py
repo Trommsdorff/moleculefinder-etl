@@ -42,19 +42,13 @@ def test_best_oral_drops_an_implausible_sub_floor_value_unless_named():
     assert toxicity.best_oral(rows, named)["value_num"] == 0.8
 
 
-def test_deadliest_and_safest_are_the_same_population_read_both_ways():
-    mols = [
-        {"cid": 1, "slug": "a", "title": "A", "ld50_mg_per_kg": 10.0, "ld50_route": "oral",
-         "ld50_species": "rat", "molecular_formula": "C"},
-        {"cid": 2, "slug": "b", "title": "B", "ld50_mg_per_kg": 900.0, "ld50_route": "oral",
-         "ld50_species": "rat", "molecular_formula": "C"},
-    ]
-    deadliest = leaderboards.rank("deadliest", mols)["entries"]
-    safest = leaderboards.rank("safest", mols)["entries"]
-    assert [e["slug"] for e in deadliest] == ["a", "b"]
-    assert [e["slug"] for e in safest] == ["b", "a"]
-    # both boards declare the route column, and it reaches the entry
-    assert deadliest[0]["route"] == "oral" and deadliest[0]["species"] == "rat"
+def test_the_deadliest_and_safest_boards_are_gone():
+    """Removed in phase 10 (2026-11): their addresses answer 410, and the weekly run must not write
+    them back. The rule the Deadliest board was written to hold (an oral LD50 or nothing) lives on in
+    toxicity.best_oral, pinned above."""
+    for board in ("deadliest", "safest"):
+        with pytest.raises(KeyError):
+            leaderboards.rank(board, [])
 
 
 # ── phase 2: is_otc / dual_use must survive assembly ─────────────────────────

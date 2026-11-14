@@ -20,14 +20,9 @@ _RULES: dict[str, str] = {
     "relative_sweetness": FROM_SOURCE,
     "curated_fact": FROM_SOURCE,        # hand-authored, cites curator's source
     # things we calculate
-    "decay": COMPUTED,                  # still-in-your-system
-    "scaled_dose": COMPUTED,            # dose scaled to a serving/body weight from LD50
-    "bac": COMPUTED,                    # Widmark
     "scoville": COMPUTED,               # ppm -> SHU
     "similarity": COMPUTED,             # fingerprint Tanimoto
     "functional_group": COMPUTED,       # RDKit SMARTS substructure match
-    # cross-context extrapolation
-    "rodent_to_human": INFERRED,        # rodent LD50 -> "lethal for a person your size"
 }
 
 

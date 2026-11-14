@@ -46,7 +46,9 @@ def test_build_db_rows_shapes():
     assert any(mc["cid"] == 2519 and mc["category_slug"] == "coffee" for mc in rows["molecule_category"])
 
     # hooks + editorial content block
-    assert {"still_in_system", "dose_poison", "structure", "similar"} <= {h["type"] for h in rows["hook"] if h["cid"] == 2519}
+    caffeine_hooks = {h["type"] for h in rows["hook"] if h["cid"] == 2519}
+    assert {"structure", "similar"} <= caffeine_hooks
+    assert not {"still_in_system", "dose_poison", "bac"} & caffeine_hooks     # phase 10
     assert any(b["cid"] == 2519 and b["block_type"] == "editorial" for b in rows["content_block"])
 
 
