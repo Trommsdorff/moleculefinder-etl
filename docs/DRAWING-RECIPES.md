@@ -467,6 +467,33 @@ snapshot files, then the plain `mfetl all`: the run made both again on this Mac 
 "remade with its recipe, SMILES and drawing unchanged (only the key moved)", writing nothing; the two
 files restored, a third build byte-identical to the first two.
 
+## 11. Display structures (phase 3A, 2026-11-14)
+
+A record's identifiers are PubChem's record of the substance. For a sugar that record is the open chain, while in water
+the sugar is a ring and the site's text describes the ring. `sources/seeds/structure_display.yaml` gives the SMILES the
+drawing is drawn from (`structures.drawn_smiles(rec)`: the display SMILES, else `isomeric_smiles`). Every recipe reads it:
+the structure drawing's key (`svg_key`), the parts (`parts_key`, `reading_for`, `find_parts`), the pairs (`pair_key`,
+`draw_pair`, `caption_rule`, the repaint) and the drawing guard, which names a change as "its display structure changed
+(structure_display.yaml: drawn as ...)" and allows it like any SMILES change. Nothing else on the record moves (formula,
+weight, InChI, descriptors and categories stay PubChem's).
+
+**The proof, at every build** (`assemble.structure_display_for`): the ring has the record's formula, and opened at its
+anomeric carbon (`structures.ring_opened`: the ring carbon bearing the ring oxygen and an OH) it is the record's own SMILES,
+every stereocentre included; it refuses the C3 epimer and the mirror image. An entry also names `model_cid`, the PubChem
+record whose 3D conformer the page shows (the web's `modelCid`), so the 3D is never the open chain.
+
+**Today:** fructose (D-fructofuranose, model beta-D-fructofuranose 439709) and allulose (D-psicofuranose, model
+alpha-D-psicofuranose 21581131). Their parts became hydroxyl, hemiacetal and ring system; erythritol vs allulose is
+shipped with nothing marked (its caption left the seed), sucrose vs fructose aligned, glucose vs fructose shipped.
+**After the deploy, Monday's lines:** `structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing`;
+`structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable`; `compare drawings: 147 pairs (aligned 45,
+aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units: 2 (2 carried, 0
+repainted, 0 drawn this run)`; made or remade: none.
+
+**To add one:** an entry with `smiles` (PubChem's ring form), `form`, `cid`, `model_cid`, `model_form`, `model_line`,
+`has_3d`, `line` and `basis` (which ring and why); build on the Mac and commit the data with it (the guard lists the
+molecule and its pairs as remade).
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under

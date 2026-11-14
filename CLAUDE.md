@@ -17,11 +17,14 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   amine rule narrowed (every neighbour an sp3 carbon); gold's "Aurum Metallicum" on the do-not-use list.
 - **Phase 10 DEPLOYED 2026-11-14** (`6848793`, with web `74f2e68`): no Deadliest or Safest board, no
   `dose_poison`/`bac`/`still_in_system` hook records, Latin remedy names off the "Also called" line by rule
-  (`assemble.latin_pharmacy_name`). Record: HISTORY.md, "Phase 10". **Next ETL phase (phase 3) also carries:** one-element
-  records' "Also called" from Wikidata's names only, the Latin symbol names (natrium ... plumbum) kept as a seed.
+  (`assemble.latin_pharmacy_name`). Record: HISTORY.md, "Phase 10". **Phase 3A BUILT 2026-11-14 on `corrections-2026-11`,
+  never pushed, waiting for Garrett:** `osha_hcs` hazard words (`ghs.with_wording`), one-element names and
+  `symbol_origin`, the sweep, fructose and allulose drawn as rings from `structure_display.yaml` (`structures.drawn_smiles`
+  in every recipe and the guard). Record: HISTORY.md, "Phase 3A". Phase 3B (personal care) is next.
 - **Monday 2026-11-16** is the drawing guard's acceptance: `structure parts: 718 carried, 0 made, 193 with no part, 4
   drawings unreadable`, the other three Drawings lines unchanged (HISTORY.md, "Phase 8"); the guide is
-  `docs/DRAWING-RECIPES.md` section 10.
+  `docs/DRAWING-RECIPES.md` section 10. Once phase 3A deploys the compare line reads `aligned 45, aligned+highlight 29`
+  (section 11).
 - **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
   on engagement (watch `/dashboard`).
 
