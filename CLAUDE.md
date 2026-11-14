@@ -896,6 +896,48 @@ or future gets the same treatment and the drawings read as one system. Branch `c
   0.045 (potassium permanganate); Ca and Cl 0.068 (calcium chloride; 0.161 before), Ca and P 0.060 (the calcium
   phosphates), Ca and Sr 0.006, Mg and Ca 0.030. Every label stays readable and is its own text. **Garrett's ruling, 2026-10-25: "keep it as is."** The rule stands as built: no per-element exceptions and no proportional lightness mapping; these near-matches are its accepted cost, not an open question.
 
+## Phase 8, the tertiary amine part rule (2026-11-13): BUILT, waiting for Garrett's approval of the web review page (code `7252ad1`, data `711882c`)
+**Built 2026-11-13 on branch `molecule-page-2026-11` (from `main` `ca6525c`, after `mfetl sync-inputs` f69fd345c58bfa08), never
+pushed.** The one ETL change of phase 8 (the molecule page, web; full record: the web CLAUDE.md "Phase 8"), queued at the phase 5
+deploy: the `amine` rule takes a nitrogen with one or two hydrogens only, so a tertiary amine (diphenhydramine's, amitriptyline's
+nitrogen) was never offered as a part. **The rule** (`sources/seeds/structure_parts.yaml`, right after `amine`, 25 default rules;
+the change table at the top of the seed has a Phase 8 entry): `id: tertiary-amine`, SMARTS `[NX3;H0;+0;$(N([CX4])([CX4])[CX4])]`
+(a neutral nitrogen with no hydrogen and three sp3 carbons), lights the nitrogen alone (as `amine` does), label "The tertiary amine
+group", sentence "A nitrogen bonded to three carbons, with no hydrogen of its own. Its spare pair of electrons can still pick up a
+hydrogen ion, so a tertiary amine is a base.", from "standard chemistry." No claim word (no claims_allowed entry); `check_text`
+passes. **Kept out by construction:** amide, lactam, carbamate, urea, imide, thioamide, sulfonamide, guanidine, amidine and cyanamide
+nitrogens; aromatic nitrogens; quaternary and protonated nitrogens, N-oxides, nitro; N bonded to N or O; anilines and enamines (their
+spare pair is shared, so "it is a base" would not hold for all; 29 catalog molecules carry one, e.g. chlorpromazine's ring N). Every lit
+nitrogen in the build checked against the sentence (the weakest bases, clopidogrel about pKa 4.5, EDTA's and imatinib's second N, are
+still bases).
+- **Counts:** matches 104 molecules; **98 change their parts**: 40 gain a part with nothing displaced, 58 lose one displayed part to the
+  three-part cap (benzene ring 18, ring system 17, halogen 10, ether 7, hydroxyl 4, acetal 1, scopolamine's epoxide 1); trimethylamine
+  had no part and now has one; 6 matched and unchanged (dextromethorphan and doxylamine curated; daraxonrasib, doxycycline,
+  rifampicin, tetracycline already full). Molecules with parts **718 -> 719**, with none **193 -> 192**, 4 unreadable; 1,774 parts
+  (1,734). Examples (before -> after): diphenhydramine ether, benzene -> tertiary amine, ether, benzene; amitriptyline ring system ->
+  tertiary amine, ring system; trimethylamine none -> tertiary amine; nicotine; lidocaine; EDTA (both N); morphine (the ether leaves);
+  fentanyl (the piperidine N, not the amide N); cetirizine (2 N; the halogen leaves); scopolamine (the epoxide leaves); azithromycin (2 N;
+  the acetal leaves); quinine (the quinuclidine N, not the quinoline N).
+- **The drawing guard** (a deliberate pattern change, so this Mac's build ran with `MFETL_DRAWING_SEEDS_CHANGED=1`): `structure
+  drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing`; `structure parts: 621 carried, 98 made, 192 with no part, 4 drawings
+  unreadable`; `compare drawings: 147 pairs (...) 147 carried, 0 repainted, 0 made`; `repeat units: 2 (2 carried, 0 repainted, 0 drawn
+  this run)`. Its made list is exactly the 98 molecules whose matched parts changed, nothing else (the report file prints the first 40
+  and "and 58 more"; the full set was checked from the log). Built from main's snapshot without the flag it stops on the 98 and writes
+  nothing (what Monday would do if the seed reached `main` without its data).
+- **Checks (keys blanked):** suite **1,214 passed, 1 skipped** (1,181 + 33 new: position, what it lights, 6 matches, 23 nitrogens it
+  must not take, diphenhydramine and amitriptyline, the sentence true of every lit N, house rules and claim rule); two tests updated
+  honestly (`test_drawing_guard.py`'s committed-snapshot line now 719/192; `test_drawings.py`'s scopolamine epoxide check reads its parts
+  with the cap lifted, still proving epoxide never ether). Ruff **130**, identical to main by rule and file. Pinned build four times (with
+  the flag, again, without the flag as Monday would, and remade from main's molecule files): all 6,940 files under `data/` byte-identical,
+  0 PubChem POSTs; against main only the 98 molecule files' `structure_parts` change; every `structure_svg` and key as main.
+- **For Garrett (on the web review page):** scopolamine's epoxide (question 3, recommended accept; else curated parts); no Explore its
+  structure over 120 heavy atoms (question 4, a web change). **Found, not changed:** the `amine` rule's sentence is shaky on about 63 lit
+  nitrogens on an aromatic ring or a C=C (adenine's and cytosine's ring amino, nifedipine's and amlodipine's NH, diclofenac's diarylamine,
+  hydralazine's hydrazine N); narrowing it the same way is its own ruling.
+- **Deploy (his word, after the review page):** ETL `main` FIRST (the seed and the 98 data files together; a seed without its data stops
+  Monday's run), then web `main`. **Monday's acceptance after this deploy:** `structure parts: 719 carried, 0 made, 192 with no part, 4
+  drawings unreadable`; the other three Drawings lines unchanged; "Made or remade this run: none."
+
 ## Phase 7, the door pages go live (2026-11-13): DEPLOYED 2026-11-13 (code `1374fda`, data `b5f2c0a`, the ruling `eca7bab`)
 **DEPLOYED 2026-11-13 on Garrett's word, ETL `main` 5dac67f -> `eca7bab` (22:55:04 UTC, then web `main`; no workflow started).** His ruling on the review page added one ETL change: coffee's Where next card line is now "See what that one group changes." (`sources/seeds/doors/coffee.yaml`), so it no longer repeats the pair's caption "One methyl group apart." (commit `eca7bab`, seed and doors.json together). Checks: 1,181 passed, 1 skipped; ruff 130 (= main); pinned build (sync-inputs f69fd345c58bfa08, keys blanked) twice, 974 files byte-identical, 0 POSTs, only that line in doors.json moved; drawing guard nothing made or remade (896 carried, 718 parts carried, 147 pairs carried, 2 repeat units carried). Full deploy record, the web changes and the live checks: the company CLAUDE.md and the web CLAUDE.md, "Phase 7". **Monday 2026-11-16's run:** the Drawings section exactly as in the drawing guard's acceptance below ("Made or remade this run: none."), sitemap 1,715 on the web side, doors.json unchanged unless a label moves, the ledger keeps the three group slugs.
 The build record:
