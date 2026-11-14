@@ -391,5 +391,7 @@ answer:
 # The drawing seeds' new writing (phase 5A, 2026-11-12): part labels, sentences and notes
 # (structure_parts.yaml), pair captions (compare_drawings.yaml), repeat unit labels (repeat_units.yaml).
 part:
+  "display.fructose.line": {words: ["most"], basis: science, line: "1bfc8460795a",
+    why: "Standard carbohydrate chemistry: in water at room temperature D-fructose is almost entirely rings (under 1 percent the open keto chain), and the six-membered beta-D-fructopyranose is the largest share, about 70 percent, against under 30 percent for the two five-membered furanoses (the equilibrium composition of D-fructose in water; Angyal, Adv. Carbohydr. Chem. Biochem. 42, 1984). Garrett's wording, 2026-11-14."}
   "caffeine.carbonyl-oxygens.sentence": {words: ["only"], basis: ordinary, line: "3b667928ad47",
     why: "\"It can only accept them\" ranks nothing: with 0 donors (PubChem's count) a molecule can accept hydrogen bonds and not give them. The approved mockup's sentence, verbatim."}

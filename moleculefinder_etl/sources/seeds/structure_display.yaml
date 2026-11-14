@@ -42,9 +42,9 @@ molecules:
       inside sucrose; in water the two interconvert at the ring carbon that carries two oxygens.
     has_3d: true
     line: >-
-      Drawn as a ring, as fructose is in water: D-fructofuranose, the five-membered ring that
-      sucrose is built from. The SMILES and identifiers are PubChem's open-chain record of the
-      same sugar.
+      Drawn as a ring, as nearly all fructose in water is. This is the five-membered ring, the form
+      sucrose is built from; most free fructose in water is the six-membered ring. The SMILES and
+      identifiers are PubChem's open-chain record of the same sugar.
     basis: >-
       In water, under 1 percent of fructose is the open keto chain PubChem's record (CID 5984)
       draws; the rest is a ring. The site's own text describes the five-membered ring: the frozen
@@ -57,7 +57,10 @@ molecules:
       Chem. Biochem. 42, 1984), so the six-membered ring would be standard too; the five-membered
       one is chosen because the page's text and sucrose describe it. The anomeric carbon is left
       unspecified (alpha and beta interconvert in water), as PubChem's own records of D-glucose,
-      galactose and ribose, which the catalog draws, leave it.
+      galactose and ribose, which the catalog draws, leave it. The line (Garrett, 2026-11-14) says
+      so: nearly all of it is a ring, this is the five-membered one, and most free fructose in water
+      is the six-membered ring ("most" has its entry in claims_allowed.yaml, part
+      display.fructose.line).
   allulose:
     smiles: "C([C@@H]1[C@H]([C@H](C(O1)(CO)O)O)O)O"
     form: D-psicofuranose
@@ -69,8 +72,9 @@ molecules:
       two interconvert at the ring carbon that carries two oxygens.
     has_3d: true
     line: >-
-      Drawn as a ring, as allulose is in water: D-psicofuranose, the five-membered ring, drawn as
-      fructose is. The SMILES and identifiers are PubChem's open-chain record of the same sugar.
+      Drawn as a ring, as nearly all allulose in water is. This is the five-membered ring, drawn as
+      fructose is; in water allulose is a mix of five- and six-membered rings. The SMILES and
+      identifiers are PubChem's open-chain record of the same sugar.
     basis: >-
       Allulose is D-psicose, the C3 epimer of fructose: the same atoms with one OH turned the other
       way. In water almost none of it is the open keto chain PubChem's record (CID 90008) draws; it
@@ -78,4 +82,6 @@ molecules:
       the commonest single form (Angyal, Adv. Carbohydr. Chem. Biochem. 42, 1984). The five-membered
       ring is chosen so that allulose is drawn as fructose is and the two differ on the page by the
       one OH that differs. Its own page's text names no ring. The anomeric carbon is left
-      unspecified, as for fructose.
+      unspecified, as for fructose. The line (2026-11-14) says only that nearly all of it is a ring,
+      that this is the five-membered one and that in water it is a mix of five- and six-membered
+      rings; it gives no share, and carries no claim word.

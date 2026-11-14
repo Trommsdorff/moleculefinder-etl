@@ -18,9 +18,11 @@ a check in ``DATA_CHECKS``, which the export preflight runs against the built ca
 (``check_data_claims``): if the data stops showing the claim, the run refuses.
 
 The lines covered: every why-it-matters line, every editorial paragraph, every comparison paragraph,
-every comparison answer line and every door seed's new writing (phase 4: titles, ledes, card lines,
-stop headings; kind ``door``). Answer lines are never edited by the sweep (they are the /vs pages'
-descriptions); an answer line that overreaches is held with basis ``held`` and listed for Garrett.
+every comparison answer line, every door seed's new writing (phase 4: titles, ledes, card lines,
+stop headings; kind ``door``), the drawing seeds' writing (phase 5A; kind ``part``) and the display
+structures' lines (phase 3A: ``structure_display.yaml``'s ``line`` and ``model_line``, kind ``part``).
+Answer lines are never edited by the sweep (they are the /vs pages' descriptions); an answer line that
+overreaches is held with basis ``held`` and listed for Garrett.
 
 The web repo's ``lib/copy-rules.ts`` carries the same word list (``CLAIM_WORDS``) for strings written
 there; a test in each repo pins the list, so a change has to be made in both.
@@ -102,6 +104,15 @@ def corpus(seeds: Path = SEEDS_DIR, curated: Path = CURATED_DIR) -> list[tuple[s
     out += [("part", key, text) for key, text in drawings.strings(
         seeds / drawings.PARTS_YAML.name, seeds / drawings.COMPARE_YAML.name,
         seeds / drawings.REPEAT_YAML.name)]
+    # The display structures' lines (phase 3A, 2026-11-14): the sentences the molecule page's notes
+    # give for a sugar drawn as its ring and for its 3D model. Drawing seeds too, so kind `part`,
+    # keyed display.<slug>.line and display.<slug>.model_line.
+    disp = seeds / "structure_display.yaml"
+    if disp.exists():
+        for slug, d in ((yaml.safe_load(disp.read_text()) or {}).get("molecules") or {}).items():
+            for f in ("line", "model_line"):
+                if isinstance((d or {}).get(f), str) and d[f].strip():
+                    out.append(("part", f"display.{slug}.{f}", normalise(d[f])))
     return out
 
 

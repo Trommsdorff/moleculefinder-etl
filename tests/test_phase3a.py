@@ -157,3 +157,21 @@ def test_the_record_stays_the_same_substance():
         assert d["model_cid"] not in (cid, d["cid"])
         assert structures.drawn_smiles(m) == d["smiles"]
     assert sum("structure_display" in m for m in _all()) == 2
+
+
+def test_the_display_lines_are_under_the_claim_rule():
+    """Garrett, 2026-11-14: fructose's line names the six-membered ring as most of free fructose in
+    water, a claim word with its entry; allulose's gives no share and carries none. Both lines are in
+    the claim corpus (kind part, display.<slug>.line), so an edit to either is checked."""
+    from moleculefinder_etl.transform import claims
+    lines = {key: text for kind, key, text in claims.corpus() if kind == "part" and key.startswith("display.")}
+    assert set(lines) == {"display.fructose.line", "display.fructose.model_line",
+                          "display.allulose.line", "display.allulose.model_line"}
+    assert lines["display.fructose.line"].startswith("Drawn as a ring, as nearly all fructose in water is.")
+    assert "most free fructose in water is the six-membered ring" in lines["display.fructose.line"]
+    assert claims.words_in(lines["display.fructose.line"]) == ["most"]
+    assert "percent" not in lines["display.allulose.line"]
+    assert claims.words_in(lines["display.allulose.line"]) == []
+    entry = claims.load_allowed()[("part", "display.fructose.line")]
+    assert entry["basis"] == "science" and entry["line"] == claims.line_id(lines["display.fructose.line"])
+    assert claims.line_problems() == []
