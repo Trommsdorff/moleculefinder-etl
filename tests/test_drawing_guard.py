@@ -48,10 +48,12 @@ ROOT = Path(__file__).resolve().parent.parent
 SNAP = ROOT / "data" / "snapshots"
 WORKFLOW = ROOT / ".github" / "workflows" / "etl.yml"
 
-# What Monday 2026-11-16's run must report: every drawing carried, nothing made.
+# What a weekly run on the committed snapshot must report: every drawing carried, nothing made.
+# (Monday 2026-11-16's acceptance on main reads 718 and 193; phase 8's tertiary amine rule, with its
+# data, makes it 719 carried and 192 with no part: trimethylamine gains its first part.)
 MONDAY = [
     "structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing",
-    "structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable",
+    "structure parts: 719 carried, 0 made, 192 with no part, 4 drawings unreadable",
     ("compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); "
     "147 carried, 0 repainted, 0 made"),
     "repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)",

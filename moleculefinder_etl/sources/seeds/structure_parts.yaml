@@ -57,6 +57,16 @@ max_parts: 3
 #                 ring fused to another ring is part of the ring system instead, so the ring
 #                 system never simply repeats the benzene ring (indoles, the benzodiazepines,
 #                 the steroids' aromatic A ring, naphthalenes).
+# Phase 8 (2026-11-13, Garrett's ruling queued at the phase 5 deploy):
+#   tertiary-amine  NEW, after amine: a nitrogen with no hydrogen bonded to three saturated (sp3)
+#                 carbons (diphenhydramine's, amitriptyline's), which the amine rule's "one or two
+#                 hydrogens" never offered. Every neighbour must be an sp3 carbon, so it never takes
+#                 an amide, carbamate, urea, imide, sulfonamide, guanidine or amidine nitrogen, an
+#                 aromatic or charged nitrogen, an N-oxide, a nitro group, an N bonded to N or O, or
+#                 a nitrogen on a benzene ring or a C=C (an aniline or enamine: its spare electrons
+#                 are shared with the ring or the double bond, so "it is a base" would not hold for
+#                 all of them, e.g. chlorpromazine's ring nitrogen). Lights the nitrogen alone, as
+#                 the amine rule does.
 defaults:
   - id: barbiturate-ring
     smarts: "O=C1[CX4]C(=O)[NX3]C(=O)[NX3]1"
@@ -173,6 +183,13 @@ defaults:
     sentence: >-
       A nitrogen carrying one or two hydrogens. Its spare pair of electrons can pick up a hydrogen
       ion, so an amine is a base.
+    from: standard chemistry.
+  - id: tertiary-amine
+    smarts: "[NX3;H0;+0;$(N([CX4])([CX4])[CX4])]"
+    label: The tertiary amine group
+    sentence: >-
+      A nitrogen bonded to three carbons, with no hydrogen of its own. Its spare pair of electrons
+      can still pick up a hydrogen ion, so a tertiary amine is a base.
     from: standard chemistry.
   - id: alcohol
     group: alcohols

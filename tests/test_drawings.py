@@ -512,7 +512,14 @@ def _ids(by_slug, slug):
 
 
 def test_the_rules_the_contact_sheet_read_wrongly(by_slug, records):
-    assert "epoxide" in _ids(by_slug, "scopolamine") and "ether" not in _ids(by_slug, "scopolamine")
+    # scopolamine's three-membered ring reads as an epoxide, never an ether. Since phase 8 its three
+    # parts are ester, tertiary amine and hydroxyl (the tertiary amine comes before the epoxide in
+    # the order), so the epoxide is read with the cap lifted.
+    assert "ether" not in _ids(by_slug, "scopolamine")
+    uncapped = {**D.load_parts_seed(), "max_parts": 99}
+    scop = [p["id"] for p in D.find_parts(
+        Chem.MolFromSmiles(by_slug["scopolamine"]["isomeric_smiles"]), "scopolamine", uncapped)]
+    assert "epoxide" in scop and "ether" not in scop
     for s in ("pentobarbital", "amobarbital"):
         assert _ids(by_slug, s)[0] == "barbiturate-ring" and "amide" not in _ids(by_slug, s)
     assert "carbamate" in _ids(by_slug, "meprobamate") and "ester" not in _ids(by_slug, "meprobamate")
@@ -594,3 +601,111 @@ def test_a_layout_that_would_flip_a_double_bond_is_refused(by_slug, pairs):
     for side, slug in (("a", "isotretinoin"), ("b", "tretinoin")):
         composed = D.compose(by_slug[slug]["structure_svg"], p[f"{side}_layer"])
         assert D.strip(composed, p[f"{side}_layer"]) == by_slug[slug]["structure_svg"]
+
+
+# ── Phase 8 (2026-11-13): the tertiary amine rule ────────────────────────────────────────────
+# Garrett's ruling, queued at the phase 5 deploy: the amine rule covers a nitrogen with one or two
+# hydrogens only, so diphenhydramine's and amitriptyline's nitrogen was never offered as a part.
+def _rule(rule_id: str) -> dict:
+    return next(s for s in D.load_parts_seed()["defaults"] if s["id"] == rule_id)
+
+
+def _tertiary(smiles: str) -> list[int]:
+    return D._match(Chem.MolFromSmiles(smiles), _rule("tertiary-amine"))[0]
+
+
+def test_the_tertiary_amine_rule_sits_after_amine_and_lights_the_nitrogen_alone():
+    ids = [s["id"] for s in D.load_parts_seed()["defaults"]]
+    assert ids.index("tertiary-amine") == ids.index("amine") + 1
+    rule = _rule("tertiary-amine")
+    assert "light" not in rule and rule.get("bonds", "within") == "within"   # as the amine rule
+    atoms, bonds, n = D._match(Chem.MolFromSmiles("CN(C)CCOC(c1ccccc1)c1ccccc1"), rule)
+    assert (atoms, bonds, n) == ([1], [], 1)
+
+
+@pytest.mark.parametrize("smiles, n", [
+    ("CN(C)C", 1),                     # trimethylamine
+    ("CCN(CC)CC", 1),                  # triethylamine
+    ("CN1CCCCC1", 1),                  # N-methylpiperidine
+    ("C1CN2CCC1CC2", 1),               # quinuclidine (quinine's nitrogen)
+    ("OC(=O)CN(CC(=O)O)CCN(CC(=O)O)CC(=O)O", 2),   # EDTA: both nitrogens
+    ("CN(C)C(=O)c1ccccc1N(C)CC", 0),   # an amide nitrogen; an aniline nitrogen
+])
+def test_the_tertiary_amine_rule_takes_a_nitrogen_on_three_saturated_carbons(smiles, n):
+    assert len(_tertiary(smiles)) == n
+
+
+@pytest.mark.parametrize("what, smiles", [
+    ("amide", "CC(=O)N(C)C"),
+    ("lactam", "CN1CCCC1=O"),
+    ("sulfonamide", "CS(=O)(=O)N(C)C"),
+    ("carbamate", "COC(=O)N(C)C"),
+    ("urea", "CN(C)C(=O)N(C)C"),
+    ("imide", "CC(=O)N(C)C(C)=O"),
+    ("guanidine", "CN(C)C(=N)N(C)C"),
+    ("amidine", "CC(=NC)N(C)C"),
+    ("cyanamide", "CN(C)C#N"),
+    ("thioamide", "CC(=S)N(C)C"),
+    ("pyridine", "c1ccncc1"),
+    ("caffeine", "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"),
+    ("N-methylpyrrole", "Cn1cccc1"),
+    ("quaternary ammonium", "C[N+](C)(C)C"),
+    ("protonated amine", "C[NH+](C)C"),
+    ("nitro", "C[N+](=O)[O-]"),
+    ("N-oxide", "C[N+](C)(C)[O-]"),
+    ("hydrazine", "CN(C)N(C)C"),
+    ("hydroxylamine", "CN(C)OC"),
+    ("aniline", "CN(C)c1ccccc1"),
+    ("enamine", "CN(C)C=C"),
+    ("phenothiazine ring nitrogen", "CN1c2ccccc2Sc2ccccc21"),
+    ("secondary amine (the amine rule's)", "CNC"),
+])
+def test_the_tertiary_amine_rule_never_takes_a_nitrogen_that_is_not_a_base_of_its_kind(what, smiles):
+    assert _tertiary(smiles) == [], what
+
+
+def test_diphenhydramine_and_amitriptyline_show_their_tertiary_amine(by_slug):
+    for slug in ("diphenhydramine", "amitriptyline"):
+        rec = by_slug[slug]
+        parts = {p["id"]: p for p in _parts(rec)}
+        assert _ids(by_slug, slug)[0] == "tertiary-amine", slug
+        p = parts["tertiary-amine"]
+        mol = Chem.MolFromSmiles(rec["isomeric_smiles"])
+        assert [mol.GetAtomWithIdx(i).GetSymbol() for i in p["atoms"]] == ["N"] and p["bonds"] == []
+        assert p["label"] == "The tertiary amine group" and p["layer"]
+        composed = D.compose(rec["structure_svg"], p["layer"])
+        assert D.strip(composed, p["layer"]) == rec["structure_svg"]
+    # trimethylamine had no part before the rule; now it has this one
+    assert _ids(by_slug, "trimethylamine") == ["tertiary-amine"]
+
+
+def test_the_tertiary_amine_sentence_is_true_of_every_nitrogen_it_lights(records):
+    """"A nitrogen bonded to three carbons, with no hydrogen of its own ... a tertiary amine is a
+    base": every lit atom is a neutral, non-aromatic nitrogen with no hydrogen whose three
+    neighbours are all saturated carbons (none a C=O, C=N, C=S or ring carbon of an aromatic ring)."""
+    lit = 0
+    for r in records:
+        for p in _parts(r):
+            if p["id"] != "tertiary-amine":
+                continue
+            mol = Chem.MolFromSmiles(r["isomeric_smiles"])
+            for i in p["atoms"]:
+                a = mol.GetAtomWithIdx(i)
+                assert a.GetSymbol() == "N" and a.GetFormalCharge() == 0, r["slug"]
+                assert not a.GetIsAromatic() and a.GetTotalNumHs() == 0, r["slug"]
+                nbrs = a.GetNeighbors()
+                assert len(nbrs) == 3, r["slug"]
+                for c in nbrs:
+                    assert c.GetSymbol() == "C" and not c.GetIsAromatic(), r["slug"]
+                    assert str(c.GetHybridization()) == "SP3", (r["slug"], c.GetIdx())
+                lit += 1
+    assert lit >= 100
+
+
+def test_the_tertiary_amine_text_keeps_the_house_rules_and_makes_no_claim():
+    from moleculefinder_etl.transform import claims
+    mine = [(k, v) for k, v in D.strings() if k.startswith("default.tertiary-amine.")]
+    assert [k for k, _ in mine] == ["default.tertiary-amine.label", "default.tertiary-amine.sentence",
+                                    "default.tertiary-amine.from"]
+    assert D.text_problems(mine) == []
+    assert not any(claims.CLAIM_RE.search(v) for _, v in mine)
