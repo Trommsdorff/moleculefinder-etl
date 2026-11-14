@@ -102,7 +102,7 @@ def test_the_eleven_symbol_origins():
 
 
 def test_the_swept_names_are_off_every_line():
-    swept = {"s-wat", "sulftech", "evits", "paratartaric aicd", "tatum-t"}
+    swept = {"s-wat", "sulftech", "evits", "paratartaric aicd", "tatum-t", "natriumsulfid"}
     for m in _all():
         for n in (m.get("display_synonyms") or []) + (m.get("wikidata_names") or []):
             assert n.casefold() not in swept, (m["slug"], n)
