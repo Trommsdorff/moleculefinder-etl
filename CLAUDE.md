@@ -13,10 +13,11 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. Phases 1, 2, 4, 5A, 5B, 6, 7, the gate hold and
   the drawing guard are live. Catalog 915 molecules; 424 product pages; 6 doors.
-- **Phase 8 (the tertiary amine part rule):** built on `molecule-page-2026-11` (code `7252ad1`, data `711882c`), goes
-  with the web's phase 8; deploy brief `../PHASE-8-DEPLOY-PROMPT.md`.
-- **Monday 2026-11-16** is the drawing guard's acceptance: the counts it must show are in HISTORY.md, "Phase 5B" and
-  "Drawing guard"; the guide is `docs/DRAWING-RECIPES.md` section 10.
+- **Phase 8 DEPLOYED 2026-11-14** (`eb429a4`): the tertiary amine rule; the epoxide rule above both amine rules; the
+  amine rule narrowed (every neighbour an sp3 carbon); gold's "Aurum Metallicum" on the do-not-use list.
+- **Monday 2026-11-16** is the drawing guard's acceptance: `structure parts: 718 carried, 0 made, 193 with no part, 4
+  drawings unreadable`, the other three Drawings lines unchanged (HISTORY.md, "Phase 8"); the guide is
+  `docs/DRAWING-RECIPES.md` section 10.
 - **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
   on engagement (watch `/dashboard`).
 
