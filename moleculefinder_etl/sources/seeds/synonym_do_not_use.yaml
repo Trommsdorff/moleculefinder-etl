@@ -95,3 +95,5 @@
   why: paratartaric acid misspelt in PubChem's list ("aicd"); racemic tartaric acid, already on the search list spelt correctly
 - name: Tatum-T
   why: a copper IUD's brand, listed as an alias of copper (Q753) on Wikidata; a device that contains copper, not a name for the element
+- name: Natriumsulfid
+  why: German for sodium sulfide (Na2S), a different compound, listed by PubChem as a synonym of sodium sulfite
