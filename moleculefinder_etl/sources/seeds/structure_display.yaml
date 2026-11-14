@@ -13,9 +13,14 @@
 #           and opening its ring at the anomeric carbon (the ring C bearing both the ring O and an
 #           OH) must give the record's own isomeric SMILES, stereo included: the same sugar.
 #   form    the ring form's name, as the page's notes say it.
-#   cid     the PubChem compound of that ring form. Its 3D conformer is the page's 3D model, so the
-#           3D never shows the open chain beside a ring drawing.
-#   has_3d  whether PubChem has a 3D conformer for `cid` (read 2026-11-14: Volume3D present).
+#   cid     the PubChem compound of that ring form, anomeric carbon open, as drawn.
+#   model_cid, model_form, model_line
+#           the 3D model. A model has to fix the anomeric carbon one way, and PubChem's conformer for
+#           `cid` happens to be the minor anomer (alpha-D-fructofuranose, beta-D-psicofuranose; read
+#           2026-11-14), so the model is the commoner five-membered anomer's own record, fetched by the
+#           page's existing method (PubChem's 3D conformer by CID). Checked in the session: its conformer
+#           is that anomer, and it is a ring, so the 3D never shows the open chain beside a ring drawing.
+#   has_3d  whether PubChem has a 3D conformer for `model_cid` (read 2026-11-14: it serves one).
 #   line    the sentence the page's notes give for the drawing.
 #   basis   which ring and why that one (not shown on the site).
 #
@@ -30,6 +35,11 @@ molecules:
     smiles: "C([C@@H]1[C@H]([C@@H](C(O1)(CO)O)O)O)O"
     form: D-fructofuranose
     cid: 439163
+    model_cid: 439709
+    model_form: β-D-fructofuranose
+    model_line: >-
+      The model shows beta-D-fructofuranose, the commoner of the two five-membered forms and the one
+      inside sucrose; in water the two interconvert at the ring carbon that carries two oxygens.
     has_3d: true
     line: >-
       Drawn as a ring, as fructose is in water: D-fructofuranose, the five-membered ring that
@@ -52,6 +62,11 @@ molecules:
     smiles: "C([C@@H]1[C@H]([C@H](C(O1)(CO)O)O)O)O"
     form: D-psicofuranose
     cid: 11378852
+    model_cid: 21581131
+    model_form: α-D-psicofuranose
+    model_line: >-
+      The model shows alpha-D-psicofuranose, the commoner of the two five-membered forms; in water the
+      two interconvert at the ring carbon that carries two oxygens.
     has_3d: true
     line: >-
       Drawn as a ring, as allulose is in water: D-psicofuranose, the five-membered ring, drawn as

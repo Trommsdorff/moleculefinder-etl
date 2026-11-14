@@ -138,6 +138,13 @@ def test_fructose_is_drawn_as_the_ring_inside_sucrose():
     assert not glucose.HasSubstructMatch(ring, useChirality=True)
 
 
+def test_the_3d_model_is_the_commoner_furanose():
+    """fructose's model is beta-D-fructofuranose (CID 439709), the anomer inside sucrose; allulose's is
+    alpha-D-psicofuranose (CID 21581131). Both conformers were read in the session (2026-11-14)."""
+    assert _mol("fructose")["structure_display"]["model_cid"] == 439709
+    assert _mol("allulose")["structure_display"]["model_cid"] == 21581131
+
+
 def test_the_record_stays_the_same_substance():
     """Only the drawing, its key and its parts move: every identifier is PubChem's record."""
     for slug, chain, cid in (("fructose", FRUCTOSE_CHAIN, 5984), ("allulose", ALLULOSE_CHAIN, 90008)):
@@ -147,5 +154,6 @@ def test_the_record_stays_the_same_substance():
         assert m["molecular_formula"] == "C6H12O6" and m["molecular_weight"] == 180.16
         assert m["structure_svg_key"] == structures.svg_key(d["smiles"])
         assert d["cid"] != cid and d["has_3d"] is True and m["has_3d"] is True
+        assert d["model_cid"] not in (cid, d["cid"])
         assert structures.drawn_smiles(m) == d["smiles"]
     assert sum("structure_display" in m for m in _all()) == 2

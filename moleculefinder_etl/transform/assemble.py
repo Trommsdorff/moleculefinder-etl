@@ -1052,21 +1052,24 @@ def structure_display_for(slug: str, iso: str | None) -> dict | None:
     e = _display_seed().get(slug)
     if not e:
         return None
-    smiles, form, line = (str(e.get(k) or "").strip() for k in ("smiles", "form", "line"))
+    smiles, form, line, model_form, model_line = (str(e.get(k) or "").strip()
+                                                  for k in ("smiles", "form", "line", "model_form", "model_line"))
     problems = []
     if not (smiles and form and line and e.get("basis") and isinstance(e.get("cid"), int)
+            and isinstance(e.get("model_cid"), int) and model_form and model_line
             and isinstance(e.get("has_3d"), bool)):
-        problems.append("needs smiles, form, cid, has_3d, line and basis")
+        problems.append("needs smiles, form, cid, model_cid, model_form, model_line, has_3d, line and basis")
     elif not iso:
         problems.append("the record has no SMILES of its own")
     elif not structures.ring_opens_to(smiles, iso):
         problems.append(f"{form}'s ring does not open to the record's own SMILES {iso}: not the same sugar")
-    elif "\u2014" in line or "\u2013" in line:
+    elif any(d in t for d in ("\u2014", "\u2013") for t in (line, model_line)):
         problems.append("a dash in the line")
     if problems:
         raise SystemExit(f"{STRUCTURE_DISPLAY.name}: {slug}: " + "; ".join(problems))
     return {"smiles": smiles, "form": form, "cid": e["cid"], "has_3d": e["has_3d"],
-            "line": " ".join(line.split()), "confidence": "from_source", "source": _src("curated")}
+            "line": " ".join(line.split()), "model_cid": e["model_cid"], "model_form": model_form,
+            "model_line": " ".join(model_line.split()), "confidence": "from_source", "source": _src("curated")}
 
 
 def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
