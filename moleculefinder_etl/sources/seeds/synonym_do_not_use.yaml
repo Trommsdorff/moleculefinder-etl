@@ -77,3 +77,6 @@
   why: calcitonin gene-related peptide, a different peptide, listed as an alias of calcitonin
 - name: katacalcin
   why: a different peptide cut from the same precursor, listed as an alias of calcitonin
+# Phase 8 review (Garrett, 2026-11-14): gold's synonym line read "Also called Aurum Metallicum".
+- name: Aurum Metallicum
+  why: the label name of a homeopathic preparation of gold (PubChem lists it from homeopathic product labels), not a name a reader would use for the metal

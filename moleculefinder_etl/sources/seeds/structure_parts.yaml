@@ -67,6 +67,16 @@ max_parts: 3
 #                 are shared with the ring or the double bond, so "it is a base" would not hold for
 #                 all of them, e.g. chlorpromazine's ring nitrogen). Lights the nitrogen alone, as
 #                 the amine rule does.
+# Phase 8, Garrett's rulings on the review page (2026-11-14):
+#   epoxide       MOVED, before amine and tertiary-amine: the order is most specific first, and an
+#                 epoxide is rarer and more telling than an amine, so it no longer loses its place to
+#                 one under the three-part cap (scopolamine shows its epoxide again).
+#   amine         NARROWED the way tertiary-amine is: every atom bonded to the nitrogen must be a
+#                 saturated (sp3) carbon. Out: a nitrogen on an aromatic ring (adenine's and
+#                 cytosine's ring amino groups, diclofenac's diarylamine, the anilines) or on a C=C
+#                 (nifedipine's and amlodipine's ring N-H), and one bonded to N or P (hydralazine's
+#                 hydrazine, cyclophosphamide's P-NH): "so an amine is a base" does not hold for them.
+#                 No rule is written for them yet; those nitrogens are simply not lit.
 defaults:
   - id: barbiturate-ring
     smarts: "O=C1[CX4]C(=O)[NX3]C(=O)[NX3]1"
@@ -177,8 +187,15 @@ defaults:
       A carbon bonded to three nitrogens, one of them by a double bond, the same group the amino
       acid arginine carries. Its N-H groups form hydrogen bonds readily.
     from: standard chemistry.
+  - id: epoxide
+    smarts: "[#6;r3]1[OX2;r3][#6;r3]1"
+    label: The epoxide ring
+    sentence: >-
+      A three-membered ring of two carbons and one oxygen. The ring is strained, so it opens more
+      readily than an ordinary ether.
+    from: standard chemistry.
   - id: amine
-    smarts: "[NX3;H2,H1;!$(NC=O);!$(NS(=O)=O);!$(NC=N);!$(N=C)]"
+    smarts: "[NX3;H2,H1;!$(NC=O);!$(NS(=O)=O);!$(NC=N);!$(N=C);!$(N[!$([CX4])])]"
     label: The amine group
     sentence: >-
       A nitrogen carrying one or two hydrogens. Its spare pair of electrons can pick up a hydrogen
@@ -197,13 +214,6 @@ defaults:
     sentence: >-
       An O-H on a carbon that is not part of an aromatic ring, the group that makes a molecule an
       alcohol. It both gives and accepts hydrogen bonds, which helps the molecule mix with water.
-    from: standard chemistry.
-  - id: epoxide
-    smarts: "[#6;r3]1[OX2;r3][#6;r3]1"
-    label: The epoxide ring
-    sentence: >-
-      A three-membered ring of two carbons and one oxygen. The ring is strained, so it opens more
-      readily than an ordinary ether.
     from: standard chemistry.
   - id: acetal
     smarts: "[CX4]([OX2][#6])[OX2][#6]"

@@ -49,11 +49,12 @@ SNAP = ROOT / "data" / "snapshots"
 WORKFLOW = ROOT / ".github" / "workflows" / "etl.yml"
 
 # What a weekly run on the committed snapshot must report: every drawing carried, nothing made.
-# (Monday 2026-11-16's acceptance on main reads 718 and 193; phase 8's tertiary amine rule, with its
-# data, makes it 719 carried and 192 with no part: trimethylamine gains its first part.)
+# (Main read 718 and 193 before phase 8; the tertiary amine rule made it 719 and 192, trimethylamine
+# gaining its first part; Garrett's rulings of 2026-11-14 (the amine rule narrowed) make it 718 and 193
+# again: meldonium, whose one amine nitrogen is bonded to a nitrogen, loses its only part.)
 MONDAY = [
     "structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing",
-    "structure parts: 719 carried, 0 made, 192 with no part, 4 drawings unreadable",
+    "structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable",
     ("compare drawings: 147 pairs (aligned 44, aligned+highlight 30, shipped 72, shipped+highlight 1); "
     "147 carried, 0 repainted, 0 made"),
     "repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)",

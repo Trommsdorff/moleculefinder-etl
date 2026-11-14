@@ -512,10 +512,11 @@ def _ids(by_slug, slug):
 
 
 def test_the_rules_the_contact_sheet_read_wrongly(by_slug, records):
-    # scopolamine's three-membered ring reads as an epoxide, never an ether. Since phase 8 its three
-    # parts are ester, tertiary amine and hydroxyl (the tertiary amine comes before the epoxide in
-    # the order), so the epoxide is read with the cap lifted.
+    # scopolamine's three-membered ring reads as an epoxide, never an ether. Since Garrett's ruling of
+    # 2026-11-14 the epoxide ranks above both amine rules, so it is one of scopolamine's three parts
+    # again (ester, epoxide, tertiary amine); the uncapped reading below still proves epoxide, not ether.
     assert "ether" not in _ids(by_slug, "scopolamine")
+    assert _ids(by_slug, "scopolamine") == ["ester", "epoxide", "tertiary-amine"]
     uncapped = {**D.load_parts_seed(), "max_parts": 99}
     scop = [p["id"] for p in D.find_parts(
         Chem.MolFromSmiles(by_slug["scopolamine"]["isomeric_smiles"]), "scopolamine", uncapped)]
@@ -709,3 +710,69 @@ def test_the_tertiary_amine_text_keeps_the_house_rules_and_makes_no_claim():
                                     "default.tertiary-amine.from"]
     assert D.text_problems(mine) == []
     assert not any(claims.CLAIM_RE.search(v) for _, v in mine)
+
+
+# ── Phase 8, Garrett's rulings on the review page (2026-11-14) ──────────────────────────────────
+def test_the_epoxide_ranks_above_both_amine_rules():
+    ids = [s["id"] for s in D.load_parts_seed()["defaults"]]
+    assert ids.index("epoxide") < ids.index("amine") < ids.index("tertiary-amine")
+    assert ids.index("epoxide") == ids.index("amine") - 1
+
+
+def _amine(smiles: str) -> list[int]:
+    return D._match(Chem.MolFromSmiles(smiles), _rule("amine"))[0]
+
+
+@pytest.mark.parametrize("smiles, n", [
+    ("CN", 1),                         # methylamine
+    ("CNC", 1),                        # dimethylamine
+    ("NCCc1ccc(O)c(O)c1", 1),          # dopamine: the NH2 on a saturated carbon
+    ("CC(N)Cc1ccccc1", 1),             # amphetamine
+    ("NCCCCC(N)C(=O)O", 2),            # lysine: both nitrogens
+])
+def test_the_amine_rule_takes_a_nitrogen_on_saturated_carbons(smiles, n):
+    assert len(_amine(smiles)) == n
+
+
+@pytest.mark.parametrize("what, smiles", [
+    ("aniline", "Nc1ccccc1"),
+    ("adenine's ring amino group", "Nc1ncnc2[nH]cnc12"),
+    ("cytosine's ring amino group", "Nc1cc[nH]c(=O)n1"),
+    ("diclofenac's diarylamine", "OC(=O)Cc1ccccc1Nc1c(Cl)cccc1Cl"),
+    ("nifedipine's ring N-H (on a C=C)", "COC(=O)C1=C(C)NC(C)=C(C(=O)OC)C1c1ccccc1[N+](=O)[O-]"),
+    ("an enamine", "CNC=C"),
+    ("hydralazine's hydrazine", "NNc1nncc2ccccc12"),
+    ("cyclophosphamide's P-NH", "ClCCN(CCCl)P1(=O)NCCCO1"),
+    ("a hydroxylamine", "CNO"),
+    ("an amide (as before)", "CC(=O)NC"),
+    ("a sulfonamide (as before)", "CS(=O)(=O)N"),
+])
+def test_the_amine_rule_leaves_out_a_nitrogen_whose_pair_is_shared(what, smiles):
+    assert _amine(smiles) == [], what
+
+
+def test_the_amine_sentence_is_true_of_every_nitrogen_it_lights(records):
+    """"A nitrogen carrying one or two hydrogens ... so an amine is a base": every lit atom is a
+    neutral, non-aromatic nitrogen with one or two hydrogens whose every neighbour is a saturated
+    (sp3) carbon, so its spare pair is its own (Garrett, 2026-11-14)."""
+    lit = 0
+    for r in records:
+        for p in _parts(r):
+            if p["id"] != "amine":
+                continue
+            mol = Chem.MolFromSmiles(r["isomeric_smiles"])
+            for i in p["atoms"]:
+                a = mol.GetAtomWithIdx(i)
+                assert a.GetSymbol() == "N" and a.GetFormalCharge() == 0 and not a.GetIsAromatic(), r["slug"]
+                assert a.GetTotalNumHs() in (1, 2), r["slug"]
+                for c in a.GetNeighbors():
+                    assert c.GetSymbol() == "C" and str(c.GetHybridization()) == "SP3", (r["slug"], c.GetIdx())
+                lit += 1
+    assert lit >= 100
+
+
+def test_the_rulings_parts_on_the_named_molecules(by_slug):
+    for slug in ("adenine", "cytosine", "diclofenac", "nifedipine", "hydralazine", "lamotrigine"):
+        assert "amine" not in _ids(by_slug, slug), slug
+    assert _ids(by_slug, "meldonium") == []        # its one amine nitrogen is bonded to a nitrogen
+    assert "epoxide" in _ids(by_slug, "mupirocin") and "epoxide" in _ids(by_slug, "natamycin")
