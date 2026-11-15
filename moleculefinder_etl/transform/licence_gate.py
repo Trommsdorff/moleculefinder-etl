@@ -103,8 +103,11 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
     if g:
         for s in g.get("sources") or [None]:
             yield f"{slug}.ghs", s
-        if g.get("h_wording"):                       # phase 3A: the words for the codes cite their own source
+        clp = set(g.get("h_wording_clp") or [])
+        if set(g.get("h_wording") or {}) - clp:      # phase 3A: the words for the codes cite their own source
             yield f"{slug}.ghs.h_wording", _key(g.get("h_wording_source"))
+        if clp:                                      # phase 3B: the aquatic codes' words, from the EU CLP Regulation
+            yield f"{slug}.ghs.h_wording_clp", "eu_clp"
     if m.get("ld50_mg_per_kg") is not None:
         row = next((t for t in m.get("toxicity") or []
                     if (t.get("value_num"), t.get("species"), t.get("route"))

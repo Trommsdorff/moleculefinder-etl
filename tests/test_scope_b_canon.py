@@ -16,7 +16,8 @@ from moleculefinder_etl.transform import canon
 ORIGINAL_CORE = 498
 # Catalog-growth tranches, newest last. Each is a `batch`-tagged block in the CSV.
 TRANCHES = {"2026-09-A": 287,   # 295 built, 5 held back; fenbendazole, carfentanil, oxandrolone removed 2026-10-18
-            "2026-10-A": 126}   # 120, then 6 of the 7 queued rows on Garrett's 2026-10-18 rulings
+            "2026-10-A": 126,   # 120, then 6 of the 7 queued rows on Garrett's 2026-10-18 rulings
+            "2026-11-care": 11}  # phase 3B of the everyday chemistry plan: the personal-care actives (2026-11-14)
 # Small tagged additions that are not tranches (Garrett, 2026-10-20: "a two-row addition of this
 # run, not a tranche"). Same provenance rule: tagged, so they can be found and lifted back out.
 ADDITIONS = {"2026-10-runA": 2,   # PFOA and PFOS, so PFAS headlines can match (Run A)
@@ -70,7 +71,8 @@ def test_scope_b_hand_model_rows_get_synthetic_cids():
     rows = canon._scope_b_rows()
     hand = [r for r in rows if r["hand_model"]]
     real = [r for r in rows if not r["hand_model"]]
-    assert len(hand) == 18, "18 hand-modeled macromolecules (collagen, starch, gluten...)"
+    # 18 hand-modelled macromolecules (collagen, starch, gluten...) and, since phase 3B, the 5 antiperspirant salts
+    assert len(hand) == 23, "23 hand-modeled records (18 macromolecules, 5 antiperspirant salts)"
     assert all(r["cid"] < 0 for r in hand)            # synthetic negatives
     assert all(r["cid"] > 0 for r in real)            # real PubChem CIDs
     # Synthetic CIDs match those the household YAML seed derives from the same names,

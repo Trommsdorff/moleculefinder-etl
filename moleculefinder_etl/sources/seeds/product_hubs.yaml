@@ -78,6 +78,32 @@ toothpaste:
     - {slug: xylitol, presence: added, presence_note: "The sweetener the maker adds."}   # sweetener that mouth bacteria cannot ferment
     - {slug: sorbitol, presence: added, presence_note: "The sweetener and humectant the maker adds."}
     - {slug: menthol, presence: added, presence_note: "The cooling flavour the maker adds."}   # with the flavour oils, the cooling finish
+    # Phase 3B (2026-11-14): the two other fluorides the FDA's anticaries monograph (M021) allows, each the
+    # labelled active of our toothpaste labels (stannous: Colgate Total, Parodontax; monofluorophosphate: Colgate
+    # Optic White Renewal, Crest Kids, Tom's of Maine Kids).
+    - {slug: stannous-fluoride, presence: added, presence_note: "The anticaries agent the maker adds in place of sodium fluoride."}
+    - {slug: sodium-monofluorophosphate, presence: added, presence_note: "The anticaries agent the maker adds; it does not react with a chalk abrasive."}
+
+# Phase 3B, the personal-care tranche (2026-11-14). Each entry is a labelled active of our DailyMed sunscreen and
+# antiperspirant labels, permitted by the FDA's OTC monograph for its class (M020 sunscreens, M019 antiperspirants).
+# A curated list, not every molecule in these products.
+sunscreen:
+  name: Sunscreen
+  molecules:
+    - {slug: avobenzone, presence: added, presence_note: "The UVA filter the maker adds."}   # 11 of our sunscreen labels
+    - {slug: homosalate, presence: added, presence_note: "A UVB filter the maker adds."}   # 9 labels
+    - {slug: octisalate, presence: added, presence_note: "A UVB filter the maker adds."}   # 9 labels
+    - {slug: octocrylene, presence: added, presence_note: "A UVB filter the maker adds; it also steadies avobenzone."}   # 9 labels
+    - {slug: zinc-oxide, presence: added, presence_note: "The mineral filter the maker adds."}   # the mineral sunscreens
+
+deodorant:
+  name: Antiperspirant deodorant
+  molecules:
+    - {slug: aluminum-chlorohydrate, presence: added, presence_note: "The antiperspirant active the maker adds."}   # Arrid, Ban, Certain Dri, Suave
+    - {slug: aluminum-sesquichlorohydrate, presence: added, presence_note: "The antiperspirant active the maker adds."}   # Degree, Dove, Mitchum
+    - {slug: aluminum-zirconium-tetrachlorohydrex-gly, presence: added, presence_note: "The antiperspirant active the maker adds."}   # Secret, Speed Stick
+    - {slug: aluminum-zirconium-octachlorohydrex-gly, presence: added, presence_note: "The antiperspirant active the maker adds."}   # Gillette Clear Shield
+    - {slug: aluminum-zirconium-trichlorohydrex-gly, presence: added, presence_note: "The antiperspirant active the maker adds."}   # Right Guard
 
 paint-and-solvent:
   name: Paint and solvent

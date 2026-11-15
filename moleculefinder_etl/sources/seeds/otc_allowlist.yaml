@@ -98,6 +98,14 @@ emergency_otc:            # added with tranche 2026-09-A
   - Naloxone                # Narcan nasal spray, OTC in the US since 2023
   - Levonorgestrel          # tranche 2026-10-A
 
+# Recorded as OTC decisions, deliberately NOT mapped to a hub in relationships.USE_GROUPS (phase 3B of the
+# everyday chemistry plan, 2026-11-14): the four sunscreen filters sold under the FDA's OTC Monograph M020. Their
+# hub is the curated sunscreen list (product_hubs.yaml), so they do not also join /in/skin-and-topical.
+sunscreen_filters:        # phase 3B, batch 2026-11-care
+  - Avobenzone
+  - Homosalate
+  - Octisalate
+  - Octocrylene
 vitamins_supplements_otc: # sold as supplements; many also nutrients
   - Glucosamine
   - Dimenhydrinate          # Dramamine (note: technically a salt/mixture)

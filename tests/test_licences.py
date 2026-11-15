@@ -71,7 +71,11 @@ def test_every_medicine_has_a_record_or_is_listed_by_name():
 
 def test_the_hand_rulings_are_untouched():
     hand = relationships.load_approvals()
-    assert set(hand) == {"orforglipron", "meldonium", "phenibut", "clenbuterol", "clostebol", "flunitrazepam"}
+    # Phase 3B (2026-11-14): the eleven personal-care actives, each under an FDA OTC monograph (Garrett's question 6).
+    care = {"avobenzone", "homosalate", "octisalate", "octocrylene", "stannous-fluoride", "sodium-monofluorophosphate",
+            "aluminum-chlorohydrate", "aluminum-sesquichlorohydrate", "aluminum-zirconium-tetrachlorohydrex-gly",
+            "aluminum-zirconium-octachlorohydrex-gly", "aluminum-zirconium-trichlorohydrex-gly"}
+    assert set(hand) == {"orforglipron", "meldonium", "phenibut", "clenbuterol", "clostebol", "flunitrazepam"} | care
     recs = [{"slug": m["slug"], "scope_bucket": m.get("scope_bucket")} for m in L.load_catalog()]
     relationships.attach_approvals(recs)
     relationships.attach_licences(recs)

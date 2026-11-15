@@ -32,6 +32,14 @@ substances:
   48268V50D5: casein               # CASEIN
   AQ4K8I4R6F: fibrin               # FIBRIN
   VSU9IB86SP: hemoglobin           # HEMOGLOBIN
+  # The five antiperspirant salts (phase 3B, batch 2026-11-care), hand-modelled: each is a range of related
+  # aluminium compounds (the USP defines each by atomic ratios, not a formula). The FDA table links two of the
+  # zirconium ones to one shared PubChem CID (72941670) and the other three to none that is the substance.
+  HPN8MZW13M: aluminum-chlorohydrate                     # ALUMINUM CHLOROHYDRATE
+  UCN889409V: aluminum-sesquichlorohydrate               # ALUMINUM SESQUICHLOROHYDRATE
+  8O386558JE: aluminum-zirconium-tetrachlorohydrex-gly   # ALUMINUM ZIRCONIUM TETRACHLOROHYDREX GLY
+  P9D3YP29MY: aluminum-zirconium-octachlorohydrex-gly    # ALUMINUM ZIRCONIUM OCTACHLOROHYDREX GLY
+  T27D6T99LH: aluminum-zirconium-trichlorohydrex-gly     # ALUMINUM ZIRCONIUM TRICHLOROHYDREX GLY
   # Records with a PubChem CID the FDA table does not link (a polymer, mixture or protein the FDA
   # registers without a PubChem CID) and whose PubChem synonym list carries no UNII:
   6OZP39ZG8H: polysorbate-80       # POLYSORBATE 80 (46 labels; PubChem's CID is one representative ester)

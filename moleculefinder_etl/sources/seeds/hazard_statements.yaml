@@ -66,3 +66,19 @@ statements:
   H371: {text: "May cause damage to organs", hcs: "C.4.11", class: "Specific target organ toxicity, single exposure, Category 2"}
   H372: {text: "Causes damage to organs through prolonged or repeated exposure", hcs: "C.4.12", class: "Specific target organ toxicity, repeated exposure, Category 1"}
   H373: {text: "May cause damage to organs through prolonged or repeated exposure", hcs: "C.4.12", class: "Specific target organ toxicity, repeated exposure, Category 2"}
+
+# Phase 3B (Garrett's ruling of 2026-11-14 on the phase 3A review, (a)): the codes the HCS does not word take their
+# words from the EU rules, where those word them. Source: Regulation (EC) No 1272/2008 (CLP), Annex III, Part 1,
+# Table 1.2 (hazard statements for environmental hazards), English text, read 2026-11-14 from the Official Journal
+# text (OJ L 353, 31.12.2008) through the EU Publications Office (publications.europa.eu/resource/celex/32008R1272),
+# EUR-Lex's own pages refusing a scripted read. Registry key eu_clp (acknowledged: reuse authorised, source
+# acknowledged, Commission Decision 2011/833/EU), displayed with its attribution. The words are CLP's without the
+# closing full stop, as the HCS words above are written. CLP words only these five of the eight: it does not adopt
+# acute toxicity category 5 (H303, H313, H333) or acute aquatic categories 2 and 3 (H401, H402), which stay codes
+# (no allowed source words them; the UN GHS text is UN copyright).
+eu_clp:
+  H400: {text: "Very toxic to aquatic life", clp: "Annex III, Table 1.2", class: "Hazardous to the aquatic environment, Acute Hazard, Category 1"}
+  H410: {text: "Very toxic to aquatic life with long lasting effects", clp: "Annex III, Table 1.2", class: "Hazardous to the aquatic environment, Chronic Hazard, Category 1"}
+  H411: {text: "Toxic to aquatic life with long lasting effects", clp: "Annex III, Table 1.2", class: "Hazardous to the aquatic environment, Chronic Hazard, Category 2"}
+  H412: {text: "Harmful to aquatic life with long lasting effects", clp: "Annex III, Table 1.2", class: "Hazardous to the aquatic environment, Chronic Hazard, Category 3"}
+  H413: {text: "May cause long lasting harmful effects to aquatic life", clp: "Annex III, Table 1.2", class: "Hazardous to the aquatic environment, Chronic Hazard, Category 4"}

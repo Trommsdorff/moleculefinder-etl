@@ -97,7 +97,7 @@ def sweep(records):
 def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
     unproven = {s for s, row in sweep.items() if row["bonded"] and row["reading"] is None}
     assert unproven == UNPROVEN
-    assert len(sweep) == 896
+    assert len(sweep) == 901          # phase 3B: +6 new drawings, -1 (carboxymethyl cellulose, now its repeat unit)
     methods = {}
     for row in sweep.values():
         if row["reading"]:

@@ -52,14 +52,17 @@ WORKFLOW = ROOT / ".github" / "workflows" / "etl.yml"
 # (Main read 718 and 193 before phase 8; the tertiary amine rule made it 719 and 192, trimethylamine
 # gaining its first part; Garrett's rulings of 2026-11-14 (the amine rule narrowed) make it 718 and 193
 # again: meldonium, whose one amine nitrogen is bonded to a nitrogen, loses its only part.)
+# Phase 3B (2026-11-14): the six new drawn molecules (four filters, two fluorides), the five hand-modelled salts with
+# no drawing, five new part sets, and carboxymethyl cellulose drawn as its repeat unit in place of its PubChem drawing
+# (its drawing and its one part set gone, a third repeat unit).
 MONDAY = [
-    "structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no drawing",
-    "structure parts: 718 carried, 0 made, 193 with no part, 4 drawings unreadable",
+    "structure drawings: 901 carried, 0 repainted, 0 drawn, 25 with no drawing",
+    "structure parts: 721 carried, 0 made, 201 with no part, 4 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
     # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).
     ("compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); "
     "147 carried, 0 repainted, 0 made"),
-    "repeat units: 2 (2 carried, 0 repainted, 0 drawn this run)",
+    "repeat units: 3 (3 carried, 0 repainted, 0 drawn this run)",
 ]
 
 SMALL = ["caffeine", "theobromine", "isotretinoin", "tretinoin", "sodium-bicarbonate", "sodium-carbonate",
@@ -145,7 +148,7 @@ def test_the_guard_counts_in_the_recipes_own_words(caplog):
     logged = [r.getMessage().strip() for r in caplog.records]
     v = DG.check(fresh, again, SNAP, allow_seeds=False)
     assert v.lines[1] in logged and v.lines[2] in logged
-    assert "repeat units: 2 (0 drawn this run)" in logged and made == 0
+    assert "repeat units: 3 (0 drawn this run)" in logged and made == 0
     assert v.lines == MONDAY and v.made == []
 
 

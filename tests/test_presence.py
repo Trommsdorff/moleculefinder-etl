@@ -229,9 +229,10 @@ def test_the_hand_mark_counts():
     # and the copy sweep's removals, phase 2: seven "none" entries left their lists, 521 -> 514).
     from collections import Counter
     marks = _all_marks()
-    assert len(marks) == 514
+    # Phase 3B (2026-11-14): +12 "added" (sunscreen 5, antiperspirant deodorant 5, toothpaste 2), 514 -> 526.
+    assert len(marks) == 526
     assert Counter(m["value"] for _, _, m in marks) == {
-        "natural": 207, "added": 212, "formed": 57, "body": 17, "none": 21}
+        "natural": 207, "added": 224, "formed": 57, "body": 17, "none": 21}
     assert Counter(m["formed_when"] for _, _, m in marks if m["value"] == "formed") == {
         "fermentation": 33, "roasted": 7, "aged": 6, "baked": 5, "cured": 2, "cooked": 2, "crushed": 2}
 

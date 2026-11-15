@@ -97,3 +97,16 @@
   why: a copper IUD's brand, listed as an alias of copper (Q753) on Wikidata; a device that contains copper, not a name for the element
 - name: Natriumsulfid
   why: German for sodium sulfide (Na2S), a different compound, listed by PubChem as a synonym of sodium sulfite
+# Phase 3B, the personal-care tranche (2026-11-14): product names PubChem's synonym lists carry for the new rows.
+# Each is a product that contains the molecule, not a name for it. Crest would otherwise have become stannous
+# fluoride's title parenthetical, because the record's own line mentions the brand's history.
+- name: Crest
+  why: a toothpaste brand (it has used several fluorides), listed by PubChem as a synonym of stannous fluoride
+- name: Sunscreen SKINCARE
+  why: a product name PubChem lists for homosalate
+- name: DT Collagen
+  why: a product name PubChem lists for octocrylene
+- name: Barbie
+  why: a toothpaste product name PubChem lists for sodium monofluorophosphate
+- name: Extra-Strength Aim
+  why: a toothpaste product name PubChem lists for sodium monofluorophosphate

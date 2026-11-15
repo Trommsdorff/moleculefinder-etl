@@ -61,7 +61,7 @@ SEEDS_CHANGED_ENV = "MFETL_DRAWING_SEEDS_CHANGED"
 # same, is a person's edit of the seed and cannot come from a machine.
 _PART_WORDS = ("label", "sentence", "from")
 _PAIR_WORDS = ("caption",)
-_REPEAT_WORDS = ("label",)
+_REPEAT_WORDS = ("label", "line", "replaces")
 
 # How many names the plain-text block (the all-clear and alarm summaries, the issue) lists before
 # it says how many more; the run job's own summary page lists every one.
@@ -262,8 +262,10 @@ def _structure_svg(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
     if not svg:
         t.add("none")
         if was:
+            ru = rec.get("structure_repeat_unit") or {}
             g.made(name, "removed", "its SMILES is gone" if not rec.get("isomeric_smiles")
-                   else "it no longer has a drawing")
+                   else "replaced by its repeat unit (repeat_units.yaml `replaces`), a deliberate remake"
+                   if ru.get("replaces") else "it no longer has a drawing")
         return
     if old is None or not was:
         t.add("drawn")
@@ -332,7 +334,9 @@ def _structure_parts(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
     if structures.drawn_smiles(rec) != structures.drawn_smiles(old):
         reasons.append(_smiles_moved(rec, old))
     if _geometry(rec.get("structure_svg")) != _geometry(old.get("structure_svg")):
-        reasons.append("its drawing changed")
+        reasons.append("its drawing was replaced by its repeat unit (repeat_units.yaml `replaces`)"
+                       if not rec.get("structure_svg") and (rec.get("structure_repeat_unit") or {}).get("replaces")
+                       else "its drawing changed")
     if new is not None and prev is not None and new.get("recipe") != prev.get("recipe"):
         reasons.append(f"the parts recipe moved from {prev.get('recipe')} to {new.get('recipe')}")
     if reasons:

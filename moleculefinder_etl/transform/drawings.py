@@ -762,8 +762,34 @@ def draw_repeat_unit(spec: dict) -> dict:
         raise DrawingSeedError(f"repeat unit linkage SMARTS matches {n} times, expected "
                                f"{spec.get('linkages', 1)}")
     scale = svg_geometry.bond_px(mol, pos)
-    return {"svg": svg, "layer": layer(pos, atoms, bonds, scale, "mf-linkage"),
-            "linkage_atoms": atoms}
+    out = {"linkage_atoms": atoms}
+    if spec.get("group_smarts"):
+        # Phase 3B: an added group (carboxymethyl cellulose's -CH2-COOH) is marked in the same amber layer as the
+        # linkage, so the drawing shows both; the figure's caption names each.
+        g_atoms, g_bonds, g_n = _match(mol, {"id": "group", "smarts": spec["group_smarts"],
+                                             "light": spec.get("group_light")})
+        if g_n != int(spec.get("groups", 1)):
+            raise DrawingSeedError(f"repeat unit group SMARTS matches {g_n} times, expected {spec.get('groups', 1)}")
+        atoms = sorted(set(atoms) | set(g_atoms))
+        bonds = sorted(set(bonds) | set(g_bonds))
+        out["group_atoms"] = g_atoms
+    return {"svg": svg, "layer": layer(pos, atoms, bonds, scale, "mf-linkage"), **out}
+
+
+def clear_replaced_drawings(records: list[dict], units: dict | None = None) -> list[str]:
+    """Phase 3B: a record whose repeat unit takes the place of its PubChem drawing (``replaces`` in
+    repeat_units.yaml: carboxymethyl cellulose) keeps no ``structure_svg``, so it gets no parts and the page
+    shows the repeat unit. Run before the parts and the repeat units; the drawing guard lists the removal."""
+    units = load_repeat_seed() if units is None else units
+    done = []
+    for rec in records:
+        if (units.get(rec["slug"]) or {}).get("replaces") and rec.get("structure_svg"):
+            rec["structure_svg"] = None
+            rec["structure_svg_key"] = None
+            done.append(rec["slug"])
+    if done:
+        log.info("  repeat units: drawn in place of the PubChem drawing for %s", ", ".join(done))
+    return done
 
 
 def repeat_key(slug: str, spec: dict) -> str:
@@ -779,8 +805,9 @@ def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = Non
     if missing:
         raise DrawingSeedError(f"repeat_units.yaml names molecules not in the catalog: {missing}")
     for slug in units:
-        if by_slug[slug].get("structure_svg"):
-            raise DrawingSeedError(f"{slug} has a structure; a repeat unit is for a polymer with none")
+        if by_slug[slug].get("structure_svg") and not units[slug].get("replaces"):
+            raise DrawingSeedError(f"{slug} has a structure; a repeat unit is for a polymer with none "
+                                   f"(or names, under `replaces`, why it takes the place of the drawing)")
     prior = prior or {}
     made = 0
     for rec in records:
@@ -803,6 +830,8 @@ def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = Non
             "smiles": spec["smiles"], "label": spec["label"], "linkage": spec["linkage"],
             "units": int(spec.get("units", 2)), "svg": drawn["svg"], "layer": drawn["layer"],
             "linkage_atoms": drawn["linkage_atoms"],
+            **({"group": spec["group"], "group_atoms": drawn["group_atoms"]} if spec.get("group_smarts") else {}),
+            **{k: " ".join(str(spec[k]).split()) for k in ("line", "replaces") if spec.get(k)},
             "confidence": "from_source", "source": "MoleculeFinder curated",
         }
         made += 1
@@ -814,7 +843,8 @@ def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = Non
 # lib/copy-rules.ts): no em or en dash, no advice or dosing word, no completeness phrase, no LD50,
 # no "inferred"; plus lengths, and a sentence or caption ends with a full stop. The claim rule is
 # claims.check_lines (kind `part`).
-TEXT_LENGTHS = {"label": (6, 40), "sentence": (30, 280), "from": (10, 240), "caption": (15, 110)}
+TEXT_LENGTHS = {"label": (6, 40), "sentence": (30, 280), "from": (10, 240), "caption": (15, 110),
+                "line": (30, 200), "replaces": (30, 200)}
 
 
 def text_problems(items: list[tuple[str, str]] | None = None) -> list[str]:
@@ -832,7 +862,7 @@ def text_problems(items: list[tuple[str, str]] | None = None) -> list[str]:
         lo, hi = TEXT_LENGTHS.get(kind, (1, 240))
         if not lo <= len(text) <= hi:
             out.append(f"{key}: {len(text)} characters, outside {lo} to {hi}: {text!r}")
-        if kind in ("sentence", "caption") and not text.endswith("."):
+        if kind in ("sentence", "caption", "line", "replaces") and not text.endswith("."):
             out.append(f"{key}: does not end with a full stop: {text!r}")
     return out
 
@@ -859,4 +889,7 @@ def strings(parts: Path = PARTS_YAML, compare: Path = COMPARE_YAML,
         out.append((f"caption.{pair}", " ".join(cap.split())))
     for slug, u in load_repeat_seed(repeat).items():
         out.append((f"repeat.{slug}.label", " ".join(u["label"].split())))
+        for f in ("line", "replaces"):          # phase 3B: carboxymethyl cellulose's line and why it replaces a drawing
+            if u.get(f):
+                out.append((f"repeat.{slug}.{f}", " ".join(str(u[f]).split())))
     return out

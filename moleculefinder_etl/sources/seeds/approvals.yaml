@@ -45,3 +45,76 @@ flunitrazepam:
   basis: Italian national licence, administrative status A (authorised), marketed, not revoked or suspended, special prescription (RMR); confirmed 2026-10-18 from AIFA's medicines database. Spain's AEMPS register (CIMA) lists no flunitrazepam product.
   source: https://api.aifa.gov.it/aifa-bdf-eif-be/1.0.0/formadosaggio/ricerca?query=flunitrazepam
   label: https://medicinali.aifa.gov.it/
+
+# ── Phase 3B, the personal-care tranche (batch 2026-11-care; Garrett's ruling, 2026-11-09, question 6 of the
+# everyday chemistry plan: an FDA OTC monograph counts as a current authorisation). Products with these actives are
+# marketed in the United States under an OTC monograph, without an individual application, so Drugs@FDA holds no
+# record. Each entry was checked on 2026-11-14 against the FDA's own final administrative order on the OTC
+# Monographs@FDA portal (https://www.accessdata.fda.gov/scripts/cder/omuf/index.cfm), the ingredient read from the
+# order's active-ingredient section, and the portal's list of orders read for any later order removing it.
+avobenzone:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(b), "Avobenzone up to 3 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf
+homosalate:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(g), "Homosalate up to 15 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf
+octisalate:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(j), "Octisalate up to 5 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf
+octocrylene:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(k), "Octocrylene up to 10 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf
+stannous-fluoride:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M021, Anticaries Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M021
+  basis: FDA OTC monograph. M021.10(c), stannous fluoride (dentifrice 0.351 to 0.474 percent with an available fluoride ion concentration of 700 to 1,100 ppm, and other dosage forms), in Final Administrative Order OTC000034 (posted 2023-05-02); the portal lists no later order on M021. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000034_M021-Anticaries%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+sodium-monofluorophosphate:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M021, Anticaries Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M021
+  basis: FDA OTC monograph. M021.10(b), sodium monofluorophosphate (dentifrice 0.654 to 0.884 percent, and 1.0 to 1.2 percent, by available fluoride ion), in Final Administrative Order OTC000034 (posted 2023-05-02); the portal lists no later order on M021. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000034_M021-Anticaries%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+aluminum-chlorohydrate:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M019, Antiperspirant Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M019
+  basis: FDA OTC monograph. M019.10(b), "Aluminum chlorohydrate up to 25 percent", in Final Administrative Order OTC000015 (posted 2021-11-23); the portal lists no later order on M019. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000015_M019-Antiperspirant%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+aluminum-sesquichlorohydrate:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M019, Antiperspirant Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M019
+  basis: FDA OTC monograph. M019.10(h), "Aluminum sesquichlorohydrate up to 25 percent", in Final Administrative Order OTC000015 (posted 2021-11-23); the portal lists no later order on M019. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000015_M019-Antiperspirant%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+aluminum-zirconium-tetrachlorohydrex-gly:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M019, Antiperspirant Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M019
+  basis: FDA OTC monograph. M019.10(p), "Aluminum zirconium tetrachlorohydrex gly up to 20 percent", in Final Administrative Order OTC000015 (posted 2021-11-23); the portal lists no later order on M019. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000015_M019-Antiperspirant%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+aluminum-zirconium-octachlorohydrex-gly:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M019, Antiperspirant Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M019
+  basis: FDA OTC monograph. M019.10(l), "Aluminum zirconium octachlorohydrex gly up to 20 percent", in Final Administrative Order OTC000015 (posted 2021-11-23); the portal lists no later order on M019. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000015_M019-Antiperspirant%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+aluminum-zirconium-trichlorohydrex-gly:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M019, Antiperspirant Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M019
+  basis: FDA OTC monograph. M019.10(r), "Aluminum zirconium trichlorohydrex gly up to 20 percent", in Final Administrative Order OTC000015 (posted 2021-11-23); the portal lists no later order on M019. Checked 2026-11-14.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000015_M019-Antiperspirant%20Drug%20Products%20for%20OTC%20Human%20Use.pdf

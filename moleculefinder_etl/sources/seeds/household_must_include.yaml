@@ -326,3 +326,45 @@ molecules:
     dual_use: false
     handling: hand-model
     tier: 2
+  # Phase 3B (2026-11-14, batch 2026-11-care): the five antiperspirant salts our labels name. Each is a range of
+  # related aluminum compounds the USP defines by atomic ratios, with no single PubChem compound, so hand-modelled.
+  - name: "Aluminum chlorohydrate"
+    cid: null
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Aluminum sesquichlorohydrate"
+    cid: null
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Aluminum zirconium tetrachlorohydrex gly"
+    cid: null
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Aluminum zirconium octachlorohydrex gly"
+    cid: null
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2
+  - name: "Aluminum zirconium trichlorohydrex gly"
+    cid: null
+    bucket: everyday-chemistry
+    family: inorganic
+    is_otc: false
+    dual_use: false
+    handling: hand-model
+    tier: 2

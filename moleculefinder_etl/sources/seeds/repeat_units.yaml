@@ -31,3 +31,24 @@ units:
     linkages: 1
     units: 2
     label: Two units of the chain
+  # Carboxymethyl cellulose (phase 3B, Garrett's ruling of 2026-11-14 on the phase 3A review, (b)): drawn as a repeat
+  # unit IN PLACE OF its PubChem record's drawing, a deliberate, reviewed remake the drawing guard lists. PubChem's
+  # CID 24748 is two small molecules (open-chain glucose and acetic acid), not the polymer. The unit is cellulose's
+  # (two beta-D-glucopyranose units joined 1->4, above) with a carboxymethyl group, -CH2-COOH, on one unit's C6
+  # oxygen: with that group taken off it is cellulose's unit, stereo included (tests/test_phase3b.py). Which
+  # hydroxyls carry the group (C2, C3 or C6) and how many vary along a real chain; C6 is shown. The line's basis:
+  # the degree of substitution, the average number of carboxymethyl groups per glucose unit, is what sets a grade
+  # apart (JECFA's specification for sodium carboxymethyl cellulose, INS 466, allows 0.20 to 1.50).
+  carboxymethyl-cellulose:
+    smiles: "*O[C@@H]1O[C@H](COCC(=O)O)[C@@H](O[C@@H]2O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O"
+    linkage: beta-1,4
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    group: carboxymethyl
+    group_smarts: "[#8;!R]-[CH2;!R]-C(=O)[OX2H1]"
+    group_light: [1, 2, 3, 4]
+    groups: 1
+    units: 2
+    label: Two units of the chain
+    line: One carboxymethyl group is shown. How many the chain carries, on average per glucose unit, varies from one grade to another.
+    replaces: PubChem's record of it, CID 24748, is two small molecules, open-chain glucose and acetic acid, not the polymer.

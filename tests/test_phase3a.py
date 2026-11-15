@@ -50,20 +50,24 @@ def test_with_wording_keeps_the_label_and_adds_only_worded_codes():
     label = {"signal_word": "Warning", "pictograms": ["GHS07"], "h_statements": ["H302", "H410"],
              "confidence": "from_source", "sources": ["echa"]}
     out = ghs.with_wording(label)
-    assert out["h_wording"] == {"H302": "Harmful if swallowed"}
-    assert out["h_wording_source"] == "osha_hcs"
+    # Phase 3B: H410 now takes the EU CLP Regulation's words, listed in h_wording_clp; the HCS stays the source of H302.
+    assert out["h_wording"] == {"H302": "Harmful if swallowed", "H410": "Very toxic to aquatic life with long lasting effects"}
+    assert out["h_wording_source"] == "osha_hcs" and out["h_wording_clp"] == ["H410"]
     assert {k: out[k] for k in label} == label          # the classification itself untouched
-    assert ghs.with_wording({"h_statements": ["H410"], "sources": ["echa"]}) == {"h_statements": ["H410"], "sources": ["echa"]}
+    # A code no allowed source words (H401: CLP does not adopt acute aquatic category 2) stays a code.
+    assert ghs.with_wording({"h_statements": ["H401"], "sources": ["echa"]}) == {"h_statements": ["H401"], "sources": ["echa"]}
     assert ghs.with_wording(None) is None
 
 
 def test_the_snapshot_words_exactly_the_codes_the_seed_has():
-    words = ghs.hazard_wording()
+    words, clp = ghs.hazard_wording(), ghs.clp_wording()
     worded = 0
     for m in _all():
         g = m.get("ghs") or {}
         want = {c: words[c] for c in g.get("h_statements") or [] if c in words}
-        assert (g.get("h_wording") or {}) == want, m["slug"]
+        eu = {c: clp[c] for c in g.get("h_statements") or [] if c in clp}     # phase 3B
+        assert (g.get("h_wording") or {}) == {**want, **eu}, m["slug"]
+        assert g.get("h_wording_clp", []) == sorted(eu), m["slug"]
         if want:
             assert g["h_wording_source"] == "osha_hcs"
             worded += 1

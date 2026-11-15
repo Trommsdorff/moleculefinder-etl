@@ -11,11 +11,12 @@ from moleculefinder_etl.transform import canon, assemble
 
 def test_household_seed_loads_and_resolves_cids():
     seed = canon.household_seed()
-    assert len(seed) == 38, "seed should carry all 38 must-include molecules"
+    # 38, then the five antiperspirant salts (phase 3B, 2026-11-14)
+    assert len(seed) == 43, "seed should carry all 43 must-include molecules"
 
     hand = [m for m in seed if m["hand_model"]]
     addc = [m for m in seed if not m["hand_model"]]
-    assert len(hand) == 18 and len(addc) == 20
+    assert len(hand) == 23 and len(addc) == 20
 
     # add-core keep their real (positive) PubChem CID; hand-model get synthetic negatives.
     assert all(m["cid"] > 0 for m in addc)

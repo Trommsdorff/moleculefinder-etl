@@ -914,3 +914,14 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 922,Perfluorooctanesulfonic acid,74483,3087,everyday-chemistry,organohalogen,,,,,2026-10-runA
 923,Perfluorononanoic acid,67821,745,everyday-chemistry,organohalogen,,,,,2026-10-runC2
 924,Perfluorohexanesulfonic acid,67734,696,everyday-chemistry,organohalogen,,,,,2026-10-runC2
+925,Avobenzone,51040,1510,otc-medicine,otc,yes,,,,2026-11-care
+926,Homosalate,8362,436,otc-medicine,otc,yes,,,,2026-11-care
+927,Octisalate,8364,366,otc-medicine,otc,yes,,,,2026-11-care
+928,Octocrylene,22571,796,otc-medicine,otc,yes,,,,2026-11-care
+929,Stannous fluoride,24550,1104,everyday-chemistry,inorganic,,,,,2026-11-care
+930,Sodium monofluorophosphate,24266,815,everyday-chemistry,inorganic,,,,,2026-11-care
+931,Aluminum chlorohydrate,,1364,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
+932,Aluminum sesquichlorohydrate,,526,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
+933,Aluminum zirconium tetrachlorohydrex gly,,565,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
+934,Aluminum zirconium octachlorohydrex gly,,0,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
+935,Aluminum zirconium trichlorohydrex gly,,0,everyday-chemistry,inorganic,,,,hand-model,2026-11-care

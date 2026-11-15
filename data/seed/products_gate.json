@@ -1,19 +1,19 @@
 {
  "seeded": 475,
- "passed": 424,
- "failed": 51,
+ "passed": 429,
+ "failed": 46,
  "by_kind": {
   "food": 34,
   "drink": 14,
   "medicine": 299,
-  "cosmetic": 60,
+  "cosmetic": 65,
   "household": 12,
   "chemistry": 1,
   "moment": 4
  },
  "min_molecules": 3,
  "matched_by_code": {
-  "unii": 1866,
+  "unii": 1920,
   "moiety": 156
  },
  "matched_by_rule": {
@@ -24,12 +24,12 @@
  "unii_index": {
   "fda_table": "UNII_Records_4Aug2026.txt",
   "codes": {
-   "cid": 788,
-   "inchikey": 22,
+   "cid": 793,
+   "inchikey": 23,
    "pubchem": 160,
-   "substance": 16
+   "substance": 21
   },
-  "molecules_with_a_code": 864
+  "molecules_with_a_code": 875
  },
  "failures": [
   {
@@ -411,68 +411,15 @@
    ]
   },
   {
-   "slug": "arrid-extra-dry",
-   "name": "Arrid Extra Dry",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "95b978ff-259d-4dea-867d-cf59a01cbd24",
-   "reason": "the label lists 7 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "butane",
-    "1-1-difluoroethane"
-   ]
-  },
-  {
-   "slug": "australian-gold-lip-balm-spf-30",
-   "name": "Australian Gold Lip Balm SPF 30",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "32725ca7-ec21-4643-bdc6-278fd647b95d",
-   "reason": "the label lists 7 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
-   "matched": []
-  },
-  {
    "slug": "ban-roll-on-unscented",
    "name": "Ban Roll-On Unscented",
    "kind": "cosmetic",
    "source": "dailymed",
    "item": "57a3d112-3f8e-4d23-864f-d834bcf25385",
-   "reason": "the label lists 9 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
+    "aluminum-chlorohydrate",
     "water"
-   ]
-  },
-  {
-   "slug": "banana-boat-sport-ultra-lip-balm",
-   "name": "Banana Boat Sport Ultra Lip Balm",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "c7a3c03b-7fee-404c-e053-2a95a90a3a97",
-   "reason": "the label lists 17 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
-   "matched": [
-    "saccharin"
-   ]
-  },
-  {
-   "slug": "carmex-lip-balm-spf-30",
-   "name": "Carmex Lip Balm SPF 30",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "ea66ce2c-4e47-451c-b8f6-1f15a23b5cab",
-   "reason": "the label lists 11 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
-   "matched": [
-    "tocopherol"
-   ]
-  },
-  {
-   "slug": "coppertone-sport-lip-balm-spf-30",
-   "name": "Coppertone Sport Lip Balm SPF 30",
-   "kind": "cosmetic",
-   "source": "dailymed",
-   "item": "47bc6776-1130-0162-e063-6294a90a2adc",
-   "reason": "the label lists 20 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
-   "matched": [
-    "tocopherol"
    ]
   },
   {
@@ -490,8 +437,10 @@
    "kind": "cosmetic",
    "source": "dailymed",
    "item": "f8aee3c2-3a39-7fae-e053-6394a90a64c4",
-   "reason": "the label lists 2 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
-   "matched": []
+   "reason": "the label lists 2 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "aluminum-zirconium-trichlorohydrex-gly"
+   ]
   },
   {
    "slug": "secret-invisible-solid",
@@ -499,8 +448,10 @@
    "kind": "cosmetic",
    "source": "dailymed",
    "item": "4250ed91-9678-2bad-e063-6394a90a8e7a",
-   "reason": "the label lists 12 ingredient(s); 0 are MoleculeFinder molecules, fewer than 3",
-   "matched": []
+   "reason": "the label lists 12 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "matched": [
+    "aluminum-zirconium-tetrachlorohydrex-gly"
+   ]
   },
   {
    "slug": "speed-stick-power",
@@ -508,8 +459,9 @@
    "kind": "cosmetic",
    "source": "dailymed",
    "item": "f1150258-059c-4292-a483-2cdf2fa3da68",
-   "reason": "the label lists 13 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 13 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
+    "aluminum-zirconium-tetrachlorohydrex-gly",
     "citric-acid"
    ]
   },
@@ -519,8 +471,9 @@
    "kind": "cosmetic",
    "source": "dailymed",
    "item": "445ef219-0712-4083-87d8-fc75dea4058d",
-   "reason": "the label lists 9 ingredient(s); 1 is a MoleculeFinder molecule, fewer than 3",
+   "reason": "the label lists 9 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
    "matched": [
+    "aluminum-chlorohydrate",
     "butylated-hydroxytoluene"
    ]
   },
@@ -734,10 +687,6 @@
    "labels": 11
   },
   {
-   "name": "AVOBENZONE",
-   "labels": 11
-  },
-  {
    "name": "CAPRYLYL GLYCOL",
    "labels": 11
   },
@@ -778,19 +727,7 @@
    "labels": 10
   },
   {
-   "name": "HOMOSALATE",
-   "labels": 9
-  },
-  {
    "name": "ISOPROPYL MYRISTATE",
-   "labels": 9
-  },
-  {
-   "name": "OCTISALATE",
-   "labels": 9
-  },
-  {
-   "name": "OCTOCRYLENE",
    "labels": 9
   },
   {
@@ -831,6 +768,22 @@
   },
   {
    "name": "CASTOR OIL",
+   "labels": 7
+  },
+  {
+   "name": "DOCOSANOL",
+   "labels": 7
+  },
+  {
+   "name": "ETHYLCELLULOSE, UNSPECIFIED",
+   "labels": 7
+  },
+  {
+   "name": "FD&C GREEN NO. 3",
+   "labels": 7
+  },
+  {
+   "name": "POLYSORBATE 20",
    "labels": 7
   }
  ],

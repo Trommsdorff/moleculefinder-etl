@@ -102,14 +102,54 @@ def hazard_wording() -> dict[str, str]:
     return out
 
 
+# Phase 3B (Garrett, 2026-11-14): a code the HCS does not word takes the EU CLP Regulation's words where CLP words it
+# (registry key eu_clp, acknowledged, shown with its attribution): the five aquatic codes H400 and H410 to H413. Those
+# codes are listed in ``h_wording_clp``; ``h_wording_source`` stays the HCS and is present only when the HCS words a code.
+CLP_SOURCE = "eu_clp"
+
+
+@functools.lru_cache(maxsize=1)
+def clp_wording() -> dict[str, str]:
+    """code -> CLP Annex III's words, for the codes the HCS does not word. A malformed entry, or a code both
+    sources word, stops the build (one code, one wording)."""
+    data = yaml.safe_load(HAZARD_STATEMENTS.read_text()) or {}
+    hcs = hazard_wording()
+    out, problems = {}, []
+    for code, e in (data.get("eu_clp") or {}).items():
+        text = str((e or {}).get("text") or "").strip()
+        if not _HCODE.fullmatch(str(code)) or not text or not (e or {}).get("clp") or not (e or {}).get("class"):
+            problems.append(f"{code}: needs an H code, text, clp and class")
+        elif "\u2014" in text or "\u2013" in text:
+            problems.append(f"{code}: a dash in the text")
+        elif str(code) in hcs:
+            problems.append(f"{code}: the HCS already words it")
+        else:
+            out[str(code)] = text
+    if problems:
+        raise SystemExit(f"{HAZARD_STATEMENTS.name} (eu_clp): " + "; ".join(problems))
+    return out
+
+
 def with_wording(ghs: dict | None) -> dict | None:
-    """A copy of the hazard label with ``h_wording`` ({code: words}, only the codes the standard
-    words) and ``h_wording_source``, or the label as it is when none of its codes has words."""
+    """A copy of the hazard label with ``h_wording`` ({code: words}, the codes a registered standard words),
+    ``h_wording_source`` (the HCS, when it words any of them) and ``h_wording_clp`` (the codes worded by the EU
+    CLP Regulation, when any), or the label as it is when none of its codes has words."""
     if not ghs:
         return ghs
-    words = hazard_wording()
-    worded = {c: words[c] for c in ghs.get("h_statements") or [] if c in words}
-    if not worded:
+    words, clp = hazard_wording(), clp_wording()
+    codes = ghs.get("h_statements") or []
+    worded = {c: words[c] for c in codes if c in words}
+    from_clp = {c: clp[c] for c in codes if c in clp}
+    if not worded and not from_clp:
         return ghs
-    registry.assert_not_blocked(WORDING_SOURCE)
-    return {**ghs, "h_wording": worded, "h_wording_source": WORDING_SOURCE}
+    out = dict(ghs)
+    if worded:
+        registry.assert_not_blocked(WORDING_SOURCE)
+        out["h_wording"] = worded
+        out["h_wording_source"] = WORDING_SOURCE
+    if from_clp:
+        registry.assert_not_blocked(CLP_SOURCE)
+        out["h_wording"] = {**(out.get("h_wording") or {}), **from_clp}
+        out["h_wording_clp"] = sorted(from_clp)
+    # The key order of a record that had words before phase 3B is unchanged (h_wording, h_wording_source).
+    return out

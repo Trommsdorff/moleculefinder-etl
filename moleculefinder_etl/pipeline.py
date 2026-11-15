@@ -444,6 +444,7 @@ def stage_transform(settings: Settings) -> list[dict]:
     # Phase 5A (2026-11-12): the parts of each molecule as amber layers under its ONE shipped
     # drawing, placed at atom positions read from that drawing, and the repeat units of starch and
     # cellulose. Carried forward by key; nothing redraws a shipped structure (transform/drawings.py).
+    drawings.clear_replaced_drawings(kept)          # phase 3B: carboxymethyl cellulose drawn as its repeat unit
     drawings.attach_structure_parts(kept, prior_by_cid)
     drawings.attach_repeat_units(kept, prior_by_cid)
 
