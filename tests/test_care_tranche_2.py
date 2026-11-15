@@ -72,6 +72,8 @@ def test_titanium_dioxide_is_a_lattice_drawn_with_nothing():
     assert r["structure_none"]["line"].startswith("a crystal lattice of titanium and oxygen with no single molecule")
     # its formula and weight stay PubChem's, those of one formula unit
     assert r["molecular_formula"] == "O2Ti" and r["isomeric_smiles"] == "O=[Ti]=O"
+    # and no computed descriptor of a molecule it does not have (PubChem computes them from O=[Ti]=O)
+    assert all(v is None for k, v in r["descriptors"].items() if k != "confidence")
     assert assemble.structure_none_for("caffeine") is None
 
 

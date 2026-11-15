@@ -1250,7 +1250,9 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         # display structure the 3D model is that ring form's conformer (its CID), read into the seed.
         "has_3d": (False if no_drawing else display["has_3d"] if display
                    else props.get("Volume3D") is not None),
-        "descriptors": _descriptors(props),
+        # A lattice drawn with nothing has no molecule for PubChem's computed descriptors to describe (they are of
+        # the gas-phase O=[Ti]=O), so it carries none; its formula and weight stay, those of one formula unit.
+        "descriptors": _descriptors({} if no_drawing else props),
         "toxicity": list(fetched.get("toxicity") or []),
         # Phase 3A: the words for each code the US Hazard Communication Standard words (ghs.with_wording).
         "ghs": ghs_wording.with_wording(fetched.get("ghs")),

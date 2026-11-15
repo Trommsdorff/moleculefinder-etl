@@ -5,8 +5,9 @@
 # O=[Ti]=O) that is a lone TiO2 molecule with two Ti=O double bonds, which exists only as a gas; in the
 # white pigment every titanium sits among six oxygens and every oxygen among three titaniums (rutile and
 # anatase alike). That drawing would not be true, so the record gets none: no structure_svg, no parts, no
-# 3D model. Its formula, weight, SMILES and identifiers stay PubChem's (the formula and weight are those of
-# one formula unit, TiO2). The page shows the "No single structure" panel with this one line.
+# 3D model, and no computed descriptors (polar surface area, hydrogen-bond counts, complexity: PubChem computes
+# them from that same molecule). Its formula, weight, SMILES and identifiers stay PubChem's (the formula and weight
+# are those of one formula unit, TiO2). The page shows the "No single structure" panel with this one line.
 #
 # Each entry:
 #   line   what the panel says after "<title> is " (house rules; the claim rule, kind `part`).

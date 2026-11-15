@@ -526,7 +526,7 @@ the recipe would draw that as a lone molecule with two double bonds, a species k
 the substance (15FIX9V2JP) is filed under CID 162651, `[O-2].[O-2].[Ti+4]`, three loose ions, but that PubChem record's
 title, CAS and Wikidata item are trititanium oxide's. Neither drawing is true of the white pigment, so the record names
 itself in `sources/seeds/structure_none.yaml` (`line`, `basis`): `assemble.structure_none_for` gives it no
-`structure_svg`, no key, no 3D, and so no parts, and the record carries `structure_none` {line, confidence, source}. The
+`structure_svg`, no key, no 3D, no computed descriptors (PubChem computes those from the same `O=[Ti]=O`), and so no parts, and the record carries `structure_none` {line, confidence, source}. The
 web's "No single structure" panel prints "<title> is <line>". Its formula, weight and SMILES stay PubChem's (the formula
 and weight are those of one formula unit). The `line` is checked by the claim rule (kind `part`, key `none.<slug>.line`).
 A new record listed here is simply one more "with no drawing"; listing a record that has a shipped drawing would remove
