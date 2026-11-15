@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- MoleculeFinder's weekly data refresh on the Mac mini (2026-11; network/137-Finder-Web-Standards.md section 14).
+     Source of truth: moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.weekly-refresh.plist; the installed
+     copy is ~/Library/LaunchAgents/com.137finder.moleculefinder.weekly-refresh.plist.
+     It runs ORIGIN/MAIN's scripts/mac/weekly-refresh.sh (fetched, then copied beside the state files), so the job is
+     the same whatever branch the interactive checkout is on; offline it runs the last copy it fetched.
+     Fires Mondays 03:10 Eastern, then Monday 06:10 to 18:10 every two hours (retries), and 03:10 on every other day
+     (catch-ups). The script runs only while this ISO week has no success and fewer than 8 tries, so the extra starts
+     cost nothing once the week is done. Monday because the molecule of the week changes with the ISO week; 03:10
+     because nothing else on this Mac starts then (ThePatentFinder 00:30, 04:00, 05:00; TheFiscalFinder 04:20 and
+     Monday 09:30 onward; PolitiFinder 05:10; GravityFinder Wednesday 01:40) and it is clear of the news job's
+     slots (:50 past 00, 06, 12 and 18 UTC: 01:50 or 02:50, 07:50 or 08:50 Eastern). The :10 retries never meet
+     PolitiFinder's 05:10. launchd weekdays: 0 = Sunday, 1 = Monday.
+     launchd, not cron: a start missed while the Mac was asleep fires once at the next wake. The times are the Mac's
+     own zone, America/New_York (the script warns if that ever changes).
+     ExitTimeOut gives a stopped run 90 s to file its "cancelled" alarm.
+     The fetch below takes GitHub's credentials from gh and never prompts, and gives up after 120 s; on a failed fetch
+     it runs the copy it fetched last time.
+     A change here takes effect only when the installed copy is replaced and the agent reloaded
+     (docs/MAC-WEEKLY-REFRESH.md, "Turning it on, off, and back to GitHub"). -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.137finder.moleculefinder.weekly-refresh</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-c</string>
+    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; mkdir -p "$D"; GIT_TERMINAL_PROMPT=0 /usr/bin/perl -e 'alarm 120; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -c "credential.helper=!/opt/homebrew/bin/gh auth git-credential" -C "$R" fetch --quiet origin main 2&gt;/dev/null; /opt/homebrew/bin/git -C "$R" show origin/main:scripts/mac/weekly-refresh.sh &gt; "$D/weekly-refresh.sh.tmp" &amp;&amp; mv "$D/weekly-refresh.sh.tmp" "$D/weekly-refresh.sh"; exec /bin/bash "$D/weekly-refresh.sh"</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>12</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>14</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>16</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>18</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>6</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+    <dict><key>Weekday</key><integer>0</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>10</integer></dict>
+  </array>
+  <key>ExitTimeOut</key><integer>90</integer>
+  <key>StandardOutPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd.log</string>
+  <key>StandardErrorPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd.log</string>
+</dict>
+</plist>

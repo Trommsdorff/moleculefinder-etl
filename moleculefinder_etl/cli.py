@@ -4,7 +4,7 @@ import argparse
 import logging
 import os
 from dotenv import load_dotenv
-from .config import Settings
+from .config import Settings, weekly_run
 from . import pipeline
 
 load_dotenv()  # pick up SUPABASE_URL / SUPABASE_SERVICE_KEY from a local .env
@@ -38,11 +38,12 @@ def main(argv: list[str] | None = None) -> int:
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
-    # Which inputs this run may use (moleculefinder_etl/inputs.py): the weekly GitHub run
-    # refreshes them; every other run is pinned to the ones main was built from, so a rebuild
-    # here reproduces main instead of drifting from it. MFETL_INPUTS=refresh overrides.
+    # Which inputs this run may use (moleculefinder_etl/inputs.py): the weekly run (GitHub's, or
+    # the Mac mini's job with MFETL_WEEKLY=1) refreshes them; every other run is pinned to the ones
+    # main was built from, so a rebuild here reproduces main instead of drifting from it.
+    # MFETL_INPUTS=refresh overrides.
     if os.getenv("MFETL_INPUTS") not in ("pinned", "refresh"):
-        os.environ["MFETL_INPUTS"] = "refresh" if os.getenv("GITHUB_ACTIONS") == "true" else "pinned"
+        os.environ["MFETL_INPUTS"] = "refresh" if weekly_run() else "pinned"
     if args.stage == "sync-inputs":
         from . import inputs
         inputs.sync()

@@ -199,3 +199,82 @@ def test_the_weekly_run_uploads_the_inputs_only_after_a_green_commit():
     assert "data/seed/inputs.json" in steps[name]["run"]
     assert steps[upload]["with"]["path"] == "data/raw_cache"
     assert steps[upload]["with"]["name"] == "${{ steps.inputs.outputs.artifact }}"
+
+
+# ── the move to the Mac mini (2026-11, scripts/mac/weekly-refresh.sh) ────────
+def test_the_cli_refreshes_on_the_mac_weekly_job(monkeypatch):
+    """The Mac job sets MFETL_WEEKLY=1 and nothing GitHub-shaped: it is the weekly run all the same."""
+    monkeypatch.delenv(inputs.MODE_ENV, raising=False)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.setenv("MFETL_WEEKLY", "1")
+    monkeypatch.setattr(inputs, "sync", lambda: None)
+    assert cli.main(["sync-inputs"]) == 0
+    assert inputs.mode() == "refresh"
+
+
+def test_a_mac_weekly_run_publishes_its_inputs_and_names_no_artifact(tmp_path, monkeypatch):
+    """Nothing can upload an Actions artifact from the Mac: its pointer says where the inputs live."""
+    monkeypatch.setenv(inputs.MODE_ENV, "refresh")
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.setenv("MFETL_WEEKLY", "1")
+    root, inputs_file = _cache(tmp_path / "mac_cache"), tmp_path / "inputs.json"
+    monkeypatch.setattr(inputs, "RAW_CACHE", root)
+    monkeypatch.setattr(inputs, "INPUTS_FILE", inputs_file)
+    inputs.after_export()
+    pointer = json.loads(inputs_file.read_text())
+    assert pointer["built_on"] == "mac-mini" and "artifact" not in pointer
+    assert not pointer["fingerprint"].startswith("local-")
+    assert inputs.verify(root, inputs_file) == pointer["fingerprint"]
+
+
+def test_the_github_backup_still_names_its_artifact(tmp_path, monkeypatch):
+    monkeypatch.setenv(inputs.MODE_ENV, "refresh")
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    monkeypatch.delenv("MFETL_WEEKLY", raising=False)
+    root, inputs_file = _cache(tmp_path / "ci_cache"), tmp_path / "inputs.json"
+    monkeypatch.setattr(inputs, "RAW_CACHE", root)
+    monkeypatch.setattr(inputs, "INPUTS_FILE", inputs_file)
+    inputs.after_export()
+    pointer = json.loads(inputs_file.read_text())
+    assert pointer["artifact"] == "inputs-" + pointer["fingerprint"][:16] and "built_on" not in pointer
+
+
+def test_sync_copies_the_mac_jobs_inputs_when_main_was_built_there(tmp_path, monkeypatch):
+    mac = _cache(tmp_path / "mac_cache")
+    inputs_file = tmp_path / "inputs.json"
+    inputs.record(mac, inputs_file, publish=True, built_on="mac-mini")
+    monkeypatch.setenv(inputs.MAC_CACHE_ENV, str(mac))
+    monkeypatch.setattr(inputs, "download", lambda name: pytest.fail("a Mac-built pointer downloads nothing"))
+    local = tmp_path / "raw_cache"
+    local.mkdir()
+    (local / ".gitkeep").write_text("")
+    (local / "stale.json").write_text("{}")
+    fp = inputs.sync(root=local, inputs_file=inputs_file)
+    assert fp == json.loads(inputs_file.read_text())["fingerprint"]
+    assert not (local / "stale.json").exists() and (local / ".gitkeep").exists()
+    assert inputs.verify(local, inputs_file) == fp
+    assert (mac / "pubchem" / "props-2519.json").exists()               # the Mac's copy is untouched
+
+
+def test_sync_refuses_a_mac_cache_that_has_moved_on(tmp_path, monkeypatch):
+    mac = _cache(tmp_path / "mac_cache")
+    inputs_file = tmp_path / "inputs.json"
+    inputs.record(mac, inputs_file, publish=True, built_on="mac-mini")
+    cache.write_json(mac / "pubchem" / "syn60-2519.json", ["Caffeine", "Theine"])    # next week's run
+    inputs.record(mac, tmp_path / "newer.json", publish=True, built_on="mac-mini")
+    monkeypatch.setenv(inputs.MAC_CACHE_ENV, str(mac))
+    local = tmp_path / "raw_cache"
+    local.mkdir()
+    (local / "kept.json").write_text("{}")
+    with pytest.raises(SystemExit, match="built by the Mac mini"):
+        inputs.sync(root=local, inputs_file=inputs_file)
+    assert (local / "kept.json").exists()                                # left as it was
+
+
+def test_the_mac_job_can_keep_its_cache_outside_the_checkout(tmp_path):
+    import subprocess
+    import sys
+    out = subprocess.run([sys.executable, "-c", "from moleculefinder_etl import config; print(config.RAW_CACHE)"],
+                         capture_output=True, text=True, check=True,
+                         env={**__import__("os").environ, "MFETL_RAW_CACHE": str(tmp_path / "c")})
+    assert out.stdout.strip() == str(tmp_path / "c")

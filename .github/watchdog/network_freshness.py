@@ -33,13 +33,32 @@ class Target:
     workflow: str  # workflow FILE, stable across display-name edits
     max_age_days: int  # 2x cadence + slack
     cadence: str  # "weekly" | "monthly"
+    # A refresh that runs OFF GitHub (on the Mac mini, the network's rule since 2026-11-09) leaves no
+    # workflow run behind. When it commits to the repo's main branch, the newest commit that touches
+    # `commit_path` and whose first line matches `commit_subject` counts as a success too, alongside
+    # any green run of `workflow` (which stays as the manual backup). None: the runs are the only signal.
+    commit_subject: str | None = None
+    # Asking by path keeps the answer on the first page however many other commits a week has
+    # (MoleculeFinder's sessions pushed 77 between two Monday refreshes in November 2026).
+    commit_path: str | None = None
 
+
+# MoleculeFinder (2026-11): the weekly refresh moves to the Mac mini (scripts/mac/weekly-refresh.sh).
+# Every run that gets as far as its commit stamps data/LAST_CHECK and pushes "etl: refresh YYYY-MM-DD"
+# (or, in a week with nothing new, "etl: no changes YYYY-MM-DD [heartbeat]") to main; a failed run's
+# heartbeat touches the same file but says "etl: run failed" and does not count. Sessions never touch it. The GitHub workflow wrote the same subjects, so either machine
+# counts. 8 days, not 10: the Mac runs early Monday Eastern and catches up daily at 03:10, so a week
+# with no success by the Wednesday check means the Monday run and two catch-ups all failed or the Mac
+# has been off since Monday; that is worth an email that day. The Mac's own alarm issue covers a run
+# that committed but did not get its data PR merged and live.
+MF_COMMIT_SUBJECT = r"^etl: (refresh|no changes) \d{4}-\d{2}-\d{2}"
 
 TARGETS = [
     Target("judicialfinder", "refresh-data.yml", 10, "weekly"),
     Target("thefiscalfinder", "refresh-data.yml", 40, "monthly"),
     Target("gravityfinder", "freshness.yml", 10, "weekly"),
-    Target("moleculefinder-etl", "etl.yml", 10, "weekly"),
+    Target("moleculefinder-etl", "etl.yml", 8, "weekly",
+           commit_subject=MF_COMMIT_SUBJECT, commit_path="data/LAST_CHECK"),
 ]
 
 OK = "ok"
@@ -129,6 +148,23 @@ def _open_failure_issue(api, repo: str, report: Report) -> str | None:
     return None
 
 
+def _newest_refresh_commit(api, t: Target) -> dict | None:
+    """The newest commit on main whose first line matches ``t.commit_subject``, as a run-shaped dict
+    (``updated_at``, ``created_at``, ``html_url``), or None. Raises when the API cannot be read: the
+    caller reports that as COULD NOT CHECK, never as a pass."""
+    path = f"&path={t.commit_path}" if t.commit_path else ""
+    commits = api(
+        f"https://api.github.com/repos/{OWNER}/{t.repo}/commits?sha=main{path}&per_page=30"
+    )
+    pattern = re.compile(t.commit_subject or "")
+    for c in commits:
+        subject = (c.get("commit", {}).get("message") or "").splitlines()[:1]
+        if subject and pattern.search(subject[0]):
+            when = c["commit"]["committer"]["date"]
+            return {"updated_at": when, "created_at": when, "html_url": c.get("html_url", "")}
+    return None
+
+
 def _classify(api, t: Target, now: _dt.datetime, report: Report) -> Finding:
     runs_url = (
         f"https://api.github.com/repos/{OWNER}/{t.repo}"
@@ -136,6 +172,10 @@ def _classify(api, t: Target, now: _dt.datetime, report: Report) -> Finding:
     )
     try:
         runs = api(runs_url).get("workflow_runs", [])
+        if t.commit_subject:
+            commit = _newest_refresh_commit(api, t)
+            if commit:
+                runs = sorted(runs + [commit], key=lambda r: _parse(r["updated_at"]), reverse=True)
     except Exception as e:  # noqa: BLE001 - fail loud; see workflow header
         return Finding(
             t.repo,
@@ -145,8 +185,9 @@ def _classify(api, t: Target, now: _dt.datetime, report: Report) -> Finding:
         )
 
     if not runs:
+        what = f"`{t.workflow}` run" + (" or refresh commit" if t.commit_subject else "")
         return Finding(
-            t.repo, UNKNOWN, f"- **{t.repo}** — no successful `{t.workflow}` run on record at all."
+            t.repo, UNKNOWN, f"- **{t.repo}** — no successful {what} on record at all."
         )
 
     run = runs[0]
@@ -234,12 +275,25 @@ class Decision:
     why: str
 
 
-def decide(report: Report, issue_open: bool) -> Decision:
+# The repos an episode issue already names as a problem: the bullets `- **repo** —` that the
+# report writes into the issue body and every daily comment.
+REPORTED = re.compile(r"^- \*\*([A-Za-z0-9._-]+)\*\*", re.MULTILINE)
+
+
+def reported_repos(issue_text: str) -> frozenset[str]:
+    return frozenset(REPORTED.findall(issue_text or ""))
+
+
+def decide(report: Report, issue_open: bool, known: frozenset[str] | set[str] = frozenset()) -> Decision:
     """Choose what to do. Quieter than exit-1-every-day, not weaker.
 
     - COULD NOT CHECK alarms every day. It is the starvation case the watchdog
       exists for, and a silent starving watchdog is the original failure.
     - Real staleness alarms once, at the start of the episode, then comments.
+      "Once" is per target (2026-11-15): ``known`` is the repos the open issue
+      already names. A target that goes stale while an older episode is open
+      (TheFiscalFinder's has been open since October) emails on the day it
+      joins; before this, one open episode made every later stall silent.
     - Everything green closes the episode.
     """
     if report.unknown:
@@ -250,6 +304,11 @@ def decide(report: Report, issue_open: bool) -> Decision:
         )
     if report.stale:
         if issue_open:
+            joined = sorted({f.repo for f in report.stale} - set(known))
+            if joined:
+                return Decision(
+                    COMMENT, 1, f"new staleness joined the open episode: {', '.join(joined)}"
+                )
             return Decision(COMMENT, 0, "staleness already reported in the open episode issue")
         return Decision(CREATE, 1, "new staleness episode")
     if report.waiting:

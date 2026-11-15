@@ -107,12 +107,22 @@ jobs:
                 --limit 1 --json number --jq '.[0].number // empty')
           echo "number=$n" >> "$GITHUB_OUTPUT"
           echo "Open episode issue: ${n:-none}"
+          # The repos the open issue already names (its body and every daily comment), so a target
+          # that stalls while an older episode is open still emails on the day it joins
+          # (network_freshness.decide, 2026-11-15). Unreadable: none known, which errs toward the email.
+          if [ -n "$n" ]; then
+            gh issue view "$n" --json body,comments --jq '[.body, .comments[].body] | join("\n")' \
+              > "$RUNNER_TEMP/episode.txt" 2>/dev/null || : > "$RUNNER_TEMP/episode.txt"
+          else
+            : > "$RUNNER_TEMP/episode.txt"
+          fi
 
       - name: Check every refresh cron across the network
         id: check
         env:
           TOKEN: ${{ secrets.NETWORK_READ_TOKEN }}
           ISSUE: ${{ steps.episode.outputs.number }}
+          EPISODE_TEXT: ${{ runner.temp }}/episode.txt
         run: |
           # A missing token is the could-not-check case, so it alarms every day —
           # but it must still respect an open episode, or it opens a fresh issue
@@ -145,7 +155,11 @@ jobs:
                   return json.load(r)
 
           report = nf.build_report(api, datetime.datetime.now(datetime.timezone.utc))
-          decision = nf.decide(report, issue_open=bool(os.environ.get("ISSUE")))
+          try:
+              known = nf.reported_repos(open(os.environ["EPISODE_TEXT"], encoding="utf-8").read())
+          except OSError:
+              known = frozenset()
+          decision = nf.decide(report, issue_open=bool(os.environ.get("ISSUE")), known=known)
 
           for f in report.findings:
               print(f"{f.state.upper():<14} {f.line.splitlines()[0]}")

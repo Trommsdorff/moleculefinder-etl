@@ -41,7 +41,7 @@ def load_sources(client) -> int:
 
 def record_run(client, stage: str, status: str, rows: int, notes: str = "") -> None:
     client.table("ingest_run").insert({
-        "git_sha": os.getenv("GITHUB_SHA"), "stage": stage,
+        "git_sha": os.getenv("GITHUB_SHA") or os.getenv("MFETL_GIT_SHA"), "stage": stage,
         "status": status, "rows_upserted": rows, "notes": notes,
     }).execute()
 
