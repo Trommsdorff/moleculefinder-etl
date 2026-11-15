@@ -231,8 +231,10 @@ def test_the_hand_mark_counts():
     marks = _all_marks()
     # Phase 3B (2026-11-14): +12 "added" (sunscreen 5, antiperspirant deodorant 5, toothpaste 2), 514 -> 526.
     assert len(marks) == 526
+    # Garrett's decision 6 (2026-11-15): PABA's Skincare entry, added -> none (the FDA removed it from the
+    # US sunscreen monograph M020 by order OTC000008-1, Federal Register 2026-09-11).
     assert Counter(m["value"] for _, _, m in marks) == {
-        "natural": 207, "added": 224, "formed": 57, "body": 17, "none": 21}
+        "natural": 207, "added": 223, "formed": 57, "body": 17, "none": 22}
     assert Counter(m["formed_when"] for _, _, m in marks if m["value"] == "formed") == {
         "fermentation": 33, "roasted": 7, "aged": 6, "baked": 5, "cured": 2, "cooked": 2, "crushed": 2}
 
@@ -330,3 +332,11 @@ def test_the_committed_unmarked_list_matches_the_snapshot():
     nulls = [{"product": p["slug"], "molecule": m["slug"]} for p in _products() for m in p["molecules"]
              if m.get("presence") is None]
     assert [{"product": u["product"], "molecule": u["molecule"]} for u in listed] == nulls
+
+
+def test_paba_is_no_longer_a_sunscreen_filter_the_maker_adds():
+    # Garrett's decision 6 (2026-11-15): the FDA removed aminobenzoic acid from the US sunscreen
+    # monograph (OTC000008-1, Federal Register 2026-09-11), so the Skincare list no longer says a maker adds it.
+    m = presence.load_marks()["product"][("skincare", "4-aminobenzoic-acid")]
+    assert m["value"] == "none"
+    assert m["note"] == "Once a sunscreen filter; the FDA removed it from the US sunscreen monograph in 2026."

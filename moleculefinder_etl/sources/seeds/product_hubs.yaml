@@ -62,7 +62,7 @@ skincare:
     - {slug: tretinoin, presence: added, presence_note: "The active ingredient of the prescription cream."}
     - {slug: urea, presence: added, presence_note: "An ingredient the maker adds."}   # keratolytic and humectant
     - {slug: tocopherol, presence: added, presence_note: "An ingredient the maker adds."}   # vitamin E
-    - {slug: 4-aminobenzoic-acid, presence: added, presence_note: "A sunscreen filter the maker adds."}   # PABA, the original sunscreen filter
+    - {slug: 4-aminobenzoic-acid, presence: none, presence_note: "Once a sunscreen filter; the FDA removed it from the US sunscreen monograph in 2026."}   # PABA; out of the FDA monograph M020 by order OTC000008-1 (Federal Register 2026-09-11), Garrett's decision 6, 2026-11-15
     - {slug: zinc-oxide, presence: added, presence_note: "The mineral filter the maker adds."}   # mineral sunscreen and nappy cream
     - {slug: lactic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # alpha hydroxy acid
     - {slug: ascorbic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # vitamin C serums
