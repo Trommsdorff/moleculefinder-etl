@@ -44,6 +44,7 @@ from typing import Any
 from .config import DATA, RAW_CACHE, SNAPSHOTS
 from .sources import cache as rawcache
 from .sources import registry
+from .transform.toxicity import QUALIFIERS as QUALIFIER_WORDS
 from .transform.toxicity import parse_ld50
 
 log = logging.getLogger("mfetl.dataset")
@@ -194,6 +195,7 @@ MOLECULE_COLUMNS: list[tuple[str, str, str, str]] = [
     ("dual_use", "boolean", "Also has a common use outside medicine or food.", "MoleculeFinder curated"),
     ("macromolecule", "boolean", "A biopolymer or mixture with no single structure drawing.", "MoleculeFinder"),
     ("ld50_mg_per_kg", "number", "The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources).", "US government sources via PubChem"),
+    ("ld50_qualifier", "string", "Blank when ld50_mg_per_kg is the figure the source reports as the LD50; 'more than', 'less than' or 'about' when the source reports it only as a limit or an approximation ('more than 10000': the LD50 lies above 10,000 mg/kg, not at it).", "US government sources via PubChem"),
     ("ld50_species", "string", "Species of that LD50.", "US government sources via PubChem"),
     ("ld50_route", "string", "Route of that LD50 (oral, dermal, inhalation, iv, other).", "US government sources via PubChem"),
     ("ld50_sources", "string", "The US government sources reporting that LD50, separated by ' | '.", "PubChem PUG-View references"),
@@ -322,12 +324,13 @@ def pug_view_toxicity(cid: int | None, cache_root: Path = RAW_CACHE) -> dict | N
     return rawcache.unwrap(_read(p)).value
 
 
-def ld50_sources(record: dict | None, value: float, species: str | None, route: str | None) -> list[str]:
+def ld50_sources(record: dict | None, value: float, species: str | None, route: str | None,
+                 qualifier: str | None = None) -> list[str]:
     """Every PUG-View reference source whose own text yields this exact LD50 row.
 
     Each Information item names its reference; the item is parsed with the same parser the
     snapshot used (`toxicity.parse_ld50`), so a source counts only when its string says this value,
-    species and route."""
+    species and route, and the same qualifier ("> 10,000" is not "10,000", toxicity.py)."""
     if not record:
         return []
     rec = record.get("Record", record)
@@ -339,7 +342,7 @@ def ld50_sources(record: dict | None, value: float, species: str | None, route: 
             for info in node.get("Information", []) or []:
                 for row in parse_ld50({"Information": [info]}, gate=False):
                     if (abs(row["value_num"] - value) < 1e-9 and row.get("species") == species
-                            and row.get("route") == route):
+                            and row.get("route") == route and row.get("qualifier") == qualifier):
                         src = names.get(info.get("ReferenceNumber"))
                         if src:
                             found.add(src)
@@ -400,6 +403,7 @@ def molecule_row(m: dict, tox_sources: list[str]) -> dict[str, Any]:
         "dual_use": bool(m.get("dual_use")),
         "macromolecule": bool(m.get("macromolecule")),
         "ld50_mg_per_kg": m.get("ld50_mg_per_kg") if has_ld50 else None,
+        "ld50_qualifier": QUALIFIER_WORDS.get(m.get("ld50_qualifier") or "") if has_ld50 else None,
         "ld50_species": m.get("ld50_species") if has_ld50 else None,
         "ld50_route": m.get("ld50_route") if has_ld50 else None,
         "ld50_sources": _join(tox_sources) if has_ld50 else None,
@@ -446,7 +450,8 @@ def build(snapshot: dict[str, Any], *, version: str, inputs: str | None,
     for m in mols:
         srcs: list[str] = []
         if m.get("ld50_mg_per_kg") is not None:
-            every = ld50_sources(tox(m.get("cid")), m["ld50_mg_per_kg"], m.get("ld50_species"), m.get("ld50_route"))
+            every = ld50_sources(tox(m.get("cid")), m["ld50_mg_per_kg"], m.get("ld50_species"), m.get("ld50_route"),
+                                 m.get("ld50_qualifier"))
             srcs = [s for s in every if s in PUBLIC_DOMAIN_TOX_SOURCES]
             if not srcs:
                 withheld_ld50.append(m["slug"])

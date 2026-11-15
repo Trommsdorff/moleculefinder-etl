@@ -6,10 +6,10 @@ anything, no permission or credit needed. A citation is welcome (below).
 
 | | |
 |---|---|
-| **Version** | 2026.10.1 |
-| **Snapshot** | MoleculeFinder data of 2026-10-21 |
-| **Molecules** | 915 |
-| **Products** | 405 |
+| **Version** | 2026.11 |
+| **Snapshot** | MoleculeFinder data of 2026-11-09 |
+| **Molecules** | 929 |
+| **Products** | 430 |
 | **Licence** | CC0 1.0 (`LICENSE.txt`) |
 | **Website** | https://moleculefinder.com |
 
@@ -17,16 +17,16 @@ anything, no permission or credit needed. A citation is welcome (below).
 
 | file | rows | what it holds |
 |---|---:|---|
-| `molecules.csv` | 915 | one row per molecule |
-| `products.csv` | 405 | one row per food, drink, product or class page |
-| `product_molecules.csv` | 2,367 | which molecules each product lists |
-| `categories.csv` | 167 | MoleculeFinder's groups, families, food and product hubs, functional groups |
-| `molecule_categories.csv` | 5,066 | which molecules each category holds |
+| `molecules.csv` | 929 | one row per molecule |
+| `products.csv` | 430 | one row per food, drink, product or class page |
+| `product_molecules.csv` | 3,104 | which molecules each product lists |
+| `categories.csv` | 169 | MoleculeFinder's groups, families, food and product hubs, functional groups |
+| `molecule_categories.csv` | 5,131 | which molecules each category holds |
 | `relationships.csv` | 16 | curated molecule-to-molecule links (becomes, affects) |
-| `similarity.csv` | 3,302 | structural neighbours (Tanimoto, Morgan fingerprints) |
+| `similarity.csv` | 3,326 | structural neighbours (Tanimoto, Morgan fingerprints) |
 | `worlds.csv` | 10 | the ten everyday worlds |
-| `world_molecules.csv` | 60 | which molecules each world holds |
-| `licences.csv` | 296 | the FDA marketing record for each approved medicine (Drugs@FDA) |
+| `world_molecules.csv` | 57 | which molecules each world holds |
+| `licences.csv` | 310 | the FDA marketing record for each approved medicine (Drugs@FDA) |
 | `moleculefinder.json` | | every table above in one JSON file (`tables.<name>` is a list of rows) |
 | `MANIFEST.json` | | row counts, file sizes and SHA-256 checksums |
 
@@ -69,11 +69,12 @@ slug is a page on the site (https://moleculefinder.com/m/caffeine, https://molec
 | `dual_use` | boolean | Also has a common use outside medicine or food. | MoleculeFinder curated |
 | `macromolecule` | boolean | A biopolymer or mixture with no single structure drawing. | MoleculeFinder |
 | `ld50_mg_per_kg` | number | The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources). | US government sources via PubChem |
+| `ld50_qualifier` | string | Blank when ld50_mg_per_kg is the figure the source reports as the LD50; 'more than', 'less than' or 'about' when the source reports it only as a limit or an approximation ('more than 10000': the LD50 lies above 10,000 mg/kg, not at it). | US government sources via PubChem |
 | `ld50_species` | string | Species of that LD50. | US government sources via PubChem |
 | `ld50_route` | string | Route of that LD50 (oral, dermal, inhalation, iv, other). | US government sources via PubChem |
 | `ld50_sources` | string | The US government sources reporting that LD50, separated by ' | '. | PubChem PUG-View references |
 | `half_life_hours` | number | Elimination half-life in people, hours (8 molecules). | MoleculeFinder curated |
-| `relative_sweetness` | number | Sweetness relative to sucrose = 1. | MoleculeFinder curated |
+| `relative_sweetness` | number | Sweetness relative to sucrose = 1, from a public-domain source named on the molecule's page (the FDA, HSDB, MeSH). Blank where the site's value comes from a source that asks for attribution. | FDA, HSDB, MeSH via MoleculeFinder's sweetness seed |
 | `scoville_shu` | number | Pungency of the pure compound, Scoville heat units. | MoleculeFinder curated |
 | `odor_threshold_ng_m3` | number | Odor detection threshold, ng per cubic metre of air. | MoleculeFinder curated |
 | `pageviews_monthly` | integer | English Wikipedia page views per month, the demand signal MoleculeFinder ranks by. | Wikimedia Pageviews (CC0) |
@@ -191,7 +192,7 @@ The dataset is CC0, so it carries only fields whose sources are public domain or
 source asks for attribution, restricts reuse, or its terms could not be confirmed, the field is
 left out, even though MoleculeFinder's pages show it with the source named.
 
-- **GHS hazard classification** (signal word, pictograms, H-statements; on 645 molecules on the
+- **GHS hazard classification** (signal word, pictograms, H-statements; on 654 molecules on the
   site) and the 10 hazard categories built from it (acutely-toxic, compressed-gas, corrosive, environmental-hazard, flammable, ghs-danger, ghs-warning, health-hazard, irritant, oxidizing). PubChem
   aggregates it from the European Chemicals Agency's C&L Inventory and EUR-Lex (reuse with the source
   acknowledged) and Safe Work Australia (CC BY 4.0); the site shows it with that attribution, which a
@@ -203,6 +204,9 @@ left out, even though MoleculeFinder's pages show it with the source named.
 - **29 licence records** from the MHRA (Open Government Licence, attribution), the
   European Medicines Agency (reproduction with the source acknowledged) and national registers
   (Italy's AIFA, Latvia's medicines agency). Drugs@FDA records are kept.
+- **8 relative sweetness values** whose source asks for attribution (open-access
+  CC BY articles, the EFSA Journal). The site shows each with its credit; here the cell is blank, and
+  the values kept come from the FDA, HSDB and MeSH (public domain).
 - **CAS Registry Numbers.** The CAS Registry is maintained by the American Chemical Society, which
   requires a licence to publish its numbers; since 2026-10-23 neither the site nor the dataset
   carries them. Each row carries the PubChem CID, InChIKey and Wikidata QID instead.
@@ -225,13 +229,14 @@ left out, even though MoleculeFinder's pages show it with the source named.
 
 MoleculeFinder (137 Finder LLC) (2026). *MoleculeFinder: the molecules in everyday foods, drinks and products* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.23605767
 
-This version 2026.10.1, https://doi.org/10.5281/zenodo.23620892.
+This version 2026.11 (its DOI is minted at upload); latest published version 2026.10.1, https://doi.org/10.5281/zenodo.23620892.
 
 - Every version (always the latest): https://doi.org/10.5281/zenodo.23605767
 - Version 2026.10: https://doi.org/10.5281/zenodo.23605768
 - Version 2026.10.1: https://doi.org/10.5281/zenodo.23620892
 - Zenodo: https://zenodo.org/records/23620892
 - Kaggle: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products
+- Hugging Face: https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products
 - Website: https://moleculefinder.com/about/methodology
 
 ## Rebuilding

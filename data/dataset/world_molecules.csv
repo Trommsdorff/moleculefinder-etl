@@ -1,5 +1,4 @@
 world_slug,molecule_slug
-after-the-rain,2-nonenal
 falling-asleep,5-hydroxytryptophan
 fresh-bread,acetic-acid
 fresh-bread,acrylamide
@@ -24,7 +23,6 @@ glass-of-wine,cyanidin
 after-the-rain,dimethyl-sulfide
 your-workout,epinephrine
 glass-of-wine,ethanol
-fresh-bread,ethyl-maltol
 fresh-bread,furaneol
 falling-asleep,gamma-aminobutyric-acid
 after-the-rain,geosmin
@@ -50,7 +48,6 @@ sunscreen-summer-skin,retinol
 sunscreen-summer-skin,salicylic-acid
 falling-asleep,serotonin
 spicy-dinner,shogaol
-glass-of-wine,tannic-acid
 glass-of-wine,tartaric-acid
 morning-coffee,theobromine
 chocolate,theobromine

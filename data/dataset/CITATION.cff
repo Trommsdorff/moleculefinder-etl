@@ -9,8 +9,8 @@ type: dataset
 authors:
   - name: "MoleculeFinder"
     alias: "137 Finder LLC"
-version: "2026.10.1"
-date-released: "2026-10-21"
+version: "2026.11"
+date-released: "2026-11-09"
 license: CC0-1.0
 url: "https://moleculefinder.com"
 doi: "10.5281/zenodo.23605767"
@@ -28,6 +28,9 @@ identifiers:
   - type: url
     value: "https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products"
     description: "Kaggle copy"
+  - type: url
+    value: "https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products"
+    description: "Hugging Face copy"
 keywords:
   - chemistry
   - molecules
