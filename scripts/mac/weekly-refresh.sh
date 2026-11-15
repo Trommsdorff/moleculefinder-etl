@@ -254,7 +254,7 @@ remove_worktree() {   # remove_worktree <repo> <path>
 tidy() {
   remove_worktree "$ETL_REPO" "$WORK/etl" || say "WARNING: could not remove $WORK/etl; delete it by hand"
   remove_worktree "$WEB_REPO" "$WORK/web" || say "WARNING: could not remove $WORK/web; delete it by hand"
-  rmdir "$WORK" 2>/dev/null
+  rm -f "$WORK/.DS_Store"; rmdir "$WORK" 2>/dev/null     # Finder drops a .DS_Store into an emptied folder
   [ -n "$SCRATCH_CACHE" ] && rm -rf "$SCRATCH_CACHE"
   rm -rf "$MAIN_INPUTS.new"
   rm -rf "$RUN_DIR"
