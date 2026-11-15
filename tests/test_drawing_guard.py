@@ -56,8 +56,10 @@ WORKFLOW = ROOT / ".github" / "workflows" / "etl.yml"
 # no drawing, five new part sets, and carboxymethyl cellulose drawn as its repeat unit in place of its PubChem drawing
 # (its drawing and its one part set gone, a third repeat unit).
 MONDAY = [
-    "structure drawings: 901 carried, 0 repainted, 0 drawn, 25 with no drawing",
-    "structure parts: 721 carried, 0 made, 201 with no part, 4 drawings unreadable",
+    # The 2026-12-care tranche (2026-11-15): octinoxate and oxybenzone drawn, each with parts; titanium dioxide has
+    # no drawing (seeds/structure_none.yaml), so it is the 26th with none and has no part.
+    "structure drawings: 903 carried, 0 repainted, 0 drawn, 26 with no drawing",
+    "structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
     # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).
     ("compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); "

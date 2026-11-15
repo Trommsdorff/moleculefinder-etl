@@ -113,6 +113,12 @@ def corpus(seeds: Path = SEEDS_DIR, curated: Path = CURATED_DIR) -> list[tuple[s
             for f in ("line", "model_line"):
                 if isinstance((d or {}).get(f), str) and d[f].strip():
                     out.append(("part", f"display.{slug}.{f}", normalise(d[f])))
+    # The 2026-12-care tranche: the no-structure line of a lattice drawn with nothing.
+    none = seeds / "structure_none.yaml"
+    if none.exists():
+        for slug, d in ((yaml.safe_load(none.read_text()) or {}).get("molecules") or {}).items():
+            if isinstance((d or {}).get("line"), str) and d["line"].strip():
+                out.append(("part", f"none.{slug}.line", normalise(d["line"])))
     return out
 
 

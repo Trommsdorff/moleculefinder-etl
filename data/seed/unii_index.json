@@ -1,7 +1,7 @@
 {
  "source": "FDA Substance Registration System (UNII_Records_4Aug2026.txt)",
  "how": {"direct": ["cid", "inchikey", "pubchem", "substance"], "by_rule": ["parent", "skeleton", "alias"]},
- "count": 1143,
+ "count": 1146,
  "uniis": {
   "00072J7XWS": {"slug": "germanium", "how": "cid", "name": "GERMANIUM"},
   "008PUV3986": {"slug": "meclizine", "how": "parent", "name": "MECLIZINE MONOHYDROCHLORIDE ANHYDROUS"},
@@ -80,6 +80,7 @@
   "142M471B3J": {"slug": "carbon-dioxide", "how": "cid", "name": "CARBON DIOXIDE"},
   "144O8QL0L1": {"slug": "diclofenac", "how": "cid", "name": "DICLOFENAC"},
   "152JRG3T0U": {"slug": "modafinil", "how": "pubchem", "name": "MODAFINIL, (S)-"},
+  "15FIX9V2JP": {"slug": "titanium-dioxide", "how": "pubchem", "name": "TITANIUM DIOXIDE"},
   "15TEQ7D2QF": {"slug": "francium", "how": "cid", "name": "FRANCIUM"},
   "1678OK0E08": {"slug": "dexmethylphenidate", "how": "parent", "name": "DEXMETHYLPHENIDATE HYDROCHLORIDE"},
   "1806D8D52K": {"slug": "amitriptyline", "how": "cid", "name": "AMITRIPTYLINE"},
@@ -296,6 +297,7 @@
   "4VON5FNS3C": {"slug": "sodium-metabisulfite", "how": "inchikey", "name": "SODIUM METABISULFITE"},
   "4X49Y0596W": {"slug": "octisalate", "how": "cid", "name": "OCTISALATE"},
   "4XYU5U00C4": {"slug": "carbon", "how": "cid", "name": "CARBON BLACK"},
+  "4Y5P7MUD51": {"slug": "octinoxate", "how": "cid", "name": "OCTINOXATE"},
   "506T60A25R": {"slug": "sorbitol", "how": "cid", "name": "SORBITOL"},
   "509F88P9SZ": {"slug": "permethrin", "how": "cid", "name": "PERMETHRIN"},
   "50LFG02TXD": {"slug": "esketamine", "how": "cid", "name": "ESKETAMINE"},
@@ -537,6 +539,7 @@
   "94255I6E2T": {"slug": "disodium-phosphate", "how": "alias", "name": "SODIUM PHOSPHATE, DIBASIC, DIHYDRATE"},
   "947VD76D3L": {"slug": "perfluorooctanoic-acid", "how": "cid", "name": "PERFLUOROOCTANOIC ACID"},
   "94ZLA3W45F": {"slug": "arginine", "how": "inchikey", "name": "ARGININE"},
+  "95OOS7VE0Y": {"slug": "oxybenzone", "how": "cid", "name": "OXYBENZONE"},
   "95QB77JKPL": {"slug": "doxylamine", "how": "cid", "name": "DOXYLAMINE"},
   "9679TC07X4": {"slug": "iodine", "how": "cid", "name": "IODINE"},
   "96K6UQ3ZD4": {"slug": "sucralose", "how": "cid", "name": "SUCRALOSE"},

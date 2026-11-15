@@ -1,0 +1,27 @@
+# Records with no drawing although PubChem gives a SMILES (the 2026-12-care tranche, 2026-11-15).
+#
+# An extended solid is a lattice, not a molecule. PubChem's record of one still carries a SMILES, and the
+# drawing recipe would draw that SMILES as if it were a molecule. For titanium dioxide (CID 26042,
+# O=[Ti]=O) that is a lone TiO2 molecule with two Ti=O double bonds, which exists only as a gas; in the
+# white pigment every titanium sits among six oxygens and every oxygen among three titaniums (rutile and
+# anatase alike). That drawing would not be true, so the record gets none: no structure_svg, no parts, no
+# 3D model. Its formula, weight, SMILES and identifiers stay PubChem's (the formula and weight are those of
+# one formula unit, TiO2). The page shows the "No single structure" panel with this one line.
+#
+# Each entry:
+#   line   what the panel says after "<title> is " (house rules; the claim rule, kind `part`).
+#   basis  why there is no drawing (not shown on the site).
+# An entry for a record with a shipped drawing removes that drawing: the drawing guard lists it ("it no longer
+# has a drawing"), so it is a reviewed change, never a silent one (docs/DRAWING-RECIPES.md section 13).
+molecules:
+  titanium-dioxide:
+    line: >-
+      a crystal lattice of titanium and oxygen with no single molecule; its formula, TiO2, gives the ratio,
+      one titanium to every two oxygens.
+    basis: >-
+      Rutile and anatase, the two forms in pigment and sunscreen grades, are both lattices of TiO6 octahedra
+      sharing edges and corners (titanium six-coordinate, oxygen three-coordinate). The recipe's drawing of
+      PubChem's SMILES O=[Ti]=O would show a discrete molecule with two double bonds, a species known only
+      in the gas phase. The FDA's own code for the substance (15FIX9V2JP) is filed under PubChem's ionic
+      depiction [O-2].[O-2].[Ti+4] (CID 162651), whose PubChem title, CAS and Wikidata item belong to
+      trititanium oxide, so it is not drawn either.

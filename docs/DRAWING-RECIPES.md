@@ -518,6 +518,34 @@ deliberate remake`, `(structure parts): dropped, its drawing was replaced by its
 aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units: 3 (3 carried, 0
 repainted, 0 drawn this run)`; made or remade: none.
 
+## 13. A lattice drawn with nothing, and a repeat unit that replaces the record's structure (the 2026-12-care tranche, 2026-11-15)
+
+**Titanium dioxide has no drawing.** It is an extended solid: in rutile and anatase every titanium sits among six
+oxygens and every oxygen among three titaniums. PubChem's titanium dioxide (CID 26042) carries the SMILES `O=[Ti]=O`, and
+the recipe would draw that as a lone molecule with two double bonds, a species known only as a gas. The FDA's code for
+the substance (15FIX9V2JP) is filed under CID 162651, `[O-2].[O-2].[Ti+4]`, three loose ions, but that PubChem record's
+title, CAS and Wikidata item are trititanium oxide's. Neither drawing is true of the white pigment, so the record names
+itself in `sources/seeds/structure_none.yaml` (`line`, `basis`): `assemble.structure_none_for` gives it no
+`structure_svg`, no key, no 3D, and so no parts, and the record carries `structure_none` {line, confidence, source}. The
+web's "No single structure" panel prints "<title> is <line>". Its formula, weight and SMILES stay PubChem's (the formula
+and weight are those of one formula unit). The `line` is checked by the claim rule (kind `part`, key `none.<slug>.line`).
+A new record listed here is simply one more "with no drawing"; listing a record that has a shipped drawing would remove
+it, and the guard lists that removal ("it no longer has a drawing"), so it is a reviewed change, never a silent one.
+Silicon dioxide (`O=[Si]=O`) and zinc oxide (`O=[Zn]`), both lattices too, are live drawings and were not touched.
+
+**Carboxymethyl cellulose drops its record's structure** (Garrett's decision 5 on the phase 3B review). A record whose
+repeat unit `replaces` its PubChem drawing (section 12) now also drops, at assembly (`assemble._replaced_by_unit`),
+everything derived from that record's SMILES: formula, weight, both SMILES, InChI and InChIKey, the computed descriptors,
+3D, the functional groups (Aldehydes, Alcohols, Carboxylic acids), the similarity edges (and so its place in eight other
+molecules' neighbours) and the two weight boards. It keeps its CID, title, names, Wikidata item, curated line and its
+repeat unit, and reads like cellulose (`macromolecule: true`). Its repeat unit's key does not move (its seed is
+unchanged), so the guard carries it.
+
+**After this tranche, the weekly run's lines:** `structure drawings: 903 carried, 0 repainted, 0 drawn, 26 with no
+drawing`; `structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable`; `compare drawings: 147 pairs
+(aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units: 3
+(3 carried, 0 repainted, 0 drawn this run)`; made or remade: none.
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under

@@ -75,6 +75,8 @@ def test_the_hand_rulings_are_untouched():
     care = {"avobenzone", "homosalate", "octisalate", "octocrylene", "stannous-fluoride", "sodium-monofluorophosphate",
             "aluminum-chlorohydrate", "aluminum-sesquichlorohydrate", "aluminum-zirconium-tetrachlorohydrex-gly",
             "aluminum-zirconium-octachlorohydrex-gly", "aluminum-zirconium-trichlorohydrex-gly"}
+    # The 2026-12-care tranche (2026-11-15): three more sunscreen actives, each in M020.10 (checked 2026-11-15).
+    care |= {"titanium-dioxide", "octinoxate", "oxybenzone"}
     assert set(hand) == {"orforglipron", "meldonium", "phenibut", "clenbuterol", "clostebol", "flunitrazepam"} | care
     recs = [{"slug": m["slug"], "scope_bucket": m.get("scope_bucket")} for m in L.load_catalog()]
     relationships.attach_approvals(recs)

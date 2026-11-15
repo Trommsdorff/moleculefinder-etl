@@ -230,11 +230,13 @@ def test_the_hand_mark_counts():
     from collections import Counter
     marks = _all_marks()
     # Phase 3B (2026-11-14): +12 "added" (sunscreen 5, antiperspirant deodorant 5, toothpaste 2), 514 -> 526.
-    assert len(marks) == 526
+    # The 2026-12-care tranche (2026-11-15): +6 "added" (sunscreen 3, toothpaste 1, skincare 1, and titanium dioxide
+    # on M&M's, the one Wikidata row it brought), 526 -> 532.
+    assert len(marks) == 532
     # Garrett's decision 6 (2026-11-15): PABA's Skincare entry, added -> none (the FDA removed it from the
     # US sunscreen monograph M020 by order OTC000008-1, Federal Register 2026-09-11).
     assert Counter(m["value"] for _, _, m in marks) == {
-        "natural": 207, "added": 223, "formed": 57, "body": 17, "none": 22}
+        "natural": 207, "added": 229, "formed": 57, "body": 17, "none": 22}
     assert Counter(m["formed_when"] for _, _, m in marks if m["value"] == "formed") == {
         "fermentation": 33, "roasted": 7, "aged": 6, "baked": 5, "cured": 2, "cooked": 2, "crushed": 2}
 

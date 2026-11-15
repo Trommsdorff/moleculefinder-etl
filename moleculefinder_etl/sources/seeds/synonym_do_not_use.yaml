@@ -110,3 +110,12 @@
   why: a toothpaste product name PubChem lists for sodium monofluorophosphate
 - name: Extra-Strength Aim
   why: a toothpaste product name PubChem lists for sodium monofluorophosphate
+# The 2026-12-care tranche (2026-11-15): names on the new rows' lines that are not names for the molecule.
+- name: titanium peroxide
+  why: a Wikidata alias of titanium dioxide (Q193521), but a peroxide has an oxygen to oxygen bond and titanium dioxide has none; titanium peroxide is another compound
+- name: Flamenco
+  why: a line of pearlescent pigments (titanium dioxide on mica), listed by PubChem as a synonym of titanium dioxide, not a name for the compound
+- name: rutile
+  why: the mineral, one crystal form of titanium dioxide (anatase and brookite are others), rather than the compound's name, as fused quartz is for silicon dioxide
+- name: Parsol
+  why: a family of sunscreen filter trade names (Parsol 1789 is avobenzone, Parsol MCX octinoxate), listed by PubChem as a synonym of octinoxate; the name of one filter, Parsol MCX, stays

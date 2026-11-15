@@ -118,3 +118,27 @@ aluminum-zirconium-trichlorohydrex-gly:
   application: OTC Monograph M019
   basis: FDA OTC monograph. M019.10(r), "Aluminum zirconium trichlorohydrex gly up to 20 percent", in Final Administrative Order OTC000015 (posted 2021-11-23); the portal lists no later order on M019. Checked 2026-11-14.
   source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/Final%20Administrative%20Order%20OTC000015_M019-Antiperspirant%20Drug%20Products%20for%20OTC%20Human%20Use.pdf
+
+# ── The 2026-12-care tranche (titanium dioxide, octinoxate, oxybenzone; Garrett's word 2026-11-15). The same basis
+# as phase 3B: each checked on 2026-11-15 against the FDA's own final order on the OTC Monographs@FDA portal, the
+# ingredient read from § M020.10 of M020 as amended by OTC000039 (the order's "M020 as amended" text), and the
+# portal's latest-news list and the OTC000008 order page read for any later order: the only one, OTC000008-1
+# (Federal Register 2026-09-11), removed aminobenzoic acid and trolamine salicylate and left the rest of § M020.10.
+titanium-dioxide:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(o), "Titanium dioxide up to 25 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-15.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf
+octinoxate:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(i), "Octinoxate up to 7.5 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-15.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf
+oxybenzone:
+  regulator: US Food and Drug Administration
+  product: OTC Monograph M020, Sunscreen Drug Products for Over-the-Counter Human Use
+  application: OTC Monograph M020
+  basis: FDA OTC monograph. M020.10(l), "Oxybenzone up to 6 percent", in M020 as amended by Final Administrative Order OTC000039 (issued 2026-06-10, corrected 2026-08-10); the later order OTC000008-1 (Federal Register 2026-09-11) removed only aminobenzoic acid and trolamine salicylate. Checked 2026-11-15.
+  source: https://www.accessdata.fda.gov/drugsatfda_docs/omuf/Order/OTC000039_Final_Administrative_Order.pdf

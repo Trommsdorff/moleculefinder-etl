@@ -79,10 +79,11 @@ def test_no_product_name_reaches_a_new_records_title_or_name_line():
 
 def test_the_two_new_lists_and_the_toothpaste_additions_carry_added_marks():
     hubs = yaml.safe_load((SEEDS_DIR / "product_hubs.yaml").read_text())
-    assert [m["slug"] for m in hubs["sunscreen"]["molecules"]] == FILTERS + ["zinc-oxide"]
+    # 2026-12-care (2026-11-15) adds titanium dioxide, octinoxate and oxybenzone after these (tests/test_care_tranche_2.py)
+    assert [m["slug"] for m in hubs["sunscreen"]["molecules"]][:5] == FILTERS + ["zinc-oxide"]
     assert [m["slug"] for m in hubs["deodorant"]["molecules"]] == SALTS
     tooth = [m["slug"] for m in hubs["toothpaste"]["molecules"]]
-    assert tooth[-2:] == FLUORIDES
+    assert tooth[-3:-1] == FLUORIDES and tooth[-1] == "titanium-dioxide"   # titanium dioxide: 2026-12-care
     for hub in ("sunscreen", "deodorant", "toothpaste"):
         for m in hubs[hub]["molecules"]:
             assert m["presence"] == "added" and m["presence_note"], (hub, m)
@@ -130,8 +131,9 @@ def test_carboxymethyl_cellulose_is_drawn_as_its_repeat_unit_in_place_of_pubchem
     assert "varies from one grade to another" in u["line"] and "CID 24748" in u["replaces"]
     assert u["group_atoms"] and set(u["group_atoms"]).isdisjoint(u["linkage_atoms"])
     assert "class='mf-linkage'" in u["layer"]
-    # the record's own identifiers stay PubChem's (only the drawing moved)
-    assert r["cid"] == 24748 and r["molecular_formula"] == "C8H16O8"
+    # Phase 3B kept PubChem's identifiers; Garrett's decision 5 (2026-11-15) dropped the fragment pair's formula, weight,
+    # SMILES and groups in the 2026-12-care tranche (tests/test_care_tranche_2.py). The CID stays.
+    assert r["cid"] == 24748 and r["molecular_formula"] is None
 
 
 def test_the_unit_is_cellulose_with_one_carboxymethyl_group_stereo_included():
@@ -162,6 +164,7 @@ def test_the_new_lines_are_curated_and_long_enough_to_be_the_description():
 
 def test_approvals_compile_on_the_catalog():
     recs = [{"slug": s} for s in CARE] + [{"slug": s} for s in
-                                          ("orforglipron", "meldonium", "phenibut", "clenbuterol", "clostebol", "flunitrazepam")]
+                                          ("orforglipron", "meldonium", "phenibut", "clenbuterol", "clostebol", "flunitrazepam",
+                                           "titanium-dioxide", "octinoxate", "oxybenzone")]   # the last three: 2026-12-care
     relationships.attach_approvals(recs)
     assert all(r.get("approval") for r in recs)

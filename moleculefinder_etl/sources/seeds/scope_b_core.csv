@@ -925,3 +925,6 @@ rank,molecule,pubchem_cid,wikipedia_views_monthly,bucket,family,is_otc,dual_use,
 933,Aluminum zirconium tetrachlorohydrex gly,,565,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
 934,Aluminum zirconium octachlorohydrex gly,,0,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
 935,Aluminum zirconium trichlorohydrex gly,,0,everyday-chemistry,inorganic,,,,hand-model,2026-11-care
+936,Titanium dioxide,26042,10482,everyday-chemistry,inorganic,,,,,2026-12-care
+937,Octinoxate,5355130,906,otc-medicine,otc,yes,,,,2026-12-care
+938,Oxybenzone,4632,1222,otc-medicine,otc,yes,,,,2026-12-care

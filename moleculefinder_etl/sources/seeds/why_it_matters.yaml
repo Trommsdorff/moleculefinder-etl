@@ -1012,3 +1012,14 @@ aluminum-sesquichlorohydrate: "Its name counts its chloride: one and a half for 
 aluminum-zirconium-tetrachlorohydrex-gly: "Two to six aluminum atoms for each zirconium, with more chloride than the trichlorohydrex, and glycine in place of some water. In the sweat duct it builds a gel plug over the opening."
 aluminum-zirconium-trichlorohydrex-gly: "The same two to six aluminum atoms for each zirconium as the tetrachlorohydrex, with less chloride, and glycine in place of some water. In the sweat duct it forms a gel plug."
 aluminum-zirconium-octachlorohydrex-gly: "Six to ten aluminum atoms for each zirconium, more aluminum than the tetrachlorohydrex carries, with glycine in place of some water. In the sweat duct it forms a gel plug."
+
+# ── Personal care, the 2026-12-care tranche (2026-11-15) ──────────────────────────────────────
+# The basis for each line is on the review page (moleculefinder-web/docs/design/care-tranche-2-review-2026-11.html):
+# absorption peaks from Shaath, Photochem. Photobiol. Sci. 2010, 9, 464 (octinoxate 311 nm; benzophenone-3 288 and
+# 325 nm); refractive indices from the CRC Handbook (rutile 2.61 and 2.90, anatase 2.49 and 2.55, diamond 2.42, at
+# 589 nm); titanium dioxide's absorption edge from its band gap (rutile 3.0 eV, about 410 nm; anatase 3.2 eV, about
+# 385 nm); octinoxate's trans to cis photoisomerisation (Pattanaargson et al., Photochem. Photobiol. 2004, 79, 207);
+# oxybenzone's proton transfer inside the molecule (Baker et al., J. Phys. Chem. Lett. 2015, 6, 1363).
+titanium-dioxide: "A white solid that bends light more strongly than diamond, so fine grains scatter every colour back and look white. On a tablet it hides the core's colour; in sunscreen it absorbs UVB and short UVA."
+octinoxate: "A UVB filter, the 2-ethylhexyl ester of 4-methoxycinnamic acid, absorbing strongest near 311 nm. Sunlight turns some of it from the trans to the cis form, which absorbs less, so it slowly weakens."
+oxybenzone: "Benzophenone-3, a filter for UVB and short-wave UVA with peaks near 288 and 325 nm. A hydrogen bond inside the molecule lets a proton hop across and back, shedding the absorbed energy as heat."

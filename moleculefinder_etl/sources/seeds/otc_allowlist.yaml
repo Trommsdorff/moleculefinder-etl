@@ -106,6 +106,8 @@ sunscreen_filters:        # phase 3B, batch 2026-11-care
   - Homosalate
   - Octisalate
   - Octocrylene
+  - Octinoxate              # batch 2026-12-care
+  - Oxybenzone              # batch 2026-12-care
 vitamins_supplements_otc: # sold as supplements; many also nutrients
   - Glucosamine
   - Dimenhydrinate          # Dramamine (note: technically a salt/mixture)

@@ -66,6 +66,7 @@ skincare:
     - {slug: zinc-oxide, presence: added, presence_note: "The mineral filter the maker adds."}   # mineral sunscreen and nappy cream
     - {slug: lactic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # alpha hydroxy acid
     - {slug: ascorbic-acid, presence: added, presence_note: "An ingredient the maker adds."}   # vitamin C serums
+    - {slug: titanium-dioxide, presence: added, presence_note: "The white colour the maker adds to some washes and creams."}   # 2026-12-care: Neutrogena Oil-Free Acne Wash, PanOxyl
 
 toothpaste:
   name: Toothpaste
@@ -83,6 +84,8 @@ toothpaste:
     # Optic White Renewal, Crest Kids, Tom's of Maine Kids).
     - {slug: stannous-fluoride, presence: added, presence_note: "The anticaries agent the maker adds in place of sodium fluoride."}
     - {slug: sodium-monofluorophosphate, presence: added, presence_note: "The anticaries agent the maker adds; it does not react with a chalk abrasive."}
+    # The 2026-12-care tranche (2026-11-15): the white of the paste, an inactive on 11 of our toothpaste labels.
+    - {slug: titanium-dioxide, presence: added, presence_note: "The white colour the maker adds to the paste."}
 
 # Phase 3B, the personal-care tranche (2026-11-14). Each entry is a labelled active of our DailyMed sunscreen and
 # antiperspirant labels, permitted by the FDA's OTC monograph for its class (M020 sunscreens, M019 antiperspirants).
@@ -95,6 +98,10 @@ sunscreen:
     - {slug: octisalate, presence: added, presence_note: "A UVB filter the maker adds."}   # 9 labels
     - {slug: octocrylene, presence: added, presence_note: "A UVB filter the maker adds; it also steadies avobenzone."}   # 9 labels
     - {slug: zinc-oxide, presence: added, presence_note: "The mineral filter the maker adds."}   # the mineral sunscreens
+    # The 2026-12-care tranche (2026-11-15): the other three sunscreen actives our labels name, each in M020.10.
+    - {slug: titanium-dioxide, presence: added, presence_note: "A mineral filter the maker adds; it also makes the cream white."}   # the active on Blue Lizard Sport, CeraVe Hydrating Mineral and Cetaphil Sheer Mineral
+    - {slug: octinoxate, presence: added, presence_note: "A UVB filter the maker adds."}   # Blistex, ChapStick, EltaMD UV Clear, Olay Complete SPF 15 (4 labels)
+    - {slug: oxybenzone, presence: added, presence_note: "A UVB and UVA filter the maker adds."}   # Blistex (1 label)
 
 deodorant:
   name: Antiperspirant deodorant

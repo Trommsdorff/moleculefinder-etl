@@ -126,6 +126,9 @@ def test_garretts_forms_ruling_links_the_same_substance_and_never_an_altered_one
         assert index.get(code, {}).get("slug") == slug, (code, index.get(code))
     altered = {"M28OL1HH48": "CROSCARMELLOSE SODIUM", "RFW2ET671P": "HYDROXYPROPYL CELLULOSE",
                "5856J3G2A2": "SODIUM STARCH GLYCOLATE", "9E8X80D2L0": "ALPHA-TOCOPHEROL ACETATE",
-               "15FIX9V2JP": "TITANIUM DIOXIDE", "3J2P07GVB6": "CELLULOSE ACETATE"}
+               "3J2P07GVB6": "CELLULOSE ACETATE"}
     for code, name in altered.items():
         assert code not in index, (code, name, index.get(code))
+    # Titanium dioxide is not titanium (the same ruling): since the 2026-12-care tranche (2026-11-15) it is its own
+    # record, PubChem's CID 26042, and its code reaches that record by PubChem's UNII synonym, never the element.
+    assert index["15FIX9V2JP"]["slug"] == "titanium-dioxide", index.get("15FIX9V2JP")

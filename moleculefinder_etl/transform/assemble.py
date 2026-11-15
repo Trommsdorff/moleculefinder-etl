@@ -1072,6 +1072,45 @@ def structure_display_for(slug: str, iso: str | None) -> dict | None:
             "model_line": " ".join(model_line.split()), "confidence": "from_source", "source": _src("curated")}
 
 
+@functools.lru_cache(maxsize=1)
+def _replacing_units() -> frozenset:
+    """Slugs whose repeat unit replaces their PubChem drawing (repeat_units.yaml ``replaces``)."""
+    from .drawings import load_repeat_seed
+    return frozenset(s for s, u in load_repeat_seed().items() if (u or {}).get("replaces"))
+
+
+def _replaced_by_unit(slug: str) -> bool:
+    return slug in _replacing_units()
+
+
+STRUCTURE_NONE = SEEDS_DIR / "structure_none.yaml"
+
+
+@functools.lru_cache(maxsize=1)
+def _none_seed() -> dict:
+    if not STRUCTURE_NONE.exists():
+        return {}
+    return (yaml.safe_load(STRUCTURE_NONE.read_text()) or {}).get("molecules") or {}
+
+
+def structure_none_for(slug: str) -> dict | None:
+    """The record's ``structure_none`` ({line, confidence, source}) or None (the 2026-12-care tranche,
+    seeds/structure_none.yaml): an extended solid PubChem gives a SMILES for, drawn with nothing. A bad
+    entry stops the build."""
+    e = _none_seed().get(slug)
+    if not e:
+        return None
+    line = " ".join(str(e.get("line") or "").split())
+    problems = []
+    if not (line and str(e.get("basis") or "").strip()):
+        problems.append("needs line and basis")
+    elif any(d in line for d in ("\u2014", "\u2013")):
+        problems.append("a dash in the line")
+    if problems:
+        raise SystemExit(f"{STRUCTURE_NONE.name}: {slug}: " + "; ".join(problems))
+    return {"line": line, "confidence": "from_source", "source": _src("curated")}
+
+
 def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
     """``structure_svg`` + the fingerprint that says when it may be reused.
 
@@ -1165,7 +1204,18 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
     if curated.get("display_name"):
         title = curated["display_name"]
     slug = slugs.unique_slug(curated.get("slug") or pref or title or f"cid-{cid}", taken)
+    if _replaced_by_unit(slug):
+        # Carboxymethyl cellulose (the 2026-12-care tranche; Garrett's decision 5 on the phase 3B review): its
+        # repeat unit replaces PubChem's drawing because CID 24748 is two small molecules (open-chain glucose and
+        # acetic acid), not the polymer. Everything PubChem or RDKit derives from that record's STRUCTURE goes
+        # with it: formula, weight, SMILES, InChI and InChIKey, the computed descriptors and 3D, and so the
+        # functional groups (Aldehydes among them), the similarity edges and the weight boards. The record keeps
+        # its CID (PubChem's record of the substance), its title, names, Wikidata item and curated fields, and
+        # reads like cellulose: a polymer drawn as its repeat unit, no single formula or weight.
+        iso = can = None
+        props = {}
     display = structure_display_for(slug, iso)
+    no_drawing = structure_none_for(slug)
 
     rec = {
         "cid": cid, "slug": slug, "title": _normalize_greek(title), "preferred_name": pref,
@@ -1191,12 +1241,15 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         "wikidata_names": wikidata_display_names(_normalize_greek(title), row),
         "title_synonym": None,
         # The drawing is drawn from the display structure when there is one (structures.drawn_smiles).
-        **_carried_svg(display["smiles"] if display else iso, prior),
+        # A lattice named in structure_none.yaml is drawn with nothing (no drawing, no parts, no 3D).
+        **({"structure_svg": None, "structure_svg_key": None} if no_drawing
+           else _carried_svg(display["smiles"] if display else iso, prior)),
         # "structure_display" is added below only when there is one (no null key on 913 records).
         # PubChem returns Volume3D only when a 3D conformer exists; the web hides the 3D toggle
         # when this is false (e.g. large peptides / polymers have a 2D depiction but no 3D). With a
         # display structure the 3D model is that ring form's conformer (its CID), read into the seed.
-        "has_3d": display["has_3d"] if display else props.get("Volume3D") is not None,
+        "has_3d": (False if no_drawing else display["has_3d"] if display
+                   else props.get("Volume3D") is not None),
         "descriptors": _descriptors(props),
         "toxicity": list(fetched.get("toxicity") or []),
         # Phase 3A: the words for each code the US Hazard Communication Standard words (ghs.with_wording).
@@ -1224,6 +1277,8 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
 
     if display:
         rec["structure_display"] = display
+    if no_drawing:
+        rec["structure_none"] = no_drawing
     if curated:
         _merge_curated(rec, curated)
 

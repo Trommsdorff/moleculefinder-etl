@@ -34,6 +34,7 @@ products:
     - {slug: curcumin, presence: added, presence_note: "The colour the maker adds to the shell."}
     - {slug: carmine, presence: added, presence_note: "The colour the maker adds to the shell."}
     - {slug: brilliant-blue-fcf, presence: added, presence_note: "The colour the maker adds to the shell."}
+    - {slug: titanium-dioxide, presence: added, presence_note: "The white the maker adds to the shell."}   # 2026-12-care: Wikidata Q739550 P186
   mcdonalds-chicken-strips:
     - {slug: water, presence: added, presence_note: "An ingredient the maker adds."}
     - {slug: monosodium-glutamate, presence: added, presence_note: "The flavour enhancer the maker adds."}

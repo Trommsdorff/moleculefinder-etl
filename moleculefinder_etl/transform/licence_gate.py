@@ -42,6 +42,8 @@ IMPLIED: tuple[tuple[str, str], ...] = (
     ("symbol_origin", "curated"),
     # Phase 3A: a sugar's ring form, the SMILES its drawing is drawn from (seeds/structure_display.yaml).
     ("structure_display", "curated"),
+    # The 2026-12-care tranche: the one line for a lattice drawn with nothing (seeds/structure_none.yaml).
+    ("structure_none", "curated"),
 )
 
 # A licence record's register (lib/registers.ts on the web) -> registry key. A record with no

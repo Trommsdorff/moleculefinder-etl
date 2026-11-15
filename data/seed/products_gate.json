@@ -1,11 +1,11 @@
 {
  "seeded": 475,
- "passed": 429,
- "failed": 46,
+ "passed": 430,
+ "failed": 45,
  "by_kind": {
   "food": 34,
   "drink": 14,
-  "medicine": 299,
+  "medicine": 300,
   "cosmetic": 65,
   "household": 12,
   "chemistry": 1,
@@ -13,7 +13,7 @@
  },
  "min_molecules": 3,
  "matched_by_code": {
-  "unii": 1920,
+  "unii": 2076,
   "moiety": 156
  },
  "matched_by_rule": {
@@ -24,12 +24,12 @@
  "unii_index": {
   "fda_table": "UNII_Records_4Aug2026.txt",
   "codes": {
-   "cid": 793,
+   "cid": 795,
    "inchikey": 23,
-   "pubchem": 160,
+   "pubchem": 161,
    "substance": 21
   },
-  "molecules_with_a_code": 875
+  "molecules_with_a_code": 878
  },
  "failures": [
   {
@@ -378,18 +378,6 @@
    ]
   },
   {
-   "slug": "vancocin",
-   "name": "Vancocin",
-   "kind": "medicine",
-   "source": "dailymed",
-   "item": "a078d9c2-f89c-4f9f-8ded-60ffb2983c3f",
-   "reason": "the label lists 8 ingredient(s); 2 are MoleculeFinder molecules, fewer than 3",
-   "matched": [
-    "vancomycin",
-    "gelatin"
-   ]
-  },
-  {
    "slug": "ventolin-hfa",
    "name": "Ventolin HFA",
    "kind": "medicine",
@@ -546,10 +534,6 @@
   }
  ],
  "label_ingredients_not_in_catalog": [
-  {
-   "name": "TITANIUM DIOXIDE",
-   "labels": 151
-  },
   {
    "name": "HYPROMELLOSE, UNSPECIFIED",
    "labels": 98
@@ -784,6 +768,10 @@
   },
   {
    "name": "POLYSORBATE 20",
+   "labels": 7
+  },
+  {
+   "name": "POVIDONE K30",
    "labels": 7
   }
  ],

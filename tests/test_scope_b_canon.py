@@ -17,7 +17,8 @@ ORIGINAL_CORE = 498
 # Catalog-growth tranches, newest last. Each is a `batch`-tagged block in the CSV.
 TRANCHES = {"2026-09-A": 287,   # 295 built, 5 held back; fenbendazole, carfentanil, oxandrolone removed 2026-10-18
             "2026-10-A": 126,   # 120, then 6 of the 7 queued rows on Garrett's 2026-10-18 rulings
-            "2026-11-care": 11}  # phase 3B of the everyday chemistry plan: the personal-care actives (2026-11-14)
+            "2026-11-care": 11,  # phase 3B of the everyday chemistry plan: the personal-care actives (2026-11-14)
+            "2026-12-care": 3}   # titanium dioxide, octinoxate and oxybenzone (2026-11-15)
 # Small tagged additions that are not tranches (Garrett, 2026-10-20: "a two-row addition of this
 # run, not a tranche"). Same provenance rule: tagged, so they can be found and lifted back out.
 ADDITIONS = {"2026-10-runA": 2,   # PFOA and PFOS, so PFAS headlines can match (Run A)

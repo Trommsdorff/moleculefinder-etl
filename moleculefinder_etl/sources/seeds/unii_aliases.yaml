@@ -54,6 +54,10 @@ substances:
   # synonyms for 4201 hold no UNII.
   5965120SH1: minoxidil            # MINOXIDIL
 aliases:
+  # Titanium dioxide (batch 2026-12-care, 2026-11-15) needs no line here: the FDA table links its code 15FIX9V2JP to
+  # PubChem CID 162651 ([O-2].[O-2].[Ti+4], a record whose PubChem title, CAS and Wikidata item belong to trititanium
+  # oxide), and PubChem's own titanium dioxide, CID 26042, the record, lists UNII-15FIX9V2JP among its synonyms, so the
+  # code reaches it by the synonym rule above (unii_index.json: "how": "pubchem"). Never the element titanium.
   # Lactose: lactose and maltose share an InChIKey skeleton (same atoms and bonds, different sugar
   # stereo), so the skeleton rule refuses to choose. Every label form of lactose:
   EWQ57Q8I5X: lactose            # LACTOSE MONOHYDRATE (61 labels)
