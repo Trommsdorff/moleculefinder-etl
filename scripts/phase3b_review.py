@@ -244,8 +244,9 @@ details { margin:8px 0; } summary { cursor:pointer; color:var(--accent); }
     w("<p><b>Stay codes (no allowed source words them):</b> H333 (acute toxicity, inhalation, category 5), H401 and H402 "
       "(acute aquatic categories 2 and 3). CLP does not adopt those categories, and the UN GHS text is UN copyright. "
       f"{facts['clp_records']} records gain words, {facts['clp_only']} of them words from CLP alone.</p>")
-    w(f'<div class="ba">{img(shots, "after-homosalate-hazard-1440", "homosalate: H410 with its words (1440 px, the hazard section)")}'
-      f'{img(shots, "after-about-methodology-390", "/about/methodology, 390 px")}</div>')
+    w("<p>Homosalate's page above shows H410 with its words in the hazard label (Properties and sources); its Sources and "
+      "notes names the CLP Regulation with the attribution. /about/methodology names the EU source beside the US standard:</p>")
+    w(f'<div class="ba">{img(shots, "after-about-methodology-390", "/about/methodology, 390 px")}<div></div></div>')
 
     # ── cmc ──
     w("<h2>Carboxymethyl cellulose, before and after</h2>")
