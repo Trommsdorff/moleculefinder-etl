@@ -12,8 +12,9 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. The redesign's phases 1, 2, 3A and 4 to 10 are
-  all live (with 5A, 5B, the gate hold and the drawing guard); phase 3B (personal care) remains. Catalog 915 molecules;
-  424 product pages; 6 doors.
+  all live (with 5A, 5B, the gate hold and the drawing guard). Catalog 915 molecules; 424 product pages; 6 doors.
+- **Phase 3B BUILT 2026-11-14** (`care-tranche-2026-11`, `3438343`), not pushed, awaiting Garrett's review: 926
+  molecules, 429 product pages, `eu_clp` words, CMC's repeat unit (DRAWING-RECIPES 12). Record: HISTORY.md, "Phase 3B".
 - **Phase 3A DEPLOYED 2026-11-14** (`cb2872c`, with web `9990b79`): hazard words (`osha_hcs`), one-element names and
   symbol lines, fructose and allulose drawn from `structure_display.yaml`, whose lines are under the claim rule (kind
   `part`, `display.<slug>.line`). Record: HISTORY.md, "Phase 3A". Phase 10 (`6848793`) and phase 8 before it: HISTORY.md.
