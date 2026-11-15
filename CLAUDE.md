@@ -15,13 +15,14 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 926 molecules; 429 product pages; 6 doors.
 - **Phase 3B DEPLOYED 2026-11-15** (`b874660`, with web `e032b74`): the personal-care tranche (batch `2026-11-care`),
   `eu_clp` words, CMC's repeat unit (DRAWING-RECIPES 12), and Garrett's one change: PABA's Skincare entry `none` and its
-  line no longer "the original sunscreen". Record: HISTORY.md, "Phase 3B, the deploy". Phase 3A (`cb2872c`): HISTORY.md.
+  line no longer "the original sunscreen". Record: HISTORY.md, "Phase 3B, the deploy".
 - **Next weekly run:** `structure drawings: 901 carried, 0 repainted, 0 drawn, 25 with no drawing`, `structure parts:
   721 carried, 0 made`, `compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight
   1); 147 carried, 0 repainted, 0 made`, `repeat units: 3 (3 carried ...)`, made: none. On a stop:
   `docs/DRAWING-RECIPES.md` sections 10 and 11.
-- **Queued** (the plan, "Queued after phase 3B"): the `2026-12-care` tranche (titanium dioxide first, octinoxate,
-  oxybenzone; CMC drops PubChem's formula, weight, SMILES and Aldehydes; a shorter list template; a review page).
+- **Built, awaiting approval: `2026-12-care`** (`care-tranche-2-2026-11`, unpushed): titanium dioxide (no drawing),
+  octinoxate, oxybenzone; CMC drops CID 24748's structure. After its deploy: 903 drawings carried, 26 with none, 723
+  parts. Record: HISTORY.md.
 - **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
   on engagement (watch `/dashboard`).
 
