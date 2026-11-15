@@ -11,17 +11,17 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 `../MoleculeFinder_Technical_Build_Plan.md` (sections 4–7). The web repo is `../moleculefinder-web/` (its own CLAUDE.md).
 
 ## Current state (update these lines; the record goes in HISTORY.md)
-- **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. The redesign's phases 1, 2, 3A and 4 to 10 are
-  all live (with 5A, 5B, the gate hold and the drawing guard). Catalog 915 molecules; 424 product pages; 6 doors.
-- **Phase 3B BUILT 2026-11-14** (`care-tranche-2026-11`, `3438343`), not pushed, awaiting Garrett's review: 926
-  molecules, 429 product pages, `eu_clp` words, CMC's repeat unit (DRAWING-RECIPES 12). Record: HISTORY.md, "Phase 3B".
-- **Phase 3A DEPLOYED 2026-11-14** (`cb2872c`, with web `9990b79`): hazard words (`osha_hcs`), one-element names and
-  symbol lines, fructose and allulose drawn from `structure_display.yaml`, whose lines are under the claim rule (kind
-  `part`, `display.<slug>.line`). Record: HISTORY.md, "Phase 3A". Phase 10 (`6848793`) and phase 8 before it: HISTORY.md.
-- **Monday 2026-11-16** is the first run after 3A: `structure drawings: 896 carried, 0 repainted, 0 drawn, 19 with no
-  drawing`, `structure parts: 718 carried, 0 made`, `compare drawings: 147 pairs (aligned 45, aligned+highlight 29,
-  shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`, `repeat units: 2 (2 carried ...)`, made: none.
-  On a stop: `docs/DRAWING-RECIPES.md` sections 10 and 11.
+- **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
+  to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 926 molecules; 429 product pages; 6 doors.
+- **Phase 3B DEPLOYED 2026-11-15** (`b874660`, with web `e032b74`): the personal-care tranche (batch `2026-11-care`),
+  `eu_clp` words, CMC's repeat unit (DRAWING-RECIPES 12), and Garrett's one change: PABA's Skincare entry `none` and its
+  line no longer "the original sunscreen". Record: HISTORY.md, "Phase 3B, the deploy". Phase 3A (`cb2872c`): HISTORY.md.
+- **Next weekly run:** `structure drawings: 901 carried, 0 repainted, 0 drawn, 25 with no drawing`, `structure parts:
+  721 carried, 0 made`, `compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight
+  1); 147 carried, 0 repainted, 0 made`, `repeat units: 3 (3 carried ...)`, made: none. On a stop:
+  `docs/DRAWING-RECIPES.md` sections 10 and 11.
+- **Queued** (the plan, "Queued after phase 3B"): the `2026-12-care` tranche (titanium dioxide first, octinoxate,
+  oxybenzone; CMC drops PubChem's formula, weight, SMILES and Aldehydes; a shorter list template; a review page).
 - **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
   on engagement (watch `/dashboard`).
 
