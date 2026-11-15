@@ -122,7 +122,7 @@ paint-and-solvent:
     - {slug: methanol, presence: added, presence_note: "Added to methylated spirit."}   # in methylated spirit
     - {slug: benzene, presence: none, presence_note: "A historic solvent, now restricted; current products should not contain it."}   # historic solvent, now restricted as a carcinogen
     - {slug: dichloromethane, presence: added, presence_note: "The solvent of paint strippers."}   # paint stripper
-    - {slug: titanium, presence: added, presence_note: "Added as titanium dioxide, the white pigment."}   # as titanium dioxide, the white of nearly all white paint
+    - {slug: titanium-dioxide, presence: added, presence_note: "The white pigment the maker adds."}   # Garrett, 2026-11-15 (2026-12-care, decision 5): was the element titanium, "Added as titanium dioxide"; the element had no other reason to be on this list
     - {slug: poly-methyl-methacrylate, presence: added, presence_note: "The binder the maker adds to acrylic paint."}   # acrylic paint binder
     - {slug: shellac, presence: added, presence_note: "The resin of the varnish."}   # the traditional sealing varnish
 

@@ -531,13 +531,16 @@ def _merge_curated(rec: dict, curated: dict) -> None:
                 f"({row['species']}, {row['route']}) is not reported by any source that may be "
                 f"displayed; fix the pin in sources/curated/ or remove it")
         row["sources"] = list(traced.get("sources") or [])
-        rec["toxicity"] = [row] + [t for t in rec["toxicity"]
-                                   if (t["species"], t["route"], t["value_num"]) != key]
+        if traced.get("qualifier"):                  # a limit stays a limit (toxicity.py, 2026-11-15)
+            row["qualifier"] = traced["qualifier"]
+        rec["toxicity"] = [row] + [t for t in rec["toxicity"] if t is not traced]
         # A curated dose_poison overlay is hand-decided, so it wins outright over the
         # parsed rows, route and all. _apply_best_oral_ld50 leaves it alone.
         rec["ld50_mg_per_kg"] = dp["ld50_mg_per_kg"]
         rec["ld50_route"] = row["route"]
         rec["ld50_species"] = row["species"]
+        if row.get("qualifier"):
+            rec["ld50_qualifier"] = row["qualifier"]
 
     if curated.get("capsaicinoid_ppm") is not None:
         ppm = curated["capsaicinoid_ppm"]
@@ -584,19 +587,24 @@ def _apply_primary_ld50(rec: dict) -> None:
     toxicity.primary_ld50 chooses it; a curated dose_poison overlay has already pinned one by
     hand and keeps it (caffeine and capsaicin, each the row the rule would choose anyway).
     Leading the list with that row is what makes the Safety panel's first row the same LD50
-    the dose hook, the boards and the /vs tables read. The other rows keep their order."""
+    the dose hook, the boards and the /vs tables read. The other rows keep their order.
+
+    A limit is not a value (2026-11-15): when the source gave the chosen figure as a bound ("> 10,000
+    mg/kg"), the record says so in `ld50_qualifier` (toxicity.QUALIFIERS). The key is written ONLY
+    then, so a record with a plain LD50 is byte for byte what it was; absent means a value."""
     if rec.get("ld50_mg_per_kg") is None:
         row = toxicity.primary_ld50(rec.get("toxicity"), rec.get("slug"))
         if row:
             rec["ld50_mg_per_kg"] = row["value_num"]
             rec["ld50_route"] = row["route"]
             rec["ld50_species"] = row["species"]
+            if row.get("qualifier"):
+                rec["ld50_qualifier"] = row["qualifier"]
     if rec.get("ld50_mg_per_kg") is None:
         return
-    chosen = (rec["ld50_mg_per_kg"], rec["ld50_route"], rec["ld50_species"])
+    chosen = (rec["ld50_species"], rec["ld50_route"], rec["ld50_mg_per_kg"], rec.get("ld50_qualifier"))
     rows = rec["toxicity"]
-    at = next((i for i, t in enumerate(rows)
-               if (t.get("value_num"), t.get("route"), t.get("species")) == chosen), None)
+    at = next((i for i, t in enumerate(rows) if toxicity.row_key(t) == chosen), None)
     if at:
         rows.insert(0, rows.pop(at))
 
@@ -730,7 +738,8 @@ def _measure_clause(rec: dict) -> str:
     # The molecule's one LD50, and only an oral one, since the sentence says oral. This used to
     # read the first oral row and call it the lowest; no current description reaches the clause.
     if rec.get("ld50_mg_per_kg") is not None and rec.get("ld50_route") == "oral":
-        return (f"Its reported oral LD50 is {_fmt_num(rec['ld50_mg_per_kg'])} mg/kg "
+        return (f"Its reported oral LD50 is {toxicity.words(rec.get('ld50_qualifier'))}"
+                f"{_fmt_num(rec['ld50_mg_per_kg'])} mg/kg "
                 f"in the {rec['ld50_species']}.")
     return ""
 

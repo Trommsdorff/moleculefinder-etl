@@ -112,8 +112,9 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
             yield f"{slug}.ghs.h_wording_clp", "eu_clp"
     if m.get("ld50_mg_per_kg") is not None:
         row = next((t for t in m.get("toxicity") or []
-                    if (t.get("value_num"), t.get("species"), t.get("route"))
-                    == (m["ld50_mg_per_kg"], m.get("ld50_species"), m.get("ld50_route"))), None)
+                    if (t.get("value_num"), t.get("species"), t.get("route"), t.get("qualifier"))
+                    == (m["ld50_mg_per_kg"], m.get("ld50_species"), m.get("ld50_route"),
+                        m.get("ld50_qualifier"))), None)
         for s in (row or {}).get("sources") or [None]:
             yield f"{slug}.ld50_mg_per_kg", s
     a = m.get("approval")

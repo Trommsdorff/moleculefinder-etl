@@ -12,6 +12,16 @@ scale a dose to a reader's weight. Prose mentions ("the LD50 for humans is
 estimated at 150-200 mg/kg") are skipped on purpose: constraining species and
 route to fixed vocabularies is what stops junk like species="for"/"values" from
 leaking in. Everything is normalized into mg/kg and labeled via `confidence.py`.
+
+A LIMIT IS NOT A VALUE (Garrett's ruling, 2026-11-15, the 2026-12-care tranche). Where a source
+reports "LD50 Rat oral > 10,000 mg/kg" (no animal died at the highest amount tested), the figure is
+a lower bound. Until 2026-11-15 this parser read the ">" and threw it away, so 27 live pages showed
+the bound as if it were the LD50. A row now keeps the qualifier its source gives, as `qualifier`
+(QUALIFIERS below: ">" greater than, "<" less than, "~" about); a row without the key is a plain
+value. The qualifier is part of the value: two rows that differ only in it are two rows, and the
+record's own LD50 carries it as `ld50_qualifier` (assemble._apply_primary_ld50). The parser reads
+no other shape than before: a range ("3000-4000 mg/kg"), "more than"/"greater than" in words,
+"+/-" and "> or =" are still skipped whole, so no value reaches the site from them.
 """
 from __future__ import annotations
 import re
@@ -54,7 +64,10 @@ _UNIT_TO_MGKG = {"mg/kg": 1.0, "g/kg": 1000.0, "ug/kg": 0.001, "µg/kg": 0.001, 
 _SPECIES_RE = "|".join(sorted((re.escape(k) for k in _SPECIES), key=len, reverse=True))
 _ROUTE_RE = "|".join(sorted((re.escape(k) for k in _ROUTE), key=len, reverse=True))
 _UNIT_RE = "|".join(sorted((re.escape(u) for u in _UNIT_TO_MGKG), key=len, reverse=True))
-_NUM = r">?<?~?\s*(?P<value>[\d,]+(?:\.\d+)?)"
+_NUM = r"(?P<qual>[<>~])?\s*(?P<value>[\d,]+(?:\.\d+)?)"
+
+# The qualifiers a row may carry, and the plain words every surface prints them in. Absent = a value.
+QUALIFIERS = {">": "more than", "<": "less than", "~": "about"}
 
 # "LD50 Rat oral 192 mg/kg"
 _FORM_A = re.compile(
@@ -108,7 +121,8 @@ def parse_ld50(pug_view: dict | None, *, withheld: list | None = None, gate: boo
                     species = _SPECIES[m.group("species").lower()]
                     route = _ROUTE[m.group("route").lower()]
                     value = _to_mgkg(m.group("value"), m.group("unit"))
-                    key = (species, route, value)
+                    qual = m.group("qual")
+                    key = (species, route, value, qual)
                     if not ok:
                         refused.setdefault(key, set()).add(source_name or "(no source named)")
                         continue
@@ -119,15 +133,19 @@ def parse_ld50(pug_view: dict | None, *, withheld: list | None = None, gate: boo
                             "value_num": value, "unit": "mg/kg", "confidence": label_for("ld50_raw"),
                             "sources": [],
                         }
+                        if qual:
+                            row["qualifier"] = qual
                     if key_src not in row["sources"]:
                         row["sources"].append(key_src)
     rows = list(by_key.values())
     for row in rows:
         row["sources"].sort()
     if withheld is not None:
-        for key in sorted(k for k in refused if k not in by_key):
-            withheld.append({"species": key[0], "route": key[1], "value_num": key[2],
-                             "sources": sorted(refused[key])})
+        for key in sorted((k for k in refused if k not in by_key), key=lambda k: (*k[:3], k[3] or "")):
+            item = {"species": key[0], "route": key[1], "value_num": key[2], "sources": sorted(refused[key])}
+            if key[3]:
+                item["qualifier"] = key[3]
+            withheld.append(item)
     # Oral first (the route the dose hook scales), then most-potent first.
     rows.sort(key=lambda r: (r["route"] != "oral", r["value_num"]))
     return rows
@@ -207,7 +225,8 @@ def best_oral(rows: list[dict] | None, slug: str | None = None) -> dict | None:
         oral = [r for r in oral if r["value_num"] >= ORAL_FLOOR_MG_PER_KG]
     if not oral:
         return None
-    oral.sort(key=lambda r: (_ORAL_SPECIES_RANK.get(r.get("species"), 2), r["value_num"]))
+    # A plain value before a limit at the same figure (no molecule has both today).
+    oral.sort(key=lambda r: (_ORAL_SPECIES_RANK.get(r.get("species"), 2), r["value_num"], bool(r.get("qualifier"))))
     return oral[0]
 
 
@@ -241,6 +260,17 @@ def primary_ld50(rows: list[dict] | None, slug: str | None = None) -> dict | Non
              if r.get("route") != "oral" and isinstance(r.get("value_num"), (int, float))]
     if not other:
         return None
-    return min(other, key=lambda r: (r["value_num"], r.get("route") or "", r.get("species") or ""))
+    return min(other, key=lambda r: (r["value_num"], r.get("route") or "", r.get("species") or "",
+                                     bool(r.get("qualifier"))))
+
+
+def row_key(r: dict) -> tuple:
+    """A toxicity row's identity: species, route, value and qualifier (a limit is not the value)."""
+    return (r.get("species"), r.get("route"), r.get("value_num"), r.get("qualifier"))
+
+
+def words(qualifier: str | None) -> str:
+    """'more than ' for '>', '' for a plain value: the words a sentence puts before the figure."""
+    return f"{QUALIFIERS[qualifier]} " if qualifier else ""
 
 
