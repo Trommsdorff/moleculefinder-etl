@@ -173,3 +173,28 @@ def test_the_committed_pairs_are_valid_and_every_one_is_built_from_the_committed
     shipped = SNAPSHOTS / "product_pairs.json"
     if shipped.exists():
         assert json.loads(shipped.read_text()) == {"pairs": out}
+
+
+def test_a_line_naming_several_actives_gives_each_its_own_quantity():
+    """Phase 3B (2026-11-14): Banana Boat Kids Clear Sunscreen SPF 65's label puts all four actives on one line; the
+    first quantity used to go to all four."""
+    spl = {"ingredients": [{"role": "active", "name": n, "unii": "x", "moiety": []}
+                           for n in ("OCTISALATE", "AVOBENZONE", "OCTOCRYLENE", "HOMOSALATE")],
+           "active_lines": ["Avobenzone 2.7%, Homosalate 9.0%, Octisalate 4.5%, Octocrylene 7.0% . ."],
+           "purpose_lines": ["Sunscreen"], "purpose_rows": []}
+    assert dailymed.strengths(spl) == {"AVOBENZONE": "2.7%", "HOMOSALATE": "9.0%", "OCTISALATE": "4.5%",
+                                       "OCTOCRYLENE": "7.0%"}
+    # one active on its line, with its own name again inside: read whole, as before
+    aleve = {"ingredients": [{"role": "active", "name": "NAPROXEN SODIUM", "unii": "x", "moiety": []}],
+             "active_lines": ["Naproxen sodium 220 mg (naproxen 200 mg)"], "purpose_lines": [], "purpose_rows": []}
+    assert dailymed.strengths(aleve) == {"NAPROXEN SODIUM": "220 mg (naproxen 200 mg)"}
+
+
+def test_a_line_naming_one_active_twice_is_read_whole():
+    """Prilosec OTC and Zaditor name their one active again inside the parenthetical; the quantity is the first."""
+    for name, line, want in (("OMEPRAZOLE MAGNESIUM", "Omeprazole delayed-release tablet 20 mg (equivalent to 20.6 mg omeprazole magnesium)",
+                              "20 mg (equivalent to 20.6 mg omeprazole magnesium)"),
+                             ("Ketotifen Fumarate", "Ketotifen (0.025%)(equivalent to ketotifen fumarate 0.035%)", "0.025%")):
+        spl = {"ingredients": [{"role": "active", "name": name, "unii": "x", "moiety": []}],
+               "active_lines": [line], "purpose_lines": [], "purpose_rows": []}
+        assert dailymed.strengths(spl) == {name: want}

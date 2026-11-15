@@ -293,11 +293,33 @@ def strengths(spl: dict) -> dict[str, str]:
     for name in actives:
         for line in lines:
             if any(k in line.lower() for k in _keys(name)):
-                text = strength_text(line)
+                text = strength_text(_own_part(line, name, actives))
                 if text:
                     out[name] = text
                     break
     return out
+
+
+def _where(line: str, name: str) -> int | None:
+    """Where a line first names an ingredient, by its full name or its first word (``_keys``)."""
+    low = line.lower()
+    found = [i for i in (low.find(k) for k in _keys(name)) if i >= 0]
+    return min(found) if found else None
+
+
+def _own_part(line: str, name: str, actives: list[str]) -> str:
+    """The stretch of a line that belongs to one active (phase 3B, 2026-11-14). A sunscreen label
+    may put every active on one line, "Avobenzone 2.7%, Homosalate 9.0%, Octisalate 4.5%,
+    Octocrylene 7.0%"; reading the line's first quantity gave all four 2.7%. When the line names
+    other actives, this one's part runs from its own name to the next other active's name. A line
+    naming only this active, or one where two actives' names start at the same place, is returned
+    whole, as before."""
+    at = _where(line, name)
+    others = [p for p in (_where(line, o) for o in actives if o != name) if p is not None]
+    if at is None or not others or any(p == at for p in others):
+        return line
+    after = [p for p in others if p > at]
+    return line[at:min(after)] if after else line[at:]
 
 
 def strength_per(spl: dict) -> str | None:

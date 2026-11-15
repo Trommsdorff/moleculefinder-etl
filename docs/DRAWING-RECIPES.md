@@ -494,6 +494,30 @@ repainted, 0 drawn this run)`; made or remade: none.
 `has_3d`, `line` and `basis` (which ring and why); build on the Mac and commit the data with it (the guard lists the
 molecule and its pairs as remade).
 
+## 12. A repeat unit in place of a PubChem drawing, with an added group (phase 3B, 2026-11-14)
+
+Garrett's ruling of 2026-11-14 (on the phase 3A review, (b)): carboxymethyl cellulose is drawn as its repeat unit. Its
+PubChem record, CID 24748, is two small molecules (open-chain glucose and acetic acid), so its shipped drawing was those two
+fragments. Three seed fields in `repeat_units.yaml` make that possible, none of which moves starch's or cellulose's key:
+
+- `replaces`: why the unit takes the place of the record's drawing. `drawings.clear_replaced_drawings` (in `stage_transform`,
+  before the parts) sets the record's `structure_svg` and `structure_svg_key` to null, so it gets no parts and the page shows
+  the unit. Without `replaces`, a record with a drawing still cannot have a repeat unit (the build stops).
+- `group`, `group_smarts`, `group_light`, `groups`: an added group, matched by pattern (exactly `groups` times) and marked
+  in the same amber layer as the linkage; the record carries `group` and `group_atoms`.
+- `line`: one sentence the page prints under the unit (house rules and the claim rule apply, kind `part`).
+
+The unit is cellulose's two beta-D-glucose units with -CH2-COOH on one unit's C6 oxygen; with the group taken off it is
+cellulose's unit, stereo included (`tests/test_phase3b.py`). The drawing guard lists the change as
+`carboxymethyl-cellulose (structure drawing): removed, replaced by its repeat unit (repeat_units.yaml `replaces`), a
+deliberate remake`, `(structure parts): dropped, its drawing was replaced by its repeat unit`, `(repeat unit): new`.
+`line` and `replaces` are seed words: changing only them later is a words-only change.
+
+**After the deploy, Monday's lines:** `structure drawings: 901 carried, 0 repainted, 0 drawn, 25 with no drawing`;
+`structure parts: 721 carried, 0 made, 201 with no part, 4 drawings unreadable`; `compare drawings: 147 pairs (aligned 45,
+aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units: 3 (3 carried, 0
+repainted, 0 drawn this run)`; made or remade: none.
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under
