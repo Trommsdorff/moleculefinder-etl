@@ -1,0 +1,57 @@
+# ── THE MAC MINI'S ALARM, RELAYED (2026-11) ──────────────────────────────────────────────────
+# The weekly refresh runs on Garrett's Mac mini (scripts/mac/weekly-refresh.sh), not on this repo's cron.
+# When it fails it dispatches THIS workflow with the issue's title and text. Why not open the issue
+# from the Mac directly: the Mac's `gh` is logged in as Garrett, and GitHub never emails you about an
+# issue you opened yourself, so an alarm filed from the Mac would arrive silently. Here the issue is
+# opened by github-actions[bot], exactly as etl.yml's `alarm` job did, and the job then FAILS on
+# purpose, which is what sends Garrett GitHub's "run failed" email (the same email a failed etl.yml
+# run sent). If this dispatch itself cannot be made, the Mac files the issue directly and shows a
+# notification on its screen.
+#
+# Not a scheduled job (the network's rule: no crons on GitHub): it runs only when the Mac dispatches it,
+# or by hand. Public repo, so its minutes are free. Inputs pass through the environment, never spliced
+# into the script.
+name: mac-alarm
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Issue title (the Mac sends 'MoleculeFinder ETL FAILED')"
+        required: true
+        type: string
+      body:
+        description: "Issue text (the Mac sends what happened, the log path, the drawings block and the log tail)"
+        required: true
+        type: string
+
+permissions:
+  issues: write
+
+jobs:
+  alarm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Open (or comment on) the refresh-failure issue, then fail so GitHub emails
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # REQUIRED: no checkout here, so gh needs the repo named (see etl.yml's alarm, 2026-08-09).
+          GH_REPO: ${{ github.repository }}
+          TITLE: ${{ inputs.title }}
+          BODY: ${{ inputs.body }}
+        run: |
+          printf '%s\n' "$BODY" > "$RUNNER_TEMP/body.md"
+          existing=$(gh issue list --label refresh-failure --state open \
+                       --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/body.md"
+            n="$existing"
+          else
+            gh label create refresh-failure --color B60205 \
+              --description "Automated data refresh failed" 2>/dev/null || true
+            url=$(gh issue create --label refresh-failure --title "$TITLE" --body-file "$RUNNER_TEMP/body.md")
+            n="${url##*/}"
+          fi
+          echo "::error title=${TITLE}::The Mac mini's weekly refresh failed: issue #${n}. This run fails on purpose so GitHub emails."
+          exit 1

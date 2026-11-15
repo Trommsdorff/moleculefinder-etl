@@ -34,8 +34,8 @@ Actions to a launchd job on the Mac mini, which becomes the canonical builder. I
 mode with ``MFETL_WEEKLY=1`` and keeps its cache outside its throwaway checkout
 (``MFETL_RAW_CACHE``, ``MAC_CACHE`` below). Nothing can upload an Actions artifact from outside
 Actions, so a Mac-built ``inputs.json`` says ``"built_on": "mac-mini"`` and names no artifact, and
-``sync-inputs`` copies the Mac job's cache instead of downloading one (same fingerprint check, same
-swap). A pointer with no ``built_on`` (every one GitHub wrote) still downloads its artifact, so a
+``sync-inputs`` copies the Mac job's copy of main's inputs (``MAC_CACHE``, refreshed after each push)
+instead of downloading one (same fingerprint check, same swap). A pointer with no ``built_on`` (every one GitHub wrote) still downloads its artifact, so a
 manual run of the GitHub workflow, the backup, stays reproducible too.
 """
 from __future__ import annotations
@@ -59,9 +59,11 @@ INPUTS_FILE = SEED_DIR / "inputs.json"          # committed: the fingerprint mai
 MANIFEST_NAME = "INPUTS.json"                   # inside the cache and the artifact: per-entry hashes
 REPO = "Trommsdorff/moleculefinder-etl"
 _SKIP = {MANIFEST_NAME, ".gitkeep"}
-# The Mac mini weekly job's own cache: the canonical inputs once the weekly run moved there.
+# The Mac mini weekly job's copy of the inputs main names: after each push to main the job clones its
+# cache here (copy-on-write, so it costs only what changed), the way GitHub uploaded the artifact. Not the
+# working cache: a run that fails has already fetched into that one, and it would no longer match main.
 MAC_CACHE_ENV = "MFETL_MAC_CACHE"
-MAC_CACHE = Path.home() / "Library" / "Application Support" / "MoleculeFinder" / "raw_cache"
+MAC_CACHE = Path.home() / "Library" / "Application Support" / "MoleculeFinder" / "inputs-main"
 BUILT_ON_MAC = "mac-mini"
 
 
@@ -251,7 +253,7 @@ def _copy_mac_cache(fp: str, incoming: Path) -> None:
             f"main's inputs ({fp[:16]}) were built by the Mac mini's weekly job, and its cache at {src} "
             f"holds {(have or {}).get('fingerprint', 'nothing')[:16]}. Check out the commit that job built "
             f"last (normally origin/main), or wait for a running job to finish; the cache was left as it was.")
-    if subprocess.run(["cp", "-cR", str(src), str(incoming)], capture_output=True).returncode != 0:
+    if subprocess.run(["cp", "-cR", str(src), str(incoming)], capture_output=True, check=False).returncode != 0:
         shutil.rmtree(incoming, ignore_errors=True)
         shutil.copytree(src, incoming)
     log.info("sync-inputs: copied the Mac weekly job's inputs from %s", src)

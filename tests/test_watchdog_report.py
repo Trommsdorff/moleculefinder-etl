@@ -335,7 +335,7 @@ def test_mf_alarms_after_eight_days_not_ten():
                   commits={"moleculefinder-etl": [_commit("etl: refresh 2026-08-31", "2026-08-31T08:20:00Z")]})
     mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
     assert mf.state == nf.STALE
-    tuesday = dt.datetime(2026, 9, 8, 13, 0, tzinfo=dt.timezone.utc)
+    tuesday = dt.datetime(2026, 9, 8, 13, 0, tzinfo=dt.UTC)
     mf = next(f for f in nf.build_report(api, tuesday).findings if f.repo == "moleculefinder-etl")
     assert mf.state == nf.OK
 

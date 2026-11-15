@@ -36,8 +36,10 @@
 #
 # ALARM: a run that fails, is cancelled (stopped, shut down, the agent unloaded), times out, or merges data that
 # never goes live opens (or comments on) the GitHub issue labelled `refresh-failure` on
-# Trommsdorff/moleculefinder-etl, as the workflow's `alarm` job did, and shows a Mac notification. A week where
-# nothing changed ends quietly. If the Mac is off, the GitHub watchdog (watchdog.yml) is what notices.
+# Trommsdorff/moleculefinder-etl, as the workflow's `alarm` job did, and shows a Mac notification. It does so by
+# dispatching .github/workflows/mac-alarm.yml, which files the issue as github-actions[bot] and fails, so GitHub
+# emails Garrett (it emails nobody about an issue they opened themselves, which is what `gh` here would be).
+# A week where nothing changed ends quietly. If the Mac is off, the GitHub watchdog (watchdog.yml) notices.
 #
 # KEYS: the real SUPABASE_URL and SUPABASE_SERVICE_KEY, read from the ETL's gitignored .env by
 # scripts/mac/with_keys.py (python-dotenv): never sourced, never printed, never logged. A dry run blanks them.
@@ -63,6 +65,7 @@ WORK="$MF/mf-weekly-worktree"                              # this run's checkout
 STATE_DIR="${MF_WEEKLY_STATE_DIR:-$HOME/Library/Application Support/MoleculeFinder}"
 LOG_DIR="${MF_WEEKLY_LOG_DIR:-$HOME/Library/Logs/MoleculeFinder}"
 CACHE="$STATE_DIR/raw_cache"                               # THE inputs: the canonical cache since the move
+MAIN_INPUTS="$STATE_DIR/inputs-main"                       # the inputs main names (sync-inputs reads this)
 VENV="$STATE_DIR/venv"                                     # built from uv.lock, Python 3.12
 PY_BASE="/opt/homebrew/opt/python@3.12/bin/python3.12"     # the GitHub run used 3.12 too
 ETL_GH="Trommsdorff/moleculefinder-etl"
@@ -195,10 +198,18 @@ $tail_text
 </details>"
   printf '%s\n' "$body" > "$RUN_DIR/alarm.md"
   if [ "$DRY" = 1 ]; then
-    say "ALARM (dry run: not filed). It would open, or comment on, the open '$ETL_GH' issue labelled refresh-failure, titled \"$title\", with this text:"
+    say "ALARM (dry run: not filed). It would dispatch mac-alarm.yml, which opens (or comments on) the open '$ETL_GH' issue labelled refresh-failure as github-actions[bot], titled \"$title\", and fails so GitHub emails; this is the text:"
     echo "----- alarm text -----"; cat "$RUN_DIR/alarm.md"; echo "----- end of alarm text -----"
     return
   fi
+  osascript -e "display notification \"$(echo "$why" | cut -c1-180 | tr '"' "'")\" with title \"MoleculeFinder refresh FAILED\"" 2>/dev/null || true
+  # The relay first: an issue the Mac opened itself would be Garrett's own, and GitHub emails nobody about those.
+  if jq -n --arg title "$title" --rawfile body "$RUN_DIR/alarm.md" '{title: $title, body: ($body | .[0:60000])}' \
+       | (cd "$STATE_DIR" && tgh workflow run mac-alarm.yml --repo "$ETL_GH" --ref main --json) >/dev/null 2>&1; then
+    say "alarm: dispatched mac-alarm.yml (GitHub opens or comments on the refresh-failure issue and emails)"
+    return
+  fi
+  say "WARNING: could not dispatch mac-alarm.yml; filing the issue from the Mac instead (GitHub sends no email for it)"
   existing=$(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label refresh-failure --state open --limit 1 \
                --json number --jq '.[0].number // empty' 2>/dev/null || true)
   if [ -n "$existing" ]; then
@@ -210,7 +221,6 @@ $tail_text
     (cd "$STATE_DIR" && tgh issue create --repo "$ETL_GH" --label refresh-failure --title "$title" \
        --body-file "$RUN_DIR/alarm.md") && say "alarm: opened an issue" || say "WARNING: the alarm issue could not be opened"
   fi
-  osascript -e "display notification \"$(echo "$why" | cut -c1-180 | tr '"' "'")\" with title \"MoleculeFinder refresh FAILED\"" 2>/dev/null || true
 }
 
 # ── the failed-run heartbeat: once a week, the timestamp only (etl.yml "heartbeat after a failed run") ──
@@ -246,6 +256,7 @@ tidy() {
   remove_worktree "$WEB_REPO" "$WORK/web" || say "WARNING: could not remove $WORK/web; delete it by hand"
   rmdir "$WORK" 2>/dev/null
   [ -n "$SCRATCH_CACHE" ] && rm -rf "$SCRATCH_CACHE"
+  rm -rf "$MAIN_INPUTS.new"
   rm -rf "$RUN_DIR"
   # old logs and summaries; old weeks' state files
   find "$LOG_DIR" -type f \( -name 'weekly-*.log' -o -name 'summary-*.md' \) -mtime +"$LOG_KEEP_DAYS" -delete 2>/dev/null
@@ -470,7 +481,7 @@ fi
 # data/LAST_CHECK is stamped by every run that gets here: the watchdog reads the commits that touch it
 date -u +%FT%TZ > data/LAST_CHECK && git add data/LAST_CHECK
 if [ "$DRY" = 1 ]; then
-  say "dry run: would commit \"$MSG\" as $(git config user.name) <$(git config user.email)> and push it to the ETL's main"
+  say "dry run: would commit \"$MSG\" as $(git config user.name) <$(git config user.email)> and push it to the ETL's main, then keep main's inputs ($(jq -r .fingerprint data/seed/inputs.json | cut -c1-16), built_on $(jq -r '.built_on // "github"' data/seed/inputs.json)) at $(echo "$MAIN_INPUTS" | tilde)"
   git reset --quiet
   SNAP_SHA="(dry run: not committed)"
 else
@@ -481,6 +492,15 @@ else
   /usr/bin/perl -e 'alarm shift; exec @ARGV' "$NET_SECONDS" git push --quiet origin HEAD:main & wait $!
   [ $? = 0 ] || fail "the push to the ETL's main was refused or timed out (did main move during the run? This run built ${START_SHA:0:7}; the next start rebuilds from the new main, nothing was published)"
   say "pushed ${SNAP_SHA:0:7} to the ETL's main"
+  # The inputs main now names, kept as they are (the artifact GitHub used to upload): `mfetl sync-inputs` copies
+  # from here. A copy-on-write clone, so it costs only what later runs change in the working cache.
+  rm -rf "$MAIN_INPUTS.new"
+  if cp -cR "$RUN_CACHE" "$MAIN_INPUTS.new"; then
+    rm -rf "$MAIN_INPUTS" && mv "$MAIN_INPUTS.new" "$MAIN_INPUTS" \
+      && say "inputs: main's inputs ($(jq -r .fingerprint data/seed/inputs.json | cut -c1-16)) kept at $(echo "$MAIN_INPUTS" | tilde)"
+  else
+    say "WARNING: could not keep a copy of main's inputs; sync-inputs will refuse until the next run"
+  fi
 fi
 [ "$NO_CHANGE" = 1 ] && say "no data changes: the heartbeat commit keeps this public repo's crons alive"
 

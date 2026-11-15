@@ -167,16 +167,16 @@ def _env_file(tmp_path: Path) -> Path:
 
 def test_with_keys_check_never_prints_a_value(tmp_path):
     out = subprocess.run([sys.executable, str(WITH_KEYS), str(_env_file(tmp_path)), "--check"],
-                         capture_output=True, text=True)
+                         capture_output=True, text=True, check=False)
     assert out.returncode == 0 and SECRET not in out.stdout + out.stderr and "values not shown" in out.stdout
 
 
 def test_with_keys_passes_only_the_two_keys(tmp_path):
     probe = ("import os; print(sorted(k for k in os.environ if k.startswith(('SUPABASE', 'MFETL_CANON')))); "
-             "print(os.environ['SUPABASE_SERVICE_KEY'] == %r)" % SECRET)
+             f"print(os.environ['SUPABASE_SERVICE_KEY'] == {SECRET!r})")
     out = subprocess.run([sys.executable, str(WITH_KEYS), str(_env_file(tmp_path)), "--", sys.executable, "-c", probe],
-                         capture_output=True, text=True,
-                         env={k: v for k, v in os.environ.items() if not k.startswith("SUPABASE")} | {"SUPABASE_DB_URL": "x"})
+                         capture_output=True, text=True, check=False,
+                         env={k: v for k, v in os.environ.items() if not k.startswith(("SUPABASE", "MFETL_"))} | {"SUPABASE_DB_URL": "x"})
     assert out.returncode == 0, out.stderr
     assert out.stdout.splitlines() == ["['SUPABASE_SERVICE_KEY', 'SUPABASE_URL']", "True"]
 
@@ -184,5 +184,21 @@ def test_with_keys_passes_only_the_two_keys(tmp_path):
 def test_with_keys_refuses_a_file_missing_a_key(tmp_path):
     env = tmp_path / ".env"
     env.write_text("SUPABASE_URL=https://example.invalid\n")
-    out = subprocess.run([sys.executable, str(WITH_KEYS), str(env), "--check"], capture_output=True, text=True)
+    out = subprocess.run([sys.executable, str(WITH_KEYS), str(env), "--check"], capture_output=True, text=True,
+                         check=False)
     assert out.returncode == 3 and "SUPABASE_SERVICE_KEY" in out.stderr
+
+
+# ── the alarm reaches Garrett by email ──────────────────────────────────────────────────────────
+def test_the_alarm_is_relayed_through_github_so_it_emails():
+    code = _code(SCRIPT.read_text())
+    alarm = code.split("alarm() {", 1)[1].split("failed_heartbeat() {", 1)[0]
+    assert alarm.index("tgh workflow run mac-alarm.yml") < alarm.index("tgh issue create")   # relay first
+    assert 'title="MoleculeFinder ETL FAILED"' in alarm and "--label refresh-failure" in alarm
+    assert "close and reopen" in alarm                                   # etl.yml's warning about re-running a check
+    import yaml
+    wf = yaml.safe_load((ROOT / ".github" / "workflows" / "mac-alarm.yml").read_text())
+    on = wf.get("on", wf.get(True))
+    assert set(on) == {"workflow_dispatch"}                              # never a schedule
+    run = wf["jobs"]["alarm"]["steps"][0]["run"]
+    assert "${{" not in run and run.rstrip().endswith("exit 1")          # inputs via env; fails so GitHub emails
