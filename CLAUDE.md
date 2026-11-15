@@ -13,13 +13,13 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 929 molecules; 430 product pages; 6 doors.
-- **`2026-12-care` DEPLOYED 2026-11-15** (`d3afa31`, web `453959a`): titanium dioxide (no drawing), octinoxate,
-  oxybenzone; CMC a polysaccharide. **A limit is not a value:** `parse_ld50` keeps a source's qualifier (`qualifier`,
-  `ld50_qualifier`, only when given). Record: HISTORY.md.
+- **`2026-12-care` DEPLOYED 2026-11-15** (`d3afa31`, web `453959a`). **A limit is not a value:** `parse_ld50` keeps a
+  source's qualifier (`qualifier`, `ld50_qualifier`, only when given). Record: HISTORY.md.
 - **Next weekly run:** `structure drawings: 903 carried, 0 repainted, 0 drawn, 26 with no drawing`, `structure parts:
   723 carried, 0 made, 202 with no part, 4 drawings unreadable`, `compare drawings: 147 pairs (aligned 45,
   aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`, `repeat units: 3 (3 carried,
   0 repainted, 0 drawn this run)`, made: none. On a stop: `docs/DRAWING-RECIPES.md` sections 10 and 11.
+- **Mac weekly job: built, not on** (`mac-weekly-2026-11`, `docs/MAC-WEEKLY-REFRESH.md`).
 - **Waiting on Garrett: dataset 2026.11** (branch `dataset-2026-11`): after his Zenodo upload, `mfetl dataset
   --version 2026.11 --doi <DOI>`, merge.
 - **Queued:** the extended-solids pass (the plan, "Queued after phase 3B"; its own review page).
