@@ -2,8 +2,9 @@
 
 MoleculeFinder's weekly data refresh moves from GitHub Actions (`.github/workflows/etl.yml`, Mondays 06:00 UTC) to a
 launchd job on Garrett's Mac mini, as the network's rule requires (`network/137-Finder-Web-Standards.md` section 14).
-Built and proved 2026-11-15 on branch `mac-weekly-2026-11`; **not switched on**. The switch happens only on Garrett's
-word "deploy" (section 4). The review page is `moleculefinder-web/docs/design/mac-weekly-review-2026-11.html`.
+Built and proved 2026-11-15 on branch `mac-weekly-2026-11`; **switched on 2026-11-16** on Garrett's word (section 4;
+the first Mac run is Monday 2026-11-23, 03:10 Eastern). `etl.yml` is the manual backup (section 7). The review page is
+`moleculefinder-web/docs/design/mac-weekly-review-2026-11.html`.
 
 Files: `scripts/mac/weekly-refresh.sh` (the job), `scripts/mac/com.137finder.moleculefinder.weekly-refresh.plist`
 (its launchd file), `scripts/mac/with_keys.py` (hands the build the two database keys), `.github/workflows/mac-alarm.yml`
@@ -26,8 +27,10 @@ The job's state (one small file per week, its inputs cache and Python environmen
 
 **What an alarm looks like.** An email from GitHub saying the `mac-alarm` run failed, and an open issue on
 `Trommsdorff/moleculefinder-etl` titled **MoleculeFinder ETL FAILED** (label `refresh-failure`). It says what
-failed, where the log is, which attempt this was, the Drawings block, and the last 80 log lines. A Mac notification
-too. The site stays up with last week's data. **Do not re-run to make it go green**: read the log, find the input that
+failed, where the log is, which attempt this was, the Drawings block, and the last 80 log lines. When the website's
+check (`ci / verify` on the data PR) is what failed, it also names the failed step, the broken test (the test runner's
+`FAIL` lines) and quotes the last 40 lines of that step's log (since 2026-11-16; the web repo is private, so those
+lines appear in the ETL's public issue). A Mac notification too. The site stays up with last week's data. **Do not re-run to make it go green**: read the log, find the input that
 moved, fix it on a branch. The next green run closes the issue itself.
 
 **If the Mac is off.** Nothing runs, so nothing on the Mac can complain. The GitHub watchdog (`watchdog.yml`, daily
@@ -68,10 +71,10 @@ as on GitHub.
 
 | # | etl.yml step | What it protects against | On the Mac |
 |---|---|---|---|
-| 1 | `schedule: 0 6 * * 1` (+ `workflow_dispatch`) | A missed week; the molecule of the week changes with the ISO week | launchd, Monday 03:10 Eastern, retries Monday 06:10 to 18:10 every two hours, catch-ups 03:10 Tuesday to Sunday; the job runs only while the UTC ISO week (the clock `refreshed` and the molecule of the week use) has no success and fewer than 8 tries. A start missed while asleep fires at the next wake. `etl.yml` keeps `workflow_dispatch` as the manual backup. |
+| 1 | `schedule: 0 6 * * 1` (+ `workflow_dispatch`; the schedule removed at the switch, 2026-11-16) | A missed week; the molecule of the week changes with the ISO week | launchd, Monday 03:10 Eastern, retries Monday 06:10 to 18:10 every two hours, catch-ups 03:10 Tuesday to Sunday; the job runs only while the UTC ISO week (the clock `refreshed` and the molecule of the week use) has no success and fewer than 8 tries. A start missed while asleep fires at the next wake. `etl.yml` keeps `workflow_dispatch` as the manual backup. |
 | 2 | `permissions: contents: write`; a fresh runner per run | A job that can do more than it needs; leftovers from an earlier run | A lock (a second start exits at once); its own worktrees of `origin/main` for both repos, created fresh and removed after; refuses a checkout that is not clean or not `origin/main`; clears every `MFETL_*`, `SUPABASE_*` and `GITHUB_*` variable a shell could leak in. It steps aside (no try counted, no alarm) while another session's `mfetl` build runs on this Mac or a GitHub `etl.yml` run is in progress. **Reach:** it uses `gh`'s login, which can do more than the workflow's tokens (see the review page). |
 | 3 | `actions/checkout@v6` | Building something other than what is on `main` | `git worktree add --detach … origin/main` after a `fetch` (time-limited, credentials from `gh`, never a prompt). The interactive checkout is never touched, whatever branch or state it is in. |
-| 4 | `setup-python 3.12` + `pip install -e .` | An environment that cannot build | Python 3.12 at a fixed path, packages exactly as `uv.lock` names them (`uv sync --frozen`). **Stronger than GitHub**, whose `pip install -e .` took whatever was newest each Monday; the lock was regenerated at the moment of GitHub's 2026-11-09 install, so it names the very versions that run used (rdkit 2026.9.1, numpy 2.5.4, pyarrow 26.0.1, Pillow 13.0.0, supabase 2.34.1). |
+| 4 | `setup-python 3.12` + `pip install -e .` (since 2026-11-16: `setup-uv` 0.13.0 + `uv sync --frozen`, as the Mac) | An environment that cannot build | Python 3.12 at a fixed path, packages exactly as `uv.lock` names them (`uv sync --frozen`). **Was stronger than GitHub**, whose `pip install -e .` took whatever was newest each Monday (the manual backup now installs from the same lock); the lock was regenerated at the moment of GitHub's 2026-11-09 install, so it names the very versions that run used (rdkit 2026.9.1, numpy 2.5.4, pyarrow 26.0.1, Pillow 13.0.0, supabase 2.34.1). |
 | 5 | `actions/cache/restore` (`pubchem-raw-*`) | Refetching every input every week (slow, and more churn than upstream really had) | The job's own cache, `~/Library/Application Support/MoleculeFinder/raw_cache`, kept between runs (`MFETL_RAW_CACHE`). It is seeded once at the switch from the last GitHub run's inputs (`--seed-cache`), so the first Mac run carries on from exactly where GitHub stopped. Expiry rules (`config.py` TTLs) unchanged. |
 | 6 | `mfetl all --target 10000` with the two secrets and `GITHUB_SHA` | The refresh itself | The same command, in refresh mode (`MFETL_WEEKLY=1`), with the real `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` read from the ETL's gitignored `.env` by `with_keys.py` (never sourced, printed or logged; the database password is not passed). `MFETL_GIT_SHA` stands in for `GITHUB_SHA` in `ingest_run`. Every check below runs inside it, unchanged. |
 | 6a | the presence check and the claim check (`check_lines`), start of transform | A bad presence mark; a claim word with no entry | Same. Proved: both stop the Mac job (section 3). |
@@ -98,7 +101,7 @@ as on GitHub.
 | 16 | sync: `rm -rf web/data/snapshots; cp -R …` | A diffed copy missing a deletion | Same, whole copy. |
 | 17 | open or update ONE data PR (lowest open `data/snapshot-*`, branch off current main, force-with-lease, create or edit) | A second PR left behind after a red week; a stale branch history | Same logic, same branch names, same title and body (it names the Mac run instead of an Actions URL). |
 | 18 | close superseded data PRs | Several open data PRs | Same; tidying, never a gate. |
-| 19 | wait for `ci / verify` on that exact sha (Actions API; appear in 5 min, finish in 30; the `verify` job itself must be `success`) | Merging an unverified tree; a green roll-up over a skipped job | Same logic and limits. A red check leaves the PR open and the run alarms. |
+| 19 | wait for `ci / verify` on that exact sha (Actions API; appear in 5 min, finish in 30; the `verify` job itself must be `success`) | Merging an unverified tree; a green roll-up over a skipped job | Same logic and limits. A red check leaves the PR open and the run alarms, naming the failed step and the broken test with the step's last 40 log lines (2026-11-16). Since 2026-11-16 the web's `ci.yml` also runs on every push to `main`; the data PR's head commit is never on `main`, so a push run is never the one waited on. |
 | 20 | squash-merge (`WEB_REPO_TOKEN`, not `GITHUB_TOKEN`) | Deploying without the web's push-triggered workflows (IndexNow) running | Same, with `gh`'s login (a user token, so the push-triggered workflows run). **Stronger:** `--match-head-commit` merges only the commit that was verified. |
 | 21 | (nothing) | A merge that never goes live | **New:** waits up to 30 min for Vercel's production deployment of the merge commit to report success (GitHub deployments API), then checks the site answers 200. Otherwise it alarms: "merged but not live". |
 
@@ -126,7 +129,7 @@ Recorded in full on the review page. In short: the dry run from a clean checkout
 last committed snapshot from the same inputs; each guard stopping the Mac job with its alarm text; every git and
 GitHub call with no terminal attached, from launchd itself; two starts at once, one refusing.
 
-## 4. The switch (the deploy session, on Garrett's word "deploy")
+## 4. The switch (the deploy session, on Garrett's word "deploy"; done 2026-11-16, the record is HISTORY.md)
 
 In this order. Name every finished branch waiting to merge first and ask whether it goes too. Clear of the news cron.
 
@@ -149,7 +152,11 @@ In this order. Name every finished branch waiting to merge first and ask whether
    ```
    Update `tests/test_etl_workflow.py` if it asserts the schedule. Run the whole suite (keys blanked), ruff at its
    baseline. Push ETL `main` (this also delivers `mac-alarm.yml` and the watchdog change).
-4. **Seed the job's cache** from the inputs main names (the last GitHub run's artifact):
+4. **Mark the switch week done** when its refresh ran on GitHub (otherwise the job's first daily catch-up, 03:10
+   the next morning, runs a full refresh in that same week): `echo "success <UTC time> switch: this ISO week's
+   refresh ran on GitHub (run <id>)" >> ~/Library/Application\ Support/MoleculeFinder/week-<YYYY-Www>`, then
+   `scripts/mac/weekly-refresh.sh --schedule-check <epoch>` reads `run=no` for every start before the next Monday
+   and `run=yes` for that Monday 03:10. **Seed the job's cache** from the inputs main names (the last GitHub run's artifact):
    `scripts/mac/weekly-refresh.sh --seed-cache`. Then a **dry run from main**: `scripts/mac/weekly-refresh.sh --dry-run`.
    It must read, in its Drawings lines, every existing drawing carried and nothing made (as of 2026-11-15:
    `903 carried, 0 repainted, 0 drawn`; parts `723 carried, 0 made`; pairs `147 carried, 0 repainted, 0 made`; repeat
@@ -194,6 +201,33 @@ cd - && git worktree remove --force "$WT"
   `inputs-main`; a GitHub-built pointer still downloads its artifact.
 - `load/supabase_loader.py`: `ingest_run.git_sha` from `MFETL_GIT_SHA` when not on GitHub.
 - `.github/watchdog/network_freshness.py` and `watchdog.yml`: MoleculeFinder counts a refresh commit touching
-  `data/LAST_CHECK` as a success (8 days, not 10); a target that stalls while an older episode is open now emails.
+  `data/LAST_CHECK` or (2026-11-16) `data/snapshots/meta.json` as a success, the newest of the two (8 days, not 10);
+  GitHub's refresh commits touch only `meta.json`; a target that stalls while an older episode is open now emails.
+- 2026-11-16, at the switch: the alarm names what broke on the website's check (`ci_failure_detail`); `etl.yml` has no
+  schedule and installs from `uv.lock`, frozen; the web's `ci.yml` runs on every push to `main` too.
 - `.github/workflows/mac-alarm.yml`: the alarm relay (dispatch only, no schedule).
 - `uv.lock`: committed (it had been excluded locally in `.git/info/exclude`, so no build was ever pinned).
+
+## 7. The manual backup: what pressing "Run workflow" on `etl.yml` does (since 2026-11-16)
+
+It runs the whole refresh on GitHub's machines, exactly as the Monday cron did before the switch: the same
+`mfetl all --target 10000` with every guard, installed from the same `uv.lock` (frozen) as the Mac, then the commit,
+its own inputs artifact, the one data PR, the wait for `ci / verify`, the merge (the deploy), all-clear or alarm. Its
+cache will usually have expired, so it fetches every input fresh: slower, more molecule files move, every guard holds
+(the snapshot guard, the drawing guard, the Wikidata 7-day hold, the gate hold, the doors, the licence gate).
+
+**It cannot fight the Mac job.** The ETL's `main` is where the two meet, and a push there only goes through on top of
+the commit the run was built from:
+- If the Mac job is running when the button is pressed, whichever pushes second is refused. On GitHub the `run` job
+  fails (its failed-run heartbeat is refused too and only warns), so `sync-web`, which needs `run`, never starts: no
+  data PR, no merge. On the Mac the push is refused and the run alarms ("did main move during the run?"); the next
+  start rebuilds from the new `main`. Proved by `tests/test_etl_workflow.py::test_the_manual_button_cannot_fight_the_mac_job`.
+- If `etl.yml` is running when a Mac start comes, the Mac steps aside (no try counted, no alarm) and tries at the next
+  start (`test_the_mac_job_steps_aside_while_the_manual_backup_runs`).
+- In the one remaining overlap (the button pressed after the Mac pushed its ETL commit but while the Mac waits on its
+  data PR), GitHub's later push to the PR branch moves it, so the Mac's `--match-head-commit` merge is refused and the
+  Mac alarms, while GitHub merges its own verified commit. Either way only a verified commit is merged, and the newest
+  data ships.
+
+Afterwards `main`'s `data/seed/inputs.json` names GitHub's artifact (`sync-inputs` downloads it as before), and the Mac
+job carries on from its own cache at its next start. A green manual run counts for the watchdog too.
