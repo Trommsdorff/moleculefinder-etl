@@ -3,8 +3,8 @@
 **Keep this file short.** It is loaded into every session, and Claude Code stops loading instruction files past
 150,000 characters in total. It holds the standing rules and the current state only. **Run records do not go here:**
 add them at the top of `HISTORY.md` (this repo), and keep this file under 20,000 characters. Everything this file
-said before 2026-11-14, every run record included, is in `HISTORY.md` verbatim; search it by section name
-(e.g. "Trust run 7", "Gate hold") when a code comment points at "ETL CLAUDE.md".
+said before 2026-11-14, every run record included, is in `HISTORY.md` verbatim; search it by section name when a
+code comment points at "ETL CLAUDE.md".
 
 Public ETL for MoleculeFinder. Pulls PubChem, Wikidata (+ Wikipedia pageviews), DailyMed and hand seeds, transforms,
 and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds from, plus Supabase. Original design:
@@ -13,13 +13,14 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 929 molecules; 430 product pages; 6 doors.
-- **`2026-12-care` DEPLOYED 2026-11-15** (`d3afa31`, web `453959a`). **A limit is not a value:** `parse_ld50` keeps a
-  source's qualifier (`qualifier`, `ld50_qualifier`, only when given). Record: HISTORY.md.
+- **A limit is not a value** (2026-11-15): `parse_ld50` keeps a source's qualifier (`qualifier`, `ld50_qualifier`).
 - **Next weekly run:** `structure drawings: 903 carried, 0 repainted, 0 drawn, 26 with no drawing`, `structure parts:
   723 carried, 0 made, 202 with no part, 4 drawings unreadable`, `compare drawings: 147 pairs (aligned 45,
   aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`, `repeat units: 3 (3 carried,
   0 repainted, 0 drawn this run)`, made: none. On a stop: `docs/DRAWING-RECIPES.md` sections 10 and 11.
-- **Mac weekly job: built, not on** (`mac-weekly-2026-11`, `docs/MAC-WEEKLY-REFRESH.md`).
+- **The weekly refresh runs on the Mac mini from 2026-11-23** (switched 2026-11-16): `scripts/mac/weekly-refresh.sh`,
+  launchd, Mon 03:10 ET; `docs/MAC-WEEKLY-REFRESH.md`. `etl.yml` is a manual backup; the watchdog stays on GitHub; the
+  news job moves next.
 - **Waiting on Garrett: dataset 2026.11** (branch `dataset-2026-11`): after his Zenodo upload, `mfetl dataset
   --version 2026.11 --doi <DOI>`, merge.
 - **Queued:** the extended-solids pass (the plan, "Queued after phase 3B"; its own review page).
@@ -56,7 +57,7 @@ keys). **Every session stops its own servers (by process id) and checks for left
 `lsof -nP -iTCP -sTCP:LISTEN | grep -E 'node|python'` must show nothing the session started.
 
 **A build on this Mac is PINNED (2026-10-20): run `mfetl sync-inputs` first.** It downloads the exact inputs main was
-built from (the weekly run's `inputs-<fingerprint16>` artifact, verified against the committed fingerprint); `mfetl all`
+built from (the Mac's `inputs-main`, or a GitHub run's `inputs-<fingerprint16>` artifact; fingerprint-checked); `mfetl all`
 then reproduces main, fetching only what is genuinely new. Without the sync, a pinned export refuses. A pinned run never
 expires a cache entry and keeps main's `refreshed` date. `MFETL_INPUTS=refresh` is a one-off local data refresh, never a
 code build. **The build here is checked by running it twice: byte-identical, and no unexpected PubChem requests.**
@@ -71,9 +72,8 @@ binaries directly:
 ./.venv/bin/ruff check .
 ./.venv/bin/python3 -m moleculefinder_etl.cli migrate [--apply]
 ```
-Fresh setup elsewhere: `python -m venv .venv && pip install -e ".[dev]"`; `mfetl seed --target 200` for a small smoke canon.
-The env has no pip: use `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the web's copy with
-`npm run sync-data` there.
+Fresh setup elsewhere: `uv sync --frozen --extra dev`; `mfetl seed --target 200` for a small smoke canon. The env has no
+pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the web's copy with `npm run sync-data` there.
 
 ## How it flows (disk-to-disk, resumable)
 - `stage_seed` → `data/seed/canon.parquet` (marquee names→CID + curated CIDs + Wikidata notability, ranked by pageviews).
@@ -88,18 +88,17 @@ The env has no pip: use `uv pip install --python .venv/bin/python3 ...`. After a
 ## Deploying and the weekly loop
 - **Pushes are held by default.** Commit locally as Trommsdorff / `291580674+Trommsdorff@users.noreply.github.com` (never a
   local identity override, no `Co-Authored-By` trailer); push only on Garrett's word. **ETL `main` first, then web `main`**,
-  clear of the news cron (`50 */6 * * *` UTC; runs fire late, check none is in progress) and of Monday's 06:00 UTC run.
+  clear of the news cron (`50 */6 * * *` UTC; runs fire late, check none is in progress) and of the Mac's Monday job.
   Before any publish, name every finished branch waiting to merge and ask whether it goes too.
-- **`.github/workflows/etl.yml`** (weekly, Monday 06:00 UTC; it may publish on its own, that is authorised): `mfetl all
-  --target 10000`, commits the refresh, uploads the inputs artifact, then `sync-web` checks out the sha the run pushed,
-  copies `data/snapshots/` WHOLE into the web repo and opens or updates ONE data PR, waits for the web's `ci / verify`
-  (decided from the Actions API by `head_sha`) and squash-merges when green; the merge is the deploy. A red check leaves
-  the PR open and fails the job; the `alarm` job opens or comments on the refresh-failure issue. `WEB_REPO_TOKEN` needs
-  Contents, Pull requests, Actions: Read and Issues: RW. Also `news.yml` (six-hourly, standard library only, never prints a
-  headline), `migrations.yml`, `watchdog.yml`. Build and test on this Mac, not GitHub, unless Garrett asks.
-- **If a run stops or its PR is held:** do not re-run the job and do not merge a held PR by hand (a re-run replays the old
-  merge; close and reopen the PR after a fix). Read the run's summary page and the step log, find the input that moved,
-  fix it on a branch.
+- **The weekly refresh (the Mac job; it may publish on its own, that is authorised):** `mfetl all --target 10000` with the
+  real keys, commits the refresh, copies `data/snapshots/` WHOLE into the web repo as ONE data PR, waits for `ci / verify`
+  on that exact commit and squash-merges (the deploy), waits for Vercel's Production success. A failure (or a red check,
+  named in the alarm) dispatches `mac-alarm.yml`: the refresh-failure issue and an email. Log
+  `~/Library/Logs/MoleculeFinder/`. **`etl.yml`** does the same on GitHub, from its button only (no schedule; uv.lock
+  frozen); `WEB_REPO_TOKEN` needs Contents, Pull requests, Actions: Read, Issues: RW. Also `news.yml` (six-hourly, never
+  prints a headline), `migrations.yml`, `watchdog.yml`. Build and test on this Mac, not GitHub, unless Garrett asks.
+- **If a run stops or its PR is held:** do not re-run it and do not merge a held PR by hand (close and reopen the PR
+  after a fix). Read the log or summary, find the input that moved, fix it on a branch.
 
 ## The guards in the weekly run (none may be weakened) and what a stop looks like
 - **The snapshot guard** (`load/snapshot_guard.py`, before the export writes anything): a protected field may only regress
@@ -212,7 +211,7 @@ The env has no pip: use `uv pip install --python .venv/bin/python3 ...`. After a
 - **Recipes:** `docs/DRAWING-RECIPES.md` (the drawing engine, parts, pairs, the guard; section 10 is what to do on a stop).
 - **Scripts:** `scripts/door_pins.py`, `draft_products.py`, and the review-page generators (`copy_sweep_review.py`,
   `door_chains_review.py`, `phase5_review.py`, `presence_review.py`), which write into `../moleculefinder-web/docs/design/`.
-- `supabase/migrations/`; `tests/`; `.github/workflows/` (`etl.yml`, `news.yml`, `migrations.yml`, `watchdog.yml`).
+- `supabase/migrations/`; `tests/`; `scripts/mac/`; `.github/workflows/` (`etl.yml`, `mac-alarm.yml`, `news.yml`, `migrations.yml`, `watchdog.yml`).
 
 ## More
 - `HISTORY.md`: every run record, newest first (the old CLAUDE.md is at its foot, verbatim).
