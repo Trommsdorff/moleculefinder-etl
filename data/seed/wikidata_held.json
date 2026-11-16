@@ -1,65 +1,61 @@
 [
  {
-  "slug": "methanol",
-  "cid": 887,
-  "qid": "Q14982",
+  "slug": "nickel",
+  "cid": 935,
+  "qid": "Q744",
   "field": "aliases",
   "shipped": [
-   "methyl alcohol",
-   "wood alcohol",
-   "wood naphtha",
-   "wood spirits",
-   "Columbian spirits",
-   "MeOH",
-   "CH3OH",
-   "wood spirit",
-   "Pyro alcohol",
-   "Methylol",
-   "spirit of wood",
-   "Columbian spirit",
-   "Colonial spirit",
-   "methyl hydrate",
-   "carbinol",
-   "pyroligneous spirit",
-   "pyroxylic spirit",
-   "monohydroxymethane",
-   "hydroxymethane",
-   "methyl hydroxide"
+   "element 28",
+   "₂₈Ni",
+   "Ni"
   ],
   "held": [
-   "methyl alcohol",
-   "wood alcohol",
-   "wood naphtha",
-   "wood spirits",
-   "Columbian spirits",
-   "wood spirit",
-   "Pyro alcohol",
-   "Methylol",
-   "spirit of wood",
-   "Columbian spirit",
-   "Colonial spirit",
-   "methyl hydrate",
-   "carbinol",
-   "pyroligneous spirit",
-   "pyroxylic spirit",
-   "monohydroxymethane",
-   "hydroxymethane",
-   "methyl hydroxide"
+   "element 28",
+   "₂₈Ni",
+   "Ni",
+   "nickel metal"
   ],
-  "modified": "2026-11-03T12:52:44Z"
+  "modified": "2026-11-12T01:27:42Z"
  },
  {
-  "slug": "pethidine",
-  "cid": 4058,
-  "qid": "Q55434",
+  "slug": "valproate",
+  "cid": 3121,
+  "qid": "Q240642",
   "field": "aliases",
   "shipped": [
-   "meperidine"
+   "LEP321",
+   "A-44090",
+   "2-n-propyl-n-valeric acid",
+   "n-DPA",
+   "DPA",
+   "dipropylacetic acid",
+   "VPA",
+   "2-n-propyl-4-pentenoic acid",
+   "propylvaleric acid",
+   "2-propylpentanoic acid",
+   "2-propylvaleric acid",
+   "di-n-propylacetic acid",
+   "4-heptanecarboxylic acid",
+   "Divalproex"
   ],
   "held": [
-   "meperidine",
-   "Demerol"
+   "LEP321",
+   "A-44090",
+   "2-n-propyl-n-valeric acid",
+   "n-DPA",
+   "DPA",
+   "dipropylacetic acid",
+   "VPA",
+   "2-n-propyl-4-pentenoic acid",
+   "propylvaleric acid",
+   "2-propylpentanoic acid",
+   "2-propylvaleric acid",
+   "di-n-propylacetic acid",
+   "4-heptanecarboxylic acid",
+   "Divalproex",
+   "sodium valproate",
+   "valproate semisodium"
   ],
-  "modified": "2026-11-09T10:00:27Z"
+  "modified": "2026-11-11T23:05:55Z"
  }
 ]
