@@ -202,3 +202,63 @@ def test_the_alarm_is_relayed_through_github_so_it_emails():
     assert set(on) == {"workflow_dispatch"}                              # never a schedule
     run = wf["jobs"]["alarm"]["steps"][0]["run"]
     assert "${{" not in run and run.rstrip().endswith("exit 1")          # inputs via env; fails so GitHub emails
+
+
+# ── the alarm names what broke on the website's check (2026-11-16) ─────────────────────────────
+# Lines shaped exactly as `gh run view --log-failed` gave them for ci run 43886653443 (PR #15): job, "UNKNOWN
+# STEP", a timestamp, colour codes written as literal "^[" text, and the post-job cleanup after the step's end.
+_FAILED_LOG = "\n".join(f"verify\tUNKNOWN STEP\t2026-11-16T14:32:26.{i:07d}Z {line}" for i, line in enumerate([
+    "^[[32m ✓^[[39m lib/dates.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m",
+    "^[[31m   ^[[31m×^[[31m presence marks > has exactly the ETL's closed formed_when list^[[39m^[[32m 3^[[2mms^[[22m^[[39m",
+    "^[[31m^[[1m^[[7m FAIL ^[[27m^[[22m^[[39m lib/presence.test.ts^[[2m > ^[[22mpresence marks^[[2m > ^[[22mhas exactly the ETL's closed formed_when list",
+    "^[[2m      Tests ^[[22m ^[[1m^[[31m1 failed^[[39m^[[22m^[[2m | ^[[22m^[[1m^[[32m339 passed^[[39m^[[22m (413)",
+    "\x1b[31mError\x1b[39m: ENOENT: no such file or directory, open '/home/runner/work/x/presence.py'",
+    "##[error]Process completed with exit code 1.",
+    "Post job cleanup.",
+    "[command]/usr/bin/git version",
+]))
+
+
+def _ci_functions() -> str:
+    text = SCRIPT.read_text()
+    keep = [line for line in text.splitlines()
+            if re.match(r"^(GH_SECONDS|WEB_GH|CI_LOG_LINES)=", line)
+            or re.match(r"^(say|tilde|ci_log_clean)\(\) \{", line)]
+    body = text.split("\nci_failure_detail() {", 1)[1].split("\n}\n", 1)[0]
+    return "\n".join(keep) + "\nci_failure_detail() {" + body + "\n}\n"
+
+
+def test_a_red_ci_check_names_the_failed_step_and_the_broken_test(tmp_path):
+    (tmp_path / "log.txt").write_text(_FAILED_LOG + "\n")
+    fake = f"""
+tgh() {{
+  case "$*" in
+    *--json\\ jobs*) echo 'verify / Run npm test' ;;
+    *--log-failed*) cat "{tmp_path}/log.txt" ;;
+  esac
+}}
+"""
+    script = _ci_functions() + fake + f"""
+STATE_DIR="{tmp_path}"; RUN_DIR="{tmp_path}"
+ci_failure_detail 43886653443
+printf '%s\\n' "STEPS=$CI_FAILED_STEPS"; printf '%s\\n' "$CI_DETAIL"
+"""
+    out = subprocess.run(["/bin/bash", "-c", script], capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr
+    text = out.stdout
+    assert "STEPS=verify / Run npm test" in text
+    assert "Failed step: verify / Run npm test" in text
+    assert re.search(r"FAIL +lib/presence\.test\.ts > presence marks > has exactly the ETL's closed formed_when list", text)
+    assert "1 failed" in text and "ENOENT" in text
+    assert "Post job cleanup" not in text and "git version" not in text      # cut at the step's own end
+    assert "^[" not in text and "\x1b" not in text and "2026-11-16T14:32" not in text
+    assert (tmp_path / "ci-failed.txt").read_text().strip() == text.split("\n", 1)[1].strip()
+
+
+def test_the_red_ci_check_detail_reaches_the_alarm_and_the_failure_line():
+    code = _code(SCRIPT.read_text())
+    wait = code.split('STEP="waiting for \'ci / verify\'', 1)[1].split("squash-merge the data PR", 1)[0]
+    assert wait.index('ci_failure_detail "$id"') < wait.index("concluded '$con' at: ${CI_FAILED_STEPS")
+    alarm = code.split("alarm() {", 1)[1].split("failed_heartbeat() {", 1)[0]
+    assert "${CI_DETAIL:+" in alarm and "$ci_text" in alarm
+    assert "redacted" in alarm.split("ci_text=", 1)[1].split("tail_text=", 1)[0]   # keys redacted there too

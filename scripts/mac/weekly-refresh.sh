@@ -77,6 +77,7 @@ NETWORK_WAIT_SECONDS=$((60 * 60))
 CI_APPEAR_SECONDS=300                                      # etl.yml: the ci run must appear within 5 min
 CI_FINISH_SECONDS=1800                                     # and finish within 30
 DEPLOY_WAIT_SECONDS=$((30 * 60))
+CI_LOG_LINES=40                                            # a failed ci step's log lines quoted in the alarm
 DISK_FLOOR_GIB=25                                          # refuse (and alarm) below this much free space
 LOG_KEEP_DAYS=90
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -147,7 +148,7 @@ SUMMARY="$LOG_DIR/summary-$STAMP$KIND.md"
 exec >>"$LOG" 2>&1
 STEP="start"; WATCHDOG=""; CAUSE=""; PUBLISHED=0; HELD="unknown"; PRODUCTS_HELD="unknown"
 DRAWINGS_TEXT="unknown: the run failed before the drawing guard ran"
-RUN_CACHE="$CACHE"; SCRATCH_CACHE=""; PR=""; PR_URL=""; SNAP_SHA=""; MERGE_SHA=""
+RUN_CACHE="$CACHE"; SCRATCH_CACHE=""; PR=""; PR_URL=""; SNAP_SHA=""; MERGE_SHA=""; CI_DETAIL=""
 RUN_DIR="$STATE_DIR/run-$STAMP"                             # this run's report files, outside every checkout
 mkdir -p "$RUN_DIR"
 
@@ -158,9 +159,36 @@ tgh() { /usr/bin/perl -e 'alarm shift; exec @ARGV' "$GH_SECONDS" /opt/homebrew/b
 netgit() { local step="$1"; shift; run "$step" /usr/bin/perl -e 'alarm shift; exec @ARGV' "$NET_SECONDS" git "$@"; }
 free_gib() { df -g / | awk 'NR==2 {print $4}'; }
 
+# ── what broke on the website's check (2026-11-16) ──
+# A red `ci / verify` used to alarm with "the check failed" and nothing else (2026-11-16, PR #15: the cause, a
+# test reading the ETL's folder, was found only by opening the run). This reads the failed run itself: the name
+# of every failed step (from the run's jobs; `gh --log-failed` labels each line "UNKNOWN STEP"), the test
+# runner's FAIL lines (they name the broken test), and the last CI_LOG_LINES lines of the step's output, cut at
+# the step's own "Process completed with exit code" line so the post-job cleanup is not what gets quoted.
+# GitHub writes colour codes either as escapes or as literal "^[" text; both are stripped. Never a gate: if gh
+# cannot read the run, the alarm says so and still goes out.
+ci_failure_detail() {   # ci_failure_detail <ci run id>: sets CI_FAILED_STEPS and CI_DETAIL
+  local id="$1" log
+  CI_FAILED_STEPS=$(cd "$STATE_DIR" && tgh run view "$id" --repo "$WEB_GH" --json jobs --jq \
+    '[.jobs[] | . as $j | .steps[]? | select(.conclusion == "failure") | "\($j.name) / \(.name)"] | join(", ")' 2>/dev/null)
+  log=$( (cd "$STATE_DIR" && tgh run view "$id" --repo "$WEB_GH" --log-failed 2>/dev/null) | ci_log_clean)
+  CI_DETAIL="ci run $id: https://github.com/$WEB_GH/actions/runs/$id
+Failed step: ${CI_FAILED_STEPS:-unknown, gh could not read the jobs of the run}
+Failed tests:
+$(printf '%s\n' "$log" | grep -E '^ *(FAIL|×) ' | sed -E 's/^ */  /' | head -20 | grep . || echo '  (no FAIL line in the log; the step itself failed)')
+
+Last $CI_LOG_LINES lines of the step's log:
+$(printf '%s\n' "$log" | awk '/^##\[error\]Process completed with exit code/ {exit} {print}' | tail -n "$CI_LOG_LINES")"
+  printf '%s\n' "$CI_DETAIL" > "$RUN_DIR/ci-failed.txt"
+}
+# gh's --log-failed lines are "job<TAB>step<TAB>timestamp text": keep the text, without the timestamp or colour.
+ci_log_clean() { cut -f3- | /usr/bin/perl -pe 's/^\xEF\xBB\xBF//; s/^\d{4}-\d\d-\d\dT[\d:.]+Z ?//; s/(?:\e|\^\[)\[[0-9;]*[A-Za-z]//g'; }
+
 # ── the alarm: the workflow's `alarm` job, from the Mac ──
 alarm() {
-  local why="$1" tail_text body existing title="MoleculeFinder ETL FAILED"
+  local why="$1" tail_text ci_text body existing title="MoleculeFinder ETL FAILED"
+  ci_text=$(printf '%s\n' "$CI_DETAIL" | tilde | sed 's/```/` ` `/g' \
+              | sed -E 's/(eyJ[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]+)/[redacted]/g')
   tail_text=$(tail -n 80 "$LOG" | tilde | sed 's/```/` ` `/g' \
                 | sed -E 's/(eyJ[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]+)/[redacted]/g')
   body="The weekly MoleculeFinder refresh on the Mac mini did not finish with a deploy.
@@ -169,6 +197,12 @@ alarm() {
 **Log on the Mac mini:** \`$(echo "$LOG" | tilde)\` (summary: \`$(echo "$SUMMARY" | tilde)\`)
 **Week:** $WEEK (attempt $(n=$(grep -c '^attempt' "$STATE" 2>/dev/null || true); echo "${n:-0}") of at most $MAX_ATTEMPTS)
 ${PR_URL:+**Data PR:** $PR_URL
+}${CI_DETAIL:+
+**What broke on the website check (\`ci / verify\`):**
+
+\`\`\`
+$ci_text
+\`\`\`
 }
 moleculefinder.com is still serving its last good build: the DATA is frozen, the site is not down.
 
@@ -605,7 +639,11 @@ it stays open and the refresh raises its alarm instead."
       [ "$now" -gt "$finish_by" ] && fail "ci run $id was still '$st' after $((CI_FINISH_SECONDS / 60)) minutes; not merging; PR $PR_URL stays open"
       sleep 20 & wait $!; continue
     fi
-    [ "$con" = "success" ] || fail "ci run $id for ${SHA:0:7} concluded '$con'; the PR is left OPEN ($PR_URL); read the failing check, never weaken it"
+    if [ "$con" != "success" ]; then
+      ci_failure_detail "$id"
+      say "what broke on the website's check:"; printf '%s\n' "$CI_DETAIL"
+      fail "ci run $id for ${SHA:0:7} concluded '$con' at: ${CI_FAILED_STEPS:-an unknown step}; the PR is left OPEN ($PR_URL); read the failing check, never weaken it"
+    fi
     job=$(tgh run view "$id" --repo "$WEB_GH" --json jobs --jq '.jobs[] | select(.name == "verify") | .conclusion' 2>/dev/null | head -1)
     [ "$job" = "success" ] || fail "ci run $id concluded success, but its 'verify' job is '${job:-absent}': not a verified snapshot; not merging; PR $PR_URL stays open"
     say "ci run $id (verify): SUCCESS on ${SHA:0:7}"
