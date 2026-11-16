@@ -511,13 +511,15 @@ def test_the_weekly_workflow_carries_the_drawings_everywhere_and_never_the_seed_
     run = wf["jobs"]["run"]
     steps = run["steps"]
     names = [s.get("name") or s.get("run") or s.get("uses") for s in steps]
-    mfetl = steps[names.index("mfetl all --target 10000")]
-    assert "name" not in mfetl          # the step keeps its name, "Run mfetl all --target 10000"
+    # The build step (2026-11-16: run by the uv.lock environment, as the Mac job runs it; it was `mfetl all`).
+    build = ".venv/bin/python -m moleculefinder_etl.cli all --target 10000"
+    mfetl = steps[names.index(build)]
+    assert "name" not in mfetl          # unnamed, so the step reads "Run .venv/bin/python -m ... all --target 10000"
     assert mfetl["env"]["MFETL_DRAWINGS_REPORT"] == "${{ runner.temp }}/drawings.json"
     count = steps[names.index("Count drawings")]
     assert count["id"] == "drawings" and count["if"] == "always()"
     assert count["env"]["REPORT"] == mfetl["env"]["MFETL_DRAWINGS_REPORT"]
-    assert names.index("mfetl all --target 10000") < names.index("Count drawings") < names.index("commit snapshot")
+    assert names.index(build) < names.index("Count drawings") < names.index("commit snapshot")
     assert run["outputs"]["drawings"] == "${{ steps.drawings.outputs.summary }}"
     for job in ("all-clear", "alarm"):
         step = next(s for s in wf["jobs"][job]["steps"] if "DRAWINGS" in (s.get("env") or {}))

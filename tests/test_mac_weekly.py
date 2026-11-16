@@ -243,7 +243,7 @@ STATE_DIR="{tmp_path}"; RUN_DIR="{tmp_path}"
 ci_failure_detail 43886653443
 printf '%s\\n' "STEPS=$CI_FAILED_STEPS"; printf '%s\\n' "$CI_DETAIL"
 """
-    out = subprocess.run(["/bin/bash", "-c", script], capture_output=True, text=True)
+    out = subprocess.run(["/bin/bash", "-c", script], capture_output=True, text=True, check=False)
     assert out.returncode == 0, out.stderr
     text = out.stdout
     assert "STEPS=verify / Run npm test" in text
