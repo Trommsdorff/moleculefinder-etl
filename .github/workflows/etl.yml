@@ -1,6 +1,17 @@
+# ════════════════════════════════════════════════════════════════════════════════════════════════
+# MANUAL BACKUP ONLY (2026-11). The weekly refresh runs on Garrett's Mac mini: scripts/mac/weekly-refresh.sh,
+# launchd agent com.137finder.moleculefinder.weekly-refresh, Mondays 03:10 Eastern with retries and catch-ups
+# (network/137-Finder-Web-Standards.md section 14: "scheduled jobs run on the Mac mini, not on GitHub Actions,
+# for every finder site; GitHub workflows stay only as manual backups"). This workflow has NO schedule; it runs
+# only from the "Run workflow" button. Before pressing it, check the Mac job is not running
+# (~/Library/Logs/MoleculeFinder/, newest log). Its cache will usually have expired, so it fetches every input
+# fresh: slower, every guard holds. It publishes its own inputs artifact as before, and the Mac job carries on
+# from whatever main then names. docs/MAC-WEEKLY-REFRESH.md.
+# ════════════════════════════════════════════════════════════════════════════════════════════════
 name: etl
 on:
-  schedule: [{ cron: "0 6 * * 1" }]     # weekly, Mondays 06:00 UTC (also keeps Supabase warm)
+  # No schedule since the switch to the Mac mini (2026-11-16; the Mac's first Monday is 2026-11-23). To go back to
+  # GitHub: turn the Mac job off, then put `schedule: [{ cron: "0 6 * * 1" }]` back here (docs/MAC-WEEKLY-REFRESH.md).
   workflow_dispatch: {}
 permissions:
   contents: write                       # snapshot push; default token is now read-only
@@ -31,13 +42,22 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
+      # PINNED (2026-11-16), exactly as the Mac job installs: the committed uv.lock, frozen, with uv 0.13.0 (the
+      # Mac's). Until then this step was `pip install -e .`, which took whatever was newest each Monday, so no
+      # GitHub build was ever pinned (uv.lock had never been committed; the record is docs/MAC-WEEKLY-REFRESH.md).
+      # --frozen refuses a lock that disagrees with pyproject.toml instead of quietly re-resolving it.
+      - uses: astral-sh/setup-uv@v10.3.2
+        with: { version: "0.13.0", enable-cache: false }
       - uses: actions/cache/restore@v4
         with:
           path: data/raw_cache
           key: pubchem-raw-${{ github.run_id }}
           restore-keys: pubchem-raw-
-      - run: pip install -e .
-      - run: mfetl all --target 10000
+      - name: Install from uv.lock (frozen)
+        env: { UV_PYTHON_DOWNLOADS: never }
+        run: uv sync --frozen --no-dev --no-install-project --python "$(command -v python)"
+      # The Mac job's command: the checkout's code, run by the locked environment (nothing installed from it).
+      - run: .venv/bin/python -m moleculefinder_etl.cli all --target 10000
         env:
           SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
