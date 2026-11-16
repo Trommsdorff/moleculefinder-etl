@@ -85,7 +85,7 @@ def test_the_jobs_commit_subjects_are_the_ones_the_watchdog_counts():
     assert not pattern.search("etl: run failed 2026-11-23 [heartbeat]")
     # every commit the job pushes to the ETL's main touches data/LAST_CHECK, the path the watchdog asks about
     target = next(t for t in nf.TARGETS if t.repo == "moleculefinder-etl")
-    assert target.commit_path == "data/LAST_CHECK" and "date -u +%FT%TZ > data/LAST_CHECK" in code
+    assert "data/LAST_CHECK" in target.commit_paths and "date -u +%FT%TZ > data/LAST_CHECK" in code
 
 
 # ── when it runs ──────────────────────────────────────────────────────────────────────────────

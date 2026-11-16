@@ -292,7 +292,8 @@ def test_it_only_ever_reads_actions_and_issues_and_mfs_public_commits():
     for url in api.calls:
         if "/commits?" in url:
             # Only the PUBLIC ETL repo's commits: a fine-grained token reads public repos as it stands.
-            assert "/repos/Trommsdorff/moleculefinder-etl/commits?sha=main&path=data/LAST_CHECK" in url, url
+            assert url.split("/repos/Trommsdorff/moleculefinder-etl/commits?sha=main&path=")[1].split("&")[0] in (
+                "data/LAST_CHECK", "data/snapshots/meta.json"), url
             continue
         assert "/actions/workflows/" in url or "/issues?" in url, url
 
@@ -338,6 +339,42 @@ def test_mf_alarms_after_eight_days_not_ten():
     tuesday = dt.datetime(2026, 9, 8, 13, 0, tzinfo=dt.UTC)
     mf = next(f for f in nf.build_report(api, tuesday).findings if f.repo == "moleculefinder-etl")
     assert mf.state == nf.OK
+
+
+class PathApi(StubApi):
+    """Answers the commits question per path, as GitHub does."""
+
+    def __init__(self, by_path: dict, **kw):
+        super().__init__(**kw)
+        self.by_path = by_path
+
+    def __call__(self, url: str):
+        if "/commits?" in url:
+            self.calls.append(url)
+            return self.by_path.get(url.split("&path=")[1].split("&")[0], [])
+        return super().__call__(url)
+
+
+def test_a_github_refresh_commit_counts_though_it_never_touched_last_check():
+    """2026-11-16: GitHub's run 43885851341 committed and shipped 366a6ab 'etl: refresh 2026-11-16' (it touches
+    data/snapshots/meta.json, not data/LAST_CHECK) but ended red at the web's check. Its commit is the week's
+    refresh; without it MoleculeFinder read 8 days stale in the week of the switch to the Mac."""
+    api = PathApi({"data/LAST_CHECK": [_commit("etl: run failed 2026-08-24 [heartbeat]", "2026-08-24T12:00:00Z")],
+                   "data/snapshots/meta.json": [_commit("docs: a session's tranche", "2026-09-08T20:00:00Z"),
+                                                _commit("etl: refresh 2026-09-07", "2026-09-07T14:30:00Z")]},
+                  green=_all_green(**{"moleculefinder-etl": "2026-08-31T14:58:00Z"}))
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.OK and "2026-09-07" in mf.line
+    asked = [u for u in api.calls if "/commits?" in u]
+    assert any("path=data/LAST_CHECK" in u for u in asked) and any("path=data/snapshots/meta.json" in u for u in asked)
+
+
+def test_the_newest_match_wins_across_the_two_paths():
+    api = PathApi({"data/LAST_CHECK": [_commit("etl: no changes 2026-09-08 [heartbeat]", "2026-09-08T08:20:00Z")],
+                   "data/snapshots/meta.json": [_commit("etl: refresh 2026-08-31", "2026-08-31T08:20:00Z")]},
+                  green=_all_green(**{"moleculefinder-etl": None}))
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.OK and "2026-09-08" in mf.line
 
 
 def test_unreadable_commits_are_could_not_check_never_a_pass():

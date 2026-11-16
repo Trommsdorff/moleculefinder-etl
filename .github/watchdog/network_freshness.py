@@ -35,12 +35,13 @@ class Target:
     cadence: str  # "weekly" | "monthly"
     # A refresh that runs OFF GitHub (on the Mac mini, the network's rule since 2026-11-09) leaves no
     # workflow run behind. When it commits to the repo's main branch, the newest commit that touches
-    # `commit_path` and whose first line matches `commit_subject` counts as a success too, alongside
+    # one of `commit_paths` and whose first line matches `commit_subject` counts as a success too, alongside
     # any green run of `workflow` (which stays as the manual backup). None: the runs are the only signal.
     commit_subject: str | None = None
     # Asking by path keeps the answer on the first page however many other commits a week has
-    # (MoleculeFinder's sessions pushed 77 between two Monday refreshes in November 2026).
-    commit_path: str | None = None
+    # (MoleculeFinder's sessions pushed 77 between two Monday refreshes in November 2026). Each path is
+    # asked separately and the newest match wins.
+    commit_paths: tuple[str, ...] = ()
 
 
 # MoleculeFinder (2026-11): the weekly refresh moves to the Mac mini (scripts/mac/weekly-refresh.sh).
@@ -51,6 +52,11 @@ class Target:
 # with no success by the Wednesday check means the Monday run and two catch-ups all failed or the Mac
 # has been off since Monday; that is worth an email that day. The Mac's own alarm issue covers a run
 # that committed but did not get its data PR merged and live.
+# Two paths (2026-11-16, the switch): data/LAST_CHECK (every Mac commit, and both heartbeats) and
+# data/snapshots/meta.json (every refresh that changed the snapshot, on either machine). GitHub's own refresh
+# commits never touched LAST_CHECK, so a GitHub refresh whose run ended red for a reason after the commit
+# (2026-11-16: run 43885851341 built, committed 366a6ab and shipped, but its web check failed) would leave
+# MoleculeFinder looking 8 days stale in the week of the switch, before the Mac's first Monday.
 MF_COMMIT_SUBJECT = r"^etl: (refresh|no changes) \d{4}-\d{2}-\d{2}"
 
 TARGETS = [
@@ -58,7 +64,7 @@ TARGETS = [
     Target("thefiscalfinder", "refresh-data.yml", 40, "monthly"),
     Target("gravityfinder", "freshness.yml", 10, "weekly"),
     Target("moleculefinder-etl", "etl.yml", 8, "weekly",
-           commit_subject=MF_COMMIT_SUBJECT, commit_path="data/LAST_CHECK"),
+           commit_subject=MF_COMMIT_SUBJECT, commit_paths=("data/LAST_CHECK", "data/snapshots/meta.json")),
 ]
 
 OK = "ok"
@@ -152,17 +158,20 @@ def _newest_refresh_commit(api, t: Target) -> dict | None:
     """The newest commit on main whose first line matches ``t.commit_subject``, as a run-shaped dict
     (``updated_at``, ``created_at``, ``html_url``), or None. Raises when the API cannot be read: the
     caller reports that as COULD NOT CHECK, never as a pass."""
-    path = f"&path={t.commit_path}" if t.commit_path else ""
-    commits = api(
-        f"https://api.github.com/repos/{OWNER}/{t.repo}/commits?sha=main{path}&per_page=30"
-    )
     pattern = re.compile(t.commit_subject or "")
-    for c in commits:
-        subject = (c.get("commit", {}).get("message") or "").splitlines()[:1]
-        if subject and pattern.search(subject[0]):
-            when = c["commit"]["committer"]["date"]
-            return {"updated_at": when, "created_at": when, "html_url": c.get("html_url", "")}
-    return None
+    found: list[dict] = []
+    for p in t.commit_paths or ("",):
+        path = f"&path={p}" if p else ""
+        commits = api(
+            f"https://api.github.com/repos/{OWNER}/{t.repo}/commits?sha=main{path}&per_page=30"
+        )
+        for c in commits:
+            subject = (c.get("commit", {}).get("message") or "").splitlines()[:1]
+            if subject and pattern.search(subject[0]):
+                when = c["commit"]["committer"]["date"]
+                found.append({"updated_at": when, "created_at": when, "html_url": c.get("html_url", "")})
+                break
+    return max(found, key=lambda r: _parse(r["updated_at"]), default=None)
 
 
 def _classify(api, t: Target, now: _dt.datetime, report: Report) -> Finding:
