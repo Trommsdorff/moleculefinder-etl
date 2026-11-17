@@ -2,6 +2,11 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The news job moves to the Mac mini: SWITCHED ON 2026-11-17
+Brief `../MAC-NEWS-PROMPT.md`; full record `../HISTORY.md`, 2026-11-17. `scripts/mac/news.sh` with `com.137finder.moleculefinder.news` runs at 01:50, 07:50, 13:50 and 19:50 Eastern (`docs/MAC-NEWS.md`: the step table, the times, the two jobs, missed runs, the alarm, the watchdog). `mac-alarm.yml` takes `label` (`refresh-failure` by default, or `news-failure`). The watchdog reads the public `in-the-news.json` (`generated_at`), stale after 24 h. `news.yml` is a MANUAL BACKUP (no schedule).
+- **Proofs passed:** the dry run from a clean checkout; parity (side by side with GitHub run 44047775101: 31 queries, 60 requests, 0 failed, 112 molecules each, the same hit counts); every guard in scratch copies; every git/gh call under launchd with no terminal; the lock and the two-jobs case. Suite 1,417 passed, 1 skipped; ruff 130.
+- **Pushed by Garrett** `c28135a..ab24753` (`045bedf`, `32d59cc`, `653ddaa`, `ab24753`). Agent loaded 2026-11-17 about 11:45 UTC. The first Mac run, 2026-11-17 07:50 Eastern: `DONE` at 07:52, 124 matched, feed 195 molecules (12:50:07Z), IndexNow 6 URLs HTTP 200. Alarm relay test (Garrett's word): run 44184698963, issue #11 `news-failure` by github-actions[bot], closed. The 13:50 run also DONE.
+
 ## The weekly refresh moves to the Mac mini: SWITCHED ON 2026-11-16 (the first Mac run is Monday 2026-11-23, 03:10 Eastern)
 Brief `../MAC-WEEKLY-DEPLOY-PROMPT.md` (Garrett's word and his five rulings: switch now; autorestart is his, reads 1; `gh`'s login; the watchdog change ships; Monday 03:10). Switched from GitHub run 43885851341 (`366a6ab`, its data PR #15 merged as web `2fe2d08`). Full record: `../HISTORY.md`, 2026-11-16.
 - **Parity IDENTICAL:** `366a6ab` rebuilt on the Mac from `inputs-0f5a2b8fe7689de7`, 0 of 949 snapshot files differ, 0 PubChem POSTs.
