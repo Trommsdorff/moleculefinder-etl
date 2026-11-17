@@ -186,13 +186,14 @@ finish() {
   stop_watchdog
   [ "$CAUSE" = "timed out" ] && rc=124
   if [ "$rc" = 0 ]; then
-    [ "$DRY" = 0 ] && [ "$PROOF" = 0 ] && date -u +%s > "$STATE_DIR/news-last-ok"
+    if [ "$DRY" = 0 ] && [ "$PROOF" = 0 ]; then date -u +%s > "$STATE_DIR/news-last-ok"
+    else say "$([ "$DRY" = 1 ] && echo 'dry' || echo 'proof') run: would record this good run's time in news-last-ok (the two-hour spacing); not recorded"; fi
     say "DONE: $STEP"
   elif [ "$CAUSE" = "cancelled" ]; then
     say "CANCELLED (stopped or shut down) during: $STEP. No alarm (a cancelled news.yml run raised none); the next slot runs as usual."
   else
     local what="FAILED (exit $rc) at: $STEP"
-    [ "$CAUSE" = "timed out" ] && what="TIMED OUT after $((LIMIT_SECONDS / 60)) min, during: $STEP"
+    [ "$CAUSE" = "timed out" ] && what="TIMED OUT after $LIMIT_SECONDS s, during: $STEP"
     say "$what"
     alarm "$what"
   fi
@@ -236,6 +237,7 @@ esac
 # ── the time limit: a run that hangs is stopped, and alarmed as a timeout (news.yml: timeout-minutes 10) ──
 ( trap - TERM; sleep "$LIMIT_SECONDS" & wait $!; touch "$LOCK/timed-out"; kill -TERM $$ ) 2>/dev/null &
 WATCHDOG=$!
+disown "$WATCHDOG" 2>/dev/null                             # no "Terminated" line in the log when it is stopped
 caffeinate -is -w $$ & disown
 
 # Nothing from a session's shell leaks in: no database key except the two with_keys.py hands the module, and no
@@ -269,7 +271,7 @@ until curl -sS --max-time 20 -o /dev/null https://news.google.com/ 2>/dev/null \
   sleep 45 & wait $!
 done
 
-if [ "$DRY" = 0 ] && [ "$PROOF" = 0 ]; then
+if [ "$PROOF" = 0 ]; then                                  # read only: a dry run asks too
   gh_running=$(cd "$STATE_DIR" && tgh run list --repo "$ETL_GH" --workflow news.yml --limit 5 \
                  --json status --jq '[.[] | select(.status != "completed")] | length' 2>/dev/null || echo "?")
   if [ "$gh_running" = "?" ]; then
