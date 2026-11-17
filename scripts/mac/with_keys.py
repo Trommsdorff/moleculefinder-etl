@@ -1,4 +1,4 @@
-"""Run a command with the weekly job's two database keys (scripts/mac/weekly-refresh.sh, 2026-11).
+"""Run a command with the two database keys (scripts/mac/weekly-refresh.sh and scripts/mac/news.sh, 2026-11).
 
     python scripts/mac/with_keys.py <path/to/.env> --check          both keys present? (values never shown)
     python scripts/mac/with_keys.py <path/to/.env> -- <command...>  run <command> with them in its environment

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- MoleculeFinder's "molecules in the news" job on the Mac mini (2026-11; network/137-Finder-Web-Standards.md
+     section 14). Source of truth: moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.news.plist; the installed
+     copy is ~/Library/LaunchAgents/com.137finder.moleculefinder.news.plist.
+     It runs ORIGIN/MAIN's scripts/mac/news.sh from the job's own clone of the public repository (fetched here, then
+     copied beside the state files), so the job is the same whatever branch the interactive checkout is on; if the
+     fetch fails it runs the copy it fetched last. Before the clone exists (the first start) it takes the script from
+     the interactive repository's origin/main, read only.
+     Fires every day at 01:50, 07:50, 13:50 and 19:50 Eastern. In winter (EST) that is 06:50, 12:50, 18:50 and 00:50
+     UTC, the very minutes news.yml's cron named (:50 past 00, 06, 12, 18 UTC); in summer (EDT) an hour earlier in UTC.
+     Either way each start falls in a different six-hour UTC band, so the module's rotation (now.hour // 6) asks all
+     four starting batches every day. 01:50 is before the clock changes' 02:00, so it exists on both change days.
+     No other calendar start on this Mac is at :50 (read 2026-11-16): the weekly refresh (:10 past the hour),
+     ThePatentFinder (00:30, 04:00, 05:00, 11:00, 12:15, 15:15, 19:00, Sunday 07:30; and pulls every 15 and 60 min
+     from when they were loaded), TheFiscalFinder (04:20; Monday 09:30 onward, on the half hour), PolitiFinder (05:10),
+     GravityFinder (01:40 daily, every two hours on Wednesday from 01:40), the snapshot thinning (03:50).
+     launchd, not cron: a start missed while the Mac was asleep fires once at the next wake (several missed starts
+     are coalesced into one); the script also steps aside within two hours of its own last good run.
+     ExitTimeOut gives a stopped run time to tidy (a cancelled news run files no alarm, as news.yml's did not).
+     The fetch below uses no credential helper (the repository is public) and never prompts; it gives up after 60 s.
+     A change here takes effect only when the installed copy is replaced and the agent reloaded (docs/MAC-NEWS.md). -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.137finder.moleculefinder.news</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-c</string>
+    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/news-checkout"; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; /opt/homebrew/bin/git -C "$C" show origin/main:scripts/mac/news.sh &gt; "$D/news.sh.tmp" 2&gt;/dev/null &amp;&amp; mv "$D/news.sh.tmp" "$D/news.sh"; elif [ ! -f "$D/news.sh" ]; then /opt/homebrew/bin/git -C "$R" show origin/main:scripts/mac/news.sh &gt; "$D/news.sh.tmp" &amp;&amp; mv "$D/news.sh.tmp" "$D/news.sh"; fi; rm -f "$D/news.sh.tmp"; exec /bin/bash "$D/news.sh"</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>1</integer><key>Minute</key><integer>50</integer></dict>
+    <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>50</integer></dict>
+    <dict><key>Hour</key><integer>13</integer><key>Minute</key><integer>50</integer></dict>
+    <dict><key>Hour</key><integer>19</integer><key>Minute</key><integer>50</integer></dict>
+  </array>
+  <key>ExitTimeOut</key><integer>30</integer>
+  <key>StandardOutPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd-news.log</string>
+  <key>StandardErrorPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd-news.log</string>
+</dict>
+</plist>

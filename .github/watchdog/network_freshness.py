@@ -67,6 +67,30 @@ TARGETS = [
            commit_subject=MF_COMMIT_SUBJECT, commit_paths=("data/LAST_CHECK", "data/snapshots/meta.json")),
 ]
 
+# MoleculeFinder's news job (2026-11) moves to the Mac mini too (scripts/mac/news.sh). It commits nothing, so it
+# leaves no run and no commit behind; what it does leave is public by design: every good run rewrites the feed
+# the home page reads, stamped `generated_at`. The watchdog reads that stamp with a plain unauthenticated GET
+# (never the GitHub token: the feed is on Supabase Storage).
+# STALE AFTER 24 HOURS. The Mac runs it four times a day (01:50, 07:50, 13:50, 19:50 Eastern), so a day without a
+# new feed means four slots in a row wrote nothing: the Mac is off, the agent is unloaded, or the job is failing
+# where it cannot raise its own alarm (no network). One or two skipped slots (a weekly refresh running, a failed
+# run the next slot repairs, which the job's own news-failure alarm already reports) never reach it. On GitHub
+# the cron fired late and often not at all (77 runs in its 27 days, the longest gap 15.5 hours), so the limit
+# would never have fired on that history either. And the site needs no faster alarm: the home page keeps the last
+# feed and only empties the block once its newest headline is a week old.
+NEWS_FEED_URL = ("https://nzhhjdbgogfidjrsuqiv.supabase.co/storage/v1/object/public/"
+                 "public-data/news/in-the-news.json")
+
+
+@dataclass(frozen=True)
+class Feed:
+    name: str  # how the report and the episode issue name it ("- **name**")
+    url: str  # a public JSON with a `generated_at` ISO timestamp (UTC)
+    max_age_hours: int
+
+
+FEEDS = [Feed("moleculefinder-news", NEWS_FEED_URL, 24)]
+
 OK = "ok"
 STALE = "stale"
 UNKNOWN = "unknown"  # could not check — the starvation case, always an alarm
@@ -262,10 +286,40 @@ def _classify(api, t: Target, now: _dt.datetime, report: Report) -> Finding:
     )
 
 
-def build_report(api, now: _dt.datetime) -> Report:
+def _classify_feed(public, f: Feed, now: _dt.datetime) -> Finding:
+    """A public feed's age, from its own `generated_at`. Unreadable, unparsable or with no stamp is COULD
+    NOT CHECK (fail loud), never a pass."""
+    try:
+        if public is None:
+            raise RuntimeError("the watchdog was given no way to read a public URL")
+        when = _parse(str(public(f.url)["generated_at"]))
+        if when.tzinfo is None:
+            raise ValueError(f"generated_at has no time zone: {when.isoformat()}")
+    except Exception as e:  # noqa: BLE001 - fail loud; see workflow header
+        return Finding(f.name, UNKNOWN, f"- **{f.name}** — COULD NOT CHECK the feed {f.url} "
+                                        f"({type(e).__name__}: {e}). Treat as broken until proven otherwise.")
+    hours = (now - when).total_seconds() / 3600
+    if hours <= f.max_age_hours:
+        return Finding(f.name, OK, f"{f.name} — feed written {hours:.0f}h ago ({when:%Y-%m-%d %H:%M} UTC)")
+    return Finding(
+        f.name,
+        STALE,
+        f"- **{f.name}** — the public news feed was last written **{hours:.0f} hours ago** "
+        f"({when:%Y-%m-%d %H:%M} UTC); the limit is {f.max_age_hours} hours (four six-hourly runs).\n"
+        f"  The news job runs on the Mac mini (scripts/mac/news.sh): is the Mac on, and is the launchd agent "
+        f"com.137finder.moleculefinder.news loaded? Its log: ~/Library/Logs/MoleculeFinder/news-*.log.\n"
+        f"  Feed: {f.url}",
+    )
+
+
+def build_report(api, now: _dt.datetime, public=None) -> Report:
+    """``api`` reads GitHub with the read token; ``public`` reads a public URL with no credentials (the
+    feeds). A missing ``public`` makes every feed COULD NOT CHECK, never a pass."""
     report = Report()
     for t in TARGETS:
         report.findings.append(_classify(api, t, now, report))
+    for f in FEEDS:
+        report.findings.append(_classify_feed(public, f, now))
     return report
 
 

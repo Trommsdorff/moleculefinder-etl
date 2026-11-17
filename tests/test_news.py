@@ -285,10 +285,14 @@ def test_the_job_needs_nothing_but_the_standard_library():
 
 
 # ── the workflow ─────────────────────────────────────────────────────────────
-def test_the_cron_is_six_hourly_installs_nothing_and_never_prints_headlines():
-    wf = yaml.safe_load(WORKFLOW.read_text())
+def test_the_backup_has_no_schedule_installs_nothing_and_never_prints_headlines():
+    """Since 2026-11 the Mac mini runs the six-hourly job (scripts/mac/news.sh, tests/test_mac_news.py);
+    news.yml keeps only its button, with dry_run."""
+    text = WORKFLOW.read_text()
+    wf = yaml.safe_load(text)
     on = wf[True] if True in wf else wf["on"]
-    assert on["schedule"] == [{"cron": "50 */6 * * *"}] and "workflow_dispatch" in on
+    assert set(on) == {"workflow_dispatch"} and "dry_run" in on["workflow_dispatch"]["inputs"]
+    assert text.startswith("# ════") and "MANUAL BACKUP ONLY" in text.split("\n", 2)[1]
     steps = wf["jobs"]["news"]["steps"]
     runs = " ".join(s.get("run", "") for s in steps)
     assert "python3 -m moleculefinder_etl.news" in runs
