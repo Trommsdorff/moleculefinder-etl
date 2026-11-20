@@ -8,6 +8,9 @@ from .config import Settings, weekly_run
 from . import pipeline
 
 load_dotenv()  # pick up SUPABASE_URL / SUPABASE_SERVICE_KEY from a local .env
+# The Zenodo token is read only by `mfetl zenodo` (zenodo.token(), straight from the file), so no other stage, and
+# no process a stage starts, carries it in its environment.
+os.environ.pop("ZENODO_TOKEN", None)
 
 STAGES = {
     "seed": pipeline.stage_seed,
@@ -23,7 +26,7 @@ STAGES = {
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mfetl", description="MoleculeFinder ETL")
-    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset"], help="pipeline stage to run")
+    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset", "zenodo"], help="pipeline stage to run")
     p.add_argument("--target", type=int, default=None, help="canon size (default from env)")
     p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
     p.add_argument("--version", dest="dataset_version", default=None,
@@ -33,6 +36,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--card", dest="dataset_card", action="store_true",
                    help="dataset: write only the Hugging Face dataset card (data/dataset/huggingface/README.md) "
                         "from the committed package's MANIFEST.json; no rebuild, no pinned inputs needed")
+    p.add_argument("--dry-run", dest="zenodo_dry_run", action="store_true",
+                   help="zenodo: read Zenodo and check everything; create nothing (no token needed)")
+    p.add_argument("--draft-only", dest="zenodo_draft_only", action="store_true",
+                   help="zenodo: make the draft with its files and stop before publishing")
+    p.add_argument("--discard", dest="zenodo_discard", action="store_true",
+                   help="zenodo: delete this record's open draft")
+    p.add_argument("--check", dest="zenodo_check", action="store_true",
+                   help="zenodo: after a publish, check the public record, its files and the DOIs (read only)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -58,6 +69,13 @@ def main(argv: list[str] | None = None) -> int:
         # data/dataset/. Offline; refuses unless data/raw_cache is main's pinned inputs.
         from . import dataset
         return dataset.run(version=args.dataset_version, doi=args.dataset_doi, card=args.dataset_card)
+    if args.stage == "zenodo":
+        # Publish the package in data/dataset/ as a new version of the Zenodo record (zenodo.py).
+        from . import zenodo
+        if sum([args.zenodo_dry_run, args.zenodo_draft_only, args.zenodo_discard, args.zenodo_check]) > 1:
+            p.error("zenodo: --dry-run, --draft-only, --discard and --check go one at a time")
+        return zenodo.run(dry_run=args.zenodo_dry_run, draft_only=args.zenodo_draft_only,
+                          do_discard=args.zenodo_discard, check=args.zenodo_check)
     if args.stage == "migrate":
         # Database migrations over SUPABASE_DB_URL; needs no REST keys.
         from . import migrate

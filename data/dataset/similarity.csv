@@ -61,6 +61,7 @@ acetophenone,niacin,0.3704
 acetophenone,salicylic-acid,0.36
 acetophenone,phenylalanine,0.3571
 acetophenone,acetic-acid,0.3529
+acetophenone,oxybenzone,0.3529
 acetophenone,phenol,0.35
 acetophenone,toluene,0.35
 acetyl-coa,coenzyme-a,0.8556
@@ -166,7 +167,6 @@ allulose,mannitol,0.5
 allulose,calcium-gluconate,0.4815
 allulose,magnesium-l-threonate,0.4231
 allulose,erythritol,0.4
-allulose,carboxymethyl-cellulose,0.4
 allura-red-ac,sunset-yellow-fcf,0.5849
 allura-red-ac,ponceau-4r,0.4762
 allura-red-ac,amaranth-dye,0.4677
@@ -295,6 +295,7 @@ androstenedione,aldosterone,0.4098
 androstenedione,medroxyprogesterone-acetate,0.3607
 androstenone,dihydrotestosterone,0.5957
 androstenone,oxymetholone,0.35
+anethole,octinoxate,0.3556
 anthranilic-acid,methyl-anthranilate,0.5556
 anthranilic-acid,salicylic-acid,0.5417
 anthranilic-acid,benzoic-acid,0.4348
@@ -446,6 +447,7 @@ benzophenone,acetophenone,0.5789
 benzophenone,sodium-benzoate,0.55
 benzophenone,benzoyl-peroxide,0.55
 benzophenone,benzyl-benzoate,0.4231
+benzophenone,oxybenzone,0.4194
 benzophenone,phenylacetic-acid,0.4091
 benzophenone,niacin,0.4
 benzophenone,salicylic-acid,0.3913
@@ -673,7 +675,6 @@ calcium-gluconate,sorbitol,0.5238
 calcium-gluconate,mannitol,0.5238
 calcium-gluconate,fructose,0.4815
 calcium-gluconate,allulose,0.4815
-calcium-gluconate,carboxymethyl-cellulose,0.4667
 calcium-gluconate,xylitol,0.4545
 calcium-gluconate,potassium-sodium-tartrate,0.4
 calcium-gluconate,potassium-bitartrate,0.3846
@@ -735,14 +736,6 @@ capsaicin,eugenol,0.4038
 capsaicin,gingerol,0.3968
 capsaicin,curcumin,0.3818
 carbamazepine,oxcarbazepine,0.4595
-carboxymethyl-cellulose,gluconic-acid,0.5
-carboxymethyl-cellulose,sorbitol,0.4783
-carboxymethyl-cellulose,mannitol,0.4783
-carboxymethyl-cellulose,calcium-gluconate,0.4667
-carboxymethyl-cellulose,xylitol,0.4167
-carboxymethyl-cellulose,fructose,0.4
-carboxymethyl-cellulose,allulose,0.4
-carboxymethyl-cellulose,magnesium-l-threonate,0.3667
 cariprazine,aripiprazole,0.3506
 carisoprodol,meprobamate,0.697
 carnitine,acetylcarnitine,0.5333
@@ -1057,6 +1050,7 @@ dicalcium-phosphate,dipotassium-phosphate,0.8
 dicalcium-phosphate,monosodium-phosphate,0.6364
 dicalcium-phosphate,tricalcium-phosphate,0.6
 dicalcium-phosphate,phosphoric-acid,0.5
+dicalcium-phosphate,sodium-monofluorophosphate,0.3846
 diclofenac,phenylacetic-acid,0.3714
 dihydrocapsaicin,nordihydrocapsaicin,1.0
 dihydrocapsaicin,homodihydrocapsaicin,1.0
@@ -1098,6 +1092,7 @@ dipotassium-phosphate,dicalcium-phosphate,0.8
 dipotassium-phosphate,monosodium-phosphate,0.6364
 dipotassium-phosphate,phosphoric-acid,0.5
 dipotassium-phosphate,tricalcium-phosphate,0.4545
+dipotassium-phosphate,sodium-monofluorophosphate,0.3846
 disodium-inosinate,adenosine-monophosphate,0.5738
 disodium-inosinate,adenosine-diphosphate,0.5385
 disodium-inosinate,adenosine-triphosphate,0.5303
@@ -1111,6 +1106,7 @@ disodium-phosphate,dipotassium-phosphate,0.8
 disodium-phosphate,dicalcium-phosphate,0.8
 disodium-phosphate,monosodium-phosphate,0.8
 disodium-phosphate,phosphoric-acid,0.5
+disodium-phosphate,sodium-monofluorophosphate,0.5
 disodium-phosphate,tricalcium-phosphate,0.4545
 docosahexaenoic-acid,eicosapentaenoic-acid,0.7692
 docosahexaenoic-acid,alpha-linolenic-acid,0.7143
@@ -1121,6 +1117,9 @@ docosahexaenoic-acid,erucic-acid,0.4516
 docosahexaenoic-acid,butyric-acid,0.4
 docosahexaenoic-acid,valeric-acid,0.3704
 docosahexaenoic-acid,anandamide,0.35
+docusate,octisalate,0.4038
+docusate,octinoxate,0.3684
+docusate,octocrylene,0.3621
 domperidone,flibanserin,0.4058
 dopamine,tyramine,0.56
 dopamine,l-dopa,0.4545
@@ -1293,7 +1292,6 @@ fructose,mannitol,0.5
 fructose,calcium-gluconate,0.4815
 fructose,magnesium-l-threonate,0.4231
 fructose,erythritol,0.4
-fructose,carboxymethyl-cellulose,0.4
 fumaric-acid,sorbic-acid,0.4706
 fumaric-acid,cinnamic-acid,0.4
 fumaric-acid,oxalic-acid,0.3636
@@ -1386,7 +1384,6 @@ gluconic-acid,mannitol,0.5789
 gluconic-acid,fructose,0.52
 gluconic-acid,allulose,0.52
 gluconic-acid,xylitol,0.5
-gluconic-acid,carboxymethyl-cellulose,0.5
 gluconic-acid,magnesium-l-threonate,0.48
 gluconic-acid,tartaric-acid,0.45
 gluconic-acid,erythritol,0.4
@@ -1594,6 +1591,8 @@ homodihydrocapsaicin,gingerol,0.4655
 homodihydrocapsaicin,shogaol,0.4068
 homodihydrocapsaicin,eugenol,0.4
 homodihydrocapsaicin,curcumin,0.3774
+homosalate,methyl-salicylate,0.45
+homosalate,salicylic-acid,0.35
 hyaluronic-acid,chitin,0.4902
 hyaluronic-acid,n-acetylglucosamine,0.4902
 hyaluronic-acid,maltodextrin,0.4615
@@ -1939,7 +1938,6 @@ magnesium-l-threonate,erythritol,0.4211
 magnesium-l-threonate,xylitol,0.381
 magnesium-l-threonate,sorbitol,0.381
 magnesium-l-threonate,mannitol,0.381
-magnesium-l-threonate,carboxymethyl-cellulose,0.3667
 magnesium-stearate,stearic-acid,0.5652
 magnesium-stearate,palmitic-acid,0.5652
 magnesium-stearate,lauric-acid,0.5652
@@ -2021,7 +2019,6 @@ mannitol,gluconic-acid,0.5789
 mannitol,calcium-gluconate,0.5238
 mannitol,fructose,0.5
 mannitol,allulose,0.5
-mannitol,carboxymethyl-cellulose,0.4783
 mannitol,glycerol,0.4286
 mannitol,propylene-glycol,0.4
 mannitol,magnesium-l-threonate,0.381
@@ -2071,7 +2068,10 @@ methyl-anthranilate,anthranilic-acid,0.5556
 methyl-cellulose,amylose,0.4
 methyl-salicylate,methyl-anthranilate,0.6071
 methyl-salicylate,salicylic-acid,0.5385
+methyl-salicylate,homosalate,0.45
+methyl-salicylate,octisalate,0.45
 methyl-salicylate,guaiacol,0.4286
+methyl-salicylate,oxybenzone,0.3684
 methyl-salicylate,aspirin,0.3529
 methylcobalamin,hydroxocobalamin,0.9839
 methylcobalamin,vitamin-b12,0.9683
@@ -2125,6 +2125,7 @@ monosodium-phosphate,disodium-phosphate,0.8
 monosodium-phosphate,dipotassium-phosphate,0.6364
 monosodium-phosphate,dicalcium-phosphate,0.6364
 monosodium-phosphate,phosphoric-acid,0.5
+monosodium-phosphate,sodium-monofluorophosphate,0.5
 monosodium-phosphate,tricalcium-phosphate,0.4545
 morphine,codeine,0.7593
 morphine,hydromorphone,0.541
@@ -2180,6 +2181,7 @@ naphthalene,indole,0.3889
 naphthalene,phenol,0.3571
 naphthalene,toluene,0.3571
 naproxen,ibuprofen,0.4211
+naproxen,oxybenzone,0.3721
 naratriptan,sumatriptan,0.4194
 naringin,hesperidin,0.625
 naringin,diosmin,0.3656
@@ -2246,6 +2248,18 @@ nortriptyline,doxepin,0.4222
 nortriptyline,cyclobenzaprine,0.3571
 nuciferine,apomorphine,0.4545
 nystatin,natamycin,0.5859
+octinoxate,octisalate,0.4528
+octinoxate,octocrylene,0.4068
+octinoxate,docusate,0.3684
+octinoxate,anethole,0.3556
+octisalate,octocrylene,0.5
+octisalate,octinoxate,0.4528
+octisalate,methyl-salicylate,0.45
+octisalate,docusate,0.4038
+octisalate,salicylic-acid,0.35
+octocrylene,octisalate,0.5
+octocrylene,octinoxate,0.4068
+octocrylene,docusate,0.3621
 olanzapine,clozapine,0.537
 oleic-acid,erucic-acid,1.0
 oleic-acid,linoleic-acid,0.8846
@@ -2305,6 +2319,10 @@ oxazepam,temazepam,0.5918
 oxazepam,diazepam,0.3818
 oxazepam,nitrazepam,0.3684
 oxcarbazepine,carbamazepine,0.4595
+oxybenzone,benzophenone,0.4194
+oxybenzone,naproxen,0.3721
+oxybenzone,methyl-salicylate,0.3684
+oxybenzone,acetophenone,0.3529
 oxycodone,naloxone,0.5909
 oxycodone,naltrexone,0.5758
 oxycodone,hydrocodone,0.5538
@@ -2725,6 +2743,8 @@ salicylic-acid,benzophenone,0.3913
 salicylic-acid,mefenamic-acid,0.3824
 salicylic-acid,phenol,0.381
 salicylic-acid,acetophenone,0.36
+salicylic-acid,homosalate,0.35
+salicylic-acid,octisalate,0.35
 scopolamine,hyoscine-butylbromide,0.5965
 scopolamine,ipratropium-bromide,0.5849
 secobarbital,pentobarbital,0.6667
@@ -2863,6 +2883,11 @@ sodium-metabisulfite,magnesium-sulfate,0.3571
 sodium-metabisulfite,copper-ii-sulfate,0.3571
 sodium-metabisulfite,iron-ii-sulfate,0.3571
 sodium-metabisulfite,zinc-sulfate,0.3571
+sodium-monofluorophosphate,disodium-phosphate,0.5
+sodium-monofluorophosphate,monosodium-phosphate,0.5
+sodium-monofluorophosphate,tricalcium-phosphate,0.4545
+sodium-monofluorophosphate,dipotassium-phosphate,0.3846
+sodium-monofluorophosphate,dicalcium-phosphate,0.3846
 sodium-nitrate,potassium-nitrate,0.75
 sodium-sulfite,sodium-bisulfite,0.6
 sodium-sulfite,sodium-metabisulfite,0.4615
@@ -2877,7 +2902,6 @@ sorbitol,gluconic-acid,0.5789
 sorbitol,calcium-gluconate,0.5238
 sorbitol,fructose,0.5
 sorbitol,allulose,0.5
-sorbitol,carboxymethyl-cellulose,0.4783
 sorbitol,glycerol,0.4286
 sorbitol,propylene-glycol,0.4
 sorbitol,magnesium-l-threonate,0.381
@@ -3139,6 +3163,7 @@ tricalcium-phosphate,dicalcium-phosphate,0.6
 tricalcium-phosphate,disodium-phosphate,0.4545
 tricalcium-phosphate,dipotassium-phosphate,0.4545
 tricalcium-phosphate,monosodium-phosphate,0.4545
+tricalcium-phosphate,sodium-monofluorophosphate,0.4545
 triiodothyronine,levothyroxine,0.7442
 triiodothyronine,thyroxine,0.7442
 triiodothyronine,l-dopa,0.5
@@ -3270,7 +3295,6 @@ xylitol,allulose,0.5
 xylitol,gluconic-acid,0.5
 xylitol,calcium-gluconate,0.4545
 xylitol,glycerol,0.4286
-xylitol,carboxymethyl-cellulose,0.4167
 xylitol,propylene-glycol,0.4
 xylitol,magnesium-l-threonate,0.381
 zeaxanthin,lutein,0.7

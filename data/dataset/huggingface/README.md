@@ -81,15 +81,15 @@ DOI to cite, and mirrored on [Kaggle](https://www.kaggle.com/datasets/trommsdorf
 
 | | |
 |---|---|
-| **Version** | 2026.10.1 |
-| **Snapshot** | MoleculeFinder data of 2026-10-21 |
-| **Molecules** | 915 |
-| **Products** | 405 |
-| **Rows in all tables** | 12,604 |
+| **Version** | 2026.11 |
+| **Snapshot** | MoleculeFinder data of 2026-11-16 |
+| **Molecules** | 929 |
+| **Products** | 430 |
+| **Rows in all tables** | 13,486 |
 | **Licence** | CC0 1.0 (`LICENSE.txt`) |
 | **Website** | https://moleculefinder.com |
 | **Methodology** | https://moleculefinder.com/about/methodology |
-| **Zenodo** | https://zenodo.org/records/23620892 |
+| **Zenodo** | https://zenodo.org/records/24407566 |
 | **Kaggle** | https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products |
 | **Hugging Face** | https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products |
 
@@ -97,16 +97,16 @@ DOI to cite, and mirrored on [Kaggle](https://www.kaggle.com/datasets/trommsdorf
 
 | file | rows | what it holds |
 |---|---:|---|
-| `molecules.csv` | 915 | one row per molecule |
-| `products.csv` | 405 | one row per food, drink, product or class page |
-| `product_molecules.csv` | 2,367 | which molecules each product lists |
-| `categories.csv` | 167 | MoleculeFinder's groups, families, food and product hubs, functional groups |
-| `molecule_categories.csv` | 5,066 | which molecules each category holds |
+| `molecules.csv` | 929 | one row per molecule |
+| `products.csv` | 430 | one row per food, drink, product or class page |
+| `product_molecules.csv` | 3,108 | which molecules each product lists |
+| `categories.csv` | 169 | MoleculeFinder's groups, families, food and product hubs, functional groups |
+| `molecule_categories.csv` | 5,131 | which molecules each category holds |
 | `relationships.csv` | 16 | curated molecule-to-molecule links (becomes, affects) |
-| `similarity.csv` | 3,302 | structural neighbours (Tanimoto, Morgan fingerprints) |
+| `similarity.csv` | 3,326 | structural neighbours (Tanimoto, Morgan fingerprints) |
 | `worlds.csv` | 10 | the ten everyday worlds |
-| `world_molecules.csv` | 60 | which molecules each world holds |
-| `licences.csv` | 296 | the FDA marketing record for each approved medicine (Drugs@FDA) |
+| `world_molecules.csv` | 57 | which molecules each world holds |
+| `licences.csv` | 310 | the FDA marketing record for each approved medicine (Drugs@FDA) |
 | `moleculefinder.json` | | every table above in one JSON file (`tables.<name>` is a list of rows) |
 | `MANIFEST.json` | | row counts, file sizes and SHA-256 checksums |
 
@@ -168,6 +168,7 @@ in_products = pd.read_csv("product_molecules.csv").merge(
 | `dual_use` | boolean | Also has a common use outside medicine or food. | MoleculeFinder curated |
 | `macromolecule` | boolean | A biopolymer or mixture with no single structure drawing. | MoleculeFinder |
 | `ld50_mg_per_kg` | number | The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources). | US government sources via PubChem |
+| `ld50_qualifier` | string | Usually blank: then ld50_mg_per_kg is the LD50 itself. 'more than' means the source gives only a lower limit: 'more than' with 10000 says the LD50 is above 10,000 mg/kg, not at it. 'less than' (an upper limit) and 'about' (an approximate figure) read the same way. | US government sources via PubChem |
 | `ld50_species` | string | Species of that LD50. | US government sources via PubChem |
 | `ld50_route` | string | Route of that LD50 (oral, dermal, inhalation, iv, other). | US government sources via PubChem |
 | `ld50_sources` | string | The US government sources reporting that LD50, separated by ' | '. | PubChem PUG-View references |
@@ -290,7 +291,7 @@ The dataset is CC0, so it carries only fields whose sources are public domain or
 source asks for attribution, restricts reuse, or its terms could not be confirmed, the field is
 left out, even though MoleculeFinder's pages show it with the source named.
 
-- **GHS hazard classification** (signal word, pictograms, H-statements; on 645 molecules on the
+- **GHS hazard classification** (signal word, pictograms, H-statements; on 654 molecules on the
   site) and the 10 hazard categories built from it. PubChem
   aggregates it from the European Chemicals Agency's C&L Inventory and EUR-Lex (reuse with the source
   acknowledged) and Safe Work Australia (CC BY 4.0); the site shows it with that attribution, which a
@@ -302,6 +303,9 @@ left out, even though MoleculeFinder's pages show it with the source named.
 - **29 licence records** from the MHRA (Open Government Licence, attribution), the
   European Medicines Agency (reproduction with the source acknowledged) and national registers
   (Italy's AIFA, Latvia's medicines agency). Drugs@FDA records are kept.
+- **8 relative sweetness values** whose source asks for attribution (open-access
+  CC BY articles, the EFSA Journal). The site shows each with its credit; here the cell is blank, and
+  the values kept come from the FDA, HSDB and MeSH (public domain).
 - **CAS Registry Numbers.** The CAS Registry is maintained by the American Chemical Society, which
   requires a licence to publish its numbers; since 2026-10-23 neither the site nor the dataset
   carries them. Each row carries the PubChem CID, InChIKey and Wikidata QID instead.
@@ -324,7 +328,7 @@ left out, even though MoleculeFinder's pages show it with the source named.
 
 MoleculeFinder (137 Finder LLC) (2026). *MoleculeFinder: the molecules in everyday foods, drinks and products* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.23605767
 
-This version 2026.10.1, https://doi.org/10.5281/zenodo.23620892.
+This version 2026.11, https://doi.org/10.5281/zenodo.24407566.
 
 ```bibtex
 @dataset{moleculefinder_2026,
@@ -334,14 +338,15 @@ This version 2026.10.1, https://doi.org/10.5281/zenodo.23620892.
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.23605767},
   url       = {https://doi.org/10.5281/zenodo.23605767},
-  note      = {This version 2026.10.1, https://doi.org/10.5281/zenodo.23620892}
+  note      = {This version 2026.11, https://doi.org/10.5281/zenodo.24407566}
 }
 ```
 
 - Every version (always the latest): https://doi.org/10.5281/zenodo.23605767
 - Version 2026.10: https://doi.org/10.5281/zenodo.23605768
 - Version 2026.10.1: https://doi.org/10.5281/zenodo.23620892
-- Zenodo: https://zenodo.org/records/23620892
+- Version 2026.11: https://doi.org/10.5281/zenodo.24407566
+- Zenodo: https://zenodo.org/records/24407566
 - Kaggle: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products
 - Hugging Face: https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products
 - Website: https://moleculefinder.com/about/methodology

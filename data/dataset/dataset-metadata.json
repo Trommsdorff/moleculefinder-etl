@@ -1,8 +1,8 @@
 {
   "title": "MoleculeFinder: Molecules in Everyday Products",
   "id": "trommsdorff/moleculefinder-molecules-in-everyday-products",
-  "subtitle": "915 molecules, 405 foods, drinks and products, CC0",
-  "description": "915 molecules from everyday life (coffee, chili, chocolate, sweeteners, medicines, cleaning products, PFAS) and the 405 foods, drinks and products they are in, from MoleculeFinder (https://moleculefinder.com). Each molecule carries its PubChem identity and computed properties (formula, weight, SMILES, InChI, descriptors), its Wikidata item and names, MoleculeFinder's one-line description and everyday group, and, where a US government source reports it, one LD50 with species, route and source. Product ingredient lists are read from DailyMed labels, Wikidata and MoleculeFinder's curated food lists, matched to molecules by code, never by name. Also included: curated relationships, structural neighbours, the ten everyday worlds and FDA approval records. Every column states its source; every field is public domain or CC0, and the whole dataset is released under CC0 1.0. Snapshot of 2026-10-21.\n\nColumn dictionary and provenance: README.md. Website: https://moleculefinder.com. Cite: https://doi.org/10.5281/zenodo.23605767",
+  "subtitle": "929 molecules, 430 foods, drinks and products, CC0",
+  "description": "929 molecules from everyday life (coffee, chili, chocolate, sweeteners, medicines, cleaning products, PFAS) and the 430 foods, drinks and products they are in, from MoleculeFinder (https://moleculefinder.com). Each molecule carries its PubChem identity and computed properties (formula, weight, SMILES, InChI, descriptors), its Wikidata item and names, MoleculeFinder's one-line description and everyday group, and, where a US government source reports it, one LD50 with species, route and source. Product ingredient lists are read from DailyMed labels, Wikidata and MoleculeFinder's curated food lists, matched to molecules by code, never by name. Also included: curated relationships, structural neighbours, the ten everyday worlds and FDA approval records. Every column states its source; every field is public domain or CC0, and the whole dataset is released under CC0 1.0. Snapshot of 2026-11-16.\n\nColumn dictionary and provenance: README.md. Website: https://moleculefinder.com. Cite: https://doi.org/10.5281/zenodo.23605767",
   "licenses": [
     {
       "name": "CC0-1.0"
@@ -17,7 +17,7 @@
   "resources": [
     {
       "path": "molecules.csv",
-      "description": "One row per molecule (915 rows).",
+      "description": "One row per molecule (929 rows).",
       "schema": {
         "fields": [
           {
@@ -166,6 +166,11 @@
             "description": "The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources)."
           },
           {
+            "name": "ld50_qualifier",
+            "type": "string",
+            "description": "Usually blank: then ld50_mg_per_kg is the LD50 itself. 'more than' means the source gives only a lower limit: 'more than' with 10000 says the LD50 is above 10,000 mg/kg, not at it. 'less than' (an upper limit) and 'about' (an approximate figure) read the same way."
+          },
+          {
             "name": "ld50_species",
             "type": "string",
             "description": "Species of that LD50."
@@ -188,7 +193,7 @@
           {
             "name": "relative_sweetness",
             "type": "number",
-            "description": "Sweetness relative to sucrose = 1."
+            "description": "Sweetness relative to sucrose = 1, from a public-domain source named on the molecule's page (the FDA, HSDB, MeSH). Blank where the site's value comes from a source that asks for attribution."
           },
           {
             "name": "scoville_shu",
@@ -220,7 +225,7 @@
     },
     {
       "path": "products.csv",
-      "description": "One row per food, drink, product or class page (405 rows).",
+      "description": "One row per food, drink, product or class page (430 rows).",
       "schema": {
         "fields": [
           {
@@ -293,7 +298,7 @@
     },
     {
       "path": "product_molecules.csv",
-      "description": "Which molecules each product lists (2,367 rows).",
+      "description": "Which molecules each product lists (3,108 rows).",
       "schema": {
         "fields": [
           {
@@ -331,7 +336,7 @@
     },
     {
       "path": "categories.csv",
-      "description": "Moleculefinder's groups, families, food and product hubs, functional groups (167 rows).",
+      "description": "Moleculefinder's groups, families, food and product hubs, functional groups (169 rows).",
       "schema": {
         "fields": [
           {
@@ -359,7 +364,7 @@
     },
     {
       "path": "molecule_categories.csv",
-      "description": "Which molecules each category holds (5,066 rows).",
+      "description": "Which molecules each category holds (5,131 rows).",
       "schema": {
         "fields": [
           {
@@ -415,7 +420,7 @@
     },
     {
       "path": "similarity.csv",
-      "description": "Structural neighbours (tanimoto, morgan fingerprints) (3,302 rows).",
+      "description": "Structural neighbours (tanimoto, morgan fingerprints) (3,326 rows).",
       "schema": {
         "fields": [
           {
@@ -461,7 +466,7 @@
     },
     {
       "path": "world_molecules.csv",
-      "description": "Which molecules each world holds (60 rows).",
+      "description": "Which molecules each world holds (57 rows).",
       "schema": {
         "fields": [
           {
@@ -479,7 +484,7 @@
     },
     {
       "path": "licences.csv",
-      "description": "The fda marketing record for each approved medicine (drugs@fda) (296 rows).",
+      "description": "The fda marketing record for each approved medicine (drugs@fda) (310 rows).",
       "schema": {
         "fields": [
           {
