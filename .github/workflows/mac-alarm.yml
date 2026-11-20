@@ -1,6 +1,8 @@
 # ── THE MAC MINI'S ALARM, RELAYED (2026-11) ──────────────────────────────────────────────────
 # The weekly refresh (scripts/mac/weekly-refresh.sh, label refresh-failure) and the six-hourly news job
-# (scripts/mac/news.sh, label news-failure, since 2026-11) run on Garrett's Mac mini, not on this repo's crons.
+# (scripts/mac/news.sh, label news-failure, since 2026-11) run on Garrett's Mac mini, not on this repo's crons; the
+# weekly refresh's dataset step (publishing the CC0 dataset's new version to Zenodo, since 2026-11-20) has its own
+# label, dataset-failure, so a Zenodo failure never reads as the refresh failing.
 # When one fails it dispatches THIS workflow with the issue's title, label and text. Why not open the issue
 # from the Mac directly: the Mac's `gh` is logged in as Garrett, and GitHub never emails you about an
 # issue you opened yourself, so an alarm filed from the Mac would arrive silently. Here the issue is
@@ -26,7 +28,7 @@ on:
         required: true
         type: string
       label:
-        description: "refresh-failure (the weekly refresh) or news-failure (the news job)"
+        description: "refresh-failure (the weekly refresh), news-failure (the news job) or dataset-failure (the weekly refresh's Zenodo step)"
         required: false
         default: refresh-failure
         type: string
@@ -48,10 +50,11 @@ jobs:
           BODY: ${{ inputs.body }}
           LABEL: ${{ inputs.label }}
         run: |
-          # Only the two labels the Mac's jobs use; anything else is refused (and still fails, so it emails).
+          # Only the three labels the Mac's jobs use; anything else is refused (and still fails, so it emails).
           case "$LABEL" in
             refresh-failure) desc="Automated data refresh failed"; what="weekly refresh" ;;
             news-failure) desc="Molecules-in-the-news run failed"; what="news job" ;;
+            dataset-failure) desc="Dataset publish to Zenodo failed"; what="dataset publish to Zenodo" ;;
             *) echo "::error::unknown label '$LABEL'"; exit 1 ;;
           esac
           printf '%s\n' "$BODY" > "$RUNNER_TEMP/body.md"

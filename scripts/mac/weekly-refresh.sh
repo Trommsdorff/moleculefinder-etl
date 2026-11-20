@@ -17,7 +17,9 @@
 #   commit the snapshot to the ETL's main and push (or the no-change heartbeat) -> copy the snapshot WHOLE into
 #   the web repo, open or update the ONE data pull request, wait for the web's `ci / verify` on that exact
 #   commit, squash-merge it (the merge is the deploy) -> wait until Vercel's production deployment of the
-#   merge commit succeeds -> close any open refresh-failure issue -> tidy up.
+#   merge commit succeeds -> close any open refresh-failure issue -> (the week's success is recorded) -> the dataset
+#   on Zenodo: when dataset_published.yaml's `release` is newer than Zenodo's latest, build that version from the
+#   live snapshot and publish it (`mfetl zenodo --release`), commit its DOI to the ETL's main -> tidy up.
 #
 # WHEN: launchd (com.137finder.moleculefinder.weekly-refresh, scripts/mac/com.137finder.moleculefinder.weekly-
 # refresh.plist) starts it Mondays 03:10 Eastern, retries Monday every two hours from 06:10 to 18:10, and
@@ -40,6 +42,9 @@
 # dispatching .github/workflows/mac-alarm.yml, which files the issue as github-actions[bot] and fails, so GitHub
 # emails Garrett (it emails nobody about an issue they opened themselves, which is what `gh` here would be).
 # A week where nothing changed ends quietly. If the Mac is off, the GitHub watchdog (watchdog.yml) notices.
+# The dataset step has its OWN alarm (2026-11-20): the label `dataset-failure`, titled "MoleculeFinder dataset publish
+# FAILED". It runs only after the week's success is recorded and always returns 0, so it never fails, retries or
+# blocks the refresh; a release still due is tried again the next Monday.
 #
 # KEYS: the real SUPABASE_URL and SUPABASE_SERVICE_KEY, read from the ETL's gitignored .env by
 # scripts/mac/with_keys.py (python-dotenv): never sourced, never printed, never logged. A dry run blanks them.
@@ -60,7 +65,8 @@ set -uo pipefail
 MF="$HOME/137/moleculefinder"
 ETL_REPO="$MF/moleculefinder-etl"
 WEB_REPO="$MF/moleculefinder-web"
-ENV_FILE="$ETL_REPO/.env"                                  # the real keys (gitignored); read by with_keys.py only
+ENV_FILE="$ETL_REPO/.env"                                  # the real keys (gitignored); read by with_keys.py, and
+                                                           # its ZENODO_TOKEN by `mfetl zenodo` (the dataset step)
 WORK="$MF/mf-weekly-worktree"                              # this run's checkouts (etl/, web/); removed after
 STATE_DIR="${MF_WEEKLY_STATE_DIR:-$HOME/Library/Application Support/MoleculeFinder}"
 LOG_DIR="${MF_WEEKLY_LOG_DIR:-$HOME/Library/Logs/MoleculeFinder}"
@@ -89,6 +95,8 @@ export GIT_CONFIG_KEY_1="credential.helper" GIT_CONFIG_VALUE_1="!/opt/homebrew/b
 export UV_PYTHON_DOWNLOADS=never UV_NO_PROGRESS=1
 NET_SECONDS=300                                            # a git push or fetch that takes longer has hung
 GH_SECONDS=120                                             # one gh call
+DATASET_SECONDS=$((45 * 60))                               # the dataset step's build and upload, each call
+DATASET_CHECK_TRIES=6                                      # the public check after a publish, 2 min apart (doi.org lags)
 
 # ── the week and the gate (also --schedule-check, for tests/test_mac_weekly.py) ──
 # The ISO week in UTC: the snapshot's `refreshed` date is a UTC date and the molecule of the week is its ISO week.
@@ -149,6 +157,7 @@ exec >>"$LOG" 2>&1
 STEP="start"; WATCHDOG=""; CAUSE=""; PUBLISHED=0; HELD="unknown"; PRODUCTS_HELD="unknown"; LD50_HELD="unknown"
 DRAWINGS_TEXT="unknown: the run failed before the drawing guard ran"
 RUN_CACHE="$CACHE"; SCRATCH_CACHE=""; PR=""; PR_URL=""; SNAP_SHA=""; MERGE_SHA=""; CI_DETAIL=""
+DATASET_READY=0                                            # 1 once this run's data is live (or, dry, would be)
 RUN_DIR="$STATE_DIR/run-$STAMP"                             # this run's report files, outside every checkout
 mkdir -p "$RUN_DIR"
 
@@ -258,6 +267,120 @@ $tail_text
   fi
 }
 
+# ── the dataset on Zenodo (2026-11-20): after the site's data is live, publish the release the repo names ──
+# dataset_published.yaml's `release` is the version the CC0 dataset should be at; cutting a version is changing that
+# line (a session, on Garrett's word). When it is newer than Zenodo's latest, `mfetl zenodo --release` builds that
+# version from THIS run's snapshot, the data now live, and publishes it with every check of a hand publish (the
+# files against MANIFEST.json, CC0, MoleculeFinder's record, the draft read back); then the DOI Zenodo reserved is
+# committed to the ETL's main. The token is read by Python from the ETL's .env (--env-file): never in this script,
+# never on a command line, never in the log. This step cannot fail the refresh: finish() calls it only after the
+# week's success is written, it runs in a subshell, and it always returns 0. A failure raises its own alarm.
+dataset_step() {
+  [ "$DATASET_READY" = 1 ] || return 0
+  local rc
+  ( cd "$WORK/etl" 2>/dev/null || { echo "the job's ETL checkout was gone" > "$RUN_DIR/dataset.why"; exit 1; }
+    dataset_publish ) > "$RUN_DIR/dataset.log" 2>&1
+  rc=$?
+  cat "$RUN_DIR/dataset.log"
+  if [ "$rc" = 0 ]; then
+    [ "$DRY" = 1 ] && return 0
+    # all clear for the dataset: the repo and Zenodo agree (published now, or nothing due)
+    for n in $(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label dataset-failure --state open --limit 20 \
+                 --json number --jq '.[].number' 2>/dev/null); do
+      (cd "$STATE_DIR" && tgh issue close "$n" --repo "$ETL_GH" --comment "The dataset step of the Mac mini's weekly refresh went green ($(date -u +%F)): the repo's record and Zenodo agree. Closing." >/dev/null) \
+        && say "closed dataset-failure issue #$n" || say "WARNING: could not close dataset-failure issue #$n; close it by hand"
+    done
+    return 0
+  fi
+  dataset_alarm "$(cat "$RUN_DIR/dataset.why" 2>/dev/null || echo "the dataset step ended with exit $rc")"
+  return 0
+}
+
+dataset_publish() {   # in the job's ETL checkout; a non-zero exit writes why to $RUN_DIR/dataset.why
+  local v doi n
+  why() { echo "$*" > "$RUN_DIR/dataset.why"; say "dataset: $*"; }
+  zen() { "${ETL_ENV[@]}" SUPABASE_URL= SUPABASE_SERVICE_KEY= /usr/bin/perl -e 'alarm shift; exec @ARGV' \
+            "$DATASET_SECONDS" "$PY" -m moleculefinder_etl.cli zenodo "$@"; }
+  say "── the dataset on Zenodo (dataset_published.yaml's release against Zenodo's latest)"
+  if [ "$DRY" = 1 ]; then
+    zen --release --dry-run || { why "the dry run of \`mfetl zenodo --release\` refused (the lines above say why)"; return 1; }
+    say "dry run: the dataset step created nothing on Zenodo and committed nothing"
+    return 0
+  fi
+  zen --release --env-file "$ENV_FILE" \
+    || { why "\`mfetl zenodo --release\` refused or failed: NOTHING was published (a draft it made was deleted, or the lines above name it and how to discard it)"; return 1; }
+  if git diff --quiet -- data/dataset moleculefinder_etl/sources/seeds/dataset_published.yaml; then
+    say "dataset: nothing due"; return 0
+  fi
+  v=$(jq -r .version data/dataset/MANIFEST.json)
+  doi=$(jq -r .doi data/dataset/zenodo.json)
+  git add data/dataset moleculefinder_etl/sources/seeds/dataset_published.yaml \
+    && git commit --quiet -m "dataset: $v published on Zenodo ($doi)" \
+         -m "Mac mini weekly refresh (scripts/mac/weekly-refresh.sh), mfetl zenodo --release, from ${SNAP_SHA:0:7}." \
+    || { why "version $v was PUBLISHED on Zenodo ($doi) but the commit recording it failed: on a checkout of main run \`mfetl dataset --version $v --doi $doi\` and commit data/dataset/ and dataset_published.yaml"; return 1; }
+  /usr/bin/perl -e 'alarm shift; exec @ARGV' "$NET_SECONDS" git push --quiet origin HEAD:main \
+    || { why "version $v was PUBLISHED on Zenodo ($doi) but the push of its record to the ETL's main was refused or timed out: on a checkout of main run \`mfetl dataset --version $v --doi $doi\` and commit data/dataset/ and dataset_published.yaml"; return 1; }
+  say "dataset: $v published on Zenodo ($doi); its record pushed to the ETL's main as $(git rev-parse --short HEAD)"
+  for n in $(seq 1 "$DATASET_CHECK_TRIES"); do
+    zen --check && return 0
+    [ "$n" -lt "$DATASET_CHECK_TRIES" ] && { sleep 120 & wait $!; }
+  done
+  why "version $v was published ($doi) and recorded, but the public check still failed after $DATASET_CHECK_TRIES tries (the lines above say which part); run \`mfetl zenodo --check\` on main"
+  return 1
+}
+
+# the dataset step's alarm: its own label, so it never reads as the refresh failing (the site's data is live)
+dataset_alarm() {
+  local why="$1" title="MoleculeFinder dataset publish FAILED" step_text body existing
+  step_text=$(tail -n 60 "$RUN_DIR/dataset.log" 2>/dev/null | tilde | sed 's/```/` ` `/g' \
+                | sed -E 's/(eyJ[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]+)/[redacted]/g' \
+                | /usr/bin/perl -pe 's/\b(?=[A-Za-z0-9]*[g-zG-Z])[A-Za-z0-9]{40,}\b/[redacted]/g')
+  body="The dataset step of the weekly MoleculeFinder refresh on the Mac mini did not finish.
+
+**What happened:** $(echo "$why" | tilde)
+**The refresh itself succeeded:** the site's data is live (week $WEEK). Only the CC0 dataset's Zenodo version is affected.
+**Log on the Mac mini:** \`$(echo "$LOG" | tilde)\`
+
+The next Monday's run tries again while dataset_published.yaml's \`release\` is newer than Zenodo's latest; the
+next green dataset step closes this issue. To stop it trying, set \`release\` back to the latest version. A token
+that expired or was revoked: make a new one and put it in the ETL's .env (docs/MAC-WEEKLY-REFRESH.md, 'The dataset
+on Zenodo'). Never paste the token anywhere else.
+
+<details><summary>The dataset step's last 60 lines</summary>
+
+\`\`\`
+$step_text
+\`\`\`
+</details>"
+  printf '%s\n' "$body" > "$RUN_DIR/dataset-alarm.md"
+  if [ "$DRY" = 1 ]; then
+    say "DATASET ALARM (dry run: not filed). It would dispatch mac-alarm.yml with the label dataset-failure, titled \"$title\"; this is the text:"
+    echo "----- dataset alarm text -----"; cat "$RUN_DIR/dataset-alarm.md"; echo "----- end of dataset alarm text -----"
+    return 0
+  fi
+  osascript -e "display notification \"$(echo "$why" | cut -c1-180 | tr '"' "'")\" with title \"MoleculeFinder dataset publish FAILED\"" 2>/dev/null || true
+  if jq -n --arg title "$title" --rawfile body "$RUN_DIR/dataset-alarm.md" \
+          '{title: $title, body: ($body | .[0:60000]), label: "dataset-failure"}' \
+       | (cd "$STATE_DIR" && tgh workflow run mac-alarm.yml --repo "$ETL_GH" --ref main --json) >/dev/null 2>&1; then
+    say "dataset alarm: dispatched mac-alarm.yml (GitHub opens or comments on the dataset-failure issue and emails)"
+    return 0
+  fi
+  say "WARNING: could not dispatch mac-alarm.yml; filing the dataset issue from the Mac instead (GitHub sends no email for it)"
+  existing=$(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label dataset-failure --state open --limit 1 \
+               --json number --jq '.[0].number // empty' 2>/dev/null || true)
+  if [ -n "$existing" ]; then
+    (cd "$STATE_DIR" && tgh issue comment "$existing" --repo "$ETL_GH" --body-file "$RUN_DIR/dataset-alarm.md") \
+      && say "dataset alarm: commented on issue #$existing" || say "WARNING: the dataset alarm comment could not be posted"
+  else
+    (cd "$STATE_DIR" && tgh label create dataset-failure --repo "$ETL_GH" --color D93F0B \
+       --description "Dataset publish to Zenodo failed" >/dev/null 2>&1) || true
+    (cd "$STATE_DIR" && tgh issue create --repo "$ETL_GH" --label dataset-failure --title "$title" \
+       --body-file "$RUN_DIR/dataset-alarm.md") && say "dataset alarm: opened an issue" \
+       || say "WARNING: the dataset alarm issue could not be opened"
+  fi
+  return 0
+}
+
 # ── the failed-run heartbeat: once a week, the timestamp only (etl.yml "heartbeat after a failed run") ──
 # This repo is PUBLIC: GitHub switches off a public repo's scheduled workflows after 60 days with no repository
 # activity, and the network watchdog lives here. A failing refresh still pushes one commit a week. It counts as
@@ -318,6 +441,7 @@ finish() {
   if [ "$rc" = 0 ]; then
     [ "$DRY" = 0 ] && [ "$SEED_ONLY" = 0 ] && echo "success $(date -u +%FT%TZ) $STEP" >> "$STATE"
     say "DONE: $STEP"
+    dataset_step                                           # after the success is written; always returns 0
   else
     local what="FAILED (exit $rc) at: $STEP"
     [ "$CAUSE" = "timed out" ] && what="TIMED OUT after $((WATCHDOG_SECONDS / 3600)) h, during: $STEP"
@@ -590,6 +714,7 @@ it stays open and the refresh raises its alarm instead."
     say "dry run: would commit \"data: weekly snapshot $TODAY\" and push it to $BRANCH, open or update the data PR, close any other data PR as superseded, wait for 'ci / verify' on that exact commit (up to $((CI_FINISH_SECONDS / 60)) min), squash-merge it with --match-head-commit, then wait up to $((DEPLOY_WAIT_SECONDS / 60)) min for Vercel's production deployment of the merge commit"
     git reset --quiet
     STEP="DRY RUN complete: the build passed every guard; nothing was loaded, committed, pushed, opened or merged"
+    DATASET_READY=1
     exit 0
   fi
   STEP="commit and push the data branch"; say "── $STEP"
@@ -680,11 +805,12 @@ it stays open and the refresh raises its alarm instead."
   PUBLISHED=1
   say "live: Vercel's production deployment of ${MERGE_SHA:0:7} succeeded and $SITE answers 200"
 else
-  [ "$DRY" = 1 ] && { STEP="DRY RUN complete: every guard passed; nothing to sync (the web already matches)"; exit 0; }
+  [ "$DRY" = 1 ] && { STEP="DRY RUN complete: every guard passed; nothing to sync (the web already matches)"; DATASET_READY=1; exit 0; }
 fi
 
 # ── all clear: close every open refresh-failure issue (etl.yml `all-clear`) ──
 STEP="all clear"
+DATASET_READY=1                                            # the site's data is live: finish() runs the dataset step
 open_issues=$(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label refresh-failure --state open --limit 50 --json number --jq '.[].number' 2>/dev/null) \
   || { say "WARNING: could not list refresh-failure issues, so none were closed"; open_issues=""; }
 for n in $open_issues; do

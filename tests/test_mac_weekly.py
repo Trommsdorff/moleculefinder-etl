@@ -50,7 +50,10 @@ def test_the_job_never_sources_the_env_file_and_reads_the_keys_only_through_with
     code = _code(SCRIPT.read_text())
     assert not re.search(r"(^|[;&|]\s*)(source|\.)\s+\S*(ENV_FILE|\.env)", code, re.MULTILINE)
     uses = [line for line in code.splitlines() if "$ENV_FILE" in line]
-    assert uses and all("with_keys.py" in line for line in uses)
+    # the database keys through with_keys.py; and since 2026-11-20 the dataset step's one line, which hands the
+    # file's PATH to `mfetl zenodo`, where python-dotenv reads ZENODO_TOKEN alone (tests/test_mac_dataset_step.py)
+    others = [line for line in uses if "with_keys.py" not in line]
+    assert uses and [line.strip() for line in others] == ['zen --release --env-file "$ENV_FILE" \\']
 
 
 def test_a_dry_run_blanks_the_keys_and_a_real_run_never_does():

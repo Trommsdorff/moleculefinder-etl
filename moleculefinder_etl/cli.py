@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from .config import Settings, weekly_run
 from . import pipeline
@@ -51,6 +52,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--check", dest="zenodo_check", action="store_true",
                    help="zenodo: after a publish, check the public record, its files and the DOIs (read only); "
                         "mirrors: check each mirror holds the package (read only)")
+    p.add_argument("--release", dest="zenodo_release", action="store_true",
+                   help="zenodo: publish dataset_published.yaml's release when it is newer than Zenodo's latest "
+                        "(the Mac's weekly job); with --dry-run, build it in a temporary folder and check only")
+    p.add_argument("--env-file", dest="zenodo_env_file", type=Path, default=None,
+                   help="zenodo: the file holding ZENODO_TOKEN (default: this repo's .env)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -81,8 +87,11 @@ def main(argv: list[str] | None = None) -> int:
         from . import zenodo
         if sum([args.zenodo_dry_run, args.zenodo_draft_only, args.zenodo_discard, args.zenodo_check]) > 1:
             p.error("zenodo: --dry-run, --draft-only, --discard and --check go one at a time")
+        if args.zenodo_release and (args.zenodo_draft_only or args.zenodo_discard or args.zenodo_check):
+            p.error("zenodo: --release goes alone or with --dry-run")
         rc = zenodo.run(dry_run=args.zenodo_dry_run, draft_only=args.zenodo_draft_only,
-                        do_discard=args.zenodo_discard, check=args.zenodo_check)
+                        do_discard=args.zenodo_discard, check=args.zenodo_check, release=args.zenodo_release,
+                        env_file=args.zenodo_env_file or zenodo.ENV_FILE)
         publishing = not (args.zenodo_dry_run or args.zenodo_draft_only or args.zenodo_discard or args.zenodo_check)
         if rc == 0 and publishing:
             # One word updates all three copies: a published version is followed by the mirrors (mirrors.py).
