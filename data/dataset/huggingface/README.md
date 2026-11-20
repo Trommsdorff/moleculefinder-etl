@@ -89,7 +89,7 @@ DOI to cite, and mirrored on [Kaggle](https://www.kaggle.com/datasets/trommsdorf
 | **Licence** | CC0 1.0 (`LICENSE.txt`) |
 | **Website** | https://moleculefinder.com |
 | **Methodology** | https://moleculefinder.com/about/methodology |
-| **Zenodo** | https://zenodo.org/records/23620892 |
+| **Zenodo** | https://zenodo.org/records/24407566 |
 | **Kaggle** | https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products |
 | **Hugging Face** | https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products |
 
@@ -328,7 +328,7 @@ left out, even though MoleculeFinder's pages show it with the source named.
 
 MoleculeFinder (137 Finder LLC) (2026). *MoleculeFinder: the molecules in everyday foods, drinks and products* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.23605767
 
-This version 2026.11 (its DOI is minted at upload); latest published version 2026.10.1, https://doi.org/10.5281/zenodo.23620892.
+This version 2026.11, https://doi.org/10.5281/zenodo.24407566.
 
 ```bibtex
 @dataset{moleculefinder_2026,
@@ -338,14 +338,15 @@ This version 2026.11 (its DOI is minted at upload); latest published version 202
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.23605767},
   url       = {https://doi.org/10.5281/zenodo.23605767},
-  note      = {This version 2026.11 (its DOI is minted at upload); latest published version 2026.10.1, https://doi.org/10.5281/zenodo.23620892}
+  note      = {This version 2026.11, https://doi.org/10.5281/zenodo.24407566}
 }
 ```
 
 - Every version (always the latest): https://doi.org/10.5281/zenodo.23605767
 - Version 2026.10: https://doi.org/10.5281/zenodo.23605768
 - Version 2026.10.1: https://doi.org/10.5281/zenodo.23620892
-- Zenodo: https://zenodo.org/records/23620892
+- Version 2026.11: https://doi.org/10.5281/zenodo.24407566
+- Zenodo: https://zenodo.org/records/24407566
 - Kaggle: https://www.kaggle.com/datasets/trommsdorff/moleculefinder-molecules-in-everyday-products
 - Hugging Face: https://huggingface.co/datasets/Trommsdorff/moleculefinder-molecules-in-everyday-products
 - Website: https://moleculefinder.com/about/methodology

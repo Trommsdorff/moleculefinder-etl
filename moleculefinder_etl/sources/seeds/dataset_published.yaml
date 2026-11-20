@@ -3,10 +3,10 @@
 # carries these, and it REFUSES to build if any field is empty: a package that cannot say where it
 # is published is not shipped. The citation is always the concept DOI; each version's own DOI goes
 # beside it. Versions are listed oldest first; the last is the latest, and zenodo_record is its page.
-# A new version: `mfetl dataset --version <v> --doi <its Zenodo DOI>` appends it here and moves
-# zenodo_record (never edit by hand); then the web repo's lib/dataset.ts gets the same line.
+# A new version: `mfetl zenodo` publishes it and appends it here with the DOI Zenodo reserved, and
+# moves zenodo_record (never edit by hand). The site names only concept_doi, so it needs no change.
 concept_doi: 10.5281/zenodo.23605767    # Zenodo's "Cite all versions" DOI: always the latest version
-zenodo_record: https://zenodo.org/records/23620892
+zenodo_record: https://zenodo.org/records/24407566
 kaggle: trommsdorff/moleculefinder-molecules-in-everyday-products
 # The Hugging Face dataset repo, owner/name, once Garrett creates it (the links kit, 2026-10-29;
 # `docs/outreach/LINKS-KIT-2026-10.md` in the web repo). Empty is allowed. When set, run
@@ -16,3 +16,4 @@ huggingface: Trommsdorff/moleculefinder-molecules-in-everyday-products
 versions:                                # each published version's own DOI
   "2026.10": 10.5281/zenodo.23605768
   "2026.10.1": 10.5281/zenodo.23620892
+  "2026.11": 10.5281/zenodo.24407566

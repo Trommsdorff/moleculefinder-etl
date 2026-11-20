@@ -27,16 +27,16 @@
  },
  "files": {
   "CITATION.cff": {
-   "bytes": 1521,
-   "sha256": "cba13130ad7881c25ae666ad31b3ced80816304bbb94b8842154f0a79eb59edc"
+   "bytes": 1607,
+   "sha256": "4d7824c9b039e7463e7aaeb297a9d8ec80bf3dd670e2ef361aed8eb52a70d4b6"
   },
   "LICENSE.txt": {
    "bytes": 7048,
    "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
   },
   "README.md": {
-   "bytes": 17217,
-   "sha256": "3394d78f566e90883d39a21c90aeb722f770077100e8548795e35f1eb947c53f"
+   "bytes": 17210,
+   "sha256": "c9399dd1c70cb9ac236e81a4d928b423c98ea7b271e67b7ce77f0189be35bc5f"
   },
   "categories.csv": {
    "bytes": 5806,
@@ -91,8 +91,8 @@
    "sha256": "e303c1dcaf19aba4bf098e5f143c1eebf7a48a9496fb80afe3f091ace0d8d836"
   },
   "zenodo.json": {
-   "bytes": 2635,
-   "sha256": "61457c4eb911b68a0b276da8fc3dc6113525468744b0d95ad7b4462d9c01b709"
+   "bytes": 2605,
+   "sha256": "587e698c8ca7d282677d93372bfb4d8e0460497ec5570278228ca2cb23f60c52"
   }
  }
 }

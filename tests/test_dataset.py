@@ -299,8 +299,11 @@ def test_the_published_record_is_complete():
     p = dataset.published()
     assert p["concept_doi"] == "10.5281/zenodo.23605767"
     assert p["versions"]["2026.10"] == "10.5281/zenodo.23605768"
-    assert list(p["versions"].items())[-1] == ("2026.10.1", "10.5281/zenodo.23620892")
-    assert p["zenodo_record"] == "https://zenodo.org/records/23620892"
+    assert p["versions"]["2026.10.1"] == "10.5281/zenodo.23620892"
+    assert p["versions"]["2026.11"] == "10.5281/zenodo.24407566"  # the first `mfetl zenodo` version
+    # the last version listed is the latest, and zenodo_record is its page (each new version moves it)
+    latest_doi = list(p["versions"].values())[-1]
+    assert p["zenodo_record"] == "https://zenodo.org/records/" + latest_doi.rsplit(".", 1)[-1]
     assert p["kaggle"] == "trommsdorff/moleculefinder-molecules-in-everyday-products"
 
 

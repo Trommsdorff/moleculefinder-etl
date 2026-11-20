@@ -664,7 +664,7 @@ def run(version: str | None = None, out: Path = OUT, doi: str | None = None, car
 
     `doi` is a new version's own DOI, which Zenodo mints at upload (or reserves before it): given
     with an explicit `version`, it is recorded in the published record once the build checks out,
-    so the package names it as this version's DOI and the site's lib/dataset.ts test can match it.
+    so the package names it as this version's DOI (`mfetl zenodo` passes the DOI it reserved).
     `card` writes only the Hugging Face card for the package already in ``out`` (`write_card`)."""
     from . import inputs
     if card:
