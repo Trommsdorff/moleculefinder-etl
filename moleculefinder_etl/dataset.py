@@ -195,7 +195,7 @@ MOLECULE_COLUMNS: list[tuple[str, str, str, str]] = [
     ("dual_use", "boolean", "Also has a common use outside medicine or food.", "MoleculeFinder curated"),
     ("macromolecule", "boolean", "A biopolymer or mixture with no single structure drawing.", "MoleculeFinder"),
     ("ld50_mg_per_kg", "number", "The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources).", "US government sources via PubChem"),
-    ("ld50_qualifier", "string", "Blank when ld50_mg_per_kg is the figure the source reports as the LD50; 'more than', 'less than' or 'about' when the source reports it only as a limit or an approximation ('more than 10000': the LD50 lies above 10,000 mg/kg, not at it).", "US government sources via PubChem"),
+    ("ld50_qualifier", "string", "Usually blank: then ld50_mg_per_kg is the LD50 itself. 'more than' means the source gives only a lower limit: 'more than' with 10000 says the LD50 is above 10,000 mg/kg, not at it. 'less than' (an upper limit) and 'about' (an approximate figure) read the same way.", "US government sources via PubChem"),
     ("ld50_species", "string", "Species of that LD50.", "US government sources via PubChem"),
     ("ld50_route", "string", "Route of that LD50 (oral, dermal, inhalation, iv, other).", "US government sources via PubChem"),
     ("ld50_sources", "string", "The US government sources reporting that LD50, separated by ' | '.", "PubChem PUG-View references"),

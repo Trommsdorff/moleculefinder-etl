@@ -1113,6 +1113,10 @@ eliquis,cellulose,inactive,MICROCRYSTALLINE CELLULOSE,,alias
 eliquis,sodium-lauryl-sulfate,inactive,sodium lauryl sulfate,,unii
 eliquis,magnesium-stearate,inactive,magnesium stearate,,unii
 eliquis,titanium-dioxide,inactive,titanium dioxide,,unii
+eliquis,sucrose,inactive,SUCROSE,,unii
+eliquis,water,inactive,WATER,,unii
+eliquis,ethanol,inactive,ALCOHOL,,unii
+eliquis,gelatin,inactive,"GELATIN, UNSPECIFIED",,unii
 eltamd-uv-clear,octinoxate,active,OCTINOXATE,Sunscreen,unii
 eltamd-uv-clear,zinc-oxide,active,ZINC OXIDE,Sunscreen,unii
 eltamd-uv-clear,water,inactive,WATER,,unii

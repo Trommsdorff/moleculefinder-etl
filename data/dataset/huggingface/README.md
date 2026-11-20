@@ -82,10 +82,10 @@ DOI to cite, and mirrored on [Kaggle](https://www.kaggle.com/datasets/trommsdorf
 | | |
 |---|---|
 | **Version** | 2026.11 |
-| **Snapshot** | MoleculeFinder data of 2026-11-09 |
+| **Snapshot** | MoleculeFinder data of 2026-11-16 |
 | **Molecules** | 929 |
 | **Products** | 430 |
-| **Rows in all tables** | 13,482 |
+| **Rows in all tables** | 13,486 |
 | **Licence** | CC0 1.0 (`LICENSE.txt`) |
 | **Website** | https://moleculefinder.com |
 | **Methodology** | https://moleculefinder.com/about/methodology |
@@ -99,7 +99,7 @@ DOI to cite, and mirrored on [Kaggle](https://www.kaggle.com/datasets/trommsdorf
 |---|---:|---|
 | `molecules.csv` | 929 | one row per molecule |
 | `products.csv` | 430 | one row per food, drink, product or class page |
-| `product_molecules.csv` | 3,104 | which molecules each product lists |
+| `product_molecules.csv` | 3,108 | which molecules each product lists |
 | `categories.csv` | 169 | MoleculeFinder's groups, families, food and product hubs, functional groups |
 | `molecule_categories.csv` | 5,131 | which molecules each category holds |
 | `relationships.csv` | 16 | curated molecule-to-molecule links (becomes, affects) |
@@ -168,7 +168,7 @@ in_products = pd.read_csv("product_molecules.csv").merge(
 | `dual_use` | boolean | Also has a common use outside medicine or food. | MoleculeFinder curated |
 | `macromolecule` | boolean | A biopolymer or mixture with no single structure drawing. | MoleculeFinder |
 | `ld50_mg_per_kg` | number | The molecule page's one LD50 (oral rat, then oral mouse, then any oral, then any route), mg/kg. An animal study measurement, not a dose for a person. Blank when no US government source reports it (see ld50_sources). | US government sources via PubChem |
-| `ld50_qualifier` | string | Blank when ld50_mg_per_kg is the figure the source reports as the LD50; 'more than', 'less than' or 'about' when the source reports it only as a limit or an approximation ('more than 10000': the LD50 lies above 10,000 mg/kg, not at it). | US government sources via PubChem |
+| `ld50_qualifier` | string | Usually blank: then ld50_mg_per_kg is the LD50 itself. 'more than' means the source gives only a lower limit: 'more than' with 10000 says the LD50 is above 10,000 mg/kg, not at it. 'less than' (an upper limit) and 'about' (an approximate figure) read the same way. | US government sources via PubChem |
 | `ld50_species` | string | Species of that LD50. | US government sources via PubChem |
 | `ld50_route` | string | Route of that LD50 (oral, dermal, inhalation, iv, other). | US government sources via PubChem |
 | `ld50_sources` | string | The US government sources reporting that LD50, separated by ' | '. | PubChem PUG-View references |

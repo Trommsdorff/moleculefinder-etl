@@ -2,7 +2,7 @@
  "title": "MoleculeFinder: the molecules in everyday foods, drinks and products",
  "version": "2026.11",
  "license": "CC0-1.0",
- "snapshot": "2026-11-09",
+ "snapshot": "2026-11-16",
  "homepage": "https://moleculefinder.com",
  "tables": {
   "molecules": [
@@ -27662,7 +27662,7 @@
     "complexity": 276,
     "formal_charge": 0,
     "wikidata_description": "chemical compound",
-    "other_names": "meperidine",
+    "other_names": "meperidine | Demerol",
     "brand_names": null,
     "description": "An older opioid painkiller, known as meperidine in the United States and sold as Demerol. Pethidine (C15H21NO2, 247 g/mol) is an opioid dispensed on prescription.",
     "why_it_matters": "An older opioid painkiller, known as meperidine in the United States and sold as Demerol.",
@@ -39741,7 +39741,7 @@
     "also_from": null,
     "labeler": "Edgewell Personal Care Brands LLC",
     "document_type": "HUMAN OTC DRUG LABEL",
-    "label_effective": "20241209",
+    "label_effective": "20261109",
     "ingredients_listed": 16,
     "molecules_in_dataset": 7,
     "url": "https://moleculefinder.com/whats-in/banana-boat-kids-clear-sunscreen-spf-65"
@@ -40191,7 +40191,7 @@
     "also_from": null,
     "labeler": "Clarion Brands, LLC",
     "document_type": "HUMAN OTC DRUG LABEL",
-    "label_effective": "20251226",
+    "label_effective": "20261109",
     "ingredients_listed": 17,
     "molecules_in_dataset": 7,
     "url": "https://moleculefinder.com/whats-in/certain-dri"
@@ -41016,7 +41016,7 @@
     "also_from": null,
     "labeler": "Pharmacia & Upjohn Company LLC",
     "document_type": "HUMAN PRESCRIPTION DRUG LABEL",
-    "label_effective": "20260821",
+    "label_effective": "20261110",
     "ingredients_listed": 4,
     "molecules_in_dataset": 3,
     "url": "https://moleculefinder.com/whats-in/depo-testosterone"
@@ -41301,9 +41301,9 @@
     "also_from": null,
     "labeler": "E.R. Squibb & Sons, L.L.C.",
     "document_type": "HUMAN PRESCRIPTION DRUG LABEL",
-    "label_effective": "20250417",
-    "ingredients_listed": 12,
-    "molecules_in_dataset": 6,
+    "label_effective": "20260817",
+    "ingredients_listed": 16,
+    "molecules_in_dataset": 10,
     "url": "https://moleculefinder.com/whats-in/eliquis"
    },
    {
@@ -43476,7 +43476,7 @@
     "also_from": null,
     "labeler": "Apotex Corp",
     "document_type": "HUMAN PRESCRIPTION DRUG LABEL",
-    "label_effective": "20250827",
+    "label_effective": "20260916",
     "ingredients_listed": 8,
     "molecules_in_dataset": 6,
     "url": "https://moleculefinder.com/whats-in/provigil"
@@ -44916,7 +44916,7 @@
     "also_from": null,
     "labeler": "Kenvue Brands LLC",
     "document_type": "HUMAN OTC DRUG LABEL",
-    "label_effective": "20261026",
+    "label_effective": "20261104",
     "ingredients_listed": 11,
     "molecules_in_dataset": 7,
     "url": "https://moleculefinder.com/whats-in/visine-red-eye-total-comfort"
@@ -54387,6 +54387,38 @@
     "molecule_slug": "titanium-dioxide",
     "role": "inactive",
     "listed_as": "titanium dioxide",
+    "purpose": null,
+    "matched_by": "unii"
+   },
+   {
+    "product_slug": "eliquis",
+    "molecule_slug": "sucrose",
+    "role": "inactive",
+    "listed_as": "SUCROSE",
+    "purpose": null,
+    "matched_by": "unii"
+   },
+   {
+    "product_slug": "eliquis",
+    "molecule_slug": "water",
+    "role": "inactive",
+    "listed_as": "WATER",
+    "purpose": null,
+    "matched_by": "unii"
+   },
+   {
+    "product_slug": "eliquis",
+    "molecule_slug": "ethanol",
+    "role": "inactive",
+    "listed_as": "ALCOHOL",
+    "purpose": null,
+    "matched_by": "unii"
+   },
+   {
+    "product_slug": "eliquis",
+    "molecule_slug": "gelatin",
+    "role": "inactive",
+    "listed_as": "GELATIN, UNSPECIFIED",
     "purpose": null,
     "matched_by": "unii"
    },

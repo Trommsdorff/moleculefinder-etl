@@ -2,7 +2,7 @@
   "title": "MoleculeFinder: Molecules in Everyday Products",
   "id": "trommsdorff/moleculefinder-molecules-in-everyday-products",
   "subtitle": "929 molecules, 430 foods, drinks and products, CC0",
-  "description": "929 molecules from everyday life (coffee, chili, chocolate, sweeteners, medicines, cleaning products, PFAS) and the 430 foods, drinks and products they are in, from MoleculeFinder (https://moleculefinder.com). Each molecule carries its PubChem identity and computed properties (formula, weight, SMILES, InChI, descriptors), its Wikidata item and names, MoleculeFinder's one-line description and everyday group, and, where a US government source reports it, one LD50 with species, route and source. Product ingredient lists are read from DailyMed labels, Wikidata and MoleculeFinder's curated food lists, matched to molecules by code, never by name. Also included: curated relationships, structural neighbours, the ten everyday worlds and FDA approval records. Every column states its source; every field is public domain or CC0, and the whole dataset is released under CC0 1.0. Snapshot of 2026-11-09.\n\nColumn dictionary and provenance: README.md. Website: https://moleculefinder.com. Cite: https://doi.org/10.5281/zenodo.23605767",
+  "description": "929 molecules from everyday life (coffee, chili, chocolate, sweeteners, medicines, cleaning products, PFAS) and the 430 foods, drinks and products they are in, from MoleculeFinder (https://moleculefinder.com). Each molecule carries its PubChem identity and computed properties (formula, weight, SMILES, InChI, descriptors), its Wikidata item and names, MoleculeFinder's one-line description and everyday group, and, where a US government source reports it, one LD50 with species, route and source. Product ingredient lists are read from DailyMed labels, Wikidata and MoleculeFinder's curated food lists, matched to molecules by code, never by name. Also included: curated relationships, structural neighbours, the ten everyday worlds and FDA approval records. Every column states its source; every field is public domain or CC0, and the whole dataset is released under CC0 1.0. Snapshot of 2026-11-16.\n\nColumn dictionary and provenance: README.md. Website: https://moleculefinder.com. Cite: https://doi.org/10.5281/zenodo.23605767",
   "licenses": [
     {
       "name": "CC0-1.0"
@@ -168,7 +168,7 @@
           {
             "name": "ld50_qualifier",
             "type": "string",
-            "description": "Blank when ld50_mg_per_kg is the figure the source reports as the LD50; 'more than', 'less than' or 'about' when the source reports it only as a limit or an approximation ('more than 10000': the LD50 lies above 10,000 mg/kg, not at it)."
+            "description": "Usually blank: then ld50_mg_per_kg is the LD50 itself. 'more than' means the source gives only a lower limit: 'more than' with 10000 says the LD50 is above 10,000 mg/kg, not at it. 'less than' (an upper limit) and 'about' (an approximate figure) read the same way."
           },
           {
             "name": "ld50_species",
@@ -298,7 +298,7 @@
     },
     {
       "path": "product_molecules.csv",
-      "description": "Which molecules each product lists (3,104 rows).",
+      "description": "Which molecules each product lists (3,108 rows).",
       "schema": {
         "fields": [
           {
