@@ -2,6 +2,14 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The CC0 dataset 2026.11 PUBLISHED on Zenodo by `mfetl zenodo` (2026-11-20)
+Brief `../ZENODO-PROMPT.md`; full record `../HISTORY.md`, 2026-11-20. `29df309` the command (`moleculefinder_etl/
+zenodo.py`, `tests/test_zenodo.py`), `d9f8bff` 2026.11 recorded (DOI 10.5281/zenodo.24407566, record 24407566), merged
+into main as `279ea05` (with `c79ebdc`). `test_the_published_record_is_complete` no longer pins the latest version.
+Runbook `docs/MAC-WEEKLY-REFRESH.md` section 8. The weekly hook is branch `zenodo-weekly-hook-2026-11` (`75d7aee`),
+NOT merged: `release:`, `mfetl zenodo --release`, `--env-file`, the dataset step in `weekly-refresh.sh` and
+`dataset-failure` in `mac-alarm.yml`, `tests/test_mac_dataset_step.py`.
+
 ## The news job moves to the Mac mini: SWITCHED ON 2026-11-17
 Brief `../MAC-NEWS-PROMPT.md`; full record `../HISTORY.md`, 2026-11-17. `scripts/mac/news.sh` with `com.137finder.moleculefinder.news` runs at 01:50, 07:50, 13:50 and 19:50 Eastern (`docs/MAC-NEWS.md`: the step table, the times, the two jobs, missed runs, the alarm, the watchdog). `mac-alarm.yml` takes `label` (`refresh-failure` by default, or `news-failure`). The watchdog reads the public `in-the-news.json` (`generated_at`), stale after 24 h. `news.yml` is a MANUAL BACKUP (no schedule).
 - **Proofs passed:** the dry run from a clean checkout; parity (side by side with GitHub run 44047775101: 31 queries, 60 requests, 0 failed, 112 molecules each, the same hit counts); every guard in scratch copies; every git/gh call under launchd with no terminal; the lock and the two-jobs case. Suite 1,417 passed, 1 skipped; ruff 130.

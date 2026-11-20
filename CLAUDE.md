@@ -21,8 +21,8 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml` and `news.yml` are manual backups; the watchdog stays on GitHub and reads
   the news feed's age (stale after 24 h). A failing web test stops the deploy (the web's `vercel.json`).
-- **Waiting on Garrett: dataset 2026.11** (branch `dataset-2026-11`): after his Zenodo upload, `mfetl dataset
-  --version 2026.11 --doi <DOI>`, merge.
+- **Dataset 2026.11 on Zenodo** (2026-11-20, `10.5281/zenodo.24407566`). Hook branch
+  `zenodo-weekly-hook-2026-11` (`release:` publishes itself) unmerged until after 2026-11-23.
 - **Queued:** the extended-solids pass (the plan, "Queued after phase 3B"; its own review page).
 - **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
   on engagement (watch `/dashboard`).
@@ -167,8 +167,8 @@ pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the w
 - **Determinism:** `mfetl all` twice from the same inputs is byte-identical (`tests/test_determinism.py`). No timestamps on
   committed records; freshness lives in gitignored `data/seed/freshness.json`. The molecule of the week is keyed to the
   snapshot's `refreshed` date, never a clock.
-- **Dataset:** a new Zenodo version's DOI is recorded only by `mfetl dataset --version V --doi D` (never by hand), then the
-  same line in the web's `lib/dataset.ts`. Lessons' text CC BY 4.0; descriptions and curated data CC0.
+- **Dataset:** a version reaches Zenodo only by `mfetl zenodo`, which records its DOI (never by hand). Runbook:
+  `docs/MAC-WEEKLY-REFRESH.md` section 8. Lessons' text CC BY 4.0; descriptions and curated data CC0.
 - **News:** names only in public; every match's headline, outlet, link and query go to the private `molecule_news_match`.
   Matching is exact on names, a miss before a wrong match; never the raw PubChem synonyms.
 - **IndexNow ignore list:** a new snapshot field no page renders yet goes on the web's ignore list, with a test.

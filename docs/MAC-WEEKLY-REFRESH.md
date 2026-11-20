@@ -231,3 +231,66 @@ the commit the run was built from:
 
 Afterwards `main`'s `data/seed/inputs.json` names GitHub's artifact (`sync-inputs` downloads it as before), and the Mac
 job carries on from its own cache at its next start. A green manual run counts for the watchdog too.
+
+## 8. The dataset on Zenodo (since 2026-11-20)
+
+The CC0 dataset (Zenodo concept DOI `10.5281/zenodo.23605767`, which always resolves to the latest version) is
+published by **one command, `mfetl zenodo`** (`moleculefinder_etl/zenodo.py`), through Zenodo's API with Garrett's
+personal access token. Version 2026.11 was the first published this way (record 24407566, DOI
+`10.5281/zenodo.24407566`). The website names only the concept DOI, so a new version changes nothing on the site.
+
+**How a version reaches Zenodo today (by hand, a session, on Garrett's word).** In the ETL checkout, on `main`, with
+the pinned inputs (`mfetl sync-inputs`) and the database keys blanked:
+```bash
+mfetl dataset --version 2026.12        # build the package from main's snapshot (twice: byte-identical), review it
+mfetl zenodo --dry-run                 # public reads only, no token: every check, nothing created
+mfetl zenodo --draft-only              # the real draft with its files, read back against MANIFEST.json; not published
+mfetl zenodo                           # publish that draft (Zenodo's reply must carry the reserved DOI)
+mfetl zenodo --check                   # read only: latest version, old versions answer, files download and match,
+                                       # the concept DOI leads to it
+git add data/dataset moleculefinder_etl/sources/seeds/dataset_published.yaml && git commit   # the DOI it recorded
+```
+It refuses, publishing nothing, when the version is already on Zenodo or not newer than its latest, a file does not
+match `MANIFEST.json` byte for byte, the licence is not CC0, the record is not MoleculeFinder's, the repo's list of
+versions is not Zenodo's, another draft is open, or the draft's files differ after upload. A failed run deletes the
+draft it made and puts `data/dataset/` and `dataset_published.yaml` back; if the delete fails it names the draft:
+discard it with `mfetl zenodo --discard` or at `https://zenodo.org/uploads/<id>` (Delete).
+
+**When the weekly job does it (branch `zenodo-weekly-hook-2026-11`, NOT merged: it waits until after the first Mac
+Monday, 2026-11-23).** `dataset_published.yaml` gains a `release:` line, the version the dataset should be at. Cutting a
+version is changing that one line (Garrett decides; a session commits it). After a weekly run's data is live and the
+week's success is written, the job runs `mfetl zenodo --release`: when `release` is newer than Zenodo's latest, it
+builds that version from the live snapshot, publishes it with every check above, commits the DOI to the ETL's main
+(`dataset: 2026.12 published on Zenodo (10.5281/zenodo.N)`) and runs `--check` (six tries, two minutes apart, for
+doi.org). Nothing due is silent. The step cannot fail, retry or block the refresh.
+
+**What its alarm looks like (once the hook is merged).** An email from GitHub saying the `mac-alarm` run failed, and an
+open issue on `Trommsdorff/moleculefinder-etl` titled **MoleculeFinder dataset publish FAILED** (label
+`dataset-failure`, separate from the refresh's `refresh-failure`). It says what happened, that the refresh itself
+succeeded and the site's data is live, where the log is, and the step's last 60 lines (token-shaped strings
+redacted). A Mac notification too. The next Monday tries again while the release is still due; the next green
+dataset step closes the issue. Most likely causes and what to do:
+- *"has no ZENODO_TOKEN"* or *HTTP 401/403*: the token is missing, revoked or lacks a scope; renew it (below).
+- *"an open draft already exists"*: a draft was left on Zenodo; discard it (`mfetl zenodo --discard`, or Delete at
+  `https://zenodo.org/uploads/<id>`).
+- *"PUBLISHED ... but the push of its record ... was refused"*: the version IS on Zenodo; on a checkout of main run the
+  `mfetl dataset --version V --doi D` the alarm quotes and commit `data/dataset/` and `dataset_published.yaml`.
+- *"are not Zenodo's"*: a version was published another way; record it the same way first.
+To stop the job trying, set `release` back to the latest published version.
+
+**Renewing the token.** Zenodo's personal access tokens do not expire on their own; renew one that was revoked,
+leaked, or stops working.
+1. Signed in to Zenodo, open https://zenodo.org/account/settings/applications/tokens/new/ , name it, tick only
+   `deposit:write` and `deposit:actions`, Create, copy it. (Revoke the old one at
+   https://zenodo.org/account/settings/applications/ .)
+2. In the Terminal app (never in a chat window), this asks for it with hidden typing and writes it into the ETL's
+   `.env` as `ZENODO_TOKEN`, keeping the file at permissions 600:
+   ```bash
+   /bin/bash -c 'umask 077; f=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl/.env; read -rsp "Paste the Zenodo token, then press Return: " T; echo; [ -n "$T" ] || { echo "nothing entered, nothing saved"; exit 1; }; grep -v "^ZENODO_TOKEN=" "$f" > "$f.tmp"; printf "ZENODO_TOKEN=%s\n" "$T" >> "$f.tmp"; chmod 600 "$f.tmp"; mv "$f.tmp" "$f"; unset T; echo "saved to .env (not shown)"'
+   ```
+3. Check it with a read-only call (prints a count, never the token):
+   ```bash
+   cd ~/137/moleculefinder/moleculefinder-etl && ./.venv/bin/python3 -c 'from moleculefinder_etl import zenodo; c = zenodo.Client(zenodo.token()); print(len(c.call("GET", "/deposit/depositions?size=100")), "deposits visible: the token works")'
+   ```
+The token is read only by Python (python-dotenv) inside `mfetl zenodo`, sent only in the Authorization header,
+redacted from every message, and taken back out of the environment for every other stage (`cli.py`).
