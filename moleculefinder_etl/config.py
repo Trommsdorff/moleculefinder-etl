@@ -11,10 +11,36 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA = REPO_ROOT / "data"
 SEED_DIR = DATA / "seed"
-RAW_CACHE = DATA / "raw_cache"
+# The upstream answers the snapshot is built from. The Mac mini's weekly job (scripts/mac/weekly-refresh.sh,
+# 2026-11) keeps its canonical copy OUTSIDE its throwaway checkout and points here with MFETL_RAW_CACHE;
+# everything else uses the checkout's own data/raw_cache.
+RAW_CACHE = Path(os.environ["MFETL_RAW_CACHE"]) if os.getenv("MFETL_RAW_CACHE") else DATA / "raw_cache"
 SNAPSHOTS = DATA / "snapshots"
 CURATED_DIR = Path(__file__).resolve().parent / "sources" / "curated"
 SEEDS_DIR = Path(__file__).resolve().parent / "sources" / "seeds"
+
+# ── The weekly run ───────────────────────────────────────────────────────────
+# The one run that refreshes the inputs, records them as the ones main is built from, and writes the run
+# summary. Until 2026-11 that was GitHub Actions (GITHUB_ACTIONS=true); it moves to the Mac mini's launchd
+# job, which sets MFETL_WEEKLY=1 (scripts/mac/weekly-refresh.sh). Every other run is pinned (inputs.py).
+WEEKLY_ENV = "MFETL_WEEKLY"
+# Where the Mac's weekly job writes the run summary that GitHub kept on the run's page.
+SUMMARY_ENV = "MFETL_STEP_SUMMARY"
+
+
+def on_github() -> bool:
+    return os.getenv("GITHUB_ACTIONS") == "true"
+
+
+def weekly_run() -> bool:
+    """The canonical weekly refresh: the GitHub workflow, or the Mac mini's job."""
+    return on_github() or os.getenv(WEEKLY_ENV) == "1"
+
+
+def summary_path() -> str | None:
+    """The run summary file: GitHub's step summary there, the Mac job's own file here."""
+    return os.getenv("GITHUB_STEP_SUMMARY") or os.getenv(SUMMARY_ENV) or None
+
 
 # ── External endpoints ───────────────────────────────────────────────────────
 WDQS_ENDPOINT = "https://query.wikidata.org/sparql"

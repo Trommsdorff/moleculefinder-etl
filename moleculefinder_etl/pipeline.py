@@ -23,7 +23,7 @@ from functools import partial
 from pathlib import Path
 
 from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
-                     SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS)
+                     SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS, summary_path, weekly_run)
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
 from .transform import presence, claims, doors, drawings, drawing_guard
@@ -105,10 +105,10 @@ def _report_held(held: list[dict]) -> None:
     lines = [wikidata_age.report_line(h) for h in held]
     for line in lines:
         log.info("  held: %s", line)
-    if os.getenv("GITHUB_ACTIONS") == "true":
+    if weekly_run():
         for line in lines:
             print(f"::notice title=Wikidata change held::{line}", flush=True)
-        summary = os.getenv("GITHUB_STEP_SUMMARY")
+        summary = summary_path()
         if summary:
             with open(summary, "a", encoding="utf-8") as f:
                 f.write(f"### Wikidata changes held ({len(held)})\n\n"
@@ -132,12 +132,12 @@ def _report_products_held(held: list[dict], removed: list[dict]) -> None:
         log.info("  held: %s", line)
     for line in removed_lines:
         log.warning("  removed: %s", line)
-    if os.getenv("GITHUB_ACTIONS") == "true":
+    if weekly_run():
         for line in held_lines:
             print(f"::notice title=Product page held::{line}", flush=True)
         for line in removed_lines:
             print(f"::warning title=Product page removed::{line}", flush=True)
-        summary = os.getenv("GITHUB_STEP_SUMMARY")
+        summary = summary_path()
         if summary:
             with open(summary, "a", encoding="utf-8") as f:
                 f.write(f"### Product pages held ({len(held)})\n\n"
@@ -159,10 +159,10 @@ def _report_presence_unmarked(unmarked: list[dict]) -> None:
     log.info("  presence: %d Wikidata ingredient row(s) exported unmarked", len(unmarked))
     for line in lines:
         log.info("  unmarked: %s", line)
-    if unmarked and os.getenv("GITHUB_ACTIONS") == "true":
+    if unmarked and weekly_run():
         for line in lines:
             print(f"::notice title=Ingredient row with no presence mark::{line}", flush=True)
-        summary = os.getenv("GITHUB_STEP_SUMMARY")
+        summary = summary_path()
         if summary:
             with open(summary, "a", encoding="utf-8") as f:
                 f.write(f"### Ingredient rows with no presence mark ({len(unmarked)})\n\n"
@@ -195,12 +195,12 @@ def _report_drawings(verdict: drawing_guard.Verdict, *, summary: bool) -> None:
         log.info("  drawing made: %s", line)
     for line in verdict.stops:
         log.error("  drawing STOPPED: %s", line)
-    if os.getenv("GITHUB_ACTIONS") == "true":
+    if weekly_run():
         for line in verdict.stops:
             print(f"::error title=Drawing changed with nothing to explain it::{line}", flush=True)
         for line in verdict.made:
             print(f"::notice title=Drawing made or remade::{line}", flush=True)
-        step_summary = os.getenv("GITHUB_STEP_SUMMARY")
+        step_summary = summary_path()
         if step_summary:
             with open(step_summary, "a", encoding="utf-8") as f:
                 f.write(verdict.markdown())
@@ -255,7 +255,7 @@ def _report_throttle() -> None:
     where it is visible without opening the step's log."""
     line = pubchem.throttle_summary()
     log.info("  %s", line)
-    if os.getenv("GITHUB_ACTIONS") == "true":
+    if weekly_run():
         print(f"::notice title=PubChem throttle::{line}", flush=True)
 
 

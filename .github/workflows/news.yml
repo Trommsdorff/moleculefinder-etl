@@ -1,3 +1,15 @@
+# ════════════════════════════════════════════════════════════════════════════════════════════════
+# MANUAL BACKUP ONLY (2026-11). The six-hourly news job runs on Garrett's Mac mini: scripts/mac/news.sh,
+# launchd agent com.137finder.moleculefinder.news, every day at 01:50, 07:50, 13:50 and 19:50 Eastern
+# (network/137-Finder-Web-Standards.md section 14: "scheduled jobs run on the Mac mini, not on GitHub Actions,
+# for every finder site; GitHub workflows stay only as manual backups"). This workflow has NO schedule; it runs
+# only from the "Run workflow" button (tick dry_run to match and log only). It installs nothing (the module is
+# standard library only), so there is no lock file to pin. Pressing it is safe: it does exactly what one Mac run
+# does (the same rows, the same feed, the same IndexNow rule for pages new to the list); the Mac steps aside while
+# a run of this workflow is in progress, and a Mac run already going when it is pressed only rewrites the same
+# rows (match rows are insert-or-ignore, the names-only rows and the feed are recomputed from the whole history).
+# A failure opens or comments on the same news-failure issue the Mac's alarm uses. docs/MAC-NEWS.md.
+# ════════════════════════════════════════════════════════════════════════════════════════════════
 name: Molecules in the news
 
 # Record the catalogue's molecules named in recent headlines, and ping IndexNow for their pages,
@@ -22,17 +34,11 @@ name: Molecules in the news
 # runner's own Python with NO install: moleculefinder_etl/news.py imports only the standard
 # library, precisely so this cron does not pay for rdkit four times a day.
 #
-# ⚠️ MERGING THIS FILE TO main ARMS THE CRON. A newly added workflow is enabled by default. Run it
-# once with workflow_dispatch + dry_run first. To hold it:
-#     gh workflow disable news.yml --repo Trommsdorff/moleculefinder-etl
-#
 # SECRETS: SUPABASE_URL and SUPABASE_SERVICE_KEY, already set for etl.yml. Unset, the job prints
 # the match list and exits 0. The IndexNow key is public by design (moleculefinder.com serves it).
 
 on:
-  schedule:
-    # Every six hours at :50 (JudicialFinder's news runs at :20, PolitiFinder's at :40).
-    - cron: '50 */6 * * *'
+  # No schedule since 2026-11 (the Mac mini runs it; header). It ran '50 */6 * * *'.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -40,7 +46,8 @@ on:
         type: boolean
         default: false
 
-# One at a time: two overlapping runs would race on the same rows.
+# One at a time on GitHub: two overlapping runs would race on the same rows (the Mac job steps aside
+# while one is in progress).
 concurrency:
   group: molecule-news
   cancel-in-progress: false

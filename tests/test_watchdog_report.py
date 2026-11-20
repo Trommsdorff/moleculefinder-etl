@@ -28,6 +28,18 @@ _spec.loader.exec_module(nf)
 
 NOW = dt.datetime(2026, 9, 9, 17, 0, tzinfo=dt.timezone.utc)
 
+# The GitHub targets' tests below take the public news feed as fresh (written an hour before `now`) unless a test
+# says otherwise; the feed's own tests (end of file) call the real build_report with their own reader.
+_build_report = nf.build_report
+
+
+def _fresh_feed(now):
+    return lambda url: {"generated_at": (now - dt.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "molecules": []}
+
+
+nf.build_report = lambda api, now, public=None: _build_report(api, now, public or _fresh_feed(now))
+
 ALL_REPOS = ["judicialfinder", "thefiscalfinder", "gravityfinder", "moleculefinder-etl"]
 
 
@@ -43,11 +55,14 @@ def _run(repo: str, when: str, conclusion: str = "success") -> dict:
 class StubApi:
     """Answers the three URL shapes the watchdog asks for, and nothing else."""
 
-    def __init__(self, *, green=None, scheduled=None, issues=None, broken=()):
+    def __init__(self, *, green=None, scheduled=None, issues=None, broken=(), commits=None,
+                 broken_commits=()):
         self.green = green or {}  # repo -> ISO timestamp of last success, or None
         self.scheduled = scheduled or {}  # repo -> list of run dicts
         self.issues = issues or {}  # repo -> list of issue dicts
         self.broken = set(broken)  # repos whose runs API raises
+        self.commits = commits or {}  # repo -> list of commit dicts, newest first
+        self.broken_commits = set(broken_commits)  # repos whose commits API raises
         self.calls: list[str] = []
 
     def __call__(self, url: str):
@@ -55,6 +70,10 @@ class StubApi:
         repo = url.split("/repos/Trommsdorff/")[1].split("/")[0]
         if repo in self.broken:
             raise TimeoutError("The read operation timed out")
+        if "/commits?" in url:
+            if repo in self.broken_commits:
+                raise TimeoutError("The read operation timed out")
+            return self.commits.get(repo, [])
         if "/issues?" in url:
             return self.issues.get(repo, [])
         if "event=schedule" in url:
@@ -75,7 +94,7 @@ def _all_green(**overrides):
 def test_all_green_is_silent_and_opens_nothing():
     report = nf.build_report(StubApi(green=_all_green()), NOW)
 
-    assert [f.state for f in report.findings] == [nf.OK] * 4
+    assert [f.state for f in report.findings] == [nf.OK] * 5   # four refresh crons and the news feed
     assert report.all_clear
 
     d = nf.decide(report, issue_open=False)
@@ -90,7 +109,7 @@ def test_one_stale_alarms_once_then_goes_quiet():
     report = nf.build_report(api, NOW)
 
     assert [f.repo for f in report.stale] == ["judicialfinder"]
-    assert len(report.ok) == 3
+    assert len(report.ok) == 4   # three GitHub targets and the news feed
     assert "30 days ago" in report.stale[0].line
     assert "the limit for this cron is 10 days" in report.stale[0].line
 
@@ -98,8 +117,8 @@ def test_one_stale_alarms_once_then_goes_quiet():
     first = nf.decide(report, issue_open=False)
     assert (first.action, first.exit_code) == (nf.CREATE, 1)
 
-    # Every day after: same finding, same issue, no email.
-    later = nf.decide(report, issue_open=True)
+    # Every day after: same finding, same issue (which names it), no email.
+    later = nf.decide(report, issue_open=True, known=nf.reported_repos(report.detail()))
     assert (later.action, later.exit_code) == (nf.COMMENT, 0)
 
     assert "judicialfinder" in report.detail()
@@ -277,14 +296,193 @@ def test_targets_are_the_four_refresh_crons():
     assert not any(t.repo == "politifinder" for t in nf.TARGETS)
 
 
-def test_it_only_ever_reads_actions_and_issues():
+def test_it_only_ever_reads_actions_and_issues_and_mfs_public_commits():
     api = StubApi(green=_all_green(thefiscalfinder="2026-07-05T15:08:13Z"),
                   scheduled={"thefiscalfinder": [TFF_FAILED_SEP]},
                   issues={"thefiscalfinder": OPEN_FAILURE_ISSUE})
     nf.build_report(api, NOW)
     for url in api.calls:
+        if "/commits?" in url:
+            # Only the PUBLIC ETL repo's commits: a fine-grained token reads public repos as it stands.
+            assert url.split("/repos/Trommsdorff/moleculefinder-etl/commits?sha=main&path=")[1].split("&")[0] in (
+                "data/LAST_CHECK", "data/snapshots/meta.json"), url
+            continue
         assert "/actions/workflows/" in url or "/issues?" in url, url
+
+
+# ── MoleculeFinder's refresh on the Mac mini (2026-11): its commits count ─────
+
+
+def _commit(subject: str, when: str) -> dict:
+    return {"commit": {"message": subject + "\n\nScheduled refresh on the Mac mini.",
+                       "committer": {"date": when}},
+            "html_url": "https://github.com/Trommsdorff/moleculefinder-etl/commit/abc"}
+
+
+def test_a_mac_refresh_commit_keeps_mf_fresh_with_no_workflow_run():
+    api = StubApi(green=_all_green(**{"moleculefinder-etl": "2026-08-10T13:00:00Z"}),
+                  commits={"moleculefinder-etl": [
+                      _commit("docs: a session's notes", "2026-09-08T20:00:00Z"),
+                      _commit("etl: refresh 2026-09-07", "2026-09-07T08:20:00Z")]})
+    report = nf.build_report(api, NOW)
+    mf = next(f for f in report.findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.OK and "2026-09-07" in mf.line
+
+
+def test_a_no_change_heartbeat_counts_but_a_failed_runs_heartbeat_does_not():
+    quiet = StubApi(green=_all_green(**{"moleculefinder-etl": None}),
+                    commits={"moleculefinder-etl": [
+                        _commit("etl: no changes 2026-09-07 [heartbeat]", "2026-09-07T08:20:00Z")]})
+    assert next(f for f in nf.build_report(quiet, NOW).findings
+                if f.repo == "moleculefinder-etl").state == nf.OK
+    failed = StubApi(green=_all_green(**{"moleculefinder-etl": "2026-08-20T13:00:00Z"}),
+                     commits={"moleculefinder-etl": [
+                         _commit("etl: run failed 2026-09-07 [heartbeat]", "2026-09-07T08:20:00Z")]})
+    mf = next(f for f in nf.build_report(failed, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.STALE and "the limit for this cron is 8 days" in mf.line
+
+
+def test_mf_alarms_after_eight_days_not_ten():
+    # Last success Monday 2026-08-31 08:20Z; the Wednesday 2026-09-09 check is 9 days on.
+    api = StubApi(green=_all_green(**{"moleculefinder-etl": None}),
+                  commits={"moleculefinder-etl": [_commit("etl: refresh 2026-08-31", "2026-08-31T08:20:00Z")]})
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.STALE
+    tuesday = dt.datetime(2026, 9, 8, 13, 0, tzinfo=dt.UTC)
+    mf = next(f for f in nf.build_report(api, tuesday).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.OK
+
+
+class PathApi(StubApi):
+    """Answers the commits question per path, as GitHub does."""
+
+    def __init__(self, by_path: dict, **kw):
+        super().__init__(**kw)
+        self.by_path = by_path
+
+    def __call__(self, url: str):
+        if "/commits?" in url:
+            self.calls.append(url)
+            return self.by_path.get(url.split("&path=")[1].split("&")[0], [])
+        return super().__call__(url)
+
+
+def test_a_github_refresh_commit_counts_though_it_never_touched_last_check():
+    """2026-11-16: GitHub's run 43885851341 committed and shipped 366a6ab 'etl: refresh 2026-11-16' (it touches
+    data/snapshots/meta.json, not data/LAST_CHECK) but ended red at the web's check. Its commit is the week's
+    refresh; without it MoleculeFinder read 8 days stale in the week of the switch to the Mac."""
+    api = PathApi({"data/LAST_CHECK": [_commit("etl: run failed 2026-08-24 [heartbeat]", "2026-08-24T12:00:00Z")],
+                   "data/snapshots/meta.json": [_commit("docs: a session's tranche", "2026-09-08T20:00:00Z"),
+                                                _commit("etl: refresh 2026-09-07", "2026-09-07T14:30:00Z")]},
+                  green=_all_green(**{"moleculefinder-etl": "2026-08-31T14:58:00Z"}))
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.OK and "2026-09-07" in mf.line
+    asked = [u for u in api.calls if "/commits?" in u]
+    assert any("path=data/LAST_CHECK" in u for u in asked) and any("path=data/snapshots/meta.json" in u for u in asked)
+
+
+def test_the_newest_match_wins_across_the_two_paths():
+    api = PathApi({"data/LAST_CHECK": [_commit("etl: no changes 2026-09-08 [heartbeat]", "2026-09-08T08:20:00Z")],
+                   "data/snapshots/meta.json": [_commit("etl: refresh 2026-08-31", "2026-08-31T08:20:00Z")]},
+                  green=_all_green(**{"moleculefinder-etl": None}))
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.OK and "2026-09-08" in mf.line
+
+
+def test_unreadable_commits_are_could_not_check_never_a_pass():
+    api = StubApi(green=_all_green(), broken_commits={"moleculefinder-etl"})
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.UNKNOWN and "COULD NOT CHECK" in mf.line
+
+
+def test_no_run_and_no_refresh_commit_is_unknown():
+    api = StubApi(green=_all_green(**{"moleculefinder-etl": None}), commits={"moleculefinder-etl": []})
+    mf = next(f for f in nf.build_report(api, NOW).findings if f.repo == "moleculefinder-etl")
+    assert mf.state == nf.UNKNOWN and "refresh commit" in mf.line
+
+
+# ── A target that stalls while an older episode is open still emails (2026-11-15) ─
+
+
+def test_a_new_stale_target_emails_even_while_an_episode_is_open():
+    """Issue #8 has been open for TheFiscalFinder since October; before this, every later stall was
+    a silent comment on it."""
+    api = StubApi(green=_all_green(thefiscalfinder="2026-07-05T15:08:13Z",
+                                   **{"moleculefinder-etl": "2026-08-20T13:00:00Z"}))
+    report = nf.build_report(api, NOW)
+    assert sorted(f.repo for f in report.stale) == ["moleculefinder-etl", "thefiscalfinder"]
+    episode = "- **thefiscalfinder** — last successful refresh was **51 days ago** (2026-09-23)"
+    known = nf.reported_repos(episode)
+    assert known == {"thefiscalfinder"}
+    d = nf.decide(report, issue_open=True, known=known)
+    assert (d.action, d.exit_code) == (nf.COMMENT, 1) and "moleculefinder-etl" in d.why
+    # The next day the comment names it too: back to quiet.
+    known = nf.reported_repos(episode + "\n" + report.detail())
+    assert (nf.decide(report, issue_open=True, known=known).exit_code) == 0
 
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))
+
+
+# ── MoleculeFinder's news job on the Mac mini (2026-11): the public feed's age ─────────────────
+
+
+def _feed(generated_at):
+    calls = []
+
+    def public(url):
+        calls.append(url)
+        if isinstance(generated_at, Exception):
+            raise generated_at
+        return {"generated_at": generated_at, "window_days": 7, "molecules": []}
+    public.calls = calls
+    return public
+
+
+def test_the_news_feed_is_the_one_public_target_and_is_read_without_the_token():
+    assert [(f.name, f.max_age_hours) for f in nf.FEEDS] == [("moleculefinder-news", 24)]
+    assert nf.FEEDS[0].url.endswith("/storage/v1/object/public/public-data/news/in-the-news.json")
+    api, public = StubApi(green=_all_green()), _feed("2026-09-09T12:50:00Z")
+    report = _build_report(api, NOW, public)
+    assert public.calls == [nf.NEWS_FEED_URL]
+    assert not any("supabase" in u for u in api.calls)          # the GitHub token never goes to the feed
+    news = next(f for f in report.findings if f.repo == "moleculefinder-news")
+    assert news.state == nf.OK and "4h ago" in news.line
+    assert nf.decide(report, issue_open=False).action == nf.NONE
+
+
+def test_a_feed_a_day_old_is_still_fresh_and_one_hour_more_is_stale():
+    ok = _build_report(StubApi(green=_all_green()), NOW, _feed("2026-09-08T17:00:00Z"))
+    assert next(f for f in ok.findings if f.repo == "moleculefinder-news").state == nf.OK
+    late = _build_report(StubApi(green=_all_green()), NOW, _feed("2026-09-08T15:59:00Z"))
+    news = next(f for f in late.findings if f.repo == "moleculefinder-news")
+    assert news.state == nf.STALE and "25 hours ago" in news.line and "com.137finder.moleculefinder.news" in news.line
+    d = nf.decide(late, issue_open=False)
+    assert (d.action, d.exit_code) == (nf.CREATE, 1)                   # an email on the day it goes stale
+    # and it joins an older open episode (TheFiscalFinder's) with an email too, once
+    d = nf.decide(late, issue_open=True, known=frozenset({"thefiscalfinder"}))
+    assert (d.action, d.exit_code) == (nf.COMMENT, 1)
+    d = nf.decide(late, issue_open=True, known=nf.reported_repos(late.detail()))
+    assert (d.action, d.exit_code) == (nf.COMMENT, 0)
+
+
+@pytest.mark.parametrize("answer", [TimeoutError("timed out"), "not a date", None])
+def test_an_unreadable_feed_is_could_not_check_never_a_pass(answer):
+    public = _feed(answer) if answer is not None else (lambda url: {"molecules": []})
+    report = _build_report(StubApi(green=_all_green()), NOW, public)
+    news = next(f for f in report.findings if f.repo == "moleculefinder-news")
+    assert news.state == nf.UNKNOWN and "COULD NOT CHECK" in news.line
+    assert nf.decide(report, issue_open=True).exit_code == 1            # every day, even with an issue open
+
+
+def test_no_feed_reader_is_could_not_check():
+    report = _build_report(StubApi(green=_all_green()), NOW)
+    assert next(f for f in report.findings if f.repo == "moleculefinder-news").state == nf.UNKNOWN
+
+
+def test_the_workflow_reads_the_feed_with_no_token():
+    wf = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "watchdog.yml").read_text()
+    public = wf.split("def public(url):", 1)[1].split("report = nf.build_report", 1)[0]
+    assert "Authorization" not in public and "TOKEN" not in public
+    assert "nf.build_report(api, datetime.datetime.now(datetime.timezone.utc), public)" in wf

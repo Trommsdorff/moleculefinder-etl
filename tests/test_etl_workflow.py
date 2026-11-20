@@ -12,6 +12,7 @@ run needs one too. See the comments beside both in etl.yml.
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -223,3 +224,71 @@ def test_both_heartbeats_are_wired_where_they_can_run():
     assert "if" not in steps[commit] and steps[failed]["if"] == "failure()"
     assert "[heartbeat]" in steps[commit]["run"] and "git diff --cached --quiet" in steps[commit]["run"]
     assert steps[save]["if"] == "always()"
+
+
+# ── a manual backup since the switch to the Mac mini (2026-11-16) ─────────────────────────────
+def test_it_is_a_manual_backup_with_no_schedule():
+    wf = _workflow()
+    on = wf.get("on", wf.get(True))
+    assert set(on) == {"workflow_dispatch"}, on
+    head = WORKFLOW.read_text().split("name: etl", 1)[0]
+    assert "MANUAL BACKUP ONLY (2026-11)" in head and "scripts/mac/weekly-refresh.sh" in head
+    assert "docs/MAC-WEEKLY-REFRESH.md" in head
+
+
+def test_every_job_that_installs_takes_the_committed_lock_frozen_as_the_mac_does():
+    """GitHub's build was never pinned (`pip install -e .` took the newest of everything each Monday)."""
+    text = WORKFLOW.read_text()
+    assert "pip install" not in "\n".join(l for l in text.splitlines() if not l.lstrip().startswith("#"))
+    mac = (WORKFLOW.parents[2] / "scripts" / "mac" / "weekly-refresh.sh").read_text()
+    for name, job in _workflow()["jobs"].items():
+        runs = [s.get("run", "") for s in job["steps"]]
+        if any("moleculefinder_etl" in r or "mfetl" in r for r in runs):
+            install = next(r for r in runs if "uv sync" in r)
+            assert "--frozen" in install and "--no-dev" in install and "--no-install-project" in install, name
+            uv = next(s for s in job["steps"] if s.get("uses", "").startswith("astral-sh/setup-uv@"))
+            assert re.fullmatch(r"astral-sh/setup-uv@v\d+\.\d+\.\d+", uv["uses"])          # an exact release
+            assert uv["with"]["version"] == "0.13.0"
+            build = next(r for r in runs if "cli all" in r)
+            assert build.startswith(".venv/bin/python -m moleculefinder_etl.cli all --target 10000")
+    assert "uv sync --quiet --frozen --no-dev --no-install-project" in mac          # the same install on the Mac
+
+
+def test_the_manual_button_cannot_fight_the_mac_job(repo, tmp_path):
+    """Pressed while the Mac's run is going: whichever pushes the ETL's main second is refused, publishes
+    nothing, and opens no data PR (sync-web needs the run job). Here the Mac pushed first."""
+    work, remote = repo
+    start = _git(work, "rev-parse", "HEAD")
+    mac = tmp_path / "mac"
+    subprocess.run(["git", "clone", "-q", str(remote), str(mac)], check=True, env={**os.environ, **ISOLATED})
+    _git(mac, "config", "user.name", "Trommsdorff")
+    _git(mac, "config", "user.email", "291580674+Trommsdorff@users.noreply.github.com")
+    _write(mac, "data/snapshots/meta.json", '{"refreshed": "2026-11-23"}')
+    _write(mac, "data/LAST_CHECK", "2026-11-23T08:20:00Z\n")
+    _git(mac, "commit", "-q", "-am", "etl: refresh 2026-11-23")
+    _git(mac, "push", "-q", "origin", "HEAD:main")
+    mac_sha = _git(mac, "rev-parse", "HEAD")
+
+    _write(work, "data/snapshots/meta.json", '{"refreshed": "2026-11-23", "github": true}')
+    proc, out = _run(_step("run", "commit snapshot"), work, tmp_path)
+    assert proc.returncode != 0                                   # the push is refused: the job fails
+    assert "snapshot_sha" not in out                              # nothing for sync-web to check out
+    assert _pushed(remote, "rev-parse", "main") == mac_sha        # the Mac's refresh stands
+
+    proc, _ = _run(_step("run", "heartbeat after a failed run"), work, tmp_path, GITHUB_SHA=start)
+    assert proc.returncode == 0 and "::warning::could not push the failed-run heartbeat" in proc.stdout
+    assert _pushed(remote, "rev-parse", "main") == mac_sha        # nothing rewrites the Mac's commit
+
+    jobs = _workflow()["jobs"]
+    assert jobs["sync-web"]["needs"] == "run" and "if" not in jobs["sync-web"]   # a failed run opens no PR
+
+
+def test_the_mac_job_steps_aside_while_the_manual_backup_runs():
+    mac = (WORKFLOW.parents[2] / "scripts" / "mac" / "weekly-refresh.sh").read_text()
+    check = mac.split('STEP="checking for another build"', 1)[1].split("attempt $(date", 1)[0]
+    assert "tgh run list --repo \"$ETL_GH\" --workflow etl.yml" in check
+    assert 'select(.status != "completed")' in check and 'step_aside "a GitHub run of etl.yml' in check
+    assert 'fail "could not ask GitHub whether the backup workflow etl.yml is running"' in check
+    # and the Mac's own push refuses a main that moved during its run, publishing nothing
+    assert 'git push --quiet origin HEAD:main & wait $!' in mac and "did main move during the run?" in mac
+    assert '--match-head-commit "$SHA"' in mac

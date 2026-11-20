@@ -1,0 +1,69 @@
+# ── THE MAC MINI'S ALARM, RELAYED (2026-11) ──────────────────────────────────────────────────
+# The weekly refresh (scripts/mac/weekly-refresh.sh, label refresh-failure) and the six-hourly news job
+# (scripts/mac/news.sh, label news-failure, since 2026-11) run on Garrett's Mac mini, not on this repo's crons.
+# When one fails it dispatches THIS workflow with the issue's title, label and text. Why not open the issue
+# from the Mac directly: the Mac's `gh` is logged in as Garrett, and GitHub never emails you about an
+# issue you opened yourself, so an alarm filed from the Mac would arrive silently. Here the issue is
+# opened by github-actions[bot], exactly as etl.yml's and news.yml's `alarm` jobs did, and the job then FAILS on
+# purpose, which is what sends Garrett GitHub's "run failed" email (the same email a failed etl.yml
+# or news.yml run sent). One open issue per label at a time: a later failure comments on it. If this dispatch itself cannot be made, the Mac files the issue directly and shows a
+# notification on its screen.
+#
+# Not a scheduled job (the network's rule: no crons on GitHub): it runs only when the Mac dispatches it,
+# or by hand. Public repo, so its minutes are free. Inputs pass through the environment, never spliced
+# into the script.
+name: mac-alarm
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Issue title (the Mac sends 'MoleculeFinder ETL FAILED')"
+        required: true
+        type: string
+      body:
+        description: "Issue text (the Mac sends what happened, the log path, the drawings block and the log tail)"
+        required: true
+        type: string
+      label:
+        description: "refresh-failure (the weekly refresh) or news-failure (the news job)"
+        required: false
+        default: refresh-failure
+        type: string
+
+permissions:
+  issues: write
+
+jobs:
+  alarm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Open (or comment on) the failure issue for its label, then fail so GitHub emails
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # REQUIRED: no checkout here, so gh needs the repo named (see etl.yml's alarm, 2026-08-09).
+          GH_REPO: ${{ github.repository }}
+          TITLE: ${{ inputs.title }}
+          BODY: ${{ inputs.body }}
+          LABEL: ${{ inputs.label }}
+        run: |
+          # Only the two labels the Mac's jobs use; anything else is refused (and still fails, so it emails).
+          case "$LABEL" in
+            refresh-failure) desc="Automated data refresh failed"; what="weekly refresh" ;;
+            news-failure) desc="Molecules-in-the-news run failed"; what="news job" ;;
+            *) echo "::error::unknown label '$LABEL'"; exit 1 ;;
+          esac
+          printf '%s\n' "$BODY" > "$RUNNER_TEMP/body.md"
+          existing=$(gh issue list --label "$LABEL" --state open \
+                       --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/body.md"
+            n="$existing"
+          else
+            gh label create "$LABEL" --color B60205 --description "$desc" 2>/dev/null || true
+            url=$(gh issue create --label "$LABEL" --title "$TITLE" --body-file "$RUNNER_TEMP/body.md")
+            n="${url##*/}"
+          fi
+          echo "::error title=${TITLE}::The Mac mini's ${what} failed: issue #${n}. This run fails on purpose so GitHub emails."
+          exit 1

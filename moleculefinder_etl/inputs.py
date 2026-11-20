@@ -28,6 +28,15 @@ THE FIX: the inputs travel with the snapshot.
 
 Library code (and the test suite) leaves ``MFETL_INPUTS`` unset, which is neither mode: nothing
 here runs, and the caches keep the expiry rules they have always had.
+
+THE MOVE TO THE MAC MINI (2026-11, scripts/mac/weekly-refresh.sh). The weekly run moves off GitHub
+Actions to a launchd job on the Mac mini, which becomes the canonical builder. It runs in refresh
+mode with ``MFETL_WEEKLY=1`` and keeps its cache outside its throwaway checkout
+(``MFETL_RAW_CACHE``, ``MAC_CACHE`` below). Nothing can upload an Actions artifact from outside
+Actions, so a Mac-built ``inputs.json`` says ``"built_on": "mac-mini"`` and names no artifact, and
+``sync-inputs`` copies the Mac job's copy of main's inputs (``MAC_CACHE``, refreshed after each push)
+instead of downloading one (same fingerprint check, same swap). A pointer with no ``built_on`` (every one GitHub wrote) still downloads its artifact, so a
+manual run of the GitHub workflow, the backup, stays reproducible too.
 """
 from __future__ import annotations
 
@@ -41,7 +50,7 @@ import subprocess
 import zipfile
 from pathlib import Path
 
-from .config import RAW_CACHE, SEED_DIR
+from .config import RAW_CACHE, SEED_DIR, on_github, weekly_run
 
 log = logging.getLogger("mfetl")
 
@@ -50,6 +59,16 @@ INPUTS_FILE = SEED_DIR / "inputs.json"          # committed: the fingerprint mai
 MANIFEST_NAME = "INPUTS.json"                   # inside the cache and the artifact: per-entry hashes
 REPO = "Trommsdorff/moleculefinder-etl"
 _SKIP = {MANIFEST_NAME, ".gitkeep"}
+# The Mac mini weekly job's copy of the inputs main names: after each push to main the job clones its
+# cache here (copy-on-write, so it costs only what changed), the way GitHub uploaded the artifact. Not the
+# working cache: a run that fails has already fetched into that one, and it would no longer match main.
+MAC_CACHE_ENV = "MFETL_MAC_CACHE"
+MAC_CACHE = Path.home() / "Library" / "Application Support" / "MoleculeFinder" / "inputs-main"
+BUILT_ON_MAC = "mac-mini"
+
+
+def mac_cache() -> Path:
+    return Path(os.environ[MAC_CACHE_ENV]) if os.getenv(MAC_CACHE_ENV) else MAC_CACHE
 
 
 class InputsMismatch(SystemExit):
@@ -130,7 +149,7 @@ def verify(root: Path | None = None, inputs_file: Path | None = None) -> str:
     if not committed or not committed.get("fingerprint"):
         raise InputsMismatch(
             f"{inputs_file.name} names no inputs yet, so there is nothing to pin this build to. "
-            f"It is written by the weekly GitHub run; until that has run once, set "
+            f"It is written by the weekly run; until that has run once, set "
             f"{MODE_ENV}=refresh for a one-off local refresh (a data refresh, not a code build).")
     local = _read(root / MANIFEST_NAME)
     if not local or local.get("fingerprint") != committed["fingerprint"]:
@@ -147,9 +166,12 @@ def verify(root: Path | None = None, inputs_file: Path | None = None) -> str:
     return committed["fingerprint"]
 
 
-def record(root: Path | None = None, inputs_file: Path | None = None, *, publish: bool) -> str:
+def record(root: Path | None = None, inputs_file: Path | None = None, *, publish: bool,
+           built_on: str | None = None) -> str:
     """After a refresh export: write the manifest into the cache and, on the weekly run
-    (``publish``), the committed pointer the artifact upload and every pinned build read."""
+    (``publish``), the committed pointer the artifact upload and every pinned build read.
+    ``built_on`` is ``mac-mini`` for the Mac job: its pointer names no artifact (nothing uploads
+    one), and ``sync-inputs`` copies the Mac's cache instead."""
     root, inputs_file = root or RAW_CACHE, inputs_file or INPUTS_FILE
     files = manifest(root)
     fp = fingerprint(files)
@@ -158,8 +180,12 @@ def record(root: Path | None = None, inputs_file: Path | None = None, *, publish
     root.mkdir(parents=True, exist_ok=True)
     (root / MANIFEST_NAME).write_text(json.dumps({"fingerprint": fp, "files": files}, sort_keys=True))
     if publish:
-        inputs_file.write_text(json.dumps({"fingerprint": fp, "artifact": artifact_name(fp),
-                                           "files": len(files)}, indent=1, sort_keys=True) + "\n")
+        pointer: dict[str, object] = {"fingerprint": fp, "files": len(files)}
+        if built_on == BUILT_ON_MAC:
+            pointer["built_on"] = BUILT_ON_MAC
+        else:
+            pointer["artifact"] = artifact_name(fp)
+        inputs_file.write_text(json.dumps(pointer, indent=1, sort_keys=True) + "\n")
     log.info("  inputs: %d cache file(s), fingerprint %s%s", len(files), fp[:22],
              "" if publish else " (local refresh: pinned builds will refuse until `mfetl sync-inputs`)")
     return fp
@@ -183,7 +209,7 @@ def before_export() -> None:
 
 def after_export() -> None:
     if mode() == "refresh":
-        record(publish=os.getenv("GITHUB_ACTIONS") == "true")
+        record(publish=weekly_run(), built_on=None if on_github() else BUILT_ON_MAC)
 
 
 def refreshed_date(meta_path: Path) -> str | None:
@@ -216,6 +242,23 @@ def download(name: str) -> bytes:
     return _gh("api", f"repos/{REPO}/actions/artifacts/{newest['id']}/zip")
 
 
+def _copy_mac_cache(fp: str, incoming: Path) -> None:
+    """A Mac-built pointer: copy the Mac weekly job's cache, once it is the one ``fp`` names. A
+    copy-on-write clone where the disk allows it (APFS), so the copy costs no space until a file in
+    it changes. The fingerprint is checked again on the copy by the caller."""
+    src = mac_cache()
+    have = _read(src / MANIFEST_NAME)
+    if not have or have.get("fingerprint") != fp:
+        raise SystemExit(
+            f"main's inputs ({fp[:16]}) were built by the Mac mini's weekly job, and its cache at {src} "
+            f"holds {(have or {}).get('fingerprint', 'nothing')[:16]}. Check out the commit that job built "
+            f"last (normally origin/main), or wait for a running job to finish; the cache was left as it was.")
+    if subprocess.run(["cp", "-cR", str(src), str(incoming)], capture_output=True, check=False).returncode != 0:
+        shutil.rmtree(incoming, ignore_errors=True)
+        shutil.copytree(src, incoming)
+    log.info("sync-inputs: copied the Mac weekly job's inputs from %s", src)
+
+
 def sync(zip_bytes: bytes | None = None, root: Path | None = None, inputs_file: Path | None = None) -> str:
     """Replace ``root`` with the inputs main was built from. Verified before anything is replaced:
     a download that does not hash to the committed fingerprint leaves the cache as it was. One
@@ -226,17 +269,21 @@ def sync(zip_bytes: bytes | None = None, root: Path | None = None, inputs_file: 
     if not committed or not committed.get("fingerprint"):
         raise SystemExit(f"{inputs_file} names no inputs yet; nothing to sync")
     fp = committed["fingerprint"]
-    if zip_bytes is None:
+    from_mac = zip_bytes is None and committed.get("built_on") == BUILT_ON_MAC
+    if zip_bytes is None and not from_mac:
         zip_bytes = download(committed.get("artifact") or artifact_name(fp))
     incoming = root.with_name(root.name + ".incoming")
     shutil.rmtree(incoming, ignore_errors=True)
     try:
-        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
-            for info in z.infolist():
-                target = (incoming / info.filename).resolve()
-                if not str(target).startswith(str(incoming.resolve())):
-                    raise SystemExit(f"refusing an artifact path outside the cache: {info.filename}")
-            z.extractall(incoming)
+        if from_mac:
+            _copy_mac_cache(fp, incoming)
+        else:
+            with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
+                for info in z.infolist():
+                    target = (incoming / info.filename).resolve()
+                    if not str(target).startswith(str(incoming.resolve())):
+                        raise SystemExit(f"refusing an artifact path outside the cache: {info.filename}")
+                z.extractall(incoming)
         files = manifest(incoming)
         if fingerprint(files) != fp:
             raise SystemExit(f"the downloaded inputs hash to {fingerprint(files)[:16]}, not main's "

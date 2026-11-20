@@ -49,6 +49,11 @@
 # four states above, plus the monthly carve-out). It could not be exercised in
 # place: to see the "recovered" branch you would have to break a sibling site.
 #
+# ── 2026-11: ONE PUBLIC FEED TOO ─────────────────────────────────────────────
+# MoleculeFinder's six-hourly news job moved to the Mac mini. It commits nothing and leaves no run, so the
+# watchdog reads the age of the public feed it writes (in-the-news.json, generated_at) with a plain GET, no
+# token, and calls it stale after 24 hours (network_freshness.FEEDS has the why). Same decision table.
+#
 # ── OWNER SETUP (one-time, required — without it this workflow only alarms) ──
 #   The default GITHUB_TOKEN is scoped to THIS repo only, so it cannot read the
 #   private repos' run history. Create a fine-grained PAT and add it here:
@@ -107,12 +112,22 @@ jobs:
                 --limit 1 --json number --jq '.[0].number // empty')
           echo "number=$n" >> "$GITHUB_OUTPUT"
           echo "Open episode issue: ${n:-none}"
+          # The repos the open issue already names (its body and every daily comment), so a target
+          # that stalls while an older episode is open still emails on the day it joins
+          # (network_freshness.decide, 2026-11-15). Unreadable: none known, which errs toward the email.
+          if [ -n "$n" ]; then
+            gh issue view "$n" --json body,comments --jq '[.body, .comments[].body] | join("\n")' \
+              > "$RUNNER_TEMP/episode.txt" 2>/dev/null || : > "$RUNNER_TEMP/episode.txt"
+          else
+            : > "$RUNNER_TEMP/episode.txt"
+          fi
 
       - name: Check every refresh cron across the network
         id: check
         env:
           TOKEN: ${{ secrets.NETWORK_READ_TOKEN }}
           ISSUE: ${{ steps.episode.outputs.number }}
+          EPISODE_TEXT: ${{ runner.temp }}/episode.txt
         run: |
           # A missing token is the could-not-check case, so it alarms every day —
           # but it must still respect an open episode, or it opens a fresh issue
@@ -122,7 +137,7 @@ jobs:
               echo "action=$([ -n "$ISSUE" ] && echo comment || echo create)"
               echo "exit_code=1"
               echo "report<<WATCHDOG_REPORT"
-              echo "- **all four targets** — COULD NOT CHECK: the NETWORK_READ_TOKEN secret is not"
+              echo "- **every target** — COULD NOT CHECK: the NETWORK_READ_TOKEN secret is not"
               echo "  set, so nothing was verified. See the setup block in .github/workflows/watchdog.yml."
               echo "WATCHDOG_REPORT"
             } >> "$GITHUB_OUTPUT"
@@ -144,8 +159,18 @@ jobs:
               with urllib.request.urlopen(req, timeout=30) as r:
                   return json.load(r)
 
-          report = nf.build_report(api, datetime.datetime.now(datetime.timezone.utc))
-          decision = nf.decide(report, issue_open=bool(os.environ.get("ISSUE")))
+          def public(url):
+              # A public feed (MoleculeFinder's news, on Supabase Storage): NO token is sent.
+              req = urllib.request.Request(url, headers={"User-Agent": "137-network-watchdog"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          report = nf.build_report(api, datetime.datetime.now(datetime.timezone.utc), public)
+          try:
+              known = nf.reported_repos(open(os.environ["EPISODE_TEXT"], encoding="utf-8").read())
+          except OSError:
+              known = frozenset()
+          decision = nf.decide(report, issue_open=bool(os.environ.get("ISSUE")), known=known)
 
           for f in report.findings:
               print(f"{f.state.upper():<14} {f.line.splitlines()[0]}")
@@ -184,11 +209,11 @@ jobs:
           today=$(date -u +%F)
 
           if [ -z "${ACTION:-}" ]; then
-            # The check step crashed. That is a could-not-check about all four
-            # targets, so it alarms — onto the open episode if there is one.
+            # The check step crashed. That is a could-not-check about every
+            # target, so it alarms — onto the open episode if there is one.
             ACTION=$([ -n "${ISSUE:-}" ] && echo comment || echo create); EXIT=1
             REPORT="- **the watchdog itself** — COULD NOT CHECK: its check step did not finish.
-            Nothing about the four refresh crons was verified."
+            Nothing about the refresh crons or the news feed was verified."
           fi
 
           detail="${REPORT:-(no detail captured — see the run log)}"
