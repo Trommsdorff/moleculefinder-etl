@@ -479,6 +479,14 @@ def _one(which: str, *, pkg: zenodo.Package, pub: dict[str, Any], mode: str, env
         hf_verify(reader, ident, pkg, wanted, concept, commit or None)
         return Outcome(which, "PUBLISHED", f"{plan}; commit {commit[:12]}; read back: {len(wanted)} files match. {link}")
     wanted = kaggle_wanted(pkg)
+    # Kaggle's public (anonymous) view of a dataset is a cached copy that can trail a new version by hours: it
+    # keeps the old description and "current version". With a login, read what Kaggle itself holds (still read
+    # only); without one (a dry run), read the public view.
+    try:
+        k_headers, k_auth, k_secrets, _where = kaggle_login(env_file)
+        reader = Http(k_secrets, k_headers, k_auth, session=session)
+    except Refused:
+        pass
     if mode == "whoami":
         headers, auth, secrets, where = kaggle_login(env_file)
         w = Http(secrets, headers, auth, session=session)

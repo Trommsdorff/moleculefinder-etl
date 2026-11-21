@@ -84,6 +84,7 @@ class Fake:
         self.kg_fail = False
         self.kg_corrupt: str | None = None
         self.kg_status = "Ready"
+        self.kg_stale_public = False        # Kaggle's anonymous view trails a new version (its description)
 
     def _old_files(self, version):
         files = {n: (self.pkg / n).read_bytes() for n in ("molecules.csv", "CITATION.cff", "zenodo.json", "MANIFEST.json",
@@ -159,8 +160,9 @@ class Fake:
         newest = self.kg_versions[-1]
         if url.startswith(f"{mirrors.KG_WWW}/datasets/view/{KG_ID}"):
             meta = json.loads((self.pkg / "dataset-metadata.json").read_text())
+            stale = self.kg_stale_public and not self._authed(kw)
             return Resp(200, {"ref": KG_ID, "licenseName": self.kg_licence, "subtitle": meta["subtitle"],
-                              "description": meta["description"],
+                              "description": "915 molecules, the old description" if stale else meta["description"],
                               "versions": [{"versionNumber": n, "versionNotes": note,
                                             "status": self.kg_status if n == newest[0] else "Ready"}
                                            for n, note, _ in self.kg_versions]})
@@ -477,6 +479,18 @@ def test_the_read_back_checks_the_licence_and_the_head(world, caplog):
     fake.hf_licence = "mit"
     assert _run(world, only="huggingface") == 1
     assert "licence is 'mit'" in _messages(caplog)
+
+
+def test_a_stale_public_kaggle_page_does_not_fail_a_publish_that_the_login_can_read_back(world, caplog):
+    caplog.set_level(logging.INFO)
+    _, _, _, env, fake = world
+    fake.kg_stale_public = True
+    assert _run(world, only="kaggle") == 0
+    assert "kaggle: PUBLISHED" in _messages(caplog)
+    env.write_text("")                                     # no login: the public view is all there is
+    caplog.clear()
+    assert _run(world, only="kaggle", check=True) == 1
+    assert "the description does not name the concept DOI" in _messages(caplog)
 
 
 def test_kaggle_that_never_becomes_ready_is_reported(world, caplog):
