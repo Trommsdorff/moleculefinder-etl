@@ -25,6 +25,9 @@ local `main`; NOT pushed.
   files changed (47 synonym lists, 9 display synonyms, GHS on 3: levonorgestrel loses H400/H410 and the environmental
   hazard category with the norgestrel rows, disodium inosinate's label empties, myristic acid; no LD50).
 
+## The first finding: `findings/dyes-in-medicines.json` (2026-11-21, branch `findings-dyes-2026-11`, NOT merged, NOT pushed)
+Brief `../FINDINGS-DYES-PROMPT.md`; full record `../HISTORY.md`, 2026-11-21. `d2cd16d` the compiler, seeds, route reader, export and 23 tests (`tests/test_findings.py`); `94f576b` the six dyes' group named `six` (a built web page may not carry the word the news test forbids). `transform/findings.py` counts the published medicine labels by UNII code from `sources/seeds/colour_additives.yaml` (22 codes, each checked against GSRS on 2026-11-21; `not_counted` records D3741U8K7L) and carries the FDA statements of `findings_dyes.yaml` (fda.gov and the Federal Register only, with the date read); `dailymed.parse_routes` and the `route1-<setid>` cache (keyed by the label's version; `warm` reads each medicine label's routes once). 112 of 300; equal to Cowork's count. Suite 1,490 passed, ruff 130 (= main); pinned build twice byte-identical (950 files), 0 PubChem POSTs; drawings 903 / 723 / 147 / 3. **Weekly dry run from this branch AND from main stops at the snapshot guard on levonorgestrel's LD50 (5010.0 -> None): not this branch; see `../HISTORY.md`.**
+
 ## The dataset's mirrors follow Zenodo: `mfetl mirrors` (2026-11-20)
 Brief `../MIRRORS-PROMPT.md`; full record `../HISTORY.md`, 2026-11-20. `b5aa46c` `moleculefinder_etl/mirrors.py` + `tests/
 test_mirrors.py`, `5f1a6f3` the Kaggle read-back reads the owner's copy. Runbook `docs/MAC-WEEKLY-REFRESH.md` section 9.
