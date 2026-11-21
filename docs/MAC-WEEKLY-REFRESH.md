@@ -237,7 +237,8 @@ job carries on from its own cache at its next start. A green manual run counts f
 The CC0 dataset (Zenodo concept DOI `10.5281/zenodo.23605767`, which always resolves to the latest version) is
 published by **one command, `mfetl zenodo`** (`moleculefinder_etl/zenodo.py`), through Zenodo's API with Garrett's
 personal access token. Version 2026.11 was the first published this way (record 24407566, DOI
-`10.5281/zenodo.24407566`). The website names only the concept DOI, so a new version changes nothing on the site.
+`10.5281/zenodo.24407566`). The website names only the concept DOI, so a new version changes nothing on the site. A published version is followed
+by `mfetl mirrors` (Hugging Face and Kaggle follow Zenodo): section 9.
 
 **How a version reaches Zenodo today (by hand, a session, on Garrett's word).** In the ETL checkout, on `main`, with
 the pinned inputs (`mfetl sync-inputs`) and the database keys blanked:
@@ -294,3 +295,59 @@ leaked, or stops working.
    ```
 The token is read only by Python (python-dotenv) inside `mfetl zenodo`, sent only in the Authorization header,
 redacted from every message, and taken back out of the environment for every other stage (`cli.py`).
+
+## 9. The dataset's mirrors (since 2026-11-20)
+
+Hugging Face (`Trommsdorff/moleculefinder-molecules-in-everyday-products`) and Kaggle
+(`trommsdorff/moleculefinder-molecules-in-everyday-products`) hold copies of the dataset. Garrett does not re-upload
+by hand: **`mfetl mirrors`** (`moleculefinder_etl/mirrors.py`) brings each to the version Zenodo's latest public record
+holds. A hand publish (`mfetl zenodo`) is followed by it automatically, so one word updates all three. 2026.11 was the
+first (Hugging Face commit `bd7f7161e14a`; Kaggle version 3).
+```bash
+mfetl mirrors --dry-run   # public reads only, no login needed: every check, what each mirror holds, writes nothing
+mfetl mirrors             # bring each mirror to Zenodo's latest, then read it back
+mfetl mirrors --check     # read only: each mirror holds the package, file for file
+mfetl mirrors --whoami    # read only: each login works (prints who it is, never a token); --only huggingface|kaggle
+```
+**What it does.** Hugging Face: ONE commit named for the version ("MoleculeFinder dataset 2026.11 (Zenodo 10.5281/
+zenodo.N)") writes the package's files, with the card (`huggingface/README.md`) as the repo's README.md, plus Kaggle's
+metadata file, and removes any file the package does not have. Kaggle: every file is uploaded, then ONE new dataset
+version with the package's metadata and the note "2026.11: the same files as Zenodo version 2026.11, https://doi.org/...".
+Each mirror is read back: the file list, sizes and checksums (Hugging Face's git blob ids; Kaggle's bytes, downloaded),
+the licence, the concept DOI. One mirror failing does not stop the other; the exit code and the summary name each.
+
+**It refuses, writing nothing to the mirror concerned, when:** a package file does not match `MANIFEST.json` byte for
+byte; the version is not the one Zenodo's latest record holds (a mirror never gets ahead of Zenodo), or Zenodo's files
+are not the package's; the licence is not CC0; the mirror's id is not the one in `dataset_published.yaml` (the card
+and the Kaggle metadata must link it); the mirror holds this version with other files, a newer version, or one it
+cannot name. A mirror that already holds the version, file for file, says so and exits 0.
+
+**Logins** (read by python-dotenv straight from the ETL's `.env` or the login file, sent only in the Authorization header,
+redacted from every message, taken out of the environment for every other stage, never printed):
+- *Hugging Face:* `HF_TOKEN` in `.env`, else the `hf auth login` file `/Users/garrettpoe/.cache/huggingface/token`
+  (a plain file at mode 600, so a launchd job with no terminal reads it like any other; token "mini-hf-cli", role
+  write, made 2026-10-30; Hugging Face write tokens do not expire). Renew: make a write token at
+  https://huggingface.co/settings/tokens , then `hf auth login` in the Terminal app, or put it in `.env` as `HF_TOKEN`
+  with the same hidden-typing command as below, with `HF_TOKEN` in place of `KAGGLE_API_TOKEN`.
+- *Kaggle:* `KAGGLE_API_TOKEN` in `.env` (Kaggle's API token; or the legacy `KAGGLE_USERNAME` with `KAGGLE_KEY`), made
+  2026-11-20 at https://www.kaggle.com/settings (API section, Generate New Token). Renew by making a new one there and:
+  ```bash
+  /bin/bash -c 'umask 077; f=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl/.env; read -rsp "Paste the Kaggle token, then press Return: " T; echo; [ -n "$T" ] || { echo "nothing entered, nothing saved"; exit 1; }; grep -v "^KAGGLE_API_TOKEN=" "$f" > "$f.tmp"; printf "KAGGLE_API_TOKEN=%s\n" "$T" >> "$f.tmp"; chmod 600 "$f.tmp"; mv "$f.tmp" "$f"; unset T; echo "saved to .env (not shown)"'
+  ```
+  then `./.venv/bin/python3 -m moleculefinder_etl.cli mirrors --whoami` (read only).
+
+**Kaggle's public page lags.** After a new version Kaggle's anonymous view of the dataset (the page, the "current
+version", the description, the default download) keeps showing the old version for hours, while Kaggle's own answer
+to the owner is already the new one and the new version's files are public by number
+(`.../datasets/download/<ref>/<file>?datasetVersionNumber=3`). With a login the command reads the owner's view;
+`mfetl mirrors --dry-run` and a login-less `--check` read the public one and may say "the description does not name
+the concept DOI" until it catches up. That is the lag, not a failed upload.
+
+**The weekly job (branch `zenodo-weekly-hook-2026-11`, NOT merged until after the first Mac Monday, 2026-11-23).** After
+the dataset step ends green, a `mirrors_step` runs `mfetl mirrors --env-file`: most weeks both mirrors already hold
+the version and it only reads. It cannot fail, retry or block the refresh, never runs when Zenodo is not current, and
+a failure raises its OWN alarm: a GitHub email that `mac-alarm` failed and an open issue **MoleculeFinder dataset
+mirrors FAILED** (label `mirror-failure`; the refresh and Zenodo are fine, one copy is behind). The next Monday tries
+again; the next green step closes the issue. To fix it sooner: `mfetl mirrors --whoami` says which login failed,
+`mfetl mirrors` retries.
+
