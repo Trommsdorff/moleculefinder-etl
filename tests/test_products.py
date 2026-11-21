@@ -433,6 +433,11 @@ def test_the_fetch_stage_warms_products_with_the_unii_expiry(tmp_path, monkeypat
     (tmp_path / "canon.parquet").write_bytes(b"")
     monkeypatch.setattr(pipeline.canon_stage, "read_parquet", lambda: [{"cid": 2519}])
     monkeypatch.setattr(pipeline.pubchem, "pug_view", lambda cid, heading: None)
+    # Since the LD50 hold the Toxicity warm-up reads through pug_view_dated; stubbed too, or an expired cache entry for
+    # 2519 is fetched from PubChem for real and written into data/raw_cache (found 2026-11-21).
+    from moleculefinder_etl.sources import cache
+    monkeypatch.setattr(pipeline.pubchem, "pug_view_dated",
+                        lambda cid, heading, max_age_days=None: cache.Entry(None, None, live=False))
     seed = [{"slug": "x", "name": "x", "kind": "drink", "source": "world", "item": "morning-coffee"}]
     monkeypatch.setattr(pipeline.products, "load_seed", lambda: seed)
 
