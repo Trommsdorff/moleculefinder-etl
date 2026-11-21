@@ -1,0 +1,7937 @@
+{
+ "id": "dyes-in-medicines",
+ "version": 1,
+ "question": "Which medicine labels on MoleculeFinder list one of the six synthetic colour additives the FDA has asked food makers to stop using?",
+ "totals": {
+  "labels": {
+   "labels": 300,
+   "otc": 116,
+   "prescription": 184
+  },
+  "any_of_six": {
+   "labels": 112,
+   "otc": 47,
+   "prescription": 65
+  },
+  "two_or_more": {
+   "labels": 50,
+   "otc": 17,
+   "prescription": 33
+  },
+  "three_or_more": {
+   "labels": 22,
+   "otc": 6,
+   "prescription": 16
+  },
+  "red_3": {
+   "labels": 4,
+   "otc": 0,
+   "prescription": 4,
+   "slugs": [
+    "inderal-la",
+    "restoril",
+    "vraylar",
+    "vyvanse"
+   ]
+  },
+  "d_and_c_any": {
+   "labels": 47,
+   "otc": 17,
+   "prescription": 30
+  },
+  "by_dye": {
+   "blue-1": {
+    "labels": 53,
+    "otc": 22,
+    "prescription": 31
+   },
+   "blue-2": {
+    "labels": 42,
+    "otc": 8,
+    "prescription": 34
+   },
+   "green-3": {
+    "labels": 5,
+    "otc": 2,
+    "prescription": 3
+   },
+   "red-40": {
+    "labels": 45,
+    "otc": 25,
+    "prescription": 20
+   },
+   "yellow-5": {
+    "labels": 6,
+    "otc": 3,
+    "prescription": 3
+   },
+   "yellow-6": {
+    "labels": 45,
+    "otc": 13,
+    "prescription": 32
+   }
+  },
+  "d_and_c_by_dye": {
+   "dc-red-7": {
+    "labels": 1,
+    "otc": 0,
+    "prescription": 1
+   },
+   "dc-red-22": {
+    "labels": 1,
+    "otc": 1,
+    "prescription": 0
+   },
+   "dc-red-27": {
+    "labels": 4,
+    "otc": 1,
+    "prescription": 3
+   },
+   "dc-red-28": {
+    "labels": 6,
+    "otc": 2,
+    "prescription": 4
+   },
+   "dc-red-30": {
+    "labels": 5,
+    "otc": 0,
+    "prescription": 5
+   },
+   "dc-red-33": {
+    "labels": 5,
+    "otc": 4,
+    "prescription": 1
+   },
+   "dc-yellow-10": {
+    "labels": 34,
+    "otc": 10,
+    "prescription": 24
+   }
+  },
+  "routes": {
+   "read": 298,
+   "all": {
+    "oral": 218,
+    "oral+other": 6,
+    "other": 74,
+    "unstated": 2
+   },
+   "any_of_six": {
+    "oral": 109,
+    "oral+other": 1,
+    "other": 2,
+    "unstated": 0
+   },
+   "red_3": {
+    "oral": 4,
+    "oral+other": 0,
+    "other": 0,
+    "unstated": 0
+   }
+  }
+ },
+ "dyes": [
+  {
+   "id": "blue-1",
+   "name": "FD&C Blue No. 1",
+   "group": "headline",
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "form": "dye",
+     "gsrs_name": "FD&C BLUE NO. 1",
+     "gsrs_status": "approved"
+    },
+    {
+     "unii": "J9EQA3S2JM",
+     "form": "lake",
+     "gsrs_name": "FD&C BLUE NO. 1 ALUMINUM LAKE",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "blue-2",
+   "name": "FD&C Blue No. 2",
+   "group": "headline",
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "form": "dye",
+     "gsrs_name": "FD&C BLUE NO. 2",
+     "gsrs_status": "approved"
+    },
+    {
+     "unii": "4AQJ3LG584",
+     "form": "lake",
+     "gsrs_name": "FD&C BLUE NO. 2 ALUMINUM LAKE",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "green-3",
+   "name": "FD&C Green No. 3",
+   "group": "headline",
+   "codes": [
+    {
+     "unii": "3P3ONR6O1S",
+     "form": "dye",
+     "gsrs_name": "FD&C GREEN NO. 3",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "red-40",
+   "name": "FD&C Red No. 40",
+   "group": "headline",
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "form": "dye",
+     "gsrs_name": "FD&C RED NO. 40",
+     "gsrs_status": "approved"
+    },
+    {
+     "unii": "6T47AS764T",
+     "form": "lake",
+     "gsrs_name": "FD&C RED NO. 40 ALUMINUM LAKE",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "yellow-5",
+   "name": "FD&C Yellow No. 5",
+   "group": "headline",
+   "codes": [
+    {
+     "unii": "I753WB2F1M",
+     "form": "dye",
+     "gsrs_name": "FD&C YELLOW NO. 5",
+     "gsrs_status": "approved"
+    },
+    {
+     "unii": "JQ6BLH9FR7",
+     "form": "lake",
+     "gsrs_name": "FD&C YELLOW NO. 5 ALUMINUM LAKE",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "yellow-6",
+   "name": "FD&C Yellow No. 6",
+   "group": "headline",
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "form": "dye",
+     "gsrs_name": "FD&C YELLOW NO. 6",
+     "gsrs_status": "approved"
+    },
+    {
+     "unii": "GYP6Z2JR6Q",
+     "form": "lake",
+     "gsrs_name": "FD&C YELLOW NO. 6 ALUMINUM LAKE",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "red-3",
+   "name": "FD&C Red No. 3",
+   "group": "red-3",
+   "codes": [
+    {
+     "unii": "PN2ZH5LOQY",
+     "form": "dye",
+     "gsrs_name": "FD&C RED NO. 3",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-red-7",
+   "name": "D&C Red No. 7",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "ECW0LZ41X8",
+     "form": "dye",
+     "gsrs_name": "D&C RED NO. 7",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-red-22",
+   "name": "D&C Red No. 22",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "1678RKX8RT",
+     "form": "dye",
+     "gsrs_name": "D&C RED NO. 22",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-red-27",
+   "name": "D&C Red No. 27",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "2LRS185U6K",
+     "form": "dye",
+     "gsrs_name": "D&C RED NO. 27",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-red-28",
+   "name": "D&C Red No. 28",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "767IP0Y5NH",
+     "form": "dye",
+     "gsrs_name": "D&C RED NO. 28",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-red-30",
+   "name": "D&C Red No. 30",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "2S42T2808B",
+     "form": "dye",
+     "gsrs_name": "D&C RED NO. 30",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-red-33",
+   "name": "D&C Red No. 33",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "9DBA0SBB0L",
+     "form": "dye",
+     "gsrs_name": "D&C RED NO. 33",
+     "gsrs_status": "approved"
+    }
+   ]
+  },
+  {
+   "id": "dc-yellow-10",
+   "name": "D&C Yellow No. 10",
+   "group": "d-and-c",
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "form": "dye",
+     "gsrs_name": "D&C YELLOW NO. 10",
+     "gsrs_status": "approved"
+    },
+    {
+     "unii": "CQ3XH3DET6",
+     "form": "lake",
+     "gsrs_name": "D&C YELLOW NO. 10 ALUMINUM LAKE",
+     "gsrs_status": "FAILED"
+    }
+   ]
+  }
+ ],
+ "not_counted": [
+  {
+   "unii": "D3741U8K7L",
+   "label_name": "INDIGOTINDISULFONATE SODIUM",
+   "gsrs_name": "INDIGOTINDISULFONATE SODIUM",
+   "reason": "A separate registry record (a single chemical, CAS 860-22-0) that the registry lists as ONE COMPONENT of the FD&C Blue No. 2 record (L06K8R7DQK, a mixture of three components). It is not the same substance record as FD&C Blue No. 2, so it is not counted as Blue No. 2. One medicine label lists it (Keppra) and that label also lists FD&C Blue No. 2 by its own code, so counting it would move no total."
+  }
+ ],
+ "registry": {
+  "checked": "2026-11-21",
+  "url": "https://gsrs.ncats.nih.gov/ginas/app/api/v1/substances({unii})?view=full",
+  "name": "FDA Global Substance Registration System (GSRS)"
+ },
+ "labels": [
+  {
+   "slug": "abilify",
+   "name": "Abilify",
+   "class": "prescription",
+   "labeler": "Otsuka America Pharmaceutical, Inc.",
+   "setid": "c040bd1d-45b7-49f2-93ea-aed7220b30ac",
+   "version": 73,
+   "effective": "20250129",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c040bd1d-45b7-49f2-93ea-aed7220b30ac",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "4AQJ3LG584",
+     "dye": "blue-2",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 2 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "abreva",
+   "name": "Abreva",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "c39b38a7-dcdd-4c32-8f35-b565c4d3cec6",
+   "version": 16,
+   "effective": "20240620",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c39b38a7-dcdd-4c32-8f35-b565c4d3cec6",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "absorica",
+   "name": "Absorica",
+   "class": "prescription",
+   "labeler": "Sun Pharmaceutical Industries, Inc.",
+   "setid": "3ef0cff8-19c1-4441-b780-fca6c7ee1615",
+   "version": 21,
+   "effective": "20260819",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3ef0cff8-19c1-4441-b780-fca6c7ee1615",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "I753WB2F1M",
+     "dye": "yellow-5",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 5"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "acetadote",
+   "name": "Acetadote",
+   "class": "prescription",
+   "labeler": "Cumberland Pharmaceuticals Inc.",
+   "setid": "472f158a-5ab9-4308-8e49-1116e6ea3d39",
+   "version": 17,
+   "effective": "20250430",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=472f158a-5ab9-4308-8e49-1116e6ea3d39",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "aciphex",
+   "name": "Aciphex",
+   "class": "prescription",
+   "labeler": "Waylis Therapeutics LLC",
+   "setid": "1eb38279-0237-4967-be7a-c53a826c1138",
+   "version": 3,
+   "effective": "20260127",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1eb38279-0237-4967-be7a-c53a826c1138",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "actos",
+   "name": "Actos",
+   "class": "prescription",
+   "labeler": "Takeda Pharmaceuticals America, Inc.",
+   "setid": "d2ddc491-88a9-4063-9150-443b4fa4330c",
+   "version": 20,
+   "effective": "20250328",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d2ddc491-88a9-4063-9150-443b4fa4330c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "adderall",
+   "name": "Adderall",
+   "class": "prescription",
+   "labeler": "Teva Pharmaceuticals USA, Inc.",
+   "setid": "f22635fe-821d-4cde-aa12-419f8b53db81",
+   "version": 21,
+   "effective": "20240529",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f22635fe-821d-4cde-aa12-419f8b53db81",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "J9EQA3S2JM",
+     "dye": "blue-1",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 1 ALUMINUM LAKE"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "addyi",
+   "name": "Addyi",
+   "class": "prescription",
+   "labeler": "Sprout Pharmaceuticals, Inc.",
+   "setid": "3819daf3-e935-2c53-c527-e1d57922f394",
+   "version": 15,
+   "effective": "20251222",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3819daf3-e935-2c53-c527-e1d57922f394",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "advil",
+   "name": "Advil",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "1a665e64-9f30-be37-4a83-38789f1f1e89",
+   "version": 39,
+   "effective": "20261103",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a665e64-9f30-be37-4a83-38789f1f1e89",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "advil-cold-and-sinus",
+   "name": "Advil Cold & Sinus",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "0da9ed22-bfb4-d61b-110b-0c7760332a98",
+   "version": 14,
+   "effective": "20260729",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0da9ed22-bfb4-d61b-110b-0c7760332a98",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "advil-dual-action",
+   "name": "Advil Dual Action",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "f5ea858e-76d9-4777-b3dc-5d614f66d485",
+   "version": 11,
+   "effective": "20250421",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f5ea858e-76d9-4777-b3dc-5d614f66d485",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "advil-liqui-gels",
+   "name": "Advil Liqui-Gels",
+   "class": "otc",
+   "labeler": "Select Corporation",
+   "setid": "9fce41c2-e059-4180-9e7b-47ac506baf44",
+   "version": 2,
+   "effective": "20220412",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9fce41c2-e059-4180-9e7b-47ac506baf44",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "green-3"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "3P3ONR6O1S",
+     "dye": "green-3",
+     "form": "dye",
+     "listed_as": "FD&C green no. 3"
+    }
+   ]
+  },
+  {
+   "slug": "advil-pm",
+   "name": "Advil PM",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "405afdb4-c157-1d88-f232-848063ba4714",
+   "version": 22,
+   "effective": "20260729",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=405afdb4-c157-1d88-f232-848063ba4714",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-33"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "9DBA0SBB0L",
+     "dye": "dc-red-33",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 33"
+    }
+   ]
+  },
+  {
+   "slug": "adzenys-xr-odt",
+   "name": "Adzenys XR-ODT",
+   "class": "prescription",
+   "labeler": "Neos Therapeutics Brands, LLC",
+   "setid": "c1179269-00b5-48ea-972d-31e614e99b7e",
+   "version": 16,
+   "effective": "20260513",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c1179269-00b5-48ea-972d-31e614e99b7e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "akovaz",
+   "name": "Akovaz",
+   "class": "prescription",
+   "labeler": "Exela Pharma Sciences, LLC",
+   "setid": "e92f3eda-33eb-4b34-9e8b-db8d32a5dbd9",
+   "version": 4,
+   "effective": "20201127",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e92f3eda-33eb-4b34-9e8b-db8d32a5dbd9",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "alaway",
+   "name": "Alaway",
+   "class": "otc",
+   "labeler": "Bausch & Lomb Incorporated",
+   "setid": "e4c310b5-1dba-4ddc-bc90-b27ebc765871",
+   "version": 15,
+   "effective": "20220501",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e4c310b5-1dba-4ddc-bc90-b27ebc765871",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "albenza",
+   "name": "Albenza",
+   "class": "prescription",
+   "labeler": "Amneal Pharmaceuticals LLC",
+   "setid": "1977a867-0ee1-44c0-8da3-fe59c48699f5",
+   "version": 14,
+   "effective": "20190923",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1977a867-0ee1-44c0-8da3-fe59c48699f5",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "aleve",
+   "name": "Aleve",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "00ef5b30-71d0-4cb4-84a3-48c67d1cea2a",
+   "version": 19,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=00ef5b30-71d0-4cb4-84a3-48c67d1cea2a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "aleve-pm",
+   "name": "Aleve PM",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "82891458-ab0d-459a-8602-dcebd22c3010",
+   "version": 16,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=82891458-ab0d-459a-8602-dcebd22c3010",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "alka-seltzer-original",
+   "name": "Alka-Seltzer Original",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "5be36a7f-7d1f-468d-9c29-92c8cd3ef1bc",
+   "version": 11,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5be36a7f-7d1f-468d-9c29-92c8cd3ef1bc",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "alka-seltzer-plus-cold-day-and-night",
+   "name": "Alka-Seltzer Plus Cold Day and Night",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "75894849-a0ba-57be-e053-2a91aa0a049a",
+   "version": 6,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=75894849-a0ba-57be-e053-2a91aa0a049a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "allegra-allergy",
+   "name": "Allegra Allergy",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "81c1dcbb-28b3-4ad5-9f3d-9ccc16ddd173",
+   "version": 64,
+   "effective": "20260414",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=81c1dcbb-28b3-4ad5-9f3d-9ccc16ddd173",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "allegra-hives-24hr",
+   "name": "Allegra Hives 24HR",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "490b4c5f-448b-4563-928b-837117b59b9f",
+   "version": 10,
+   "effective": "20260112",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=490b4c5f-448b-4563-928b-837117b59b9f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ambien",
+   "name": "Ambien",
+   "class": "prescription",
+   "labeler": "Cosette Pharmaceuticals, Inc.",
+   "setid": "747949c5-2c91-4909-8a07-71b6826f8e97",
+   "version": 1,
+   "effective": "20250207",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=747949c5-2c91-4909-8a07-71b6826f8e97",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "amidate",
+   "name": "Amidate",
+   "class": "prescription",
+   "labeler": "Hospira, Inc.",
+   "setid": "b7ed5bf8-ba75-44dc-8f81-96b4ad5766be",
+   "version": 27,
+   "effective": "20260520",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b7ed5bf8-ba75-44dc-8f81-96b4ad5766be",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "amrix",
+   "name": "Amrix",
+   "class": "prescription",
+   "labeler": "Cephalon, LLC",
+   "setid": "3902123b-1365-ac3c-0934-afff9eeeb1bd",
+   "version": 32,
+   "effective": "20240430",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3902123b-1365-ac3c-0934-afff9eeeb1bd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "green-3",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "3P3ONR6O1S",
+     "dye": "green-3",
+     "form": "dye",
+     "listed_as": "FD&C GREEN NO. 3"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "anafranil",
+   "name": "Anafranil",
+   "class": "prescription",
+   "labeler": "SpecGx LLC",
+   "setid": "4074b555-7635-41a9-809d-fae3b3610059",
+   "version": 22,
+   "effective": "20241126",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4074b555-7635-41a9-809d-fae3b3610059",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-33",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "9DBA0SBB0L",
+     "dye": "dc-red-33",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 33"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "anbesol-maximum-strength",
+   "name": "Anbesol Maximum Strength",
+   "class": "otc",
+   "labeler": "Foundation Consumer Brands",
+   "setid": "8c6ac499-9bd2-4ea5-9f26-df7947bff4a6",
+   "version": 5,
+   "effective": "20260622",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8c6ac499-9bd2-4ea5-9f26-df7947bff4a6",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "apokyn",
+   "name": "Apokyn",
+   "class": "prescription",
+   "labeler": "MDD US Operations, LLC",
+   "setid": "3235535d-9ef9-4657-8b2a-176a807d091c",
+   "version": 21,
+   "effective": "20241010",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3235535d-9ef9-4657-8b2a-176a807d091c",
+   "routes": [
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "aricept",
+   "name": "Aricept",
+   "class": "prescription",
+   "labeler": "Eisai Inc.",
+   "setid": "98e451e1-e4d7-4439-a675-c5457ba20975",
+   "version": 33,
+   "effective": "20211230",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=98e451e1-e4d7-4439-a675-c5457ba20975",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "aspercreme",
+   "name": "Aspercreme",
+   "class": "otc",
+   "labeler": "Lead Chemical Co. Ltd.",
+   "setid": "275e1343-deef-424a-a883-5e780083af91",
+   "version": 8,
+   "effective": "20240125",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=275e1343-deef-424a-a883-5e780083af91",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "astepro-allergy",
+   "name": "Astepro Allergy",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "e0640846-19a6-7f79-e053-2995a90a8176",
+   "version": 8,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e0640846-19a6-7f79-e053-2995a90a8176",
+   "routes": null,
+   "taken": null,
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "atacand",
+   "name": "Atacand",
+   "class": "prescription",
+   "labeler": "ANI Pharmaceuticals, Inc.",
+   "setid": "94a59260-d2b6-464a-b5b9-bbc599e57e10",
+   "version": 5,
+   "effective": "20251222",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=94a59260-d2b6-464a-b5b9-bbc599e57e10",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ativan",
+   "name": "Ativan",
+   "class": "prescription",
+   "labeler": "Hikma Pharmaceuticals USA Inc.",
+   "setid": "5fc0e987-61c9-40c4-b0d5-fcea07c8733e",
+   "version": 15,
+   "effective": "20260916",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5fc0e987-61c9-40c4-b0d5-fcea07c8733e",
+   "routes": [
+    "INTRAMUSCULAR",
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "atoncy",
+   "name": "Atoncy",
+   "class": "prescription",
+   "labeler": "Validus Pharmaceuticals LLC",
+   "setid": "72d3d8cf-7f3b-479e-bd9f-e204d4118517",
+   "version": 1,
+   "effective": "20260402",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=72d3d8cf-7f3b-479e-bd9f-e204d4118517",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "augmentin",
+   "name": "Augmentin",
+   "class": "prescription",
+   "labeler": "Dr. Reddy's Laboratories Inc",
+   "setid": "174cc098-fe49-4f1a-87e2-601c7573f0db",
+   "version": 6,
+   "effective": "20160901",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=174cc098-fe49-4f1a-87e2-601c7573f0db",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "avodart",
+   "name": "Avodart",
+   "class": "prescription",
+   "labeler": "Waylis Therapeutics LLC",
+   "setid": "960797b3-09b1-4d6a-8ece-8b5d918e93e4",
+   "version": 5,
+   "effective": "20261030",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=960797b3-09b1-4d6a-8ece-8b5d918e93e4",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "bactrim-ds",
+   "name": "Bactrim DS",
+   "class": "prescription",
+   "labeler": "Sun Pharmaceutical Industries, Inc",
+   "setid": "f59d0c04-9c66-4d53-a0e1-cb55570deb62",
+   "version": 18,
+   "effective": "20241230",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f59d0c04-9c66-4d53-a0e1-cb55570deb62",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "bayer-low-dose-aspirin",
+   "name": "Bayer Low Dose Aspirin",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "075b103e-0bb4-4b7a-ac0e-5645bcbd0a07",
+   "version": 8,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=075b103e-0bb4-4b7a-ac0e-5645bcbd0a07",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "belsomra",
+   "name": "Belsomra",
+   "class": "prescription",
+   "labeler": "Merck Sharp & Dohme LLC",
+   "setid": "e5b72731-1acb-45b7-9c13-290ad12d3951",
+   "version": 22,
+   "effective": "20250310",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e5b72731-1acb-45b7-9c13-290ad12d3951",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "benadryl-allergy",
+   "name": "Benadryl Allergy",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "224ba2a3-1a93-29c8-e063-6394a90a9bef",
+   "version": 3,
+   "effective": "20250130",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224ba2a3-1a93-29c8-e063-6394a90a9bef",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-33"
+   ],
+   "codes": [
+    {
+     "unii": "9DBA0SBB0L",
+     "dye": "dc-red-33",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 33"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "benadryl-itch-stopping-cream",
+   "name": "Benadryl Itch Stopping Cream",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "66a2fd60-1757-45cc-a195-ecb9241dca2a",
+   "version": 9,
+   "effective": "20250424",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=66a2fd60-1757-45cc-a195-ecb9241dca2a",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "bengay-vanishing-scent",
+   "name": "Bengay Vanishing Scent",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "6cc3294b-3b0f-44d0-af71-61db1022d269",
+   "version": 8,
+   "effective": "20250710",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6cc3294b-3b0f-44d0-af71-61db1022d269",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "benicar",
+   "name": "Benicar",
+   "class": "prescription",
+   "labeler": "Cosette Pharmaceuticals, Inc.",
+   "setid": "dc3f1fd4-5578-4c5d-be7b-12e3f8f3e7df",
+   "version": 1,
+   "effective": "20250923",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=dc3f1fd4-5578-4c5d-be7b-12e3f8f3e7df",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "biofreeze",
+   "name": "Biofreeze",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "00bb462a-27d0-6f74-e063-6394a90a90ec",
+   "version": 12,
+   "effective": "20260513",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=00bb462a-27d0-6f74-e063-6394a90a90ec",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "bonine",
+   "name": "Bonine",
+   "class": "otc",
+   "labeler": "WellSpring Pharmaceutical Corporation",
+   "setid": "0b2ea6b8-b342-4940-8922-898758fbeb31",
+   "version": 2,
+   "effective": "20250321",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0b2ea6b8-b342-4940-8922-898758fbeb31",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "brilinta",
+   "name": "Brilinta",
+   "class": "prescription",
+   "labeler": "AstraZeneca Pharmaceuticals LP",
+   "setid": "f7b3f443-e83d-4bf2-0e96-023448fed9a8",
+   "version": 56,
+   "effective": "20260507",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f7b3f443-e83d-4bf2-0e96-023448fed9a8",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "bufferin-regular-strength",
+   "name": "Bufferin Regular Strength",
+   "class": "otc",
+   "labeler": "Genomma Lab USA",
+   "setid": "3543b2bf-1062-468a-a5dc-eabb2408af8c",
+   "version": 2,
+   "effective": "20250225",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3543b2bf-1062-468a-a5dc-eabb2408af8c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "bystolic",
+   "name": "Bystolic",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "8b8ad213-1dc8-454e-a524-075685c0e1a8",
+   "version": 31,
+   "effective": "20240801",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8b8ad213-1dc8-454e-a524-075685c0e1a8",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-27"
+   ],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "2LRS185U6K",
+     "dye": "dc-red-27",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 27"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "caladryl",
+   "name": "Caladryl",
+   "class": "otc",
+   "labeler": "Bausch Health US, LLC",
+   "setid": "67d4fd42-9fed-4238-9f5a-c9403abbcf20",
+   "version": 6,
+   "effective": "20241017",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=67d4fd42-9fed-4238-9f5a-c9403abbcf20",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "carafate",
+   "name": "Carafate",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "c87c6b50-6977-4fa7-ae98-40c0753f7aee",
+   "version": 18,
+   "effective": "20240521",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c87c6b50-6977-4fa7-ae98-40c0753f7aee",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-30"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "2S42T2808B",
+     "dye": "dc-red-30",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 30"
+    }
+   ]
+  },
+  {
+   "slug": "cardizem",
+   "name": "Cardizem",
+   "class": "prescription",
+   "labeler": "Bausch Health US LLC",
+   "setid": "f3e7ecef-f360-4987-a4f5-933214130ab2",
+   "version": 20,
+   "effective": "20250430",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f3e7ecef-f360-4987-a4f5-933214130ab2",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "celebrex",
+   "name": "Celebrex",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "2d6675e4-5859-4be2-8037-a20ce9f707aa",
+   "version": 13,
+   "effective": "20241122",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2d6675e4-5859-4be2-8037-a20ce9f707aa",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "celexa",
+   "name": "Celexa",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "4259d9b1-de34-43a4-85a8-41dd214e9177",
+   "version": 40,
+   "effective": "20231009",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4259d9b1-de34-43a4-85a8-41dd214e9177",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "cepacol-sore-throat-and-cough",
+   "name": "Cepacol Sore Throat and Cough",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "c0cc32db-90f0-4106-8538-89821083ece1",
+   "version": 14,
+   "effective": "20260513",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c0cc32db-90f0-4106-8538-89821083ece1",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "childrens-advil",
+   "name": "Children's Advil",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "3079d932-afb2-94fe-f4ba-a3d8b5198fce",
+   "version": 20,
+   "effective": "20240208",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3079d932-afb2-94fe-f4ba-a3d8b5198fce",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "childrens-benadryl",
+   "name": "Children's Benadryl",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "fc9181b9-c92d-493e-8d7c-4a4239c6c092",
+   "version": 15,
+   "effective": "20260911",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fc9181b9-c92d-493e-8d7c-4a4239c6c092",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-33"
+   ],
+   "codes": [
+    {
+     "unii": "9DBA0SBB0L",
+     "dye": "dc-red-33",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 33"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "childrens-motrin",
+   "name": "Children's Motrin",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "15b0b56d-6188-4937-b541-902022e35b24",
+   "version": 8,
+   "effective": "20251007",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=15b0b56d-6188-4937-b541-902022e35b24",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "childrens-mucinex-multi-symptom-cold",
+   "name": "Children's Mucinex Multi-Symptom Cold",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "60daf6e2-ded8-44e6-bd8d-9d221384adde",
+   "version": 10,
+   "effective": "20261014",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=60daf6e2-ded8-44e6-bd8d-9d221384adde",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "childrens-tylenol",
+   "name": "Children's Tylenol",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "3162733b-9382-39f1-e063-6294a90ac420",
+   "version": 3,
+   "effective": "20260612",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3162733b-9382-39f1-e063-6294a90ac420",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "childrens-zyrtec",
+   "name": "Children's Zyrtec",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "0fe77356-d945-46a0-882e-b3bbab784556",
+   "version": 14,
+   "effective": "20260422",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0fe77356-d945-46a0-882e-b3bbab784556",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "chloraseptic",
+   "name": "Chloraseptic",
+   "class": "otc",
+   "labeler": "Prestige Brands Holdings, Inc.",
+   "setid": "d500f423-b9f2-4d98-8f2a-8bab7c05737c",
+   "version": 4,
+   "effective": "20241025",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d500f423-b9f2-4d98-8f2a-8bab7c05737c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "cialis",
+   "name": "Cialis",
+   "class": "prescription",
+   "labeler": "Eli Lilly and Company",
+   "setid": "bcd8f8ab-81a2-4891-83db-24a0b0e25895",
+   "version": 52,
+   "effective": "20260603",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bcd8f8ab-81a2-4891-83db-24a0b0e25895",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "cipro",
+   "name": "Cipro",
+   "class": "prescription",
+   "labeler": "Bayer HealthCare Pharmaceuticals Inc.",
+   "setid": "888dc7f9-ad9c-4c00-8d50-8ddfd9bd27c0",
+   "version": 32,
+   "effective": "20260302",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=888dc7f9-ad9c-4c00-8d50-8ddfd9bd27c0",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "claritin",
+   "name": "Claritin",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "660ac9df-f1b1-4c89-94dd-9fae0a013f3c",
+   "version": 12,
+   "effective": "20251205",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=660ac9df-f1b1-4c89-94dd-9fae0a013f3c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "claritin-d-24-hour",
+   "name": "Claritin-D 24 Hour",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "f046a807-ab8c-0620-e053-2a95a90a9d3c",
+   "version": 11,
+   "effective": "20251205",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f046a807-ab8c-0620-e053-2a95a90a9d3c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "clear-eyes-cooling-redness-relief",
+   "name": "Clear Eyes Cooling Redness Relief",
+   "class": "otc",
+   "labeler": "Prestige Brands Holdings, Inc.",
+   "setid": "38d14e99-e4c8-431b-b106-578eeb38bf3c",
+   "version": 7,
+   "effective": "20261015",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=38d14e99-e4c8-431b-b106-578eeb38bf3c",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "cleocin-hydrochloride",
+   "name": "Cleocin Hydrochloride",
+   "class": "prescription",
+   "labeler": "Pharmacia & Upjohn Company LLC",
+   "setid": "df9a2a41-b132-4f43-8940-b2d773b1369a",
+   "version": 41,
+   "effective": "20260916",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=df9a2a41-b132-4f43-8940-b2d773b1369a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-5"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "I753WB2F1M",
+     "dye": "yellow-5",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 5"
+    }
+   ]
+  },
+  {
+   "slug": "clomid",
+   "name": "Clomid",
+   "class": "prescription",
+   "labeler": "Cosette Pharmaceuticals, Inc.",
+   "setid": "2ca373c1-4dba-4126-8616-5c533d606fe5",
+   "version": 3,
+   "effective": "20250131",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2ca373c1-4dba-4126-8616-5c533d606fe5",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "clozaril",
+   "name": "Clozaril",
+   "class": "prescription",
+   "labeler": "HLS Therapeutics (USA), Inc.",
+   "setid": "90876802-0e3a-44c9-9ff7-1754dfbe736a",
+   "version": 21,
+   "effective": "20250606",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=90876802-0e3a-44c9-9ff7-1754dfbe736a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "colace",
+   "name": "Colace",
+   "class": "otc",
+   "labeler": "Atlantis Consumer Healthcare, Inc.",
+   "setid": "9fce5c4b-1e2e-47ef-13e5-c3bd5320d41b",
+   "version": 9,
+   "effective": "20260909",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9fce5c4b-1e2e-47ef-13e5-c3bd5320d41b",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "concerta",
+   "name": "Concerta",
+   "class": "prescription",
+   "labeler": "Janssen Pharmaceuticals, Inc.",
+   "setid": "1a88218c-5b18-4220-8f56-526de1a276cd",
+   "version": 30,
+   "effective": "20260420",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a88218c-5b18-4220-8f56-526de1a276cd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "conzip",
+   "name": "Conzip",
+   "class": "prescription",
+   "labeler": "Vertical Pharmaceuticals, LLC",
+   "setid": "a65b4d05-3a1c-4aa1-848a-d20ac9aaf62f",
+   "version": 14,
+   "effective": "20251229",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a65b4d05-3a1c-4aa1-848a-d20ac9aaf62f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-7",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "ECW0LZ41X8",
+     "dye": "dc-red-7",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 7"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "coreg",
+   "name": "Coreg",
+   "class": "prescription",
+   "labeler": "Waylis Therapeutics LLC",
+   "setid": "07c619c6-4a0c-445e-94fa-664a54f68a39",
+   "version": 3,
+   "effective": "20260731",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=07c619c6-4a0c-445e-94fa-664a54f68a39",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "coricidin-hbp-chest-congestion-and-cough",
+   "name": "Coricidin HBP Chest Congestion and Cough",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "40ad8261-d01d-436b-83b4-1b7c987573db",
+   "version": 10,
+   "effective": "20251205",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=40ad8261-d01d-436b-83b4-1b7c987573db",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "cortizone-10-soothing-aloe",
+   "name": "Cortizone-10 Soothing Aloe",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "1a841bf0-9d7b-4566-b442-aa9bcc827846",
+   "version": 3,
+   "effective": "20260114",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a841bf0-9d7b-4566-b442-aa9bcc827846",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "cozaar",
+   "name": "Cozaar",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "9949448f-c3b9-44ee-94ed-c1aca8c90f39",
+   "version": 9,
+   "effective": "20260120",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9949448f-c3b9-44ee-94ed-c1aca8c90f39",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "crestor",
+   "name": "Crestor",
+   "class": "prescription",
+   "labeler": "AstraZeneca Pharmaceuticals LP",
+   "setid": "325a5d0e-9a72-4015-9fcd-1655fb504cee",
+   "version": 19,
+   "effective": "20260923",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=325a5d0e-9a72-4015-9fcd-1655fb504cee",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "dayvigo",
+   "name": "Dayvigo",
+   "class": "prescription",
+   "labeler": "Eisai Inc.",
+   "setid": "7074cb65-77b3-45d2-8e8d-da8dc0f70bfd",
+   "version": 39,
+   "effective": "20250224",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7074cb65-77b3-45d2-8e8d-da8dc0f70bfd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "debrox",
+   "name": "Debrox",
+   "class": "otc",
+   "labeler": "Medtech Products Inc.",
+   "setid": "43649ba3-75e0-4dcf-9172-23767dbaeda6",
+   "version": 3,
+   "effective": "20250127",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=43649ba3-75e0-4dcf-9172-23767dbaeda6",
+   "routes": [
+    "AURICULAR (OTIC)"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "delsym",
+   "name": "Delsym",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "e3e1d126-76c2-4776-8ce0-449625b7e6ba",
+   "version": 15,
+   "effective": "20260909",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e3e1d126-76c2-4776-8ce0-449625b7e6ba",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "demerol",
+   "name": "Demerol",
+   "class": "prescription",
+   "labeler": "Hospira, Inc.",
+   "setid": "b31d1308-28c3-43f4-e0a6-2f3ed76b8975",
+   "version": 38,
+   "effective": "20260720",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b31d1308-28c3-43f4-e0a6-2f3ed76b8975",
+   "routes": [
+    "INTRAMUSCULAR",
+    "INTRAVENOUS",
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "depakote",
+   "name": "Depakote",
+   "class": "prescription",
+   "labeler": "AbbVie Inc.",
+   "setid": "08a65cf4-7749-4ceb-6895-8f4805e2b01f",
+   "version": 1621,
+   "effective": "20260331",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=08a65cf4-7749-4ceb-6895-8f4805e2b01f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-30"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "2S42T2808B",
+     "dye": "dc-red-30",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 30"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "depo-provera",
+   "name": "Depo-Provera",
+   "class": "prescription",
+   "labeler": "Pharmacia & Upjohn Company LLC",
+   "setid": "199cf13e-0859-4a73-9b45-e700d0cd1049",
+   "version": 29,
+   "effective": "20260825",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=199cf13e-0859-4a73-9b45-e700d0cd1049",
+   "routes": [
+    "INTRAMUSCULAR"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "depo-testosterone",
+   "name": "Depo-Testosterone",
+   "class": "prescription",
+   "labeler": "Pharmacia & Upjohn Company LLC",
+   "setid": "cfbb53d4-b868-4a28-8436-f9112eb01c39",
+   "version": 27,
+   "effective": "20261110",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cfbb53d4-b868-4a28-8436-f9112eb01c39",
+   "routes": [
+    "INTRAMUSCULAR"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "dexedrine-spansule",
+   "name": "Dexedrine Spansule",
+   "class": "prescription",
+   "labeler": "Amneal Pharmaceuticals LLC",
+   "setid": "cc717b9b-22ea-4c60-a1d4-ee38a40bce78",
+   "version": 15,
+   "effective": "20250925",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cc717b9b-22ea-4c60-a1d4-ee38a40bce78",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "dexilant",
+   "name": "Dexilant",
+   "class": "prescription",
+   "labeler": "Takeda Pharmaceuticals America, Inc.",
+   "setid": "9819f033-3bbe-442e-8e92-45fec77b237d",
+   "version": 40,
+   "effective": "20250217",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9819f033-3bbe-442e-8e92-45fec77b237d",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 2"
+    }
+   ]
+  },
+  {
+   "slug": "diflucan",
+   "name": "Diflucan",
+   "class": "prescription",
+   "labeler": "Roerig",
+   "setid": "f694c617-3383-416c-91b6-b94fda371204",
+   "version": 57,
+   "effective": "20260402",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f694c617-3383-416c-91b6-b94fda371204",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "dilantin-125",
+   "name": "Dilantin-125",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "f339f9e4-b289-4efe-82b9-46c57d1dc277",
+   "version": 1,
+   "effective": "20230202",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f339f9e4-b289-4efe-82b9-46c57d1dc277",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "diovan",
+   "name": "Diovan",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "5ddba454-f3e6-43c2-a7a6-58365d297213",
+   "version": 32,
+   "effective": "20260811",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5ddba454-f3e6-43c2-a7a6-58365d297213",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "diprivan",
+   "name": "Diprivan",
+   "class": "prescription",
+   "labeler": "Fresenius Kabi USA, LLC",
+   "setid": "e3105799-a4b6-f3f4-e6e2-b2b29bbdb538",
+   "version": 10,
+   "effective": "20250911",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e3105799-a4b6-f3f4-e6e2-b2b29bbdb538",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "dramamine",
+   "name": "Dramamine",
+   "class": "otc",
+   "labeler": "Medtech Products Inc.",
+   "setid": "3a960d43-62aa-464e-92b9-d83042ba02bf",
+   "version": 1,
+   "effective": "20251223",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3a960d43-62aa-464e-92b9-d83042ba02bf",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ecotrin",
+   "name": "Ecotrin",
+   "class": "otc",
+   "labeler": "Medtech Products Inc.",
+   "setid": "222d187b-aae6-410b-baeb-b2bd42f5c676",
+   "version": 5,
+   "effective": "20250116",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=222d187b-aae6-410b-baeb-b2bd42f5c676",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "effexor-xr",
+   "name": "Effexor XR",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "c848a5d8-ba94-4c84-80e3-0bf35fb8e32e",
+   "version": 7,
+   "effective": "20230815",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c848a5d8-ba94-4c84-80e3-0bf35fb8e32e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "egrifta-wr",
+   "name": "Egrifta WR",
+   "class": "prescription",
+   "labeler": "Theratechnologies Inc.",
+   "setid": "839334d3-8c1d-4c26-9036-2ab524a6ea75",
+   "version": 2,
+   "effective": "20260729",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=839334d3-8c1d-4c26-9036-2ab524a6ea75",
+   "routes": [
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "eliquis",
+   "name": "Eliquis",
+   "class": "prescription",
+   "labeler": "E.R. Squibb & Sons, L.L.C.",
+   "setid": "e9481622-7cc6-418a-acb6-c5450daae9b0",
+   "version": 39,
+   "effective": "20260817",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e9481622-7cc6-418a-acb6-c5450daae9b0",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "emetrol-chewables",
+   "name": "Emetrol Chewables",
+   "class": "otc",
+   "labeler": "WellSpring Pharmaceutical Corporation",
+   "setid": "9880a18a-cf84-47cd-99b5-d692065a25bf",
+   "version": 8,
+   "effective": "20260924",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9880a18a-cf84-47cd-99b5-d692065a25bf",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "entresto",
+   "name": "Entresto",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "000dc81d-ab91-450c-8eae-8eb74e72296f",
+   "version": 25,
+   "effective": "20260706",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=000dc81d-ab91-450c-8eae-8eb74e72296f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "epsolay",
+   "name": "Epsolay",
+   "class": "prescription",
+   "labeler": "Mayne Pharma Commercial LLC",
+   "setid": "641981e6-460b-44dd-8146-306c47e5367c",
+   "version": 2,
+   "effective": "20250811",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=641981e6-460b-44dd-8146-306c47e5367c",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ex-lax-chocolated",
+   "name": "Ex-Lax Chocolated",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "59a26a7f-516f-4507-8dec-f40cf6cfaffc",
+   "version": 6,
+   "effective": "20241217",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=59a26a7f-516f-4507-8dec-f40cf6cfaffc",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "excedrin-extra-strength",
+   "name": "Excedrin Extra Strength",
+   "class": "otc",
+   "labeler": "Select Corporation",
+   "setid": "60af6b21-9dc2-461e-a9bd-28d8e75cecb5",
+   "version": 1,
+   "effective": "20220324",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=60af6b21-9dc2-461e-a9bd-28d8e75cecb5",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "excedrin-migraine",
+   "name": "Excedrin Migraine",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "7ed841fb-a61c-4868-b4e5-4f2311a5e79c",
+   "version": 14,
+   "effective": "20250625",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7ed841fb-a61c-4868-b4e5-4f2311a5e79c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "farxiga",
+   "name": "Farxiga",
+   "class": "prescription",
+   "labeler": "AstraZeneca Pharmaceuticals LP",
+   "setid": "72ad22ae-efe6-4cd6-a302-98aaee423d69",
+   "version": 49,
+   "effective": "20260603",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=72ad22ae-efe6-4cd6-a302-98aaee423d69",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "femara",
+   "name": "Femara",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "82b77d74-085f-45ac-a7dd-1f5c038bf406",
+   "version": 32,
+   "effective": "20260611",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=82b77d74-085f-45ac-a7dd-1f5c038bf406",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "finacea",
+   "name": "Finacea",
+   "class": "prescription",
+   "labeler": "Intendis Inc.",
+   "setid": "63773349-0295-4d56-a72e-0d7cade88ddb",
+   "version": 5,
+   "effective": "20110412",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=63773349-0295-4d56-a72e-0d7cade88ddb",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "flagyl",
+   "name": "Flagyl",
+   "class": "prescription",
+   "labeler": "Pfizer Laboratories Div Pfizer Inc",
+   "setid": "a2883ca1-5a9a-4259-9d80-46ab67274384",
+   "version": 25,
+   "effective": "20260522",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a2883ca1-5a9a-4259-9d80-46ab67274384",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "green-3"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "3P3ONR6O1S",
+     "dye": "green-3",
+     "form": "dye",
+     "listed_as": "FD&C GREEN NO. 3"
+    }
+   ]
+  },
+  {
+   "slug": "flonase-allergy-relief",
+   "name": "Flonase Allergy Relief",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "b6134ba0-b70a-4eac-9a82-cef64b242c1d",
+   "version": 21,
+   "effective": "20241219",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b6134ba0-b70a-4eac-9a82-cef64b242c1d",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "focalin",
+   "name": "Focalin",
+   "class": "prescription",
+   "labeler": "Sandoz Inc",
+   "setid": "2016f5c2-95d2-4655-af65-c588c2bf5e6d",
+   "version": 2,
+   "effective": "20240530",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2016f5c2-95d2-4655-af65-c588c2bf5e6d",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "foundayo",
+   "name": "Foundayo",
+   "class": "prescription",
+   "labeler": "Eli Lilly and Company",
+   "setid": "8ac446c5-feba-474f-a103-23facb9b5c62",
+   "version": 10,
+   "effective": "20260729",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8ac446c5-feba-474f-a103-23facb9b5c62",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "gas-x-total-relief",
+   "name": "Gas-X Total Relief",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "edb0f11a-bdb7-484d-9257-09ff47b0fca4",
+   "version": 6,
+   "effective": "20250715",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=edb0f11a-bdb7-484d-9257-09ff47b0fca4",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "red-40",
+    "yellow-5"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "4AQJ3LG584",
+     "dye": "blue-2",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 2 ALUMINUM LAKE"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "6T47AS764T",
+     "dye": "red-40",
+     "form": "lake",
+     "listed_as": "FD&C RED NO. 40 ALUMINUM LAKE"
+    },
+    {
+     "unii": "JQ6BLH9FR7",
+     "dye": "yellow-5",
+     "form": "lake",
+     "listed_as": "FD&C YELLOW NO. 5 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "gaviscon",
+   "name": "Gaviscon",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "2d74e5bc-1f10-4fb6-9258-cd906e360013",
+   "version": 23,
+   "effective": "20260213",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2d74e5bc-1f10-4fb6-9258-cd906e360013",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "gleevec",
+   "name": "Gleevec",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "211ef2da-2868-4a77-8055-1cb2cd78e24b",
+   "version": 41,
+   "effective": "20260713",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=211ef2da-2868-4a77-8055-1cb2cd78e24b",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "gocovri",
+   "name": "Gocovri",
+   "class": "prescription",
+   "labeler": "Supernus Pharmaceuticals, Inc.",
+   "setid": "2bee0631-0028-1314-e063-6394a90aaaed",
+   "version": 8,
+   "effective": "20261005",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2bee0631-0028-1314-e063-6394a90aaaed",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "goodys-extra-strength",
+   "name": "Goody's Extra Strength",
+   "class": "otc",
+   "labeler": "Medtech Products Inc.",
+   "setid": "d4325b17-23bc-44ac-868d-bb0886853a73",
+   "version": 4,
+   "effective": "20251023",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d4325b17-23bc-44ac-868d-bb0886853a73",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "halls-cough-drops-variety-pack",
+   "name": "Halls Cough Drops Variety Pack",
+   "class": "otc",
+   "labeler": "Mondelez Global LLC",
+   "setid": "512a9a2e-6160-80d1-e063-6394a90aeff0",
+   "version": 1,
+   "effective": "20260508",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=512a9a2e-6160-80d1-e063-6394a90aeff0",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "hysingla-er",
+   "name": "Hysingla ER",
+   "class": "prescription",
+   "labeler": "Knoa Pharma LLC",
+   "setid": "b7d23ac2-e776-9f62-3290-c64c2d6eb353",
+   "version": 17,
+   "effective": "20260529",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b7d23ac2-e776-9f62-3290-c64c2d6eb353",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "icy-hot",
+   "name": "Icy Hot",
+   "class": "otc",
+   "labeler": "Lead Chemical Co. Ltd.",
+   "setid": "1830c5ce-60e2-40e7-96cb-c5f7b9357ae5",
+   "version": 6,
+   "effective": "20240102",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1830c5ce-60e2-40e7-96cb-c5f7b9357ae5",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "imitrex",
+   "name": "Imitrex",
+   "class": "prescription",
+   "labeler": "GlaxoSmithKline LLC",
+   "setid": "584abe73-8290-4484-ff8e-5890831c095e",
+   "version": 24,
+   "effective": "20251209",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=584abe73-8290-4484-ff8e-5890831c095e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "imodium-a-d",
+   "name": "Imodium A-D",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "76a976d5-8bee-4158-a94d-7fbfc5544fd4",
+   "version": 10,
+   "effective": "20250923",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=76a976d5-8bee-4158-a94d-7fbfc5544fd4",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "imodium-multi-symptom-relief",
+   "name": "Imodium Multi-Symptom Relief",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "ecb91e47-2b0c-47c8-9256-4623d8bc825e",
+   "version": 25,
+   "effective": "20261029",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ecb91e47-2b0c-47c8-9256-4623d8bc825e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "inderal-la",
+   "name": "Inderal LA",
+   "class": "prescription",
+   "labeler": "ANI Pharmaceuticals, Inc.",
+   "setid": "35d28979-36b1-4630-b85e-a44e0a443734",
+   "version": 11,
+   "effective": "20260824",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=35d28979-36b1-4630-b85e-a44e0a443734",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": true,
+   "d_and_c": [
+    "dc-red-28"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "767IP0Y5NH",
+     "dye": "dc-red-28",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 28"
+    },
+    {
+     "unii": "PN2ZH5LOQY",
+     "dye": "red-3",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 3"
+    }
+   ]
+  },
+  {
+   "slug": "indocin",
+   "name": "Indocin",
+   "class": "prescription",
+   "labeler": "Zyla Life Sciences US Inc.",
+   "setid": "3b36645c-de5e-4263-ae06-2f6ff6a9add2",
+   "version": 6,
+   "effective": "20251217",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3b36645c-de5e-4263-ae06-2f6ff6a9add2",
+   "routes": [
+    "RECTAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "infumorph",
+   "name": "Infumorph",
+   "class": "prescription",
+   "labeler": "Hikma Pharmaceuticals USA Inc.",
+   "setid": "db9ac9e3-d761-4a99-9f34-4946ebe8f255",
+   "version": 12,
+   "effective": "20251231",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=db9ac9e3-d761-4a99-9f34-4946ebe8f255",
+   "routes": [
+    "EPIDURAL",
+    "INTRATHECAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "intuniv",
+   "name": "Intuniv",
+   "class": "prescription",
+   "labeler": "Takeda Pharmaceuticals America, Inc.",
+   "setid": "b972af81-3a37-40be-9fe1-3ddf59852528",
+   "version": 44,
+   "effective": "20250623",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b972af81-3a37-40be-9fe1-3ddf59852528",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "jantoven",
+   "name": "Jantoven",
+   "class": "prescription",
+   "labeler": "Upsher-Smith Laboratories, LLC",
+   "setid": "19a69a72-ac5d-45d5-a94d-a5aaecbe4730",
+   "version": 14,
+   "effective": "20261028",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=19a69a72-ac5d-45d5-a94d-a5aaecbe4730",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "januvia",
+   "name": "Januvia",
+   "class": "prescription",
+   "labeler": "Merck Sharp & Dohme LLC",
+   "setid": "f85a48d0-0407-4c50-b0fa-7673a160bf01",
+   "version": 71,
+   "effective": "20241114",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f85a48d0-0407-4c50-b0fa-7673a160bf01",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "journavx",
+   "name": "Journavx",
+   "class": "prescription",
+   "labeler": "Vertex Pharmaceuticals Incorporated",
+   "setid": "f0976da4-1d20-4517-945c-b60ed2f41c12",
+   "version": 10,
+   "effective": "20261002",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f0976da4-1d20-4517-945c-b60ed2f41c12",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "kaopectate",
+   "name": "Kaopectate",
+   "class": "otc",
+   "labeler": "Kramer Laboratories",
+   "setid": "3877a88d-9546-48ce-ad6b-3c2a115e3eaf",
+   "version": 9,
+   "effective": "20260603",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3877a88d-9546-48ce-ad6b-3c2a115e3eaf",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "kenalog-10",
+   "name": "Kenalog-10",
+   "class": "prescription",
+   "labeler": "E.R. Squibb & Sons, L.L.C.",
+   "setid": "ec04ecbb-2896-3feb-85fd-a64aba93b289",
+   "version": 24,
+   "effective": "20240826",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ec04ecbb-2896-3feb-85fd-a64aba93b289",
+   "routes": [
+    "INTRA-ARTICULAR",
+    "INTRALESIONAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "keppra",
+   "name": "Keppra",
+   "class": "prescription",
+   "labeler": "UCB, Inc.",
+   "setid": "3ca9df05-a506-4ec8-a4fe-320f1219ab21",
+   "version": 36,
+   "effective": "20260128",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3ca9df05-a506-4ec8-a4fe-320f1219ab21",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "keytruda",
+   "name": "Keytruda",
+   "class": "prescription",
+   "labeler": "Merck Sharp & Dohme LLC",
+   "setid": "9333c79b-d487-4538-a9f0-71b91a02b287",
+   "version": 229,
+   "effective": "20261016",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9333c79b-d487-4538-a9f0-71b91a02b287",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "klonopin",
+   "name": "Klonopin",
+   "class": "prescription",
+   "labeler": "H2-Pharma, LLC",
+   "setid": "cfa0d79a-843c-4b88-95a1-e9511d649ca1",
+   "version": 6,
+   "effective": "20251201",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cfa0d79a-843c-4b88-95a1-e9511d649ca1",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "lamictal",
+   "name": "Lamictal",
+   "class": "prescription",
+   "labeler": "GlaxoSmithKline LLC",
+   "setid": "d7e3572d-56fe-4727-2bb4-013ccca22678",
+   "version": 45,
+   "effective": "20251010",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d7e3572d-56fe-4727-2bb4-013ccca22678",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "lamisil-at",
+   "name": "Lamisil AT",
+   "class": "otc",
+   "labeler": "Karo Healthcare Inc.",
+   "setid": "21f1bf77-4338-4b75-b513-80a0d98a722a",
+   "version": 1,
+   "effective": "20251212",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=21f1bf77-4338-4b75-b513-80a0d98a722a",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lanoxin",
+   "name": "Lanoxin",
+   "class": "prescription",
+   "labeler": "Covis Pharma US, Inc",
+   "setid": "9ec84cac-6ecc-43dc-8006-6ccc029e2707",
+   "version": 10,
+   "effective": "20251017",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9ec84cac-6ecc-43dc-8006-6ccc029e2707",
+   "routes": [
+    "INTRAMUSCULAR",
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lasix",
+   "name": "Lasix",
+   "class": "prescription",
+   "labeler": "Validus Pharmaceuticals LLC",
+   "setid": "2c9b4d8f-0770-482d-a9e6-9c616a440b1a",
+   "version": 7,
+   "effective": "20250930",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2c9b4d8f-0770-482d-a9e6-9c616a440b1a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "latuda",
+   "name": "Latuda",
+   "class": "prescription",
+   "labeler": "Sumitomo Pharma America, Inc.",
+   "setid": "afad3051-9df2-4c54-9684-e8262a133af8",
+   "version": 37,
+   "effective": "20250131",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=afad3051-9df2-4c54-9684-e8262a133af8",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C blue No. 2"
+    }
+   ]
+  },
+  {
+   "slug": "lexapro",
+   "name": "Lexapro",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "13bb8267-1cab-43e5-acae-55a4d957630a",
+   "version": 45,
+   "effective": "20231001",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=13bb8267-1cab-43e5-acae-55a4d957630a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lioresal",
+   "name": "Lioresal",
+   "class": "prescription",
+   "labeler": "Amneal Pharmaceuticals LLC",
+   "setid": "6f3bdcc0-ffc8-4911-8c35-958c8103a2c5",
+   "version": 29,
+   "effective": "20221209",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6f3bdcc0-ffc8-4911-8c35-958c8103a2c5",
+   "routes": [
+    "INTRATHECAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lipitor",
+   "name": "Lipitor",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "a60cc18b-0631-4cf0-b021-9f52224ece65",
+   "version": 8,
+   "effective": "20240415",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a60cc18b-0631-4cf0-b021-9f52224ece65",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lithobid",
+   "name": "Lithobid",
+   "class": "prescription",
+   "labeler": "ANI Pharmaceuticals, Inc.",
+   "setid": "f7f5b69a-c2a1-4586-a189-1475d41387c0",
+   "version": 13,
+   "effective": "20260824",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f7f5b69a-c2a1-4586-a189-1475d41387c0",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 2"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C Red No. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C Yellow No. 6"
+    }
+   ]
+  },
+  {
+   "slug": "little-remedies-infant-fever-and-pain-reliever",
+   "name": "Little Remedies Infant Fever and Pain Reliever",
+   "class": "otc",
+   "labeler": "Medtech Products Inc.",
+   "setid": "af5c3b3b-079f-4ee6-a9a4-a13ee8cd99a5",
+   "version": 5,
+   "effective": "20260511",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=af5c3b3b-079f-4ee6-a9a4-a13ee8cd99a5",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lopressor",
+   "name": "Lopressor",
+   "class": "prescription",
+   "labeler": "VALIDUS PHARMACEUTICALS LLC",
+   "setid": "b5f4fed2-369c-4808-a682-8a5b8cfdbb4f",
+   "version": 3,
+   "effective": "20260126",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b5f4fed2-369c-4808-a682-8a5b8cfdbb4f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-30"
+   ],
+   "codes": [
+    {
+     "unii": "2S42T2808B",
+     "dye": "dc-red-30",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 30"
+    }
+   ]
+  },
+  {
+   "slug": "lotrimin-af",
+   "name": "Lotrimin AF",
+   "class": "otc",
+   "labeler": "Bayer Healthcare LLC.",
+   "setid": "163996c6-af54-21ac-e063-6394a90ac05c",
+   "version": 2,
+   "effective": "20251204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=163996c6-af54-21ac-e063-6394a90ac05c",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ludens-throat-drops",
+   "name": "Luden's Throat Drops",
+   "class": "otc",
+   "labeler": "Prestige Brands Holdings, Inc.",
+   "setid": "adfb248a-96bb-4742-9df6-c47edccdd671",
+   "version": 16,
+   "effective": "20260820",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=adfb248a-96bb-4742-9df6-c47edccdd671",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "I753WB2F1M",
+     "dye": "yellow-5",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 5"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "lumigan",
+   "name": "Lumigan",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "a5e67c75-db88-4372-bb07-c8dd15c97631",
+   "version": 19,
+   "effective": "20240622",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a5e67c75-db88-4372-bb07-c8dd15c97631",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "lunesta",
+   "name": "Lunesta",
+   "class": "prescription",
+   "labeler": "Waylis Therapeutics LLC",
+   "setid": "3821f4b7-a3c8-4920-ba80-18aa96532c09",
+   "version": 2,
+   "effective": "20250108",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3821f4b7-a3c8-4920-ba80-18aa96532c09",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "lyrica",
+   "name": "Lyrica",
+   "class": "prescription",
+   "labeler": "Parke-Davis Div of Pfizer Inc",
+   "setid": "60185c88-ecfd-46f9-adb9-b97c6b00a553",
+   "version": 59,
+   "effective": "20200615",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=60185c88-ecfd-46f9-adb9-b97c6b00a553",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "maxalt",
+   "name": "Maxalt",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "007b4644-e0e7-4863-9ae3-fe09676b3f5f",
+   "version": 4,
+   "effective": "20260129",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=007b4644-e0e7-4863-9ae3-fe09676b3f5f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "maxidex",
+   "name": "Maxidex",
+   "class": "prescription",
+   "labeler": "Harrow Eye, LLC",
+   "setid": "35e47fcd-e020-43e5-8322-41f8060d220d",
+   "version": 2,
+   "effective": "20250505",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=35e47fcd-e020-43e5-8322-41f8060d220d",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "medrol",
+   "name": "Medrol",
+   "class": "prescription",
+   "labeler": "Pharmacia & Upjohn Company LLC",
+   "setid": "39d5270b-d957-4821-93d6-501b7b9f02d4",
+   "version": 25,
+   "effective": "20251114",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=39d5270b-d957-4821-93d6-501b7b9f02d4",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "midol-complete",
+   "name": "Midol Complete",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "ce9e6acb-a38b-4c9b-a7e8-3e1c2a49a324",
+   "version": 7,
+   "effective": "20250410",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ce9e6acb-a38b-4c9b-a7e8-3e1c2a49a324",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "mifeprex",
+   "name": "Mifeprex",
+   "class": "prescription",
+   "labeler": "Danco Laboratories, LLC",
+   "setid": "61626f72-7469-6f6e-4953-6d7572646572",
+   "version": 3,
+   "effective": "20260107",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=61626f72-7469-6f6e-4953-6d7572646572",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "monistat-1-combination-pack",
+   "name": "Monistat 1 Combination Pack",
+   "class": "otc",
+   "labeler": "Insight Pharmaceuticals LLC",
+   "setid": "97ff1c90-c250-4921-81af-6a56cc9cc7d2",
+   "version": 7,
+   "effective": "20260420",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=97ff1c90-c250-4921-81af-6a56cc9cc7d2",
+   "routes": [
+    "VAGINAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "monistat-7",
+   "name": "Monistat 7",
+   "class": "otc",
+   "labeler": "Insight Pharmaceuticals LLC",
+   "setid": "2aad40f2-4eea-441d-8b34-5613f1955405",
+   "version": 5,
+   "effective": "20251027",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2aad40f2-4eea-441d-8b34-5613f1955405",
+   "routes": [
+    "VAGINAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "monodox",
+   "name": "Monodox",
+   "class": "prescription",
+   "labeler": "Aqua Pharmaceuticals, LLC",
+   "setid": "a65325a7-ae0a-4704-99c4-a3a2e4e1dcf2",
+   "version": 18,
+   "effective": "20170426",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a65325a7-ae0a-4704-99c4-a3a2e4e1dcf2",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "motrin-ib",
+   "name": "Motrin IB",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "d9fc716a-fba5-45f8-8024-52325799d1dd",
+   "version": 13,
+   "effective": "20251222",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d9fc716a-fba5-45f8-8024-52325799d1dd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "mounjaro",
+   "name": "Mounjaro",
+   "class": "prescription",
+   "labeler": "Eli Lilly and Company",
+   "setid": "d2d7da5d-ad07-4228-955f-cf7e355c8cc0",
+   "version": 40,
+   "effective": "20260827",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d2d7da5d-ad07-4228-955f-cf7e355c8cc0",
+   "routes": [
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "mucinex",
+   "name": "Mucinex",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "dd379cdd-90ab-42e0-ad89-f50d3220f611",
+   "version": 20,
+   "effective": "20260527",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=dd379cdd-90ab-42e0-ad89-f50d3220f611",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "mucinex-d",
+   "name": "Mucinex D",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "d5f046c0-66b9-4cdc-9a1e-8e2cb5ece84f",
+   "version": 11,
+   "effective": "20260527",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d5f046c0-66b9-4cdc-9a1e-8e2cb5ece84f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "mucinex-dm",
+   "name": "Mucinex DM",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "70987d06-d206-445f-bd0d-5e1345b8465c",
+   "version": 19,
+   "effective": "20260615",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=70987d06-d206-445f-bd0d-5e1345b8465c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "mucinex-fast-max-cold-and-flu",
+   "name": "Mucinex Fast-Max Cold and Flu",
+   "class": "otc",
+   "labeler": "Reckitt Benckiser LLC",
+   "setid": "31ac6883-ffcd-39de-e063-6294a90a52dd",
+   "version": 3,
+   "effective": "20261019",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=31ac6883-ffcd-39de-e063-6294a90a52dd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "6T47AS764T",
+     "dye": "red-40",
+     "form": "lake",
+     "listed_as": "FD&C RED NO. 40 ALUMINUM LAKE"
+    },
+    {
+     "unii": "GYP6Z2JR6Q",
+     "dye": "yellow-6",
+     "form": "lake",
+     "listed_as": "FD&C YELLOW NO. 6 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "mylanta-spiced-apple-cider",
+   "name": "Mylanta Spiced Apple Cider",
+   "class": "otc",
+   "labeler": "Infirst Healthcare Inc.",
+   "setid": "5a6040ff-1779-3215-e063-6294a90aaab1",
+   "version": 1,
+   "effective": "20260815",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5a6040ff-1779-3215-e063-6294a90aaab1",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "myrbetriq",
+   "name": "Myrbetriq",
+   "class": "prescription",
+   "labeler": "Astellas Pharma US, Inc.",
+   "setid": "ba9e9e15-e666-4c56-9271-2e24739cfa2d",
+   "version": 17,
+   "effective": "20240801",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ba9e9e15-e666-4c56-9271-2e24739cfa2d",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "narcan",
+   "name": "Narcan",
+   "class": "otc",
+   "labeler": "Emergent Devices Inc.",
+   "setid": "a0ebc83d-2892-40de-bc0a-775ce90b30db",
+   "version": 4,
+   "effective": "20260817",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a0ebc83d-2892-40de-bc0a-775ce90b30db",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "nasacort-allergy-24hr",
+   "name": "Nasacort Allergy 24HR",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "4bff57a5-cce0-401c-a0fe-23c65c1b7ddc",
+   "version": 38,
+   "effective": "20260114",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4bff57a5-cce0-401c-a0fe-23c65c1b7ddc",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "nayzilam",
+   "name": "Nayzilam",
+   "class": "prescription",
+   "labeler": "UCB, Inc.",
+   "setid": "2b29422e-54d5-4a49-8522-e9cf752368c3",
+   "version": 5,
+   "effective": "20261016",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2b29422e-54d5-4a49-8522-e9cf752368c3",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "neurontin",
+   "name": "Neurontin",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "97935fd9-1d4a-43b6-a5d9-de994591187b",
+   "version": 48,
+   "effective": "20260512",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=97935fd9-1d4a-43b6-a5d9-de994591187b",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "nexium",
+   "name": "Nexium",
+   "class": "prescription",
+   "labeler": "AstraZeneca Pharmaceuticals LP",
+   "setid": "f4853677-1622-4037-688b-fdf533a11d96",
+   "version": 74,
+   "effective": "20251219",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f4853677-1622-4037-688b-fdf533a11d96",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-28",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "767IP0Y5NH",
+     "dye": "dc-red-28",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 28"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "nexium-24hr",
+   "name": "Nexium 24HR",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "61f67858-ba2f-449b-8b30-c15cdaf49222",
+   "version": 12,
+   "effective": "20250109",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=61f67858-ba2f-449b-8b30-c15cdaf49222",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-27"
+   ],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "2LRS185U6K",
+     "dye": "dc-red-27",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 27"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "nicorette",
+   "name": "Nicorette",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "f350e050-2173-43e0-8738-848382ce0700",
+   "version": 8,
+   "effective": "20250604",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f350e050-2173-43e0-8738-848382ce0700",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "norvasc",
+   "name": "Norvasc",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "7367289c-b0b0-466a-83e2-558e2985c29f",
+   "version": 10,
+   "effective": "20230215",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7367289c-b0b0-466a-83e2-558e2985c29f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "norvir",
+   "name": "Norvir",
+   "class": "prescription",
+   "labeler": "AbbVie Inc.",
+   "setid": "2849298e-de6e-47bb-8194-56e075b33fc3",
+   "version": 1653,
+   "effective": "20260723",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2849298e-de6e-47bb-8194-56e075b33fc3",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "nucynta",
+   "name": "Nucynta",
+   "class": "prescription",
+   "labeler": "Collegium Pharmaceutical, Inc.",
+   "setid": "80938c30-9fe3-4c7d-9d9c-5476638cfb2d",
+   "version": 7,
+   "effective": "20251230",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=80938c30-9fe3-4c7d-9d9c-5476638cfb2d",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "nuvigil",
+   "name": "Nuvigil",
+   "class": "prescription",
+   "labeler": "Apotex Corp.",
+   "setid": "a69631d0-1263-769e-b232-4ab9160e0fa3",
+   "version": 3,
+   "effective": "20260914",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a69631d0-1263-769e-b232-4ab9160e0fa3",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "orajel-4x-toothache-and-gum",
+   "name": "Orajel 4X Toothache and Gum",
+   "class": "otc",
+   "labeler": "Church & Dwight Co., Inc.",
+   "setid": "5a1b4133-0eac-2f8f-e063-6394a90af8f6",
+   "version": 2,
+   "effective": "20260828",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5a1b4133-0eac-2f8f-e063-6394a90af8f6",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ozempic",
+   "name": "Ozempic",
+   "class": "prescription",
+   "labeler": "Novo Nordisk Pharmaceutical Industries, LP",
+   "setid": "adec4fd2-6858-4c99-91d4-531f5f2a2d79",
+   "version": 20,
+   "effective": "20260601",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=adec4fd2-6858-4c99-91d4-531f5f2a2d79",
+   "routes": [
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "pamelor",
+   "name": "Pamelor",
+   "class": "prescription",
+   "labeler": "SpecGx LLC",
+   "setid": "e17dc299-f52d-414d-ab6e-e809bd6f8acb",
+   "version": 24,
+   "effective": "20241204",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e17dc299-f52d-414d-ab6e-e809bd6f8acb",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "paxil",
+   "name": "Paxil",
+   "class": "prescription",
+   "labeler": "Apotex Corp",
+   "setid": "ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e",
+   "version": 13,
+   "effective": "20260929",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-30",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "2S42T2808B",
+     "dye": "dc-red-30",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 30"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "paxlovid",
+   "name": "Paxlovid",
+   "class": "prescription",
+   "labeler": "Pfizer Laboratories Div Pfizer Inc",
+   "setid": "8a99d6d6-fd9e-45bb-b1bf-48c7f761232a",
+   "version": 12,
+   "effective": "20260219",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a99d6d6-fd9e-45bb-b1bf-48c7f761232a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "pepcid-complete",
+   "name": "Pepcid Complete",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "a2ef8424-7d80-42b0-a01e-f378f629b2b6",
+   "version": 20,
+   "effective": "20260724",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a2ef8424-7d80-42b0-a01e-f378f629b2b6",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "J9EQA3S2JM",
+     "dye": "blue-1",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 1 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "pepto-bismol",
+   "name": "Pepto-Bismol",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "67006e82-870d-8d63-e053-2991aa0a02d1",
+   "version": 19,
+   "effective": "20261006",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=67006e82-870d-8d63-e053-2991aa0a02d1",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-22",
+    "dc-red-28"
+   ],
+   "codes": [
+    {
+     "unii": "1678RKX8RT",
+     "dye": "dc-red-22",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 22"
+    },
+    {
+     "unii": "767IP0Y5NH",
+     "dye": "dc-red-28",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 28"
+    }
+   ]
+  },
+  {
+   "slug": "percocet",
+   "name": "Percocet",
+   "class": "prescription",
+   "labeler": "SpecGx LLC",
+   "setid": "4dd36cf5-8f73-404a-8b1d-3bd53bd90c25",
+   "version": 66,
+   "effective": "20261002",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4dd36cf5-8f73-404a-8b1d-3bd53bd90c25",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "phenergan",
+   "name": "Phenergan",
+   "class": "prescription",
+   "labeler": "Hikma Pharmaceuticals USA Inc.",
+   "setid": "6f7e47cc-f823-4336-8107-f980e3049617",
+   "version": 8,
+   "effective": "20250630",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6f7e47cc-f823-4336-8107-f980e3049617",
+   "routes": [
+    "INTRAMUSCULAR",
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "phillips-milk-of-magnesia-wild-cherry",
+   "name": "Phillips' Milk of Magnesia Wild Cherry",
+   "class": "otc",
+   "labeler": "Bayer HealthCare LLC.",
+   "setid": "0a6d824a-3d9a-07f9-e054-00144ff8d46c",
+   "version": 10,
+   "effective": "20250401",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0a6d824a-3d9a-07f9-e054-00144ff8d46c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-28"
+   ],
+   "codes": [
+    {
+     "unii": "767IP0Y5NH",
+     "dye": "dc-red-28",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 28"
+    }
+   ]
+  },
+  {
+   "slug": "plan-b-one-step",
+   "name": "Plan B One-Step",
+   "class": "otc",
+   "labeler": "Foundation Consumer Healthcare LLC",
+   "setid": "6ce6b40e-14ac-47bd-a648-ddf9e452e559",
+   "version": 5,
+   "effective": "20230131",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6ce6b40e-14ac-47bd-a648-ddf9e452e559",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "plaquenil",
+   "name": "Plaquenil",
+   "class": "prescription",
+   "labeler": "Advanz Pharma (US) Corp.",
+   "setid": "34496b43-05a2-45fb-a769-52b12e099341",
+   "version": 15,
+   "effective": "20260409",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=34496b43-05a2-45fb-a769-52b12e099341",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "plavix",
+   "name": "Plavix",
+   "class": "prescription",
+   "labeler": "Sanofi-Aventis U.S. LLC",
+   "setid": "de8b0b67-eb25-4684-83b5-7ad785314227",
+   "version": 5,
+   "effective": "20250530",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=de8b0b67-eb25-4684-83b5-7ad785314227",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "precedex",
+   "name": "Precedex",
+   "class": "prescription",
+   "labeler": "Hospira, Inc.",
+   "setid": "92b7ddaa-e45a-4b64-a802-bb5df8771dd6",
+   "version": 6,
+   "effective": "20260617",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=92b7ddaa-e45a-4b64-a802-bb5df8771dd6",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "pred-mild",
+   "name": "Pred Mild",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "4fcce64a-94ea-4031-ad5a-c4eddc73a910",
+   "version": 16,
+   "effective": "20251125",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4fcce64a-94ea-4031-ad5a-c4eddc73a910",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "prevacid",
+   "name": "Prevacid",
+   "class": "prescription",
+   "labeler": "Takeda Pharmaceuticals America, Inc.",
+   "setid": "71ba78cb-7e46-43eb-9425-fa130f537f84",
+   "version": 45,
+   "effective": "20250708",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=71ba78cb-7e46-43eb-9425-fa130f537f84",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-28"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 1"
+    },
+    {
+     "unii": "767IP0Y5NH",
+     "dye": "dc-red-28",
+     "form": "dye",
+     "listed_as": "D&C Red No. 28"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C Red No. 40"
+    }
+   ]
+  },
+  {
+   "slug": "prilosec-otc",
+   "name": "Prilosec OTC",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "35a79458-79f6-44d6-b74c-b4f4aaf0dde0",
+   "version": 18,
+   "effective": "20261005",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=35a79458-79f6-44d6-b74c-b4f4aaf0dde0",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "4AQJ3LG584",
+     "dye": "blue-2",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 2--ALUMINUM LAKE"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "pristiq",
+   "name": "Pristiq",
+   "class": "prescription",
+   "labeler": "Wyeth Pharmaceuticals LLC, a subsidiary of Pfizer Inc.",
+   "setid": "0f43610c-f290-46ea-d186-4f998ed99fce",
+   "version": 67,
+   "effective": "20260428",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0f43610c-f290-46ea-d186-4f998ed99fce",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "procardia-xl",
+   "name": "Procardia XL",
+   "class": "prescription",
+   "labeler": "Pfizer Laboratories Div Pfizer Inc",
+   "setid": "8ebcb33c-f43b-4b36-9f94-9774b2a59e06",
+   "version": 20,
+   "effective": "20260921",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8ebcb33c-f43b-4b36-9f94-9774b2a59e06",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "prograf",
+   "name": "Prograf",
+   "class": "prescription",
+   "labeler": "Astellas Pharma US, Inc.",
+   "setid": "7f667de1-9dfa-4bd6-8ba0-15ee2d78873b",
+   "version": 30,
+   "effective": "20230825",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7f667de1-9dfa-4bd6-8ba0-15ee2d78873b",
+   "routes": [
+    "INTRAVENOUS",
+    "ORAL"
+   ],
+   "taken": "oral+other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "proscar",
+   "name": "Proscar",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "6f988153-fc74-4ca4-b29a-111f750c4a4b",
+   "version": 9,
+   "effective": "20260318",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6f988153-fc74-4ca4-b29a-111f750c4a4b",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "provigil",
+   "name": "Provigil",
+   "class": "prescription",
+   "labeler": "Apotex Corp",
+   "setid": "0391f182-1958-9fef-a944-53b229ce99e7",
+   "version": 5,
+   "effective": "20260916",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0391f182-1958-9fef-a944-53b229ce99e7",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "prozac",
+   "name": "Prozac",
+   "class": "prescription",
+   "labeler": "Dista Products Company",
+   "setid": "c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+   "version": 59,
+   "effective": "20260108",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 1"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C Yellow No. 6"
+    }
+   ]
+  },
+  {
+   "slug": "pyridium",
+   "name": "Pyridium",
+   "class": "prescription",
+   "labeler": "Amneal Pharmaceuticals LLC",
+   "setid": "165d01d4-a9f7-2293-e054-00144ff8d46c",
+   "version": 15,
+   "effective": "20231216",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=165d01d4-a9f7-2293-e054-00144ff8d46c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "qelbree",
+   "name": "Qelbree",
+   "class": "prescription",
+   "labeler": "Supernus Pharmaceuticals, Inc",
+   "setid": "aedf408d-0f84-418d-9416-7c39ddb0d29a",
+   "version": 16,
+   "effective": "20261005",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=aedf408d-0f84-418d-9416-7c39ddb0d29a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-28",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "767IP0Y5NH",
+     "dye": "dc-red-28",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 28"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "I753WB2F1M",
+     "dye": "yellow-5",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 5"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "quviviq",
+   "name": "Quviviq",
+   "class": "prescription",
+   "labeler": "Idorsia Pharmaceuticals Ltd",
+   "setid": "3a2d1503-b816-40c9-9fac-7e03c5a3bcef",
+   "version": 13,
+   "effective": "20260226",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3a2d1503-b816-40c9-9fac-7e03c5a3bcef",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "raldesy",
+   "name": "Raldesy",
+   "class": "prescription",
+   "labeler": "Validus Pharmaceuticals LLC",
+   "setid": "34708cc1-b0b2-4fd0-b9f3-7f008b457fc9",
+   "version": 6,
+   "effective": "20260901",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=34708cc1-b0b2-4fd0-b9f3-7f008b457fc9",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "reglan",
+   "name": "Reglan",
+   "class": "prescription",
+   "labeler": "ANI Pharmaceuticals, Inc.",
+   "setid": "de55c133-eb08-4a35-91a2-5dc093027397",
+   "version": 8,
+   "effective": "20260209",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=de55c133-eb08-4a35-91a2-5dc093027397",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "remeron",
+   "name": "Remeron",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "98ad1917-a094-44f5-a28f-a64a8cfcd887",
+   "version": 8,
+   "effective": "20250806",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=98ad1917-a094-44f5-a28f-a64a8cfcd887",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "restasis",
+   "name": "Restasis",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "8e24af2b-bc1c-4849-94f2-6df950cdca89",
+   "version": 19,
+   "effective": "20240909",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8e24af2b-bc1c-4849-94f2-6df950cdca89",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "restoril",
+   "name": "Restoril",
+   "class": "prescription",
+   "labeler": "SpecGx LLC",
+   "setid": "bc56f7fd-1aaf-48ff-8aa7-d467e59e1015",
+   "version": 25,
+   "effective": "20260609",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc56f7fd-1aaf-48ff-8aa7-d467e59e1015",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": true,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "PN2ZH5LOQY",
+     "dye": "red-3",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 3"
+    }
+   ]
+  },
+  {
+   "slug": "retin-a",
+   "name": "Retin-A",
+   "class": "prescription",
+   "labeler": "Bausch Health US, LLC",
+   "setid": "9556d73d-c573-4e0a-9feb-764ce2d1107b",
+   "version": 15,
+   "effective": "20240517",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9556d73d-c573-4e0a-9feb-764ce2d1107b",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "retrovir",
+   "name": "Retrovir",
+   "class": "prescription",
+   "labeler": "ViiV Healthcare Company",
+   "setid": "6df09f15-b102-431c-adde-d7aeef6f5d84",
+   "version": 33,
+   "effective": "20241113",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6df09f15-b102-431c-adde-d7aeef6f5d84",
+   "routes": [
+    "INTRAVENOUS",
+    "ORAL"
+   ],
+   "taken": "oral+other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "rexulti",
+   "name": "Rexulti",
+   "class": "prescription",
+   "labeler": "Otsuka America Pharmaceutical, Inc.",
+   "setid": "2d301358-6291-4ec1-bd87-37b4ad9bd850",
+   "version": 26,
+   "effective": "20260506",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2d301358-6291-4ec1-bd87-37b4ad9bd850",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "ricola-max-honey-lemon",
+   "name": "Ricola Max Honey Lemon",
+   "class": "otc",
+   "labeler": "Ricola Ag",
+   "setid": "27c0d805-ae15-46c7-965f-e6b3eeb3e013",
+   "version": 4,
+   "effective": "20260916",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=27c0d805-ae15-46c7-965f-e6b3eeb3e013",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "risperdal",
+   "name": "Risperdal",
+   "class": "prescription",
+   "labeler": "Janssen Pharmaceuticals, Inc.",
+   "setid": "7e117c7e-02fc-4343-92a1-230061dfc5e0",
+   "version": 46,
+   "effective": "20261023",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7e117c7e-02fc-4343-92a1-230061dfc5e0",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "ritalin",
+   "name": "Ritalin",
+   "class": "prescription",
+   "labeler": "Sandoz Inc",
+   "setid": "d6fb2750-cdab-4749-ba0d-7534840a5892",
+   "version": 3,
+   "effective": "20250205",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d6fb2750-cdab-4749-ba0d-7534840a5892",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "green-3"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "3P3ONR6O1S",
+     "dye": "green-3",
+     "form": "dye",
+     "listed_as": "FD&C GREEN NO. 3"
+    }
+   ]
+  },
+  {
+   "slug": "robaxin",
+   "name": "Robaxin",
+   "class": "prescription",
+   "labeler": "Hikma Pharmaceuticals USA Inc.",
+   "setid": "090a3d3d-92c3-4c30-a648-436461f81702",
+   "version": 8,
+   "effective": "20240410",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=090a3d3d-92c3-4c30-a648-436461f81702",
+   "routes": [
+    "INTRAMUSCULAR",
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "robitussin-long-acting-coughgels",
+   "name": "Robitussin Long-Acting CoughGels",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "472c5c1f-eb5a-444b-a17e-f0d71007fb15",
+   "version": 5,
+   "effective": "20260729",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=472c5c1f-eb5a-444b-a17e-f0d71007fb15",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "rolaids-advanced-soft-chews",
+   "name": "Rolaids Advanced Soft Chews",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "9789c3f7-bdb5-453e-812f-951682a2f5c2",
+   "version": 8,
+   "effective": "20261002",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9789c3f7-bdb5-453e-812f-951682a2f5c2",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "roxicodone",
+   "name": "Roxicodone",
+   "class": "prescription",
+   "labeler": "SpecGx LLC",
+   "setid": "5a8157d3-ba20-4abf-b0d4-6ad141b31d63",
+   "version": 30,
+   "effective": "20260424",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5a8157d3-ba20-4abf-b0d4-6ad141b31d63",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "salonpas",
+   "name": "Salonpas",
+   "class": "otc",
+   "labeler": "Hisamitsu America, Inc.",
+   "setid": "f439445d-046e-4220-a4a7-13d750ee0949",
+   "version": 5,
+   "effective": "20241114",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f439445d-046e-4220-a4a7-13d750ee0949",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "sandimmune",
+   "name": "Sandimmune",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "5e5926a7-1de0-4b54-a5c0-286b6200ff82",
+   "version": 37,
+   "effective": "20260710",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5e5926a7-1de0-4b54-a5c0-286b6200ff82",
+   "routes": [
+    "INTRAVENOUS",
+    "ORAL"
+   ],
+   "taken": "oral+other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "seroquel",
+   "name": "Seroquel",
+   "class": "prescription",
+   "labeler": "H2-Pharma, LLC",
+   "setid": "8ae62aaf-f8c5-417f-baac-0098369ca322",
+   "version": 53,
+   "effective": "20260410",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8ae62aaf-f8c5-417f-baac-0098369ca322",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "singulair",
+   "name": "Singulair",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "482dcc92-b47f-4ea6-854a-f5ac2aea7842",
+   "version": 5,
+   "effective": "20250430",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=482dcc92-b47f-4ea6-854a-f5ac2aea7842",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "solarcaine-burn-relief",
+   "name": "Solarcaine Burn Relief",
+   "class": "otc",
+   "labeler": "WellSpring Pharmaceutical Corporation",
+   "setid": "14f23c28-c713-4868-9f46-66363bf94b2c",
+   "version": 4,
+   "effective": "20251203",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=14f23c28-c713-4868-9f46-66363bf94b2c",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "soltamox",
+   "name": "Soltamox",
+   "class": "prescription",
+   "labeler": "Mayne Pharma",
+   "setid": "1e6ff055-590c-41e6-9530-1fdf04cdbd02",
+   "version": 2,
+   "effective": "20211129",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1e6ff055-590c-41e6-9530-1fdf04cdbd02",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "sominex",
+   "name": "Sominex",
+   "class": "otc",
+   "labeler": "Medtech Products Inc.",
+   "setid": "f7858ecf-8498-4465-85d8-3e7814737573",
+   "version": 3,
+   "effective": "20251023",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f7858ecf-8498-4465-85d8-3e7814737573",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "spravato",
+   "name": "Spravato",
+   "class": "prescription",
+   "labeler": "Janssen Pharmaceuticals, Inc.",
+   "setid": "d81a6a79-a74a-44b7-822c-0dfa3036eaed",
+   "version": 21,
+   "effective": "20260922",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d81a6a79-a74a-44b7-822c-0dfa3036eaed",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "strattera",
+   "name": "Strattera",
+   "class": "prescription",
+   "labeler": "Eli Lilly and Company",
+   "setid": "309de576-c318-404a-bc15-660c2b1876fb",
+   "version": 69,
+   "effective": "20260630",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=309de576-c318-404a-bc15-660c2b1876fb",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 2"
+    }
+   ]
+  },
+  {
+   "slug": "stromectol",
+   "name": "Stromectol",
+   "class": "prescription",
+   "labeler": "Merck Sharp & Dohme LLC",
+   "setid": "681888c9-af79-4b7d-ae80-c3f4f6f1effd",
+   "version": 21,
+   "effective": "20240920",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=681888c9-af79-4b7d-ae80-c3f4f6f1effd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "suboxone",
+   "name": "Suboxone",
+   "class": "prescription",
+   "labeler": "INDIVIOR INC.",
+   "setid": "8a5edcf9-828c-4f97-b671-268ab13a8ecd",
+   "version": 37,
+   "effective": "20251222",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a5edcf9-828c-4f97-b671-268ab13a8ecd",
+   "routes": [
+    "BUCCAL",
+    "SUBLINGUAL"
+   ],
+   "taken": "other",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "sudafed-pe-head-congestion-plus-pain",
+   "name": "Sudafed PE Head Congestion plus Pain",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "76513fb2-7323-4f1f-8a10-92f8f603cf97",
+   "version": 5,
+   "effective": "20250310",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=76513fb2-7323-4f1f-8a10-92f8f603cf97",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "sudafed-sinus-congestion",
+   "name": "Sudafed Sinus Congestion",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "c05d7e27-6821-468f-b27d-9c0b02a07b0f",
+   "version": 7,
+   "effective": "20241108",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c05d7e27-6821-468f-b27d-9c0b02a07b0f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "CQ3XH3DET6",
+     "dye": "dc-yellow-10",
+     "form": "lake",
+     "listed_as": "D&C YELLOW NO. 10 ALUMINUM LAKE"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "sudafed-sinus-congestion-plus-cold-severe",
+   "name": "Sudafed Sinus Congestion + Cold Severe",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "537e1a0d-820d-c3f7-e063-6294a90a56ea",
+   "version": 1,
+   "effective": "20260610",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=537e1a0d-820d-c3f7-e063-6294a90a56ea",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "GYP6Z2JR6Q",
+     "dye": "yellow-6",
+     "form": "lake",
+     "listed_as": "FD&C YELLOW NO. 6 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "sunlenca",
+   "name": "Sunlenca",
+   "class": "prescription",
+   "labeler": "Gilead Sciences, Inc.",
+   "setid": "e5652804-29c4-40d7-aeb2-0142ed2a7b5b",
+   "version": 14,
+   "effective": "20260827",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e5652804-29c4-40d7-aeb2-0142ed2a7b5b",
+   "routes": [
+    "ORAL",
+    "SUBCUTANEOUS"
+   ],
+   "taken": "oral+other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "synthroid",
+   "name": "Synthroid",
+   "class": "prescription",
+   "labeler": "AbbVie Inc.",
+   "setid": "1e11ad30-1041-4520-10b0-8f9d30d30fcc",
+   "version": 1537,
+   "effective": "20240220",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1e11ad30-1041-4520-10b0-8f9d30d30fcc",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-27",
+    "dc-red-30",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "2LRS185U6K",
+     "dye": "dc-red-27",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 27"
+    },
+    {
+     "unii": "2S42T2808B",
+     "dye": "dc-red-30",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 30"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "systane",
+   "name": "Systane",
+   "class": "otc",
+   "labeler": "Alcon Laboratories, Inc.",
+   "setid": "1d679d0f-cec2-a644-79cd-079607254bb9",
+   "version": 11,
+   "effective": "20250730",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1d679d0f-cec2-a644-79cd-079607254bb9",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "tamiflu",
+   "name": "Tamiflu",
+   "class": "prescription",
+   "labeler": "Genentech, Inc.",
+   "setid": "ee3c9555-60f2-4f82-a760-11983c86e97b",
+   "version": 45,
+   "effective": "20251215",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee3c9555-60f2-4f82-a760-11983c86e97b",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "tegretol",
+   "name": "Tegretol",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "8d409411-aa9f-4f3a-a52c-fbcb0c3ec053",
+   "version": 39,
+   "effective": "20260820",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8d409411-aa9f-4f3a-a52c-fbcb0c3ec053",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "tenormin",
+   "name": "Tenormin",
+   "class": "prescription",
+   "labeler": "Upsher-Smith Laboratories, LLC",
+   "setid": "6e850b1e-28a4-4ff8-8ed7-bb0b29faa28a",
+   "version": 2,
+   "effective": "20250918",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6e850b1e-28a4-4ff8-8ed7-bb0b29faa28a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "theraflu-nasal-mist",
+   "name": "Theraflu Nasal Mist",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "4ec42064-7390-4137-a93e-57343c3c76a7",
+   "version": 3,
+   "effective": "20260608",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4ec42064-7390-4137-a93e-57343c3c76a7",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "tiger-balm",
+   "name": "Tiger Balm",
+   "class": "otc",
+   "labeler": "Haw Par Healthcare Ltd.",
+   "setid": "5066dc10-e4d5-49e9-9a5f-0ac220cfbf28",
+   "version": 12,
+   "effective": "20260518",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5066dc10-e4d5-49e9-9a5f-0ac220cfbf28",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "topamax",
+   "name": "Topamax",
+   "class": "prescription",
+   "labeler": "Janssen Pharmaceuticals, Inc.",
+   "setid": "21628112-0c47-11df-95b3-498d55d89593",
+   "version": 31,
+   "effective": "20260312",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=21628112-0c47-11df-95b3-498d55d89593",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "trexall",
+   "name": "Trexall",
+   "class": "prescription",
+   "labeler": "Teva Women's Health LLC",
+   "setid": "e942f8db-510f-44d6-acb5-b822196f5e8c",
+   "version": 14,
+   "effective": "20260617",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e942f8db-510f-44d6-acb5-b822196f5e8c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "J9EQA3S2JM",
+     "dye": "blue-1",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 1 ALUMINUM LAKE"
+    },
+    {
+     "unii": "4AQJ3LG584",
+     "dye": "blue-2",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 2--ALUMINUM LAKE"
+    },
+    {
+     "unii": "CQ3XH3DET6",
+     "dye": "dc-yellow-10",
+     "form": "lake",
+     "listed_as": "D&C YELLOW NO. 10 ALUMINUM LAKE"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "trileptal",
+   "name": "Trileptal",
+   "class": "prescription",
+   "labeler": "Novartis Pharmaceuticals Corporation",
+   "setid": "4c5c86c8-ab7f-4fcf-bc1b-5a0b1fd0691b",
+   "version": 40,
+   "effective": "20261028",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4c5c86c8-ab7f-4fcf-bc1b-5a0b1fd0691b",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "trintellix",
+   "name": "Trintellix",
+   "class": "prescription",
+   "labeler": "Takeda Pharmaceuticals America, Inc.",
+   "setid": "1a5b68e2-14d0-419d-9ec6-1ca97145e838",
+   "version": 18,
+   "effective": "20250305",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a5b68e2-14d0-419d-9ec6-1ca97145e838",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "tucks-triple-relief",
+   "name": "Tucks Triple Relief",
+   "class": "otc",
+   "labeler": "Blistex Inc.",
+   "setid": "bf892e90-2d9b-4fa0-8ee4-8a2736be6c30",
+   "version": 1,
+   "effective": "20241224",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bf892e90-2d9b-4fa0-8ee4-8a2736be6c30",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "tums",
+   "name": "Tums",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "35f79dcf-1743-4d9f-aba5-5ead6b056309",
+   "version": 12,
+   "effective": "20240315",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=35f79dcf-1743-4d9f-aba5-5ead6b056309",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "I753WB2F1M",
+     "dye": "yellow-5",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 5"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "tylenol-8-hr-arthritis-pain",
+   "name": "Tylenol 8 HR Arthritis Pain",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "3af22fc8-e4e0-4863-8696-6bc1257047cb",
+   "version": 16,
+   "effective": "20241113",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3af22fc8-e4e0-4863-8696-6bc1257047cb",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "tylenol-cold-plus-flu-severe",
+   "name": "Tylenol Cold + Flu Severe",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "efb3bfc5-72e9-4221-8d03-e48f3d8e3821",
+   "version": 21,
+   "effective": "20260924",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=efb3bfc5-72e9-4221-8d03-e48f3d8e3821",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "CQ3XH3DET6",
+     "dye": "dc-yellow-10",
+     "form": "lake",
+     "listed_as": "D&C YELLOW NO. 10 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "tylenol-extra-strength",
+   "name": "Tylenol Extra Strength",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "103d109d-f520-409c-8da2-eb6b0fbec891",
+   "version": 16,
+   "effective": "20260722",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=103d109d-f520-409c-8da2-eb6b0fbec891",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "tylenol-pm",
+   "name": "Tylenol PM",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "ce58105b-f010-47af-8f31-6dd4ce4e9cba",
+   "version": 15,
+   "effective": "20260722",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ce58105b-f010-47af-8f31-6dd4ce4e9cba",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "J9EQA3S2JM",
+     "dye": "blue-1",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 1 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "tylenol-regular-strength",
+   "name": "Tylenol Regular Strength",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "1622f694-4d63-4c56-8737-fae31f0ecfb7",
+   "version": 13,
+   "effective": "20260527",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1622f694-4d63-4c56-8737-fae31f0ecfb7",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "unisom-sleepgels",
+   "name": "Unisom SleepGels",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "17383d22-91cc-4d9e-a0b8-3f7d9a18af83",
+   "version": 9,
+   "effective": "20260114",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=17383d22-91cc-4d9e-a0b8-3f7d9a18af83",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "unisom-sleeptabs",
+   "name": "Unisom SleepTabs",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "7ae32d74-76a0-47e2-9e5c-812426413c4e",
+   "version": 1,
+   "effective": "20260325",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7ae32d74-76a0-47e2-9e5c-812426413c4e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "unithroid",
+   "name": "Unithroid",
+   "class": "prescription",
+   "labeler": "Amneal Pharmaceuticals LLC",
+   "setid": "07562e72-7eaa-4ce6-94f0-e08814787e50",
+   "version": 13,
+   "effective": "20190619",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=07562e72-7eaa-4ce6-94f0-e08814787e50",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-27",
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C Blue No. 2"
+    },
+    {
+     "unii": "2LRS185U6K",
+     "dye": "dc-red-27",
+     "form": "dye",
+     "listed_as": "D&C Red No. 27"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C Yellow No. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C Red No. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C Yellow No. 6"
+    }
+   ]
+  },
+  {
+   "slug": "valium",
+   "name": "Valium",
+   "class": "prescription",
+   "labeler": "Waylis Therapeutics LLC",
+   "setid": "260e2041-2bb3-482f-850e-b5d47a7bdbe6",
+   "version": 12,
+   "effective": "20261006",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=260e2041-2bb3-482f-850e-b5d47a7bdbe6",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "valtrex",
+   "name": "Valtrex",
+   "class": "prescription",
+   "labeler": "GlaxoSmithKline LLC",
+   "setid": "f8e0d8f8-cb73-4206-a484-88f5c4fbd719",
+   "version": 32,
+   "effective": "20251112",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f8e0d8f8-cb73-4206-a484-88f5c4fbd719",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "vancocin",
+   "name": "Vancocin",
+   "class": "prescription",
+   "labeler": "ANI Pharmaceuticals, Inc.",
+   "setid": "a078d9c2-f89c-4f9f-8ded-60ffb2983c3f",
+   "version": 12,
+   "effective": "20251222",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a078d9c2-f89c-4f9f-8ded-60ffb2983c3f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "vazalore",
+   "name": "Vazalore",
+   "class": "otc",
+   "labeler": "PLx Pharma Inc",
+   "setid": "c623d479-f7c9-da5d-e053-2a95a90a898a",
+   "version": 6,
+   "effective": "20241230",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c623d479-f7c9-da5d-e053-2a95a90a898a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "veklury",
+   "name": "Veklury",
+   "class": "prescription",
+   "labeler": "Gilead Sciences, Inc.",
+   "setid": "c0978fa8-53ff-4ca2-82a7-567fd3e958ca",
+   "version": 24,
+   "effective": "20260729",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c0978fa8-53ff-4ca2-82a7-567fd3e958ca",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "viagra",
+   "name": "Viagra",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "d905dc8d-917f-4ea3-a4ee-a1ecf6967d4e",
+   "version": 6,
+   "effective": "20231117",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d905dc8d-917f-4ea3-a4ee-a1ecf6967d4e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    }
+   ]
+  },
+  {
+   "slug": "vicks-dayquil-and-nyquil-kids-honey-cold-and-cough",
+   "name": "Vicks DayQuil and NyQuil Kids Honey Cold and Cough",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "efa53214-b2e0-cfd0-e053-2a95a90abbdf",
+   "version": 11,
+   "effective": "20261008",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=efa53214-b2e0-cfd0-e053-2a95a90abbdf",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "green-3",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "3P3ONR6O1S",
+     "dye": "green-3",
+     "form": "dye",
+     "listed_as": "FD&C GREEN NO. 3"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "vicks-dayquil-severe-cold-and-flu",
+   "name": "Vicks DayQuil Severe Cold and Flu",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "6f013cc1-7885-5025-e053-2a91aa0afe11",
+   "version": 19,
+   "effective": "20261005",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6f013cc1-7885-5025-e053-2a91aa0afe11",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "vicks-nyquil-intense-flu-liquicaps",
+   "name": "Vicks NyQuil Intense Flu LiquiCaps",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "354906d1-455b-460c-8283-984e73c09d7e",
+   "version": 7,
+   "effective": "20261009",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=354906d1-455b-460c-8283-984e73c09d7e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    }
+   ]
+  },
+  {
+   "slug": "vicks-sinex-severe-pain-mucus-and-chest",
+   "name": "Vicks Sinex Severe Pain, Mucus and Chest",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "5605aab6-6074-0a3b-e063-6294a90a49a2",
+   "version": 2,
+   "effective": "20261009",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5605aab6-6074-0a3b-e063-6294a90a49a2",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [
+    "dc-red-33"
+   ],
+   "codes": [
+    {
+     "unii": "9DBA0SBB0L",
+     "dye": "dc-red-33",
+     "form": "dye",
+     "listed_as": "D&C RED NO. 33"
+    }
+   ]
+  },
+  {
+   "slug": "vicks-vapocool",
+   "name": "Vicks VapoCOOL",
+   "class": "otc",
+   "labeler": "The Procter & Gamble Manufacturing Company",
+   "setid": "3de4268b-61a0-b92f-e063-6394a90a40b9",
+   "version": 2,
+   "effective": "20261005",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3de4268b-61a0-b92f-e063-6394a90a40b9",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    }
+   ]
+  },
+  {
+   "slug": "vicks-vaporub",
+   "name": "Vicks VapoRub",
+   "class": "otc",
+   "labeler": "Procter & Gamble Manufactura S de RL de CV",
+   "setid": "699691ae-d2a1-a8bb-e053-2991aa0acfea",
+   "version": 13,
+   "effective": "20261005",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=699691ae-d2a1-a8bb-e053-2991aa0acfea",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "victoza",
+   "name": "Victoza",
+   "class": "prescription",
+   "labeler": "Novo Nordisk",
+   "setid": "5a9ef4ea-c76a-4d34-a604-27c5b505f5a4",
+   "version": 31,
+   "effective": "20251014",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5a9ef4ea-c76a-4d34-a604-27c5b505f5a4",
+   "routes": [
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "viibryd",
+   "name": "Viibryd",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "4c55ccfb-c4cf-11df-851a-0800200c9a66",
+   "version": 34,
+   "effective": "20231001",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4c55ccfb-c4cf-11df-851a-0800200c9a66",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "visine-red-eye-total-comfort",
+   "name": "Visine Red Eye Total Comfort",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "5747edef-7a87-41d7-9594-6c78508b9ba2",
+   "version": 7,
+   "effective": "20261104",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5747edef-7a87-41d7-9594-6c78508b9ba2",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "vivitrol",
+   "name": "Vivitrol",
+   "class": "prescription",
+   "labeler": "Alkermes, Inc.",
+   "setid": "cd11c435-b0f0-4bb9-ae78-60f101f3703f",
+   "version": 39,
+   "effective": "20260531",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cd11c435-b0f0-4bb9-ae78-60f101f3703f",
+   "routes": [
+    "INTRAMUSCULAR"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "voltaren-arthritis-pain",
+   "name": "Voltaren Arthritis Pain",
+   "class": "otc",
+   "labeler": "Haleon US Holdings LLC",
+   "setid": "30a94282-0892-442a-aa10-6525cbd4fe88",
+   "version": 13,
+   "effective": "20250211",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=30a94282-0892-442a-aa10-6525cbd4fe88",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "vraylar",
+   "name": "Vraylar",
+   "class": "prescription",
+   "labeler": "Allergan, Inc.",
+   "setid": "4b5f7c65-aa2d-452a-b3db-bc85c06ff12f",
+   "version": 32,
+   "effective": "20251218",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4b5f7c65-aa2d-452a-b3db-bc85c06ff12f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": true,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "PN2ZH5LOQY",
+     "dye": "red-3",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 3"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "vusion",
+   "name": "Vusion",
+   "class": "prescription",
+   "labeler": "Mylan Pharmaceuticals Inc.",
+   "setid": "b44b452d-3630-4cb5-8ed1-1f8edac4690c",
+   "version": 6,
+   "effective": "20180815",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b44b452d-3630-4cb5-8ed1-1f8edac4690c",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "vyvanse",
+   "name": "Vyvanse",
+   "class": "prescription",
+   "labeler": "Takeda Pharmaceuticals America, Inc.",
+   "setid": "704e4378-ca83-445c-8b45-3cfa51c1ecad",
+   "version": 81,
+   "effective": "20260430",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=704e4378-ca83-445c-8b45-3cfa51c1ecad",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": true,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "PN2ZH5LOQY",
+     "dye": "red-3",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 3"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "wegovy",
+   "name": "Wegovy",
+   "class": "prescription",
+   "labeler": "Novo Nordisk Pharmaceutical Industries, LP",
+   "setid": "ee06186f-2aa3-4990-a760-757579d8f77b",
+   "version": 19,
+   "effective": "20260618",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee06186f-2aa3-4990-a760-757579d8f77b",
+   "routes": [
+    "ORAL",
+    "SUBCUTANEOUS"
+   ],
+   "taken": "oral+other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "wellbutrin-sr",
+   "name": "Wellbutrin SR",
+   "class": "prescription",
+   "labeler": "GlaxoSmithKline LLC",
+   "setid": "cbc8c074-f080-4489-a5ae-207b5fadeba3",
+   "version": 39,
+   "effective": "20251105",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cbc8c074-f080-4489-a5ae-207b5fadeba3",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "womens-rogaine-foam",
+   "name": "Women's Rogaine Foam",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "4d328537-b7f5-43cc-9837-c5a0c6c390f8",
+   "version": 6,
+   "effective": "20241113",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4d328537-b7f5-43cc-9837-c5a0c6c390f8",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "xalatan",
+   "name": "Xalatan",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "a98595b3-9f47-48e0-b18d-550a2095f264",
+   "version": 2,
+   "effective": "20230515",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a98595b3-9f47-48e0-b18d-550a2095f264",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "xanax",
+   "name": "Xanax",
+   "class": "prescription",
+   "labeler": "PHARMACIA & UPJOHN COMPANY LLC",
+   "setid": "388e249d-b9b6-44c3-9f8f-880eced0239f",
+   "version": 30,
+   "effective": "20230118",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=388e249d-b9b6-44c3-9f8f-880eced0239f",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C YELLOW NO. 6"
+    }
+   ]
+  },
+  {
+   "slug": "xarelto",
+   "name": "Xarelto",
+   "class": "prescription",
+   "labeler": "Janssen Pharmaceuticals, Inc.",
+   "setid": "10db92f9-2300-4a80-836b-673e1ae91610",
+   "version": 65,
+   "effective": "20260910",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=10db92f9-2300-4a80-836b-673e1ae91610",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "xifaxan",
+   "name": "Xifaxan",
+   "class": "prescription",
+   "labeler": "Salix Pharmaceuticals, Inc.",
+   "setid": "c5e8e2fd-7087-4b78-9181-cc259c0be2f1",
+   "version": 50,
+   "effective": "20250625",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c5e8e2fd-7087-4b78-9181-cc259c0be2f1",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "xylocaine",
+   "name": "Xylocaine",
+   "class": "prescription",
+   "labeler": "Dentsply Pharmaceutical",
+   "setid": "14b55cf9-f7cd-4bb4-a7c5-aba61abadef1",
+   "version": 10,
+   "effective": "20260813",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=14b55cf9-f7cd-4bb4-a7c5-aba61abadef1",
+   "routes": [
+    "SUBMUCOSAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "xyzal-allergy-24hr",
+   "name": "Xyzal Allergy 24Hr",
+   "class": "otc",
+   "labeler": "Chattem, Inc.",
+   "setid": "8be45c2a-1eca-4a00-81b9-f7babdbdcd41",
+   "version": 14,
+   "effective": "20260311",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8be45c2a-1eca-4a00-81b9-f7babdbdcd41",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zaditor",
+   "name": "Zaditor",
+   "class": "otc",
+   "labeler": "Alcon Laboratories, Inc.",
+   "setid": "ac66b1e4-c2b0-a4c3-09e3-ebd44a2f7c9f",
+   "version": 13,
+   "effective": "20231215",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ac66b1e4-c2b0-a4c3-09e3-ebd44a2f7c9f",
+   "routes": [
+    "OPHTHALMIC"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zanaflex",
+   "name": "Zanaflex",
+   "class": "prescription",
+   "labeler": "Legacy Pharma USA, Inc.",
+   "setid": "60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+   "version": 2,
+   "effective": "20260102",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zegerid-otc",
+   "name": "Zegerid OTC",
+   "class": "otc",
+   "labeler": "Riley Consumer Care LLC",
+   "setid": "1d764fc5-8eae-4fc9-a2e9-3f1954a3ac05",
+   "version": 3,
+   "effective": "20251224",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1d764fc5-8eae-4fc9-a2e9-3f1954a3ac05",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "Fd&C Blue No. 1"
+    },
+    {
+     "unii": "4AQJ3LG584",
+     "dye": "blue-2",
+     "form": "lake",
+     "listed_as": "Fd&C Blue No. 2 Aluminum Lake"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "Fd&C Red No. 40"
+    }
+   ]
+  },
+  {
+   "slug": "zepbound",
+   "name": "Zepbound",
+   "class": "prescription",
+   "labeler": "Eli Lilly and Company",
+   "setid": "487cd7e7-434c-4925-99fa-aa80b1cc776b",
+   "version": 40,
+   "effective": "20260828",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=487cd7e7-434c-4925-99fa-aa80b1cc776b",
+   "routes": [
+    "SUBCUTANEOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zestril",
+   "name": "Zestril",
+   "class": "prescription",
+   "labeler": "Upsher-Smith Laboratories, LLC",
+   "setid": "838c2d78-d2d8-4981-9ec9-e50ef9e1a5d8",
+   "version": 2,
+   "effective": "20250102",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=838c2d78-d2d8-4981-9ec9-e50ef9e1a5d8",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zetia",
+   "name": "Zetia",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
+   "version": 8,
+   "effective": "20251125",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
+   "routes": null,
+   "taken": null,
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zicam",
+   "name": "Zicam",
+   "class": "otc",
+   "labeler": "Church & Dwight Co., Inc.",
+   "setid": "54604317-7d74-007e-e063-6394a90a5b83",
+   "version": 1,
+   "effective": "20260601",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=54604317-7d74-007e-e063-6394a90a5b83",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zithromax",
+   "name": "Zithromax",
+   "class": "prescription",
+   "labeler": "Pfizer Laboratories Div Pfizer Inc",
+   "setid": "8d24bacb-feff-4c6a-b8df-625e1435387a",
+   "version": 26,
+   "effective": "20260909",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8d24bacb-feff-4c6a-b8df-625e1435387a",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zocor",
+   "name": "Zocor",
+   "class": "prescription",
+   "labeler": "Organon LLC",
+   "setid": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+   "version": 11,
+   "effective": "20250328",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zoloft",
+   "name": "Zoloft",
+   "class": "prescription",
+   "labeler": "Viatris Specialty LLC",
+   "setid": "fda754f6-d0f3-4dce-a17a-927d64f912f7",
+   "version": 7,
+   "effective": "20230808",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fda754f6-d0f3-4dce-a17a-927d64f912f7",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false,
+   "d_and_c": [
+    "dc-yellow-10"
+   ],
+   "codes": [
+    {
+     "unii": "H3R47K3TBD",
+     "dye": "blue-1",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 1"
+    },
+    {
+     "unii": "L06K8R7DQK",
+     "dye": "blue-2",
+     "form": "dye",
+     "listed_as": "FD&C BLUE NO. 2"
+    },
+    {
+     "unii": "35SW5USQ3G",
+     "dye": "dc-yellow-10",
+     "form": "dye",
+     "listed_as": "D&C YELLOW NO. 10"
+    },
+    {
+     "unii": "WZB9127XOA",
+     "dye": "red-40",
+     "form": "dye",
+     "listed_as": "FD&C RED NO. 40"
+    }
+   ]
+  },
+  {
+   "slug": "zomig",
+   "name": "Zomig",
+   "class": "prescription",
+   "labeler": "Amneal Pharmaceuticals LLC",
+   "setid": "2438c223-605b-4885-afc3-a6794f190f89",
+   "version": 6,
+   "effective": "20190404",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2438c223-605b-4885-afc3-a6794f190f89",
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zonalon",
+   "name": "Zonalon",
+   "class": "prescription",
+   "labeler": "Mylan Pharmaceuticals Inc.",
+   "setid": "5f302247-525e-4acc-852b-00eb1d79af4b",
+   "version": 3,
+   "effective": "20170614",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5f302247-525e-4acc-852b-00eb1d79af4b",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zovirax",
+   "name": "Zovirax",
+   "class": "prescription",
+   "labeler": "Bausch Health US, LLC",
+   "setid": "125dbe4e-94ba-45bd-a714-f9c4b8e8b5c2",
+   "version": 10,
+   "effective": "20210201",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=125dbe4e-94ba-45bd-a714-f9c4b8e8b5c2",
+   "routes": [
+    "TOPICAL"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zyloprim",
+   "name": "Zyloprim",
+   "class": "prescription",
+   "labeler": "Prometheus Laboratories Inc.",
+   "setid": "342832b5-1a32-4bea-bc49-ab0fd152154e",
+   "version": 2,
+   "effective": "20091130",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=342832b5-1a32-4bea-bc49-ab0fd152154e",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "H77VEI93A8",
+     "dye": "yellow-6",
+     "form": "dye",
+     "listed_as": "FD&C Yellow No. 6"
+    }
+   ]
+  },
+  {
+   "slug": "zyprexa",
+   "name": "Zyprexa",
+   "class": "prescription",
+   "labeler": "H2-Pharma LLC",
+   "setid": "b418946a-1ab4-4d89-a012-d94fc361a3c4",
+   "version": 69,
+   "effective": "20261006",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b418946a-1ab4-4d89-a012-d94fc361a3c4",
+   "routes": [
+    "INTRAMUSCULAR",
+    "ORAL"
+   ],
+   "taken": "oral+other",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": [
+    {
+     "unii": "4AQJ3LG584",
+     "dye": "blue-2",
+     "form": "lake",
+     "listed_as": "FD&C BLUE NO. 2 ALUMINUM LAKE"
+    }
+   ]
+  },
+  {
+   "slug": "zyrtec",
+   "name": "Zyrtec",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "dc613bd5-70fd-1d9b-e053-2995a90a41cd",
+   "version": 9,
+   "effective": "20260427",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=dc613bd5-70fd-1d9b-e053-2995a90a41cd",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zyrtec-allergy",
+   "name": "Zyrtec Allergy",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "b165db38-b302-4220-8627-77cb07bb078c",
+   "version": 25,
+   "effective": "20251010",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b165db38-b302-4220-8627-77cb07bb078c",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zyrtec-d",
+   "name": "Zyrtec-D",
+   "class": "otc",
+   "labeler": "Kenvue Brands LLC",
+   "setid": "f1ecf9ba-1c03-7fb7-e053-2a95a90a875a",
+   "version": 6,
+   "effective": "20260406",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f1ecf9ba-1c03-7fb7-e053-2a95a90a875a",
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  },
+  {
+   "slug": "zyvox",
+   "name": "Zyvox",
+   "class": "prescription",
+   "labeler": "Pharmacia & Upjohn Company LLC",
+   "setid": "3e5e9975-6f36-42e4-ab46-0e75dda83592",
+   "version": 24,
+   "effective": "20260709",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3e5e9975-6f36-42e4-ab46-0e75dda83592",
+   "routes": [
+    "INTRAVENOUS"
+   ],
+   "taken": "other",
+   "six": [],
+   "red_3": false,
+   "d_and_c": [],
+   "codes": []
+  }
+ ],
+ "unrecognised": [],
+ "fda": {
+  "read": "2026-11-21",
+  "statements": [
+   {
+    "id": "red3-order",
+    "date": "2025-01-16",
+    "kind": "order",
+    "title": "Color Additive Petition From Center for Science in the Public Interest, et al.; Request To Revoke Color Additive Listing for Use of FD&C Red No. 3 in Food and Ingested Drugs (90 FR 4628)",
+    "publisher": "Federal Register",
+    "source": "federal_register",
+    "url": "https://www.federalregister.gov/documents/2025/01/16/2025-00830/color-additive-petition-from-center-for-science-in-the-public-interest-et-al-request-to-revoke-color",
+    "says": "On January 16, 2025 the FDA published an order that removes the listings for FD&C Red No. 3 in food (21 CFR 74.303) and in ingested drugs (21 CFR 74.1303). The order takes effect January 15, 2027 for food and January 18, 2028 for ingested drugs.",
+    "quote": "This order is effective January 15, 2027, except for amendatory instruction 4, which is effective January 18, 2028."
+   },
+   {
+    "id": "red3-update",
+    "date": "2025-01-15",
+    "kind": "announcement",
+    "title": "FDA to Revoke Authorization for the Use of Red No. 3 in Food and Ingested Drugs",
+    "publisher": "FDA, Constituent Update",
+    "source": "fda",
+    "url": "https://www.fda.gov/food/hfp-constituent-updates/fda-revoke-authorization-use-red-no-3-food-and-ingested-drugs",
+    "says": "The FDA's own announcement of the order, dated January 15, 2025, gives the same two dates: manufacturers using FD&C Red No. 3 in food and in ingested drugs have until January 15, 2027 and January 18, 2028, respectively, to reformulate.",
+    "quote": "Manufacturers who use FD&C Red No. 3 in food and ingested drugs will have until January 15, 2027 or January 18, 2028, respectively, to reformulate their products."
+   },
+   {
+    "id": "red3-stay",
+    "date": "2026-08-05",
+    "kind": "notice",
+    "title": "Micro-Tracers, Inc.; Response to Objections and Requests for a Public Hearing (91 FR 50475)",
+    "publisher": "Federal Register",
+    "source": "federal_register",
+    "url": "https://www.federalregister.gov/documents/2026/08/05/2026-15920/micro-tracers-inc-response-to-objections-and-requests-for-a-public-hearing",
+    "says": "A company's objections had put the order on hold from February 18, 2025. On August 5, 2026 the FDA denied the hearing request, lifted the hold and confirmed both dates, January 15, 2027 and January 18, 2028.",
+    "quote": "FDA lifts the administrative stay as of August 5, 2026. The effective dates of January 15, 2027, and January 18, 2028, for amendatory instruction 4, for the order published on January 16, 2025 (90 FR 4628), are confirmed."
+   },
+   {
+    "id": "six-announcement",
+    "date": "2025-04-22",
+    "kind": "announcement",
+    "title": "HHS, FDA to Phase Out Petroleum-Based Synthetic Dyes in Nation's Food Supply",
+    "publisher": "FDA, Press Announcement",
+    "source": "fda",
+    "url": "https://www.fda.gov/news-events/press-announcements/hhs-fda-phase-out-petroleum-based-synthetic-dyes-nations-food-supply",
+    "says": "On April 22, 2025 the FDA and HHS said they would work with industry to eliminate six remaining synthetic dyes from the food supply by the end of 2026: FD&C Green No. 3, Red No. 40, Yellow No. 5, Yellow No. 6, Blue No. 1 and Blue No. 2. The announcement is about the food supply.",
+    "quote": "Working with industry to eliminate six remaining synthetic dyes—FD&C Green No. 3, FD&C Red No. 40, FD&C Yellow No. 5, FD&C Yellow No. 6, FD&C Blue No. 1, and FD&C Blue No. 2—from the food supply by the end of next year."
+   },
+   {
+    "id": "six-tracker",
+    "date": "2026-10-16",
+    "kind": "page",
+    "title": "Tracking Food Industry Pledges to Remove Petroleum Based Food Dyes",
+    "publisher": "FDA, page current as of October 16, 2026",
+    "source": "fda",
+    "url": "https://www.fda.gov/food/color-additives-information-consumers/tracking-food-industry-pledges-remove-petroleum-based-food-dyes",
+    "says": "The FDA's tracker page, current as of October 16, 2026, describes the same six dyes as ones frequently used in the food supply and gives the end of 2027 as the date by which the FDA is working with food makers, retailers and trade associations to eliminate them. The page lists company pledges for food and does not mention medicines.",
+    "quote": "Additionally, the FDA is working closely with food manufacturers, retailers, and trade associations to eliminate six remaining certified color additives frequently used in the food supply—FD&C Green No. 3, FD&C Red No. 40, FD&C Yellow No. 5, FD&C Yellow No. 6, FD&C Blue No. 1, and FD&C Blue No. 2—by the end of 2027."
+   },
+   {
+    "id": "regulates",
+    "date": "2026-07-22",
+    "kind": "page",
+    "title": "Color Additives - Information for Consumers",
+    "publisher": "FDA, page current as of July 22, 2026",
+    "source": "fda",
+    "url": "https://www.fda.gov/food/food-ingredients-packaging/color-additives-information-consumers",
+    "says": "The FDA regulates the color additives used in foods, drugs, cosmetics and certain medical devices. It describes a straight color as one not mixed or reacted with anything else (for example FD&C Blue No. 1) and a lake as a straight color reacted with precipitants and substrata (for example Blue 1 Lake).",
+    "quote": "The FDA is responsible for regulating all color additives used in foods, drugs, cosmetics (except for coal- tar hair dyes), and certain medical devices to ensure that they meet the FDA’s safety standard and are accurately labeled."
+   }
+  ]
+ },
+ "selection": {
+  "chosen_by": "A person picked them, brand by brand, in a list kept by hand (products.yaml). Candidates were drafted from the brand names the FDA's Drugs@FDA records give for medicines MoleculeFinder describes, and from brand names added by name (over-the-counter ones too), each with the brand owner's own label, not a repackager's.",
+  "gate": "A label needs at least three molecules MoleculeFinder holds, matched by the FDA's ingredient code, to have a page on the site.",
+  "not_by": "They were not chosen by sales, by how often they are prescribed or at random.",
+  "labels": 300,
+  "every_active_is_a_molecule": 268
+ },
+ "sources": [
+  "dailymed",
+  "fda_unii",
+  "fda",
+  "federal_register",
+  "curated"
+ ],
+ "license": "CC0 1.0"
+}

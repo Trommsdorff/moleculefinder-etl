@@ -25,7 +25,7 @@ from pathlib import Path
 from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS, summary_path, weekly_run)
 from .transform import canon as canon_stage
-from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
+from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold, findings
 from .transform import presence, claims, doors, drawings, drawing_guard
 from .transform import wikidata_age, ld50_hold
 from .sources import cache, pubchem
@@ -658,10 +658,15 @@ def stage_export(settings: Settings) -> Path:
     # The ledger of every /whats-in/ slug ever published (gate hold, 2026-11-09): never shrinks.
     published = (products_hold.published(products_hold.read_published(), staged, pairs, door_data)
                  if staged is not None else None)
+    # Findings (2026-11-21): facts computed from the products this run publishes, one file each in
+    # snapshots/findings/. Offline (the label cache), so the weekly refresh keeps them current.
+    found = ({findings.DYES_FINDING: findings.compile_dyes(staged, spl=products.spl_cached,
+                                                           routes=products.routes_cached)}
+             if staged is not None else None)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
                                   products=staged, product_pairs=pairs, published=published,
-                                  doors=door_data, compare_drawings=compare)
+                                  doors=door_data, compare_drawings=compare, findings=found)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)

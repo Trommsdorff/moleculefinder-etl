@@ -1,0 +1,123 @@
+# The colour additives the findings pages count on medicine labels (findings run, 2026-11-21).
+# HAND-MAINTAINED, and the only place a dye is named: a label ingredient is a dye ONLY by its UNII
+# code, never by its name (the label-ingredient rule, ETL CLAUDE.md: a name can be misspelled,
+# shortened or reused; a code cannot).
+#
+# Every code here was read from the FDA's Global Substance Registration System (GSRS, the FDA's
+# own registry of substances and their UNII codes; public domain) on 2026-11-21 through
+#     https://gsrs.ncats.nih.gov/ginas/app/api/v1/substances(<UNII>)?view=full
+# and agrees with the FDA's UNII table the build already reads (sources/fda_unii.py; the test
+# checks every name below against it). `gsrs_name` is the registry's own preferred name,
+# `gsrs_status` its record status as returned that day. The straight dye and each lake the labels
+# use are separate substances with separate codes, so each has its own line.
+#
+# GROUPS
+#   headline: the six synthetic colour additives the FDA's April 2025 announcement names. The
+#             headline count is a label that lists any code of any of these six.
+#   red-3:    FD&C Red No. 3, the one the FDA has revoked by order (kept apart from the six: the
+#             FDA's two actions are different actions).
+#   d-and-c:  D&C colours seen on the labels, counted as their own group, never in the headline.
+#
+# HOW THE LIST WAS COMPLETED (2026-11-21). (1) Every ingredient of the 300 medicine labels
+# (614 distinct UNIIs) was checked by name for a colour additive; (2) the FDA's registry was
+# searched by the name of each of the seven FD&C dyes and by its trade and chemical names
+# (Allura Red, tartrazine, sunset yellow, brilliant blue, erythrosine, indigo carmine, fast
+# green) and every hit was compared with the labels' codes by CODE: the only codes that matched
+# are the ones below. A code not listed here is not counted, and `not_counted` says why for the
+# one a reader may ask about.
+
+checked: "2026-11-21"
+registry_url: "https://gsrs.ncats.nih.gov/ginas/app/api/v1/substances({unii})?view=full"
+
+dyes:
+  - id: blue-1
+    name: "FD&C Blue No. 1"
+    group: headline
+    codes:
+      - {unii: H3R47K3TBD, form: dye,  gsrs_name: "FD&C BLUE NO. 1", gsrs_status: approved}
+      - {unii: J9EQA3S2JM, form: lake, gsrs_name: "FD&C BLUE NO. 1 ALUMINUM LAKE", gsrs_status: approved}
+  - id: blue-2
+    name: "FD&C Blue No. 2"
+    group: headline
+    codes:
+      - {unii: L06K8R7DQK, form: dye,  gsrs_name: "FD&C BLUE NO. 2", gsrs_status: approved}
+      - {unii: 4AQJ3LG584, form: lake, gsrs_name: "FD&C BLUE NO. 2 ALUMINUM LAKE", gsrs_status: approved}
+  - id: green-3
+    name: "FD&C Green No. 3"
+    group: headline
+    codes:
+      - {unii: 3P3ONR6O1S, form: dye,  gsrs_name: "FD&C GREEN NO. 3", gsrs_status: approved}
+  - id: red-40
+    name: "FD&C Red No. 40"
+    group: headline
+    codes:
+      - {unii: WZB9127XOA, form: dye,  gsrs_name: "FD&C RED NO. 40", gsrs_status: approved}
+      - {unii: 6T47AS764T, form: lake, gsrs_name: "FD&C RED NO. 40 ALUMINUM LAKE", gsrs_status: approved}
+  - id: yellow-5
+    name: "FD&C Yellow No. 5"
+    group: headline
+    codes:
+      - {unii: I753WB2F1M, form: dye,  gsrs_name: "FD&C YELLOW NO. 5", gsrs_status: approved}
+      - {unii: JQ6BLH9FR7, form: lake, gsrs_name: "FD&C YELLOW NO. 5 ALUMINUM LAKE", gsrs_status: approved}
+  - id: yellow-6
+    name: "FD&C Yellow No. 6"
+    group: headline
+    codes:
+      - {unii: H77VEI93A8, form: dye,  gsrs_name: "FD&C YELLOW NO. 6", gsrs_status: approved}
+      - {unii: GYP6Z2JR6Q, form: lake, gsrs_name: "FD&C YELLOW NO. 6 ALUMINUM LAKE", gsrs_status: approved}
+  - id: red-3
+    name: "FD&C Red No. 3"
+    group: red-3
+    codes:
+      - {unii: PN2ZH5LOQY, form: dye,  gsrs_name: "FD&C RED NO. 3", gsrs_status: approved}
+  # The D&C colours the 300 labels list. A separate group; never part of the headline.
+  - id: dc-red-7
+    name: "D&C Red No. 7"
+    group: d-and-c
+    codes:
+      - {unii: ECW0LZ41X8, form: dye,  gsrs_name: "D&C RED NO. 7", gsrs_status: approved}
+  - id: dc-red-22
+    name: "D&C Red No. 22"
+    group: d-and-c
+    codes:
+      - {unii: 1678RKX8RT, form: dye,  gsrs_name: "D&C RED NO. 22", gsrs_status: approved}
+  - id: dc-red-27
+    name: "D&C Red No. 27"
+    group: d-and-c
+    codes:
+      - {unii: 2LRS185U6K, form: dye,  gsrs_name: "D&C RED NO. 27", gsrs_status: approved}
+  - id: dc-red-28
+    name: "D&C Red No. 28"
+    group: d-and-c
+    codes:
+      - {unii: 767IP0Y5NH, form: dye,  gsrs_name: "D&C RED NO. 28", gsrs_status: approved}
+  - id: dc-red-30
+    name: "D&C Red No. 30"
+    group: d-and-c
+    codes:
+      - {unii: 2S42T2808B, form: dye,  gsrs_name: "D&C RED NO. 30", gsrs_status: approved}
+  - id: dc-red-33
+    name: "D&C Red No. 33"
+    group: d-and-c
+    codes:
+      - {unii: 9DBA0SBB0L, form: dye,  gsrs_name: "D&C RED NO. 33", gsrs_status: approved}
+  - id: dc-yellow-10
+    name: "D&C Yellow No. 10"
+    group: d-and-c
+    codes:
+      - {unii: 35SW5USQ3G, form: dye,  gsrs_name: "D&C YELLOW NO. 10", gsrs_status: approved}
+      # The registry returns this record with status FAILED (a validation flag on the record,
+      # 2026-11-21); the FDA's UNII table still lists the code under this name, and labels use it.
+      - {unii: CQ3XH3DET6, form: lake, gsrs_name: "D&C YELLOW NO. 10 ALUMINUM LAKE", gsrs_status: FAILED}
+
+# A code a label carries that this table does NOT count, with the reason, so the choice is on record.
+not_counted:
+  - unii: D3741U8K7L
+    label_name: "INDIGOTINDISULFONATE SODIUM"
+    gsrs_name: "INDIGOTINDISULFONATE SODIUM"
+    reason: >-
+      A separate registry record (a single chemical, CAS 860-22-0) that the registry lists as ONE
+      COMPONENT of the FD&C Blue No. 2 record (L06K8R7DQK, a mixture of three components). It is
+      not the same substance record as FD&C Blue No. 2, so it is not counted as Blue No. 2. One
+      medicine label lists it (Keppra) and that label also lists FD&C Blue No. 2 by its own code,
+      so counting it would move no total.

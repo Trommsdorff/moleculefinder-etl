@@ -98,6 +98,13 @@ SOURCES: dict[str, dict] = {
                  "license_url": "https://www.fda.gov/about-fda/about-website/website-policies",
                  "homepage": "https://www.fda.gov/food/food-additives-petitions/aspartame-and-other-sweeteners-food",
                  "commercial_ok": True, "attribution_required": False},
+    # The Federal Register (findings run, 2026-11-21): the FDA's orders and notices, published by the
+    # Office of the Federal Register and the Government Publishing Office; a US government work.
+    "federal_register": {"name": "Federal Register (Office of the Federal Register, NARA, and GPO)",
+                 "license": "US Government Public Domain", "licence_class": "public_domain",
+                 "license_url": "https://www.federalregister.gov/reader-aids/policy/terms-of-use",
+                 "homepage": "https://www.federalregister.gov/",
+                 "commercial_ok": True, "attribution_required": False},
     "mesh":     {"name": "Medical Subject Headings (MeSH), US National Library of Medicine",
                  "license": "US Government Public Domain", "licence_class": "public_domain",
                  "license_url": "https://www.nlm.nih.gov/web_policies.html",
@@ -258,7 +265,7 @@ SHORT_NAMES: dict[str, str] = {
     "eu_clp": "EU CLP Regulation", "hcis": "Safe Work Australia", "nite": "NITE",
     "cas_registry": "CAS Registry", "fda_unii": "FDA UNII", "osha_hcs": "US OSHA Hazard Communication Standard", "epa_toxvaldb": "EPA ToxValDB", "epa_iris": "EPA IRIS",
     "niosh": "NIOSH", "atsdr": "ATSDR", "fda_ltkb": "FDA LTKB", "lactmed": "LactMed",
-    "fda": "FDA", "mesh": "MeSH", "efsa": "EFSA", "dragomir_2025": "Dragomir et al. 2025",
+    "fda": "FDA", "federal_register": "Federal Register", "mesh": "MeSH", "efsa": "EFSA", "dragomir_2025": "Dragomir et al. 2025",
     "weber_2025": "Weber et al. 2025", "saraiva_2020": "Saraiva et al. 2020", "gourineni_2018": "Gourineni et al. 2018",
     "vajdovich_2025": "Vajdovich et al. 2025", "dermesonlouoglou_2026": "Dermesonlouoglou et al. 2026",
 }

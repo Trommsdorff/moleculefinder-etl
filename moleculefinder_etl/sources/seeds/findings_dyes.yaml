@@ -1,0 +1,89 @@
+# Words and sources for the first findings page, "Synthetic dyes on medicine labels" (findings run,
+# 2026-11-21). HAND-MAINTAINED. The numbers are never here: they are computed from the labels
+# (transform/findings.py). This file holds only (1) what the FDA has said, each statement read on
+# the FDA's own page in the session named below, with its link and the date it was read, and (2)
+# the one true account of how the labels on the site were chosen.
+#
+# THE RULE FOR THE FDA STATEMENTS (the brief): every statement about what the FDA has done or
+# asked comes from fda.gov or the Federal Register, read in the session, never from a news
+# article or memory. `says` is MoleculeFinder's plain restatement and carries ONLY what that
+# page says; `quote` is the page's own sentence, character for character (it may hold a dash: it
+# is the FDA's text, shown on the review page and in the data, never printed as site copy).
+# A statement the FDA's pages do not support is not here. No statement says a dye is harmful or
+# safe, and the FDA's stated reason for an action is not restated (the page links the FDA's own).
+
+read: "2026-11-21"
+sources:
+  fda: fda
+  federal_register: federal_register
+
+statements:
+  - id: red3-order
+    date: "2025-01-16"
+    kind: order
+    title: "Color Additive Petition From Center for Science in the Public Interest, et al.; Request To Revoke Color Additive Listing for Use of FD&C Red No. 3 in Food and Ingested Drugs (90 FR 4628)"
+    publisher: "Federal Register"
+    source: federal_register
+    url: "https://www.federalregister.gov/documents/2025/01/16/2025-00830/color-additive-petition-from-center-for-science-in-the-public-interest-et-al-request-to-revoke-color"
+    says: "On January 16, 2025 the FDA published an order that removes the listings for FD&C Red No. 3 in food (21 CFR 74.303) and in ingested drugs (21 CFR 74.1303). The order takes effect January 15, 2027 for food and January 18, 2028 for ingested drugs."
+    quote: "This order is effective January 15, 2027, except for amendatory instruction 4, which is effective January 18, 2028."
+  - id: red3-update
+    date: "2025-01-15"
+    kind: announcement
+    title: "FDA to Revoke Authorization for the Use of Red No. 3 in Food and Ingested Drugs"
+    publisher: "FDA, Constituent Update"
+    source: fda
+    url: "https://www.fda.gov/food/hfp-constituent-updates/fda-revoke-authorization-use-red-no-3-food-and-ingested-drugs"
+    says: "The FDA's own announcement of the order, dated January 15, 2025, gives the same two dates: manufacturers using FD&C Red No. 3 in food and in ingested drugs have until January 15, 2027 and January 18, 2028, respectively, to reformulate."
+    quote: "Manufacturers who use FD&C Red No. 3 in food and ingested drugs will have until January 15, 2027 or January 18, 2028, respectively, to reformulate their products."
+  - id: red3-stay
+    date: "2026-08-05"
+    kind: notice
+    title: "Micro-Tracers, Inc.; Response to Objections and Requests for a Public Hearing (91 FR 50475)"
+    publisher: "Federal Register"
+    source: federal_register
+    url: "https://www.federalregister.gov/documents/2026/08/05/2026-15920/micro-tracers-inc-response-to-objections-and-requests-for-a-public-hearing"
+    says: "A company's objections had put the order on hold from February 18, 2025. On August 5, 2026 the FDA denied the hearing request, lifted the hold and confirmed both dates, January 15, 2027 and January 18, 2028."
+    quote: "FDA lifts the administrative stay as of August 5, 2026. The effective dates of January 15, 2027, and January 18, 2028, for amendatory instruction 4, for the order published on January 16, 2025 (90 FR 4628), are confirmed."
+  - id: six-announcement
+    date: "2025-04-22"
+    kind: announcement
+    title: "HHS, FDA to Phase Out Petroleum-Based Synthetic Dyes in Nation's Food Supply"
+    publisher: "FDA, Press Announcement"
+    source: fda
+    url: "https://www.fda.gov/news-events/press-announcements/hhs-fda-phase-out-petroleum-based-synthetic-dyes-nations-food-supply"
+    says: "On April 22, 2025 the FDA and HHS said they would work with industry to eliminate six remaining synthetic dyes from the food supply by the end of 2026: FD&C Green No. 3, Red No. 40, Yellow No. 5, Yellow No. 6, Blue No. 1 and Blue No. 2. The announcement is about the food supply."
+    quote: "Working with industry to eliminate six remaining synthetic dyes—FD&C Green No. 3, FD&C Red No. 40, FD&C Yellow No. 5, FD&C Yellow No. 6, FD&C Blue No. 1, and FD&C Blue No. 2—from the food supply by the end of next year."
+  - id: six-tracker
+    date: "2026-10-16"
+    kind: page
+    title: "Tracking Food Industry Pledges to Remove Petroleum Based Food Dyes"
+    publisher: "FDA, page current as of October 16, 2026"
+    source: fda
+    url: "https://www.fda.gov/food/color-additives-information-consumers/tracking-food-industry-pledges-remove-petroleum-based-food-dyes"
+    says: "The FDA's tracker page, current as of October 16, 2026, describes the same six dyes as ones frequently used in the food supply and gives the end of 2027 as the date by which the FDA is working with food makers, retailers and trade associations to eliminate them. The page lists company pledges for food and does not mention medicines."
+    quote: "Additionally, the FDA is working closely with food manufacturers, retailers, and trade associations to eliminate six remaining certified color additives frequently used in the food supply—FD&C Green No. 3, FD&C Red No. 40, FD&C Yellow No. 5, FD&C Yellow No. 6, FD&C Blue No. 1, and FD&C Blue No. 2—by the end of 2027."
+  - id: regulates
+    date: "2026-07-22"
+    kind: page
+    title: "Color Additives - Information for Consumers"
+    publisher: "FDA, page current as of July 22, 2026"
+    source: fda
+    url: "https://www.fda.gov/food/food-ingredients-packaging/color-additives-information-consumers"
+    says: "The FDA regulates the color additives used in foods, drugs, cosmetics and certain medical devices. It describes a straight color as one not mixed or reacted with anything else (for example FD&C Blue No. 1) and a lake as a straight color reacted with precipitants and substrata (for example Blue 1 Lake)."
+    quote: "The FDA is responsible for regulating all color additives used in foods, drugs, cosmetics (except for coal- tar hair dyes), and certain medical devices to ensure that they meet the FDA’s safety standard and are accurately labeled."
+
+# How the 300 medicine labels came to be on the site (established 2026-11-21 from products.yaml,
+# scripts/draft_products.py and the Run C1 record in HISTORY.md). Written ONCE here, shown on the
+# page and the review page. The numbers in it (how many labels, how many have an active that is a
+# MoleculeFinder molecule) are filled in by the compiler from the data, never typed.
+selection:
+  chosen_by: >-
+    A person picked them, brand by brand, in a list kept by hand (products.yaml). Candidates were
+    drafted from the brand names the FDA's Drugs@FDA records give for medicines MoleculeFinder
+    describes, and from brand names added by name (over-the-counter ones too), each with the brand
+    owner's own label, not a repackager's.
+  gate: >-
+    A label needs at least three molecules MoleculeFinder holds, matched by the FDA's ingredient
+    code, to have a page on the site.
+  not_by: "They were not chosen by sales, by how often they are prescribed or at random."
