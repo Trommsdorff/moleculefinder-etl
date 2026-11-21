@@ -102,6 +102,8 @@ def test_the_words_the_page_prints_have_no_dash_no_claim_word_and_no_word_of_har
         assert not DASH.search(text), text
         assert not CLAIM_WORDS.search(text), text
         assert not re.search(r"\b(harm|harmful|safe|safety|unsafe|toxic|cancer|danger|risk)\w*", text, re.IGNORECASE), text
+        # the web's ADVICE words (lib/copy-rules.ts), so a seed edit fails here before the web build does
+        assert not re.search(r"\b(should|recommend|take \d|dose|dosing|consult|per day)\b", text, re.IGNORECASE), text
 
 
 def test_a_statement_from_a_news_site_is_refused(tmp_path):
@@ -331,3 +333,28 @@ def test_the_fda_draft_guidance_on_colour_additives_in_drugs_is_there_as_the_fda
     assert g["url"].startswith("https://www.fda.gov/regulatory-information/search-fda-guidance-documents/")
     assert g["date"] == "2025-05-30" and "FDA-2025-D-0507" in g["title"]
     assert "draft" in g["says"] and "not binding" in g["says"] and "names no dye" in g["says"]
+
+
+def test_the_run_reports_each_finding_rebuilt_in_the_log_and_the_weekly_summary(tmp_path, monkeypatch, caplog):
+    from moleculefinder_etl import pipeline
+    monkeypatch.setattr(pipeline, "SNAPSHOTS", tmp_path)
+    (tmp_path / "findings").mkdir()
+    prods = [_product("a", "A", [(BLUE1, "FD&C BLUE NO. 1")]), _product("b", "B", [("XXXXXXXXXX", "WATER")])]
+    s = {**findings.load_statements(), "examples": {"lists": ["a", "b"], "lists_none": []}}
+    labels = _labels(prods)
+    f = findings.compile_dyes(prods, spl=lambda x: labels.get(x), routes=lambda x, v: None, statements=s)
+    summary = tmp_path / "summary.md"
+    monkeypatch.setenv("MFETL_WEEKLY", "1")
+    monkeypatch.setenv("MFETL_STEP_SUMMARY", str(summary))
+    before = pipeline._findings_shipped({"dyes-in-medicines": f})
+    assert before == {"dyes-in-medicines": None}
+    (tmp_path / "findings" / "dyes-in-medicines.json").write_text("{}")
+    with caplog.at_level("INFO", logger="mfetl"):
+        pipeline._report_findings({"dyes-in-medicines": f}, before)
+    text = summary.read_text()
+    assert "### Findings (1)" in text
+    assert "dyes-in-medicines: rebuilt (new from the shipped file): 1 of the 2 medicine labels list one of the six" in text
+    assert "dyes-in-medicines: b left out of the lists sentence: now lists none of the six" in text
+    assert any("findings: dyes-in-medicines: rebuilt" in r.getMessage() for r in caplog.records)
+    pipeline._report_findings({"dyes-in-medicines": f}, {"dyes-in-medicines": "{}"})
+    assert "rebuilt (unchanged from the shipped file)" in summary.read_text()

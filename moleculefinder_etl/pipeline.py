@@ -175,6 +175,47 @@ def _report_ld50_held(events: list[dict]) -> None:
                 f.write("\n")
 
 
+def _findings_shipped(found: dict | None) -> dict[str, str | None]:
+    """Each finding's file as the snapshot holds it before this export writes (None: not there)."""
+    out: dict[str, str | None] = {}
+    for name in (found or {}):
+        f = SNAPSHOTS / "findings" / f"{name}.json"
+        out[name] = f.read_text() if f.exists() else None
+    return out
+
+
+def _report_findings(found: dict | None, before: dict[str, str | None]) -> None:
+    """Each finding rebuilt this run (2026-11-21): one log line and a section of the run summary,
+    saying whether its file changed from what shipped, its headline count and any familiar label the
+    page no longer names (``findings.examples``). Words only: a finding never stops a run."""
+    if not found:
+        return
+    lines: list[str] = []
+    for name, f in sorted(found.items()):
+        path = SNAPSHOTS / "findings" / f"{name}.json"
+        now = path.read_text() if path.exists() else None
+        state = "new" if before.get(name) is None else ("changed" if now != before[name] else "unchanged")
+        t = f["totals"]
+        ex = f.get("examples") or {}
+        line = (f"{name}: rebuilt ({state} from the shipped file): {t['any_of_six']['labels']} of the "
+                f"{t['labels']['labels']} medicine labels list one of the six; familiar labels named "
+                f"{len(ex.get('lists') or [])} and {len(ex.get('lists_none') or [])}, "
+                f"{len(ex.get('dropped') or [])} left out")
+        lines.append(line)
+        lines += [f"{name}: {d['slug']} left out of the {d['side']} sentence: {d['why']}" for d in ex.get("dropped") or []]
+    for line in lines:
+        log.info("  findings: %s", line)
+    if weekly_run():
+        summary = summary_path()
+        if summary:
+            with open(summary, "a", encoding="utf-8") as fh:
+                fh.write(f"### Findings ({len(found)})\n\n"
+                         "Each findings page's file, recomputed from the labels this run publishes "
+                         "(transform/findings.py).\n\n")
+                fh.writelines(f"- {line}\n" for line in lines)
+                fh.write("\n")
+
+
 def _report_presence_unmarked(unmarked: list[dict]) -> None:
     """Wikidata ingredient rows with no presence mark (build plan everyday chemistry, phase 1): one log
     line each, the committed ``data/seed/presence_unmarked.json``, and on GitHub Actions a notice and a
@@ -663,6 +704,7 @@ def stage_export(settings: Settings) -> Path:
     found = ({findings.DYES_FINDING: findings.compile_dyes(staged, spl=products.spl_cached,
                                                            routes=products.routes_cached)}
              if staged is not None else None)
+    before = _findings_shipped(found)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
                                   products=staged, product_pairs=pairs, published=published,
@@ -675,6 +717,7 @@ def stage_export(settings: Settings) -> Path:
         log.info("  doors: %s", ", ".join(f"{d['slug']} ({len(d['stops'])} stops, {'live' if d['live'] else 'dark'})"
                                           for d in door_data["doors"]))
     _log_featured()
+    _report_findings(found, before)
     return path
 
 
