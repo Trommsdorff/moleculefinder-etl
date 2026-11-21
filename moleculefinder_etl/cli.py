@@ -11,6 +11,9 @@ load_dotenv()  # pick up SUPABASE_URL / SUPABASE_SERVICE_KEY from a local .env
 # The Zenodo token is read only by `mfetl zenodo` (zenodo.token(), straight from the file), so no other stage, and
 # no process a stage starts, carries it in its environment.
 os.environ.pop("ZENODO_TOKEN", None)
+# The same for the dataset mirrors' logins (mirrors.py reads them straight from the file).
+for _k in ("HF_TOKEN", "KAGGLE_API_TOKEN", "KAGGLE_USERNAME", "KAGGLE_KEY"):
+    os.environ.pop(_k, None)
 
 STAGES = {
     "seed": pipeline.stage_seed,
@@ -26,7 +29,7 @@ STAGES = {
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mfetl", description="MoleculeFinder ETL")
-    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset", "zenodo"], help="pipeline stage to run")
+    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset", "zenodo", "mirrors"], help="pipeline stage to run")
     p.add_argument("--target", type=int, default=None, help="canon size (default from env)")
     p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
     p.add_argument("--version", dest="dataset_version", default=None,
@@ -42,8 +45,12 @@ def main(argv: list[str] | None = None) -> int:
                    help="zenodo: make the draft with its files and stop before publishing")
     p.add_argument("--discard", dest="zenodo_discard", action="store_true",
                    help="zenodo: delete this record's open draft")
+    p.add_argument("--whoami", dest="mirrors_whoami", action="store_true",
+                   help="mirrors: check each login with a read-only call (never prints a token)")
+    p.add_argument("--only", choices=["huggingface", "kaggle"], default=None, help="mirrors: just this mirror")
     p.add_argument("--check", dest="zenodo_check", action="store_true",
-                   help="zenodo: after a publish, check the public record, its files and the DOIs (read only)")
+                   help="zenodo: after a publish, check the public record, its files and the DOIs (read only); "
+                        "mirrors: check each mirror holds the package (read only)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -74,8 +81,24 @@ def main(argv: list[str] | None = None) -> int:
         from . import zenodo
         if sum([args.zenodo_dry_run, args.zenodo_draft_only, args.zenodo_discard, args.zenodo_check]) > 1:
             p.error("zenodo: --dry-run, --draft-only, --discard and --check go one at a time")
-        return zenodo.run(dry_run=args.zenodo_dry_run, draft_only=args.zenodo_draft_only,
-                          do_discard=args.zenodo_discard, check=args.zenodo_check)
+        rc = zenodo.run(dry_run=args.zenodo_dry_run, draft_only=args.zenodo_draft_only,
+                        do_discard=args.zenodo_discard, check=args.zenodo_check)
+        publishing = not (args.zenodo_dry_run or args.zenodo_draft_only or args.zenodo_discard or args.zenodo_check)
+        if rc == 0 and publishing:
+            # One word updates all three copies: a published version is followed by the mirrors (mirrors.py).
+            from . import mirrors
+            rc = mirrors.run(wait_for_zenodo=8)
+            if rc:
+                logging.getLogger("mfetl.mirrors").error(
+                    "mirrors: Zenodo IS published; a mirror needs a second look: run `mfetl mirrors` again")
+        return rc
+    if args.stage == "mirrors":
+        # Bring Hugging Face and Kaggle to the version Zenodo's latest record holds (mirrors.py).
+        from . import mirrors
+        if sum([args.zenodo_dry_run, args.zenodo_check, args.mirrors_whoami]) > 1:
+            p.error("mirrors: --dry-run, --check and --whoami go one at a time")
+        return mirrors.run(dry_run=args.zenodo_dry_run, check=args.zenodo_check, whoami=args.mirrors_whoami,
+                           only=args.only)
     if args.stage == "migrate":
         # Database migrations over SUPABASE_DB_URL; needs no REST keys.
         from . import migrate
