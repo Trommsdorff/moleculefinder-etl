@@ -2,6 +2,12 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The dataset's mirrors follow Zenodo: `mfetl mirrors` (2026-11-20)
+Brief `../MIRRORS-PROMPT.md`; full record `../HISTORY.md`, 2026-11-20. `b5aa46c` `moleculefinder_etl/mirrors.py` + `tests/
+test_mirrors.py`, `5f1a6f3` the Kaggle read-back reads the owner's copy. Runbook `docs/MAC-WEEKLY-REFRESH.md` section 9.
+2026.11 reached Hugging Face (commit `bd7f7161e14a`) and Kaggle (version 3). The weekly share (a `mirrors_step`, its own
+alarm label `mirror-failure`) is on `zenodo-weekly-hook-2026-11` (`9df6ade`), NOT merged. Suite 1,467 passed, ruff 130.
+
 ## The CC0 dataset 2026.11 PUBLISHED on Zenodo by `mfetl zenodo` (2026-11-20)
 Brief `../ZENODO-PROMPT.md`; full record `../HISTORY.md`, 2026-11-20. `29df309` the command (`moleculefinder_etl/
 zenodo.py`, `tests/test_zenodo.py`), `d9f8bff` 2026.11 recorded (DOI 10.5281/zenodo.24407566, record 24407566), merged

@@ -1,13 +1,13 @@
 # CLAUDE.md — moleculefinder-etl
 
-**Keep this file short.** It is loaded into every session, and Claude Code stops loading instruction files past
+**Keep this file short.** It is loaded every session; Claude Code stops loading instruction files past
 150,000 characters in total. It holds the standing rules and the current state only. **Run records do not go here:**
 add them at the top of `HISTORY.md` (this repo), and keep this file under 20,000 characters. This file before
 2026-11-14 is in `HISTORY.md` verbatim (search it by section name when a comment points at "ETL CLAUDE.md").
 
 Public ETL for MoleculeFinder. Pulls PubChem, Wikidata (+ Wikipedia pageviews), DailyMed and hand seeds, transforms,
-and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds from, plus Supabase. Original design:
-`../MoleculeFinder_Technical_Build_Plan.md` (sections 4–7). The web repo is `../moleculefinder-web/` (its own CLAUDE.md).
+and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds from, plus Supabase. Design:
+`../MoleculeFinder_Technical_Build_Plan.md` (4–7). The web repo is `../moleculefinder-web/` (its own CLAUDE.md).
 
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
@@ -21,11 +21,11 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml` and `news.yml` are manual backups; the watchdog stays on GitHub and reads
   the news feed's age (stale after 24 h). A failing web test stops the deploy (the web's `vercel.json`).
-- **Dataset 2026.11 on Zenodo** (2026-11-20, `10.5281/zenodo.24407566`). Hook branch
-  `zenodo-weekly-hook-2026-11` (`release:` publishes itself) unmerged until after 2026-11-23.
-- **Queued:** the extended-solids pass (the plan, "Queued after phase 3B"; its own review page).
+- **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
+  hand `mfetl zenodo` runs it). Hook branch `zenodo-weekly-hook-2026-11` (release and mirrors steps): unmerged to 11-23.
+- **Queued:** the extended-solids pass (the plan, "Queued after phase 3B").
 - **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
-  on engagement (watch `/dashboard`).
+  on engagement (`/dashboard`).
 
 ## Golden rules (do not break these)
 1. **License firewall.** Never ingest a BLOCKED source (DrugBank, HMDB, FooDB, FlavorDB, Leffingwell, ChEMBL). Route
@@ -81,7 +81,7 @@ pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the w
 - `pipeline._preflight` (boards, comparisons, doors, drawing guard, data claims), then `stage_load` → Supabase upserts
   (**skips with no creds**), then `stage_export` → `data/snapshots/` (per-molecule JSON, index, boards, `featured.json`,
   `products.json`, `products_published.json`, `doors.json`, `compare_drawings.json`, `sources.json`, `meta.json`).
-- `mfetl featured` (offline) rebuilds only `featured.json` for previewing a seed edit; it never moves meta.json.
+- `mfetl featured` (offline) rebuilds only `featured.json` to preview a seed edit; never moves meta.json.
 
 ## Deploying and the weekly loop
 - **Pushes are held by default.** Commit locally as Trommsdorff / `291580674+Trommsdorff@users.noreply.github.com` (never a
@@ -154,7 +154,7 @@ pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the w
   (colours only) or a deliberate `RECIPE_VERSION` bump. The palette's fingerprint is pinned to the recipe version. CPK
   colours: the ten brief hues exactly, every other element Jmol's colour tuned into their band by one rule
   (`structures.tuned`), no per-element exceptions (Garrett, 2026-10-25: "keep it as is"). Parts are SMARTS rules
-  (`structure_parts.yaml`), never atom numbers; a part with no label is never shown.
+  (`structure_parts.yaml`), never atom numbers; an unlabelled part is never shown.
 - **Names and titles:** a name goes in a title only when the record carries it (no hand seed of names for titles).
   `title_synonym` is never used when the title has a parenthesis; `synonym_do_not_use.yaml` lists names the parenthetical
   never uses (a test fails any committed title using one). Short answers' other names come only from curated `brands` and
