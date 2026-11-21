@@ -333,11 +333,33 @@ def strength_per(spl: dict) -> str | None:
     return None
 
 
+# ── routes (findings run, 2026-11-21) ─────────────────────────────────────────
+# The route of administration an SPL gives each product ("ORAL", "TOPICAL", "INTRAVENOUS"): the
+# label's own ``routeCode`` (FDA's NCI Thesaurus code and display name), read from the same
+# document as the ingredients. Kept apart from ``parse`` (and from the ``spl1`` cache) so no
+# cached label changes; the findings page uses it to separate medicines taken by mouth from
+# creams, drops and sprays. A label with several products may name several routes.
+ORAL_CODE = "C38288"
+
+
+def parse_routes(xml: bytes) -> list[dict]:
+    """The routes of administration an SPL names, one entry per code, sorted by name:
+    ``[{"code": "C38288", "name": "ORAL"}]``. Empty when the document names none."""
+    root = ET.fromstring(xml)
+    found: dict[str, str] = {}
+    for rc in root.iter(f"{_NS}routeCode"):
+        code = (rc.get("code") or "").strip()
+        name = _clean(rc.get("displayName") or "").upper()
+        if code and name:
+            found.setdefault(code, name)
+    return [{"code": c, "name": n} for c, n in sorted(found.items(), key=lambda x: (x[1], x[0]))]
+
+
 # ── network ───────────────────────────────────────────────────────────────────
-def fetch(setid: str) -> dict | None:
-    """One label, parsed. None when DailyMed has no such set id (404: the label was withdrawn or
-    archived); the products gate then reports it. A transient failure is retried three times
-    and then raises, so a weekly run fails loudly instead of dropping pages."""
+def _get_xml(setid: str) -> bytes | None:
+    """One label's SPL bytes. None when DailyMed has no such set id (404: the label was withdrawn
+    or archived). A transient failure is retried three times and then raises, so a weekly run
+    fails loudly instead of dropping pages."""
     if not SETID_RE.match(setid):
         raise ValueError(f"not a DailyMed set id: {setid!r}")
     url = SPL_URL.format(setid=setid)
@@ -357,10 +379,28 @@ def fetch(setid: str) -> dict | None:
                 log.warning("dailymed %s: 404, the label is withdrawn, archived or moved to another set id", setid)
                 return None
             if r.status_code == 200:
-                return parse(r.content, setid)
+                return r.content
             err = DailyMedError(f"HTTP {r.status_code}")
             if r.status_code not in (429, 500, 502, 503, 504):
                 break
         log.warning("dailymed %s: %s; retrying", setid, err)
         time.sleep(5 * (attempt + 1))
     raise DailyMedError(f"dailymed label {setid}: {type(err).__name__}: {err}")
+
+
+def fetch(setid: str) -> dict | None:
+    """One label, parsed. None when DailyMed has no such set id (404); the products gate then
+    reports it."""
+    xml = _get_xml(setid)
+    return parse(xml, setid) if xml is not None else None
+
+
+def fetch_routes(setid: str) -> dict | None:
+    """One label's routes with the version they were read at: ``{"version": 25, "routes": [...]}``.
+    None for a 404. The version lets the cache drop routes read from an older edition of the label."""
+    xml = _get_xml(setid)
+    if xml is None:
+        return None
+    version = ET.fromstring(xml).find(f"{_NS}versionNumber")
+    v = version.get("value") if version is not None else None
+    return {"version": int(v) if v and v.isdigit() else None, "routes": parse_routes(xml)}

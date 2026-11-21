@@ -27,6 +27,7 @@ PRODUCTS = "products.json"
 PRODUCT_PAIRS = "product_pairs.json"
 DOORS = "doors.json"
 COMPARE_DRAWINGS = "compare_drawings.json"
+FINDINGS = "findings"                # a folder: one <name>.json per finding (findings run, 2026-11-21)
 # Gate hold (2026-11-09): every /whats-in/ product and pair slug ever published (never shrinks).
 PUBLISHED = products_hold.PUBLISHED
 # The source registry with each source's licence class and attribution (2026-10-23), so the site
@@ -63,7 +64,7 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
            featured: Callable[[str], dict] | None = None, today: str | None = None,
            products: list[dict] | None = None, product_pairs: list[dict] | None = None,
            published: dict[str, list[str]] | None = None, doors: dict | None = None,
-           compare_drawings: dict | None = None) -> Path:
+           compare_drawings: dict | None = None, findings: dict[str, dict] | None = None) -> Path:
     """Write per-molecule JSON + a compact search index + leaderboard files + meta.json.
 
     Each leaderboard file is a self-describing board (metadata + enriched
@@ -104,6 +105,10 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     ``compare_drawings`` (``transform/drawings.compile_compare_drawings``, phase 5A) becomes
     compare_drawings.json, the two drawings of every /vs pair; kept apart from comparisons.json so
     that file stays small. None removes one left behind.
+
+    ``findings`` (``transform/findings``, findings run 2026-11-21) is {name: finding}: each becomes
+    ``findings/<name>.json``, a fact MoleculeFinder computes from its own data for a /findings page.
+    None (no products) removes the folder's files.
     """
     snapshot_guard.check(molecules, SNAPSHOTS)
     # The source-licence rule: nothing is written if any value cites a source that is not in
@@ -166,10 +171,14 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
     if doors is not None and doors.get("doors"):
         outputs[doors_path] = json.dumps(doors, ensure_ascii=False)
 
+    findings_dir = SNAPSHOTS / FINDINGS
+    for name, finding in (findings or {}).items():
+        outputs[findings_dir / f"{name}.json"] = json.dumps(finding, ensure_ascii=False, indent=1) + "\n"
+
     if published is not None:
         outputs[SNAPSHOTS / PUBLISHED] = json.dumps(published, ensure_ascii=False, indent=1) + "\n"
 
-    stale = [f for d in (mol_dir, lb_dir) if d.is_dir() for f in d.glob("*.json") if f not in outputs]
+    stale = [f for d in (mol_dir, lb_dir, findings_dir) if d.is_dir() for f in d.glob("*.json") if f not in outputs]
     if featured is None and featured_path.exists():
         stale.append(featured_path)
     if products is None and products_path.exists():
@@ -189,8 +198,14 @@ def export(molecules: list[dict], leaderboards: dict[str, dict],
 
     mol_dir.mkdir(parents=True, exist_ok=True)
     lb_dir.mkdir(parents=True, exist_ok=True)
+    if findings:
+        findings_dir.mkdir(parents=True, exist_ok=True)
     for path, text in outputs.items():
         path.write_text(text)
+    if findings_dir.is_dir():
+        _prune(findings_dir, {f"{name}.json" for name in (findings or {})})
+        if not any(findings_dir.iterdir()):
+            findings_dir.rmdir()
     _prune(mol_dir, {f"{m['slug']}.json" for m in molecules})
     _prune(lb_dir, {f"{slug}.json" for slug in leaderboards} | {"index.json"})
     if featured is None and featured_path.exists():

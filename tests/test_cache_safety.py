@@ -485,6 +485,12 @@ def test_the_fetch_stage_gives_synonyms_the_expiry_and_properties_none(tmp_path,
     (tmp_path / "canon.parquet").write_bytes(b"")          # _require only checks that it exists
     monkeypatch.setattr(pipeline.canon_stage, "read_parquet", lambda: [{"cid": 2519}])
     monkeypatch.setattr(pipeline.pubchem, "pug_view", lambda cid, heading: None)
+    # The Toxicity warm-up reads through pug_view_dated since the LD50 hold (2026-11-21); without this the test fetched
+    # caffeine's answer from PubChem for real and wrote it into data/raw_cache (found 2026-11-21: a pinned build after
+    # the suite then refused, "pubchem/2519-Toxicity.json: changed").
+    from moleculefinder_etl.sources import cache
+    monkeypatch.setattr(pipeline.pubchem, "pug_view_dated",
+                        lambda cid, heading, max_age_days=None: cache.Entry(None, None, live=False))
     # The product inputs (run C1) have their own wiring test in test_products.py; with no seed
     # the stage fetches exactly what it did before.
     monkeypatch.setattr(pipeline.products, "load_seed", list)

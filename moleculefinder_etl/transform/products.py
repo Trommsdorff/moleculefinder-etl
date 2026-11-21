@@ -291,6 +291,38 @@ def spl_cached(setid: str) -> dict | None:
     return hit.value if hit is not None else None
 
 
+ROUTE_PREFIX = "route1"               # dailymed/route1-<setid>.json: the label's routes of administration
+
+
+def _route_path(setid: str) -> Path:
+    return DAILYMED_DIR / f"{ROUTE_PREFIX}-{setid}.json"
+
+
+def routes_cached(setid: str, version: int | None) -> list[dict] | None:
+    """The routes of administration cached for a label, or None when none are cached for THIS
+    edition of it (a route entry read at another version is not used: the findings must describe
+    the label the page links, not an older one). Written by ``warm`` (findings run, 2026-11-21)."""
+    hit = cache.read_json(_route_path(setid), PRODUCTS_CACHE_TTL_DAYS)
+    value = hit.value if hit is not None else None
+    if not isinstance(value, dict) or value.get("missing") or value.get("version") != version:
+        return None
+    routes = value.get("routes")
+    return routes if isinstance(routes, list) else None
+
+
+def _routes_read(setid: str, version: int | None) -> bool:
+    """Has this label's route entry been read at its edition, or at a newer one (a pinned build can
+    hold a label one edition behind DailyMed; asking again would return the same newer answer)?"""
+    hit = cache.read_json(_route_path(setid), PRODUCTS_CACHE_TTL_DAYS)
+    value = hit.value if hit is not None else None
+    if not isinstance(value, dict):
+        return False
+    if value.get("missing"):
+        return True
+    seen = value.get("version")
+    return isinstance(seen, int) and isinstance(version, int) and seen >= version
+
+
 def _read_parts() -> dict[str, dict]:
     if not PARTS_CACHE.exists():
         return {}
@@ -358,7 +390,7 @@ def read_props(cids) -> dict[int, dict]:
 
 
 def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
-         fetch_parents=None, fetch_table=None, fetch_cid_parents=None) -> dict[str, int]:
+         fetch_parents=None, fetch_table=None, fetch_cid_parents=None, fetch_routes=None) -> dict[str, int]:
     """Fetch whatever the product pages need that the cache does not hold fresh: each seeded
     DailyMed label, the seeded Wikidata items' parts, the FDA's UNII table (``fetch_table``,
     default ``fda_unii.warm``; a test passes ``lambda: None`` for no table), every molecule's UNII
@@ -376,6 +408,23 @@ def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
             parsed = dailymed.fetch(p["item"])
             cache.write_json(_spl_path(p["item"]), parsed if parsed is not None else {"missing": True})
             fetched_labels += 1
+
+    # The routes of administration of every medicine label (findings run, 2026-11-21), from the same
+    # DailyMed document, cached beside the label under the version it was read at.
+    fetch_routes = fetch_routes or dailymed.fetch_routes
+    fetched_routes = 0
+    for p in seed:
+        if p["source"] != "dailymed" or p["kind"] != "medicine":
+            continue
+        label = spl_cached(p["item"])
+        if not label or label.get("missing"):
+            continue
+        if not _routes_read(p["item"], label.get("version")):
+            got = fetch_routes(p["item"])
+            cache.write_json(_route_path(p["item"]), got if got is not None else {"missing": True})
+            fetched_routes += 1
+    if fetched_routes:
+        log.info("  products: %d medicine label(s) read again for their routes of administration", fetched_routes)
 
     qids = sorted({s["item"] for p in seed for s in [p, *p.get("also", [])] if s["source"] == "wikidata"})
     stored = _read_parts()

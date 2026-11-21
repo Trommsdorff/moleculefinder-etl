@@ -25,7 +25,7 @@ from pathlib import Path
 from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, SNAPSHOTS,
                      SYNONYMS_CACHE_TTL_DAYS, UNII_CACHE_TTL_DAYS, summary_path, weekly_run)
 from .transform import canon as canon_stage
-from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
+from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold, findings
 from .transform import presence, claims, doors, drawings, drawing_guard
 from .transform import wikidata_age, ld50_hold
 from .sources import cache, pubchem
@@ -173,6 +173,47 @@ def _report_ld50_held(events: list[dict]) -> None:
                         f"it is released and the page shows none.\n\n")
                 f.writelines(f"- {line}\n" for line in lines)
                 f.write("\n")
+
+
+def _findings_shipped(found: dict | None) -> dict[str, str | None]:
+    """Each finding's file as the snapshot holds it before this export writes (None: not there)."""
+    out: dict[str, str | None] = {}
+    for name in (found or {}):
+        f = SNAPSHOTS / "findings" / f"{name}.json"
+        out[name] = f.read_text() if f.exists() else None
+    return out
+
+
+def _report_findings(found: dict | None, before: dict[str, str | None]) -> None:
+    """Each finding rebuilt this run (2026-11-21): one log line and a section of the run summary,
+    saying whether its file changed from what shipped, its headline count and any familiar label the
+    page no longer names (``findings.examples``). Words only: a finding never stops a run."""
+    if not found:
+        return
+    lines: list[str] = []
+    for name, f in sorted(found.items()):
+        path = SNAPSHOTS / "findings" / f"{name}.json"
+        now = path.read_text() if path.exists() else None
+        state = "new" if before.get(name) is None else ("changed" if now != before[name] else "unchanged")
+        t = f["totals"]
+        ex = f.get("examples") or {}
+        line = (f"{name}: rebuilt ({state} from the shipped file): {t['any_of_six']['labels']} of the "
+                f"{t['labels']['labels']} medicine labels list one of the six; familiar labels named "
+                f"{len(ex.get('lists') or [])} and {len(ex.get('lists_none') or [])}, "
+                f"{len(ex.get('dropped') or [])} left out")
+        lines.append(line)
+        lines += [f"{name}: {d['slug']} left out of the {d['side']} sentence: {d['why']}" for d in ex.get("dropped") or []]
+    for line in lines:
+        log.info("  findings: %s", line)
+    if weekly_run():
+        summary = summary_path()
+        if summary:
+            with open(summary, "a", encoding="utf-8") as fh:
+                fh.write(f"### Findings ({len(found)})\n\n"
+                         "Each findings page's file, recomputed from the labels this run publishes "
+                         "(transform/findings.py).\n\n")
+                fh.writelines(f"- {line}\n" for line in lines)
+                fh.write("\n")
 
 
 def _report_presence_unmarked(unmarked: list[dict]) -> None:
@@ -658,10 +699,16 @@ def stage_export(settings: Settings) -> Path:
     # The ledger of every /whats-in/ slug ever published (gate hold, 2026-11-09): never shrinks.
     published = (products_hold.published(products_hold.read_published(), staged, pairs, door_data)
                  if staged is not None else None)
+    # Findings (2026-11-21): facts computed from the products this run publishes, one file each in
+    # snapshots/findings/. Offline (the label cache), so the weekly refresh keeps them current.
+    found = ({findings.DYES_FINDING: findings.compile_dyes(staged, spl=products.spl_cached,
+                                                           routes=products.routes_cached)}
+             if staged is not None else None)
+    before = _findings_shipped(found)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
                                   products=staged, product_pairs=pairs, published=published,
-                                  doors=door_data, compare_drawings=compare)
+                                  doors=door_data, compare_drawings=compare, findings=found)
     inputs.after_export()
     non_empty = {k: len(v["entries"]) for k, v in boards.items() if v["entries"]}
     log.info("stage 4: export — %d molecules + %d leaderboards -> %s", len(molecules), len(non_empty), path)
@@ -670,6 +717,7 @@ def stage_export(settings: Settings) -> Path:
         log.info("  doors: %s", ", ".join(f"{d['slug']} ({len(d['stops'])} stops, {'live' if d['live'] else 'dark'})"
                                           for d in door_data["doors"]))
     _log_featured()
+    _report_findings(found, before)
     return path
 
 

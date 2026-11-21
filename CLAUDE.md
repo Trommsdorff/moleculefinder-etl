@@ -21,9 +21,8 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
 - **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
   hand `mfetl zenodo` runs it). Hook branch `zenodo-weekly-hook-2026-11` (release and mirrors steps): unmerged to 11-23.
-- **Queued:** the extended-solids pass (the plan, "Queued after phase 3B").
-- **Deferred:** monthly tranches from `../drugs-wing-deferred.csv`; the ~10k bulk canon (`--target 10000`) stays gated
-  on engagement (`/dashboard`).
+- **Queued:** extended solids. **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
+- **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 
 ## Golden rules (do not break these)
 1. **License firewall.** Never ingest a BLOCKED source (DrugBank, HMDB, FooDB, FlavorDB, Leffingwell, ChEMBL). Route
