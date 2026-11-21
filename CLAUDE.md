@@ -3,7 +3,7 @@
 **Keep this file short.** It is loaded every session; Claude Code stops loading instruction files past
 150,000 characters in total. It holds the standing rules and the current state only. **Run records do not go here:**
 add them at the top of `HISTORY.md` (this repo), and keep this file under 20,000 characters. This file before
-2026-11-14 is in `HISTORY.md` verbatim (search it by section name when a comment points at "ETL CLAUDE.md").
+2026-11-14 is in `HISTORY.md` verbatim.
 
 Public ETL for MoleculeFinder. Pulls PubChem, Wikidata (+ Wikipedia pageviews), DailyMed and hand seeds, transforms,
 and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds from, plus Supabase. Design:
@@ -12,15 +12,13 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 929 molecules; 430 product pages; 6 doors.
-- **A limit is not a value** (2026-11-15): `parse_ld50` keeps a source's qualifier (`qualifier`, `ld50_qualifier`).
 - **Next weekly run:** `structure drawings: 903 carried, 0 repainted, 0 drawn, 26 with no drawing`, `structure parts:
   723 carried, 0 made, 202 with no part, 4 drawings unreadable`, `compare drawings: 147 pairs (aligned 45,
   aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`, `repeat units: 3 (3 carried,
   0 repainted, 0 drawn this run)`, made: none. On a stop: `docs/DRAWING-RECIPES.md` sections 10 and 11.
 - **Both scheduled jobs run on the Mac mini:** the weekly refresh (`scripts/mac/weekly-refresh.sh`, Mon 03:10 ET, from
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
-  `docs/MAC-NEWS.md`). `etl.yml` and `news.yml` are manual backups; the watchdog stays on GitHub and reads
-  the news feed's age (stale after 24 h). A failing web test stops the deploy (the web's `vercel.json`).
+  `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
 - **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
   hand `mfetl zenodo` runs it). Hook branch `zenodo-weekly-hook-2026-11` (release and mirrors steps): unmerged to 11-23.
 - **Queued:** the extended-solids pass (the plan, "Queued after phase 3B").
@@ -103,10 +101,12 @@ pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the w
   if the input behind the new value was fetched live in this run (an existing LD50 going null, a QID changing). A summary
   reverting to "chemical compound" never passes, live or not. `MFETL_ALLOW_REGRESSION=1` overrides and logs each molecule,
   for a deliberate rule change only.
+- **An LD50 a LIVE answer drops is held 7 days** (`transform/ld50_hold.py`, 2026-11-21): released on a live fetch 7+
+  days after first seen gone; a cache hit never starts or releases a hold. `data/seed/ld50_held.json`; runbook section 10.
 - **Wikidata text ages 7 days** (`transform/wikidata_age.py`, Garrett's ruling, trust run 8): a CHANGE to a Wikidata text
   field the site shows (description, label, aliases) ships only once the revision that introduced it is at least 7 days
   old; until then the shipped value stands. A brand-new molecule takes the current value; a reverted edit never ships.
-  Not a blacklist of names. Held values: run summary and `data/seed/wikidata_held.json`.
+  Held values: run summary and `data/seed/wikidata_held.json`.
 - **Product pages are held, not dropped** (`transform/products_hold.py`, gate hold): a product the SHIPPED snapshot has,
   whose row is still in `products.yaml`, and which this run would drop, is published again from what shipped, logged
   `held:`, in the run summary and `data/seed/products_held.json`. A product leaves ONLY by removing its row from
@@ -161,7 +161,7 @@ pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the w
   `wikidata_names`, never raw PubChem synonyms. A pair's `names` parenthetical must be a name the record carries, not
   the title, and appear in the answer line.
 - **LD50:** `toxicity.primary_ld50` is the one LD50 (oral rat, oral mouse, any oral, then the lowest by another route);
-  the boards take it only when oral (`leaderboards.ORAL_ONLY`).
+  the boards take it only when oral (`leaderboards.ORAL_ONLY`). A limit is not a value (`ld50_qualifier`, 2026-11-15).
 - **Descriptions:** every record gets a unique 100-200 character description; every new family slug needs an entry in
   `description_phrases.yaml`.
 - **Determinism:** `mfetl all` twice from the same inputs is byte-identical (`tests/test_determinism.py`). No timestamps on

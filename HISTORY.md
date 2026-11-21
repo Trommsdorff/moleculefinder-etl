@@ -2,6 +2,29 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## levonorgestrel's LD50: a live fetch is live in the guard, and the LD50 hold (2026-11-21)
+Brief `../LEVONORGESTREL-LD50-PROMPT.md`; full record `../HISTORY.md`, 2026-11-21. Branch `ld50-hold-2026-11`, merged to
+local `main`; NOT pushed.
+- **Upstream:** PubChem's Toxicity answer for CID 13109 no longer carries HSDB record 3595 (NORGESTREL, the racemate; it
+  now sits only on CID 4542) and its four LD50 rows (oral rat 5010, oral mouse 5010, mouse ip 7300, rat ip 11,200 mg/kg).
+  Levonorgestrel's own HSDB 6483 has no LD50. Three fetches today agree (18:01, 18:25, 18:30 UTC; the last two byte
+  identical). Not a wording: `parse_ld50(gate=False)` reads nothing either. Across all 906 live answers no other LD50 moves.
+- **The cause (a liveness bug, since the guard was added 2026-09-08):** `stage_fetch` fetched each Toxicity answer live
+  (`pug_view`, the date dropped), `stage_transform` read the file back, a cache hit by construction, so the guard saw
+  "cache hit written <today>" and any real LD50 removal stopped the weekly run. Monday 2026-11-23 would have stopped and
+  alarmed (895 of the 909 cached answers date from 2026-10-21, past the 30 days).
+- **The fix (`76ee2ae`):** `pipeline._warm_annotations` records which answers it fetched live; `freshness.carried`
+  keeps live only for that exact `fetched_at`. `transform/ld50_hold.py`: an LD50 a LIVE answer drops is assembled from the
+  shipped rows, listed in the summary ("LD50 values held") and `data/seed/ld50_held.json`, re-asked live every run
+  (`pug_view_dated(max_age_days=0)`; a pinned build never asks), released on a live fetch 7+ days after first seen gone; a
+  value back resets the clock; a cache hit never starts or releases a hold and the guard still refuses it. The Mac job's
+  summaries and alarm name the count. 15 tests (`tests/test_ld50_hold.py`, from the real text). Runbook section 10.
+- **Checks:** suite 1,482 passed (main's 1,467 plus 15), ruff 130. Pinned build twice: 965 files byte-identical, equal to
+  main, 0 PubChem requests, Drawings 903 / 723 / 147 / 3 carried. `weekly-refresh.sh --dry-run --ref ld50-hold-2026-11`
+  (log `weekly-20261121-133442-dry-run.log`): DRY RUN complete, 895 of 906 answers live, levonorgestrel held, 50 molecule
+  files changed (47 synonym lists, 9 display synonyms, GHS on 3: levonorgestrel loses H400/H410 and the environmental
+  hazard category with the norgestrel rows, disodium inosinate's label empties, myristic acid; no LD50).
+
 ## The dataset's mirrors follow Zenodo: `mfetl mirrors` (2026-11-20)
 Brief `../MIRRORS-PROMPT.md`; full record `../HISTORY.md`, 2026-11-20. `b5aa46c` `moleculefinder_etl/mirrors.py` + `tests/
 test_mirrors.py`, `5f1a6f3` the Kaggle read-back reads the owner's copy. Runbook `docs/MAC-WEEKLY-REFRESH.md` section 9.
