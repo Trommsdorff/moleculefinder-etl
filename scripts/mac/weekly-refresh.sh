@@ -96,6 +96,7 @@ export UV_PYTHON_DOWNLOADS=never UV_NO_PROGRESS=1
 NET_SECONDS=300                                            # a git push or fetch that takes longer has hung
 GH_SECONDS=120                                             # one gh call
 DATASET_SECONDS=$((45 * 60))                               # the dataset step's build and upload, each call
+MIRROR_SECONDS=$((30 * 60))                                # the mirrors step: one call, uploads and read-backs
 DATASET_CHECK_TRIES=6                                      # the public check after a publish, 2 min apart (doi.org lags)
 
 # ── the week and the gate (also --schedule-check, for tests/test_mac_weekly.py) ──
@@ -158,6 +159,7 @@ STEP="start"; WATCHDOG=""; CAUSE=""; PUBLISHED=0; HELD="unknown"; PRODUCTS_HELD=
 DRAWINGS_TEXT="unknown: the run failed before the drawing guard ran"
 RUN_CACHE="$CACHE"; SCRATCH_CACHE=""; PR=""; PR_URL=""; SNAP_SHA=""; MERGE_SHA=""; CI_DETAIL=""
 DATASET_READY=0                                            # 1 once this run's data is live (or, dry, would be)
+DATASET_OK=0                                               # 1 once the dataset step ended green (Zenodo is current)
 RUN_DIR="$STATE_DIR/run-$STAMP"                             # this run's report files, outside every checkout
 mkdir -p "$RUN_DIR"
 
@@ -283,6 +285,7 @@ dataset_step() {
   rc=$?
   cat "$RUN_DIR/dataset.log"
   if [ "$rc" = 0 ]; then
+    DATASET_OK=1                                           # the mirrors step runs only after this
     [ "$DRY" = 1 ] && return 0
     # all clear for the dataset: the repo and Zenodo agree (published now, or nothing due)
     for n in $(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label dataset-failure --state open --limit 20 \
@@ -381,6 +384,101 @@ $step_text
   return 0
 }
 
+# ── the dataset's mirrors (2026-11-20): once Zenodo is current, Hugging Face and Kaggle follow it ──
+# `mfetl mirrors` brings each mirror to the version Zenodo's latest record holds (moleculefinder_etl/mirrors.py) and
+# reads it back; a mirror that already holds that version is left alone, so most weeks it only reads. It runs only
+# after the dataset step ended green, so a mirror never gets ahead of Zenodo. The logins (HF_TOKEN or the Hugging
+# Face login file; KAGGLE_API_TOKEN or KAGGLE_USERNAME with KAGGLE_KEY) are read by Python from the ETL's .env
+# (--env-file): never in this script, never on a command line, never in the log. Like the dataset step it cannot
+# fail, retry or block the refresh; a failure raises its OWN alarm (label mirror-failure) and the next Monday tries
+# again, because a mirror that is behind is still behind.
+mirrors_step() {
+  [ "$DATASET_OK" = 1 ] || return 0
+  local rc n
+  ( cd "$WORK/etl" 2>/dev/null || { echo "the job's ETL checkout was gone" > "$RUN_DIR/mirrors.why"; exit 1; }
+    mirrors_run ) > "$RUN_DIR/mirrors.log" 2>&1
+  rc=$?
+  cat "$RUN_DIR/mirrors.log"
+  if [ "$rc" = 0 ]; then
+    [ "$DRY" = 1 ] && return 0
+    for n in $(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label mirror-failure --state open --limit 20 \
+                 --json number --jq '.[].number' 2>/dev/null); do
+      (cd "$STATE_DIR" && tgh issue close "$n" --repo "$ETL_GH" --comment "The mirrors step of the Mac mini's weekly refresh went green ($(date -u +%F)): Hugging Face and Kaggle hold Zenodo's latest version. Closing." >/dev/null) \
+        && say "closed mirror-failure issue #$n" || say "WARNING: could not close mirror-failure issue #$n; close it by hand"
+    done
+    return 0
+  fi
+  mirrors_alarm "$(cat "$RUN_DIR/mirrors.why" 2>/dev/null || echo "the mirrors step ended with exit $rc")"
+  return 0
+}
+
+mirrors_run() {   # in the job's ETL checkout; a non-zero exit writes why to $RUN_DIR/mirrors.why
+  why() { echo "$*" > "$RUN_DIR/mirrors.why"; say "mirrors: $*"; }
+  mir() { "${ETL_ENV[@]}" SUPABASE_URL= SUPABASE_SERVICE_KEY= /usr/bin/perl -e 'alarm shift; exec @ARGV' \
+            "$MIRROR_SECONDS" "$PY" -m moleculefinder_etl.cli mirrors "$@"; }
+  say "── the dataset's mirrors (Hugging Face and Kaggle against Zenodo's latest)"
+  if [ "$DRY" = 1 ]; then
+    mir --dry-run --env-file "$ENV_FILE" || { why "the dry run of \`mfetl mirrors\` refused (the lines above say why)"; return 1; }
+    say "dry run: the mirrors step wrote nothing to either mirror"
+    return 0
+  fi
+  mir --env-file "$ENV_FILE" \
+    || { why "\`mfetl mirrors\` refused or failed for at least one mirror (the lines above name each, and what it did); Zenodo and the site are current"; return 1; }
+  return 0
+}
+
+# the mirrors step's alarm: its own label, so it never reads as the refresh or the Zenodo publish failing
+mirrors_alarm() {
+  local why="$1" title="MoleculeFinder dataset mirrors FAILED" step_text body existing
+  step_text=$(tail -n 60 "$RUN_DIR/mirrors.log" 2>/dev/null | tilde | sed 's/```/` ` `/g' \
+                | sed -E 's/(eyJ[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]+|hf_[A-Za-z0-9]{20,}|KGAT_[A-Za-z0-9_-]+)/[redacted]/g' \
+                | /usr/bin/perl -pe 's/\b(?=[A-Za-z0-9]*[g-zG-Z])[A-Za-z0-9]{40,}\b/[redacted]/g')
+  body="The mirrors step of the weekly MoleculeFinder refresh on the Mac mini did not finish.
+
+**What happened:** $(echo "$why" | tilde)
+**The refresh and Zenodo are fine:** the site's data is live (week $WEEK) and the dataset on Zenodo is current. Only the copy on Hugging Face or Kaggle, or both, is behind.
+**Log on the Mac mini:** \`$(echo "$LOG" | tilde)\`
+
+The next Monday's run tries again; the next green mirrors step closes this issue. To fix it now, on the Mac
+mini: \`mfetl mirrors --whoami\` says which login does not work, \`mfetl mirrors\` retries. A token that expired or
+was revoked: make a new one and put it in the ETL's .env (docs/MAC-WEEKLY-REFRESH.md, 'The dataset's mirrors').
+Never paste a token anywhere else.
+
+<details><summary>The mirrors step's last 60 lines</summary>
+
+\`\`\`
+$step_text
+\`\`\`
+</details>"
+  printf '%s\n' "$body" > "$RUN_DIR/mirrors-alarm.md"
+  if [ "$DRY" = 1 ]; then
+    say "MIRRORS ALARM (dry run: not filed). It would dispatch mac-alarm.yml with the label mirror-failure, titled \"$title\"; this is the text:"
+    echo "----- mirrors alarm text -----"; cat "$RUN_DIR/mirrors-alarm.md"; echo "----- end of mirrors alarm text -----"
+    return 0
+  fi
+  osascript -e "display notification \"$(echo "$why" | cut -c1-180 | tr '"' "'")\" with title \"MoleculeFinder dataset mirrors FAILED\"" 2>/dev/null || true
+  if jq -n --arg title "$title" --rawfile body "$RUN_DIR/mirrors-alarm.md" \
+          '{title: $title, body: ($body | .[0:60000]), label: "mirror-failure"}' \
+       | (cd "$STATE_DIR" && tgh workflow run mac-alarm.yml --repo "$ETL_GH" --ref main --json) >/dev/null 2>&1; then
+    say "mirrors alarm: dispatched mac-alarm.yml (GitHub opens or comments on the mirror-failure issue and emails)"
+    return 0
+  fi
+  say "WARNING: could not dispatch mac-alarm.yml; filing the mirrors issue from the Mac instead (GitHub sends no email for it)"
+  existing=$(cd "$STATE_DIR" && tgh issue list --repo "$ETL_GH" --label mirror-failure --state open --limit 1 \
+               --json number --jq '.[0].number // empty' 2>/dev/null || true)
+  if [ -n "$existing" ]; then
+    (cd "$STATE_DIR" && tgh issue comment "$existing" --repo "$ETL_GH" --body-file "$RUN_DIR/mirrors-alarm.md") \
+      && say "mirrors alarm: commented on issue #$existing" || say "WARNING: the mirrors alarm comment could not be posted"
+  else
+    (cd "$STATE_DIR" && tgh label create mirror-failure --repo "$ETL_GH" --color D93F0B \
+       --description "Dataset mirrors (Hugging Face, Kaggle) failed" >/dev/null 2>&1) || true
+    (cd "$STATE_DIR" && tgh issue create --repo "$ETL_GH" --label mirror-failure --title "$title" \
+       --body-file "$RUN_DIR/mirrors-alarm.md") && say "mirrors alarm: opened an issue" \
+       || say "WARNING: the mirrors alarm issue could not be opened"
+  fi
+  return 0
+}
+
 # ── the failed-run heartbeat: once a week, the timestamp only (etl.yml "heartbeat after a failed run") ──
 # This repo is PUBLIC: GitHub switches off a public repo's scheduled workflows after 60 days with no repository
 # activity, and the network watchdog lives here. A failing refresh still pushes one commit a week. It counts as
@@ -442,6 +540,7 @@ finish() {
     [ "$DRY" = 0 ] && [ "$SEED_ONLY" = 0 ] && echo "success $(date -u +%FT%TZ) $STEP" >> "$STATE"
     say "DONE: $STEP"
     dataset_step                                           # after the success is written; always returns 0
+    mirrors_step                                           # then Hugging Face and Kaggle follow Zenodo; always returns 0
   else
     local what="FAILED (exit $rc) at: $STEP"
     [ "$CAUSE" = "timed out" ] && what="TIMED OUT after $((WATCHDOG_SECONDS / 3600)) h, during: $STEP"

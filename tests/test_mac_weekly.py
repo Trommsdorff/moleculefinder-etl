@@ -51,9 +51,14 @@ def test_the_job_never_sources_the_env_file_and_reads_the_keys_only_through_with
     assert not re.search(r"(^|[;&|]\s*)(source|\.)\s+\S*(ENV_FILE|\.env)", code, re.MULTILINE)
     uses = [line for line in code.splitlines() if "$ENV_FILE" in line]
     # the database keys through with_keys.py; and since 2026-11-20 the dataset step's one line, which hands the
-    # file's PATH to `mfetl zenodo`, where python-dotenv reads ZENODO_TOKEN alone (tests/test_mac_dataset_step.py)
+    # file's PATH to `mfetl zenodo`, where python-dotenv reads ZENODO_TOKEN alone (tests/test_mac_dataset_step.py);
+    # and the mirrors step's two lines (a dry run and the real one), which hand the same PATH to `mfetl mirrors`,
+    # where python-dotenv reads the Hugging Face and Kaggle logins alone (tests/test_mac_mirrors_step.py)
     others = [line for line in uses if "with_keys.py" not in line]
-    assert uses and [line.strip() for line in others] == ['zen --release --env-file "$ENV_FILE" \\']
+    assert uses and [line.strip() for line in others if not line.strip().startswith("mir ")] == [
+        'zen --release --env-file "$ENV_FILE" \\']
+    assert sorted(line.strip().split(" || ")[0].split(" \\")[0] for line in others if line.strip().startswith("mir ")) == [
+        'mir --dry-run --env-file "$ENV_FILE"', 'mir --env-file "$ENV_FILE"']
 
 
 def test_a_dry_run_blanks_the_keys_and_a_real_run_never_does():
