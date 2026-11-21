@@ -146,7 +146,7 @@ KIND=$([ "$DRY" = 1 ] && echo -dry-run; [ "$SEED_ONLY" = 1 ] && echo -seed-cache
 LOG="$LOG_DIR/weekly-$STAMP$KIND.log"
 SUMMARY="$LOG_DIR/summary-$STAMP$KIND.md"
 exec >>"$LOG" 2>&1
-STEP="start"; WATCHDOG=""; CAUSE=""; PUBLISHED=0; HELD="unknown"; PRODUCTS_HELD="unknown"
+STEP="start"; WATCHDOG=""; CAUSE=""; PUBLISHED=0; HELD="unknown"; PRODUCTS_HELD="unknown"; LD50_HELD="unknown"
 DRAWINGS_TEXT="unknown: the run failed before the drawing guard ran"
 RUN_CACHE="$CACHE"; SCRATCH_CACHE=""; PR=""; PR_URL=""; SNAP_SHA=""; MERGE_SHA=""; CI_DETAIL=""
 RUN_DIR="$STATE_DIR/run-$STAMP"                             # this run's report files, outside every checkout
@@ -208,6 +208,7 @@ moleculefinder.com is still serving its last good build: the DATA is frozen, the
 
 Wikidata changes held this run (they ship once 7 days old): ${HELD}.
 Product pages held live this run (see data/seed/products_held.json): ${PRODUCTS_HELD}.
+LD50 values held this run (see data/seed/ld50_held.json): ${LD50_HELD}.
 
 Drawings this run (the drawing guard, transform/drawing_guard.py; a STOPPED line names
 each drawing that changed with nothing to explain it, and nothing was exported):
@@ -308,7 +309,7 @@ finish() {
     echo "## Run"
     echo ""
     echo "- week $WEEK, ref $REF$([ "$DRY" = 1 ] && echo ', DRY RUN'), log \`$(echo "$LOG" | tilde)\`"
-    echo "- Wikidata changes held this run (shipped once 7 days old): $HELD; product pages held live: $PRODUCTS_HELD"
+    echo "- Wikidata changes held this run (shipped once 7 days old): $HELD; product pages held live: $PRODUCTS_HELD; LD50 values held: $LD50_HELD"
     [ -n "$SNAP_SHA" ] && echo "- ETL commit: $SNAP_SHA"
     [ -n "$PR_URL" ] && echo "- data PR: $PR_URL"
     [ -n "$MERGE_SHA" ] && echo "- merged as $MERGE_SHA$([ "$PUBLISHED" = 1 ] && echo ', live')"
@@ -494,10 +495,11 @@ STEP="after the build"
 count_held() { [ -n "$(find "$1" -newer "$RUN_DIR/started" 2>/dev/null)" ] && jq length "$1" || echo unknown; }
 read_counts() {
   HELD=$(count_held data/seed/wikidata_held.json); PRODUCTS_HELD=$(count_held data/seed/products_held.json)
+  LD50_HELD=$(count_held data/seed/ld50_held.json)
   [ -s "$DRAWINGS_JSON" ] && DRAWINGS_TEXT=$(jq -r .text "$DRAWINGS_JSON")
 }
 read_counts
-say "Wikidata changes held this run: $HELD; product pages held: $PRODUCTS_HELD"
+say "Wikidata changes held this run: $HELD; product pages held: $PRODUCTS_HELD; LD50 values held: $LD50_HELD"
 say "Drawings this run:"; echo "$DRAWINGS_TEXT"
 
 # ── commit the snapshot to the ETL's main (etl.yml "commit snapshot", with the heartbeat) ──
@@ -692,6 +694,6 @@ done
 if [ "$WEB_SAME" = 1 ]; then
   STEP="${STEP_WEB:-done}: nothing to publish (week $WEEK; ETL ${SNAP_SHA:0:7})"
 else
-  STEP="published: ETL ${SNAP_SHA:0:7}, web PR #$PR merged as ${MERGE_SHA:0:7} and live (Wikidata held $HELD, products held $PRODUCTS_HELD)"
+  STEP="published: ETL ${SNAP_SHA:0:7}, web PR #$PR merged as ${MERGE_SHA:0:7} and live (Wikidata held $HELD, products held $PRODUCTS_HELD, LD50s held $LD50_HELD)"
 fi
 exit 0

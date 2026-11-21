@@ -92,6 +92,24 @@ def describe(data: dict, source: str, cid: int) -> str:
     return f"{source}: cache hit written {when}"
 
 
+def carried(data: dict, source: str, cid: int, entry) -> object:
+    """``entry`` (a ``cache.Entry``), marked live when an EARLIER STAGE of this run fetched exactly it.
+
+    The Toxicity annotation is fetched in ``stage_fetch`` (the warm-up) and read back in
+    ``stage_transform``. The read back is a cache hit by construction, so until 2026-11-21 every
+    live fetch reached the export guard as "cache hit written <today>", and a real upstream
+    removal stopped the weekly run (levonorgestrel, 2026-11-21). The fetch stage now records what
+    it fetched live in this map; the transform keeps ``live`` only when the entry it read carries
+    the very ``fetched_at`` that was recorded live. Anything else (an entry the fetch stage read
+    off the disk, or one written by some other run) stays a cache hit."""
+    if entry.live:
+        return entry
+    e = (data.get(source) or {}).get(str(cid)) or {}
+    if e.get("live") and entry.fetched_at is not None and e.get("fetched_at") == entry.fetched_at:
+        return type(entry)(entry.value, entry.fetched_at, live=True)
+    return entry
+
+
 def from_entries(entries: dict) -> dict:
     """``{cid: cache.Entry}`` -> the serialisable per-cid shape stored above."""
     return {str(cid): {"fetched_at": e.fetched_at, "live": bool(e.live)}
