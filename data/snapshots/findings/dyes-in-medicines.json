@@ -134,7 +134,7 @@
   {
    "id": "blue-1",
    "name": "FD&C Blue No. 1",
-   "group": "headline",
+   "group": "six",
    "codes": [
     {
      "unii": "H3R47K3TBD",
@@ -153,7 +153,7 @@
   {
    "id": "blue-2",
    "name": "FD&C Blue No. 2",
-   "group": "headline",
+   "group": "six",
    "codes": [
     {
      "unii": "L06K8R7DQK",
@@ -172,7 +172,7 @@
   {
    "id": "green-3",
    "name": "FD&C Green No. 3",
-   "group": "headline",
+   "group": "six",
    "codes": [
     {
      "unii": "3P3ONR6O1S",
@@ -185,7 +185,7 @@
   {
    "id": "red-40",
    "name": "FD&C Red No. 40",
-   "group": "headline",
+   "group": "six",
    "codes": [
     {
      "unii": "WZB9127XOA",
@@ -204,7 +204,7 @@
   {
    "id": "yellow-5",
    "name": "FD&C Yellow No. 5",
-   "group": "headline",
+   "group": "six",
    "codes": [
     {
      "unii": "I753WB2F1M",
@@ -223,7 +223,7 @@
   {
    "id": "yellow-6",
    "name": "FD&C Yellow No. 6",
-   "group": "headline",
+   "group": "six",
    "codes": [
     {
      "unii": "H77VEI93A8",

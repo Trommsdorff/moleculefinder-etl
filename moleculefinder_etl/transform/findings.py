@@ -43,7 +43,7 @@ FINDINGS_YAML = SEEDS_DIR / "findings_dyes.yaml"
 DYES_FINDING = "dyes-in-medicines"
 VERSION = 1
 
-GROUPS = ("headline", "red-3", "d-and-c")
+GROUPS = ("six", "red-3", "d-and-c")
 FORMS = ("dye", "lake")
 UNII_RE = fda_unii.UNII_RE
 # The order the six are always listed in (alphabetical by colour, then number).
@@ -96,9 +96,9 @@ def load_colours(path: Path | None = None) -> dict:
             if u in by_unii:
                 errors.append(f"{where}.codes[{j}]: {u} is already {by_unii[u][0]['id']}'s")
             by_unii[u] = (d, c)
-    headline = [d["id"] for d in dyes if isinstance(d, dict) and d.get("group") == "headline"]
-    if sorted(headline) != sorted(SIX_ORDER):
-        errors.append(f"the headline group must be exactly the six {list(SIX_ORDER)}, not {headline}")
+    six = [d["id"] for d in dyes if isinstance(d, dict) and d.get("group") == "six"]
+    if sorted(six) != sorted(SIX_ORDER):
+        errors.append(f"the six group must be exactly the six {list(SIX_ORDER)}, not {six}")
     not_counted = data.get("not_counted") or []
     for n in not_counted:
         if not UNII_RE.match(str(n.get("unii") or "")) or not n.get("reason"):

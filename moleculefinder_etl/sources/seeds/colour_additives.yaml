@@ -12,8 +12,8 @@
 # use are separate substances with separate codes, so each has its own line.
 #
 # GROUPS
-#   headline: the six synthetic colour additives the FDA's April 2025 announcement names. The
-#             headline count is a label that lists any code of any of these six.
+#   six:      the six synthetic colour additives the FDA's April 2025 announcement names. The
+#             headline figure's count is a label that lists any code of any of these six.
 #   red-3:    FD&C Red No. 3, the one the FDA has revoked by order (kept apart from the six: the
 #             FDA's two actions are different actions).
 #   d-and-c:  D&C colours seen on the labels, counted as their own group, never in the headline.
@@ -32,36 +32,36 @@ registry_url: "https://gsrs.ncats.nih.gov/ginas/app/api/v1/substances({unii})?vi
 dyes:
   - id: blue-1
     name: "FD&C Blue No. 1"
-    group: headline
+    group: six
     codes:
       - {unii: H3R47K3TBD, form: dye,  gsrs_name: "FD&C BLUE NO. 1", gsrs_status: approved}
       - {unii: J9EQA3S2JM, form: lake, gsrs_name: "FD&C BLUE NO. 1 ALUMINUM LAKE", gsrs_status: approved}
   - id: blue-2
     name: "FD&C Blue No. 2"
-    group: headline
+    group: six
     codes:
       - {unii: L06K8R7DQK, form: dye,  gsrs_name: "FD&C BLUE NO. 2", gsrs_status: approved}
       - {unii: 4AQJ3LG584, form: lake, gsrs_name: "FD&C BLUE NO. 2 ALUMINUM LAKE", gsrs_status: approved}
   - id: green-3
     name: "FD&C Green No. 3"
-    group: headline
+    group: six
     codes:
       - {unii: 3P3ONR6O1S, form: dye,  gsrs_name: "FD&C GREEN NO. 3", gsrs_status: approved}
   - id: red-40
     name: "FD&C Red No. 40"
-    group: headline
+    group: six
     codes:
       - {unii: WZB9127XOA, form: dye,  gsrs_name: "FD&C RED NO. 40", gsrs_status: approved}
       - {unii: 6T47AS764T, form: lake, gsrs_name: "FD&C RED NO. 40 ALUMINUM LAKE", gsrs_status: approved}
   - id: yellow-5
     name: "FD&C Yellow No. 5"
-    group: headline
+    group: six
     codes:
       - {unii: I753WB2F1M, form: dye,  gsrs_name: "FD&C YELLOW NO. 5", gsrs_status: approved}
       - {unii: JQ6BLH9FR7, form: lake, gsrs_name: "FD&C YELLOW NO. 5 ALUMINUM LAKE", gsrs_status: approved}
   - id: yellow-6
     name: "FD&C Yellow No. 6"
-    group: headline
+    group: six
     codes:
       - {unii: H77VEI93A8, form: dye,  gsrs_name: "FD&C YELLOW NO. 6", gsrs_status: approved}
       - {unii: GYP6Z2JR6Q, form: lake, gsrs_name: "FD&C YELLOW NO. 6 ALUMINUM LAKE", gsrs_status: approved}

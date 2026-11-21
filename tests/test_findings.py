@@ -43,9 +43,9 @@ def _compile(prods, routes=None):
 
 
 # ── the seed ──────────────────────────────────────────────────────────────────
-def test_the_seed_validates_and_the_headline_group_is_exactly_the_six():
+def test_the_seed_validates_and_the_six_group_is_exactly_the_six():
     c = findings.load_colours()
-    six = sorted(d["id"] for d in c["dyes"] if d["group"] == "headline")
+    six = sorted(d["id"] for d in c["dyes"] if d["group"] == "six")
     assert six == sorted(findings.SIX_ORDER)
     assert [d["id"] for d in c["dyes"] if d["group"] == "red-3"] == ["red-3"]
     assert c["checked"] == "2026-11-21"
@@ -79,7 +79,7 @@ def test_a_bad_seed_names_every_problem(tmp_path):
     with pytest.raises(findings.FindingsError) as e:
         findings.load_colours(bad)
     msg = str(e.value)
-    assert "group must be one of" in msg and "is not a UNII" in msg and "headline group" in msg
+    assert "group must be one of" in msg and "is not a UNII" in msg and "six group" in msg
 
 
 # ── what the FDA said ─────────────────────────────────────────────────────────
