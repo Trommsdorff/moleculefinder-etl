@@ -2,6 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The dyes finding, the deploy amendments (2026-11-21, merged to local `main`, NOT pushed)
+Brief `../FINDINGS-DYES-DEPLOY-PROMPT.md`; full record `../HISTORY.md`, 2026-11-21. Rebased onto `de8f25e`. `9c100fd` the familiar labels (`findings_dyes.yaml` `examples`, `findings.examples`: checked against the table every run, a label on the wrong side or gone drops out and is logged) and the FDA's draft guidance (FDA-2025-D-0507, read 2026-11-21: still a draft, no dye, no date); `19cd8f1` two fetch-stage tests stubbed `pug_view` but not `pug_view_dated`, so with an expired entry the suite fetched caffeine from PubChem and wrote `data/raw_cache` (a pinned build then refused); `c3d1360` `pipeline._report_findings`: a log line and a "Findings" section of the weekly summary (changed or unchanged from the shipped file, the headline count, examples left out), the ETL copy test holds the web's advice words. Suite 1,510 (read-only cache), ruff 130; pinned twice byte-identical; `weekly-refresh.sh --dry-run --ref findings-dyes-merged` DRY RUN complete, "Findings (1): ... rebuilt (unchanged from the shipped file): 112 of the 300", levonorgestrel held, Drawings 903 / 723 / 147 / 3.
+
 ## levonorgestrel's LD50: a live fetch is live in the guard, and the LD50 hold (2026-11-21)
 Brief `../LEVONORGESTREL-LD50-PROMPT.md`; full record `../HISTORY.md`, 2026-11-21. Branch `ld50-hold-2026-11`, merged to
 local `main`; NOT pushed.
