@@ -7847,6 +7847,61 @@
    "codes": []
   }
  ],
+ "examples": {
+  "lists": [
+   {
+    "slug": "advil",
+    "name": "Advil"
+   },
+   {
+    "slug": "tylenol-extra-strength",
+    "name": "Tylenol Extra Strength"
+   },
+   {
+    "slug": "tums",
+    "name": "Tums"
+   },
+   {
+    "slug": "benadryl-allergy",
+    "name": "Benadryl Allergy"
+   },
+   {
+    "slug": "adderall",
+    "name": "Adderall"
+   },
+   {
+    "slug": "zoloft",
+    "name": "Zoloft"
+   },
+   {
+    "slug": "xanax",
+    "name": "Xanax"
+   },
+   {
+    "slug": "synthroid",
+    "name": "Synthroid"
+   }
+  ],
+  "lists_none": [
+   {
+    "slug": "childrens-tylenol",
+    "name": "Children's Tylenol"
+   },
+   {
+    "slug": "childrens-motrin",
+    "name": "Children's Motrin"
+   },
+   {
+    "slug": "claritin",
+    "name": "Claritin"
+   },
+   {
+    "slug": "allegra-allergy",
+    "name": "Allegra Allergy"
+   }
+  ],
+  "dropped": []
+ },
  "unrecognised": [],
  "fda": {
   "read": "2026-11-21",
@@ -7905,6 +7960,17 @@
     "url": "https://www.fda.gov/food/color-additives-information-consumers/tracking-food-industry-pledges-remove-petroleum-based-food-dyes",
     "says": "The FDA's tracker page, current as of October 16, 2026, describes the same six dyes as ones frequently used in the food supply and gives the end of 2027 as the date by which the FDA is working with food makers, retailers and trade associations to eliminate them. The page lists company pledges for food and does not mention medicines.",
     "quote": "Additionally, the FDA is working closely with food manufacturers, retailers, and trade associations to eliminate six remaining certified color additives frequently used in the food supply—FD&C Green No. 3, FD&C Red No. 40, FD&C Yellow No. 5, FD&C Yellow No. 6, FD&C Blue No. 1, and FD&C Blue No. 2—by the end of 2027."
+   },
+   {
+    "id": "drugs-guidance",
+    "date": "2025-05-30",
+    "kind": "draft guidance",
+    "title": "Replacing Color Additives in Approved or Marketed Drug Products (draft guidance for industry, May 2025, docket FDA-2025-D-0507)",
+    "publisher": "FDA, Center for Drug Evaluation and Research",
+    "source": "fda",
+    "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/replacing-color-additives-approved-or-marketed-drug-products",
+    "says": "In May 2025 the FDA published a draft guidance for drug makers on replacing a color additive in a medicine, whatever the reason for the change. It applies to prescription and over-the-counter medicines and sets out how a maker should test, document and report the change. It is a draft and not binding, and on November 21, 2026 the FDA still listed it as a draft. It names no dye to be replaced and gives no date.",
+    "quote": "This draft guidance provides recommendations for replacing color additives in approved or marketed drug products."
    },
    {
     "id": "regulates",

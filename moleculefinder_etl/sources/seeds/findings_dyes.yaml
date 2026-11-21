@@ -63,6 +63,15 @@ statements:
     url: "https://www.fda.gov/food/color-additives-information-consumers/tracking-food-industry-pledges-remove-petroleum-based-food-dyes"
     says: "The FDA's tracker page, current as of October 16, 2026, describes the same six dyes as ones frequently used in the food supply and gives the end of 2027 as the date by which the FDA is working with food makers, retailers and trade associations to eliminate them. The page lists company pledges for food and does not mention medicines."
     quote: "Additionally, the FDA is working closely with food manufacturers, retailers, and trade associations to eliminate six remaining certified color additives frequently used in the food supply—FD&C Green No. 3, FD&C Red No. 40, FD&C Yellow No. 5, FD&C Yellow No. 6, FD&C Blue No. 1, and FD&C Blue No. 2—by the end of 2027."
+  - id: drugs-guidance
+    date: "2025-05-30"
+    kind: draft guidance
+    title: "Replacing Color Additives in Approved or Marketed Drug Products (draft guidance for industry, May 2025, docket FDA-2025-D-0507)"
+    publisher: "FDA, Center for Drug Evaluation and Research"
+    source: fda
+    url: "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/replacing-color-additives-approved-or-marketed-drug-products"
+    says: "In May 2025 the FDA published a draft guidance for drug makers on replacing a color additive in a medicine, whatever the reason for the change. It applies to prescription and over-the-counter medicines and sets out how a maker should test, document and report the change. It is a draft and not binding, and on November 21, 2026 the FDA still listed it as a draft. It names no dye to be replaced and gives no date."
+    quote: "This draft guidance provides recommendations for replacing color additives in approved or marketed drug products."
   - id: regulates
     date: "2026-07-22"
     kind: page
@@ -72,6 +81,15 @@ statements:
     url: "https://www.fda.gov/food/food-ingredients-packaging/color-additives-information-consumers"
     says: "The FDA regulates the color additives used in foods, drugs, cosmetics and certain medical devices. It describes a straight color as one not mixed or reacted with anything else (for example FD&C Blue No. 1) and a lake as a straight color reacted with precipitants and substrata (for example Blue 1 Lake)."
     quote: "The FDA is responsible for regulating all color additives used in foods, drugs, cosmetics (except for coal- tar hair dyes), and certain medical devices to ensure that they meet the FDA’s safety standard and are accurately labeled."
+
+# Familiar labels named under the headline (Garrett's ruling, 2026-11-21): a few that list one of
+# the six and a few that list none. A hand list of product slugs, each checked against the data on
+# every run (transform/findings.py::examples): a label that has changed sides, or is no longer in
+# the count, drops out of the sentence and the run logs it, so the sentence never states something
+# the table does not. In the order the page prints them. No ranking and no comment.
+examples:
+  lists: [advil, tylenol-extra-strength, tums, benadryl-allergy, adderall, zoloft, xanax, synthroid]
+  lists_none: [childrens-tylenol, childrens-motrin, claritin, allegra-allergy]
 
 # How the 300 medicine labels came to be on the site (established 2026-11-21 from products.yaml,
 # scripts/draft_products.py and the Run C1 record in HISTORY.md). Written ONCE here, shown on the

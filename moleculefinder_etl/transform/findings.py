@@ -5,7 +5,8 @@ the six synthetic colour additives the FDA has asked food makers to stop using, 
 file is computed on every run from the labels the products stage already holds, so the weekly
 refresh keeps it current and a pinned rebuild is byte-identical. Nothing in it is typed except
 what the FDA said (``findings_dyes.yaml``, each statement with its link and the date it was read)
-and the table of dyes (``colour_additives.yaml``).
+and the table of dyes (``colour_additives.yaml``), plus the hand list of familiar labels the page
+names under its headline (``examples``), each checked against the table on every run.
 
 A DYE IS A CODE. A label ingredient is one of the dyes when its UNII code is in the table, never
 by its name (the label-ingredient rule). The straight dye and each lake have separate codes and
@@ -55,6 +56,8 @@ DYE_NAME = re.compile(
     r"\bSUNSET YELLOW\b|\bBRILLIANT BLUE\b|\bINDIGO ?(?:CARMINE|TIN)|\bFAST GREEN\b|\bPONCEAU\b|"
     r"\bAMARANTH\b|\bCARMOISINE\b|\bQUINOLINE YELLOW\b|\bPATENT BLUE\b|\bGREEN S\b", re.IGNORECASE)
 SOURCE_KEYS = ("dailymed", "fda_unii", "fda", "federal_register", "curated")
+# The familiar labels named under the headline: "lists" must list one of the six, "lists_none" none.
+EXAMPLE_SIDES = ("lists", "lists_none")
 
 
 class FindingsError(RuntimeError):
@@ -138,15 +141,49 @@ def load_statements(path: Path | None = None) -> dict:
     for k in ("chosen_by", "gate", "not_by"):
         if not sel.get(k):
             errors.append(f"selection.{k} is required")
+    ex = data.get("examples") or {}
+    for side in EXAMPLE_SIDES:
+        slugs = ex.get(side) or []
+        if not isinstance(slugs, list) or not all(isinstance(x, str) and x for x in slugs):
+            errors.append(f"examples.{side} must be a list of product slugs")
+        elif len(set(slugs)) != len(slugs):
+            errors.append(f"examples.{side} names a slug twice")
+    if set(ex.get("lists") or []) & set(ex.get("lists_none") or []):
+        errors.append("examples: a slug on both sides")
     if errors:
         raise FindingsError("findings_dyes.yaml: " + "; ".join(errors))
     return {"read": data["read"],
+            "examples": {side: list(ex.get(side) or []) for side in EXAMPLE_SIDES},
             "statements": [{k: s[k] for k in ("id", "date", "kind", "title", "publisher", "source", "url", "says", "quote")}
                            for s in data["statements"]],
             "selection": {k: " ".join(str(sel[k]).split()) for k in ("chosen_by", "gate", "not_by")}}
 
 
 # ── the finding ───────────────────────────────────────────────────────────────
+def examples(labels: list[dict], wanted: dict) -> dict:
+    """The familiar labels the page names under its headline, checked against this run's table.
+    A slug stays only when the label is in the count and on the side the seed puts it; otherwise it
+    drops out (logged, and kept under ``dropped`` with the reason), so the sentence never says what
+    the table does not. Never stops a run: the sentence just names fewer labels."""
+    by = {lb["slug"]: lb for lb in labels}
+    out: dict = {side: [] for side in EXAMPLE_SIDES}
+    dropped: list[dict] = []
+    for side in EXAMPLE_SIDES:
+        for slug in wanted.get(side) or []:
+            lb = by.get(slug)
+            if lb is None:
+                why = "not a medicine label in this count"
+            elif bool(lb["six"]) != (side == "lists"):
+                why = "now lists one of the six" if lb["six"] else "now lists none of the six"
+            else:
+                out[side].append({"slug": slug, "name": lb["name"]})
+                continue
+            dropped.append({"slug": slug, "side": side, "why": why})
+            log.warning("findings: example %s dropped from the %s sentence: %s", slug, side, why)
+    out["dropped"] = dropped
+    return out
+
+
 def _class(doc_type: str | None) -> str:
     t = (doc_type or "").upper()
     if t.startswith("HUMAN OTC"):
@@ -282,6 +319,7 @@ def compile_dyes(products: list[dict], *,
         "registry": {"checked": colours["checked"], "url": colours.get("registry_url"),
                      "name": "FDA Global Substance Registration System (GSRS)"},
         "labels": labels,
+        "examples": examples(labels, statements.get("examples") or {}),
         "unrecognised": unrecognised,
         "fda": {"read": statements["read"], "statements": statements["statements"]},
         "selection": selection,

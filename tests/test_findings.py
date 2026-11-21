@@ -282,3 +282,52 @@ class TestTheSnapshotsFile:
 
     def test_nothing_in_it_is_a_timestamp(self):
         assert not re.search(r"20\d\d-\d\d-\d\dT\d\d:", FILE.read_text())
+
+
+# ── the familiar labels under the headline (deploy amendments, 2026-11-21) ─────
+def test_the_seeds_examples_are_on_their_sides_in_the_committed_file():
+    s = findings.load_statements()
+    assert s["examples"]["lists"] and s["examples"]["lists_none"]
+    if FILE.exists():
+        f = json.loads(FILE.read_text())
+        by = {r["slug"]: r for r in f["labels"]}
+        for e in f["examples"]["lists"]:
+            assert by[e["slug"]]["six"] and e["name"] == by[e["slug"]]["name"]
+        for e in f["examples"]["lists_none"]:
+            assert not by[e["slug"]]["six"] and e["name"] == by[e["slug"]]["name"]
+        assert [e["slug"] for e in f["examples"]["lists"]] == [x for x in s["examples"]["lists"] if x not in
+                                                                 {d["slug"] for d in f["examples"]["dropped"]}]
+
+
+def test_an_example_that_changes_sides_or_leaves_drops_out_and_is_logged(caplog):
+    prods = [_product("a", "A", [(BLUE1, "FD&C BLUE NO. 1")]), _product("b", "B", [("XXXXXXXXXX", "WATER")]),
+             _product("c", "C", [(RED40, "FD&C RED NO. 40")])]
+    s = {**findings.load_statements(), "examples": {"lists": ["a", "b", "gone"], "lists_none": ["c", "b"]}}
+    labels = _labels(prods)
+    with caplog.at_level("WARNING", logger="mfetl"):
+        f = findings.compile_dyes(prods, spl=lambda x: labels.get(x), routes=lambda x, v: None, statements=s)
+    ex = f["examples"]
+    assert ex["lists"] == [{"slug": "a", "name": "A"}]
+    assert ex["lists_none"] == [{"slug": "b", "name": "B"}]
+    assert ex["dropped"] == [{"slug": "b", "side": "lists", "why": "now lists none of the six"},
+                             {"slug": "gone", "side": "lists", "why": "not a medicine label in this count"},
+                             {"slug": "c", "side": "lists_none", "why": "now lists one of the six"}]
+    assert sum("example" in r.getMessage() for r in caplog.records) == 3
+
+
+def test_a_bad_examples_seed_is_named(tmp_path):
+    bad = tmp_path / "f.yaml"
+    base = yaml.safe_load(findings.FINDINGS_YAML.read_text())
+    base["examples"] = {"lists": ["a", "a"], "lists_none": ["a"]}
+    bad.write_text(yaml.safe_dump(base))
+    with pytest.raises(findings.FindingsError) as e:
+        findings.load_statements(bad)
+    assert "names a slug twice" in str(e.value) and "a slug on both sides" in str(e.value)
+
+
+def test_the_fda_draft_guidance_on_colour_additives_in_drugs_is_there_as_the_fda_states_it():
+    s = {x["id"]: x for x in findings.load_statements()["statements"]}
+    g = s["drugs-guidance"]
+    assert g["url"].startswith("https://www.fda.gov/regulatory-information/search-fda-guidance-documents/")
+    assert g["date"] == "2025-05-30" and "FDA-2025-D-0507" in g["title"]
+    assert "draft" in g["says"] and "not binding" in g["says"] and "names no dye" in g["says"]
