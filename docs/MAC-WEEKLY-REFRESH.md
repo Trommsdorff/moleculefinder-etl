@@ -80,6 +80,7 @@ as on GitHub.
 | 6a | the presence check and the claim check (`check_lines`), start of transform | A bad presence mark; a claim word with no entry | Same. Proved: both stop the Mac job (section 3). |
 | 6b | the Wikidata 7-day hold (`wikidata_age.py`) | A fresh Wikidata edit (vandalism) reaching the site before it is a week old | Same; held changes in the summary and `data/seed/wikidata_held.json`. |
 | 6c | the gate hold (`products_hold.py`) | A live product page vanishing because a refresh lost it | Same; held pages in the summary and `data/seed/products_held.json`; a held page under 3 molecules stops the run. |
+| 6c2 | the LD50 hold (`ld50_hold.py`, since 2026-11-21; part of `mfetl all`, so on both) | An LD50 leaving a page the first week PubChem stops reporting it, or the run stopping because it did | Same; held 7 days, then released; the summary's "LD50 values held" section and `data/seed/ld50_held.json` (section 10). |
 | 6d | `_preflight` before the load: data claims, comparisons, the featured compiler, the doors (`requires:` and pins), compare drawings, **the drawing guard**, the snapshot guard | Anything the export would refuse reaching the database; a door saying something no longer true; a drawing changing with nothing to explain it; a cached value walking a shipped one backwards | Same. The release valves (`MFETL_DRAWING_SEEDS_CHANGED`, `MFETL_ALLOW_REGRESSION`, `MFETL_ALLOW_STALE_WIKIDATA`) are never set and are actively cleared (a test holds it). Proved: doors, the drawing guard, the snapshot guard and the featured compiler each stop the Mac job (section 3). |
 | 6e | the Supabase load: retries only the idempotent DELETE (3 tries); the four inserts never | A dropped connection half-loading the database | Same code. A dry run blanks the keys, so the load logs that it skipped. |
 | 6f | export: the licence gate, the snapshot guard, descriptions checks, the pinned-inputs refusal (pinned builds only) | A value from a source that may not be shown; a regression; a duplicate or short description | Same. Proved: the licence gate stops the Mac job (section 3). Note: it runs after the load, on GitHub too (review page). The pinned-inputs refusal does not apply to the refresh, as on GitHub; it still guards every interactive build. |
@@ -351,3 +352,39 @@ mirrors FAILED** (label `mirror-failure`; the refresh and Zenodo are fine, one c
 again; the next green step closes the issue. To fix it sooner: `mfetl mirrors --whoami` says which login failed,
 `mfetl mirrors` retries.
 
+## 10. An LD50 held or released (since 2026-11-21)
+
+**Why it exists.** PubChem changes what it reports for a molecule. On 2026-11-21 it stopped attaching HSDB record 3595
+(NORGESTREL, the racemic mixture, which has its own PubChem entry, CID 4542) to levonorgestrel (CID 13109), and the
+four LD50 rows MoleculeFinder showed for levonorgestrel (oral rat 5010 mg/kg) went with it. Levonorgestrel's own HSDB
+record reports no LD50. Before this date such a change could only stop the Monday job: the job fetched PubChem's
+answer live, then read it back from the cache a minute later, so the snapshot guard saw "a cache hit" and refused the
+removal. That is fixed (the fetch stage records what it fetched live, `freshness.carried`), and a real removal is
+now held for a week rather than shipped at once.
+
+**The rule** (`moleculefinder_etl/transform/ld50_hold.py`):
+- A molecule whose live page has an LD50, and whose PubChem Toxicity answer, **fetched live** this run, gives none,
+  keeps the shipped LD50. The run summary lists it under **LD50 values held (N)** and `data/seed/ld50_held.json`
+  records it with `since` (the day it was first seen gone) and `seen` (the latest live check).
+- Every run asks PubChem again for a held molecule, whatever the cache's age.
+- A live check at least 7 days after `since` that still gives no LD50 **releases** it: the page then shows no LD50,
+  and the summary says `... RELEASED. PubChem's live Toxicity answer has not reported it since <date> ...`.
+- If the LD50 comes back in between, the hold ends (`the LD50 is back ... the hold since <date> ends`), and the clock
+  starts again if it goes a second time.
+- A cache hit never starts or releases a hold. A cached answer that would remove an LD50 that is not held still stops
+  the run at the snapshot guard, as before.
+
+**What the summary lines mean.**
+- `levonorgestrel: LD50 5,010 mg/kg (rat, oral) held. PubChem's live Toxicity answer of 2026-11-23 no longer reports
+  it (first seen gone today); the page keeps the shipped value until a live fetch on or after 2026-11-30 still lacks
+  it, then it is released.` The first week. Nothing to do; the site is unchanged.
+- `... held since <date> (this run read the cached answer, so the clock did not move) ...` A rebuild from cached inputs
+  (a pinned build). Nothing to do.
+- `... RELEASED ...` The value has left the page on purpose. Nothing to do unless you think PubChem is wrong.
+
+**What to do when a value is held.** Usually nothing: the next Monday decides. If you want to know why, open
+`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/<CID>/JSON?heading=Toxicity` and look for the rows
+(under Non-Human Toxicity Values) and their reference (`SourceName`, `SourceID`). If you believe the value is still
+right for this molecule, a reported LD50 can be pinned only to one a displayable source reports (the curated
+`dose_poison` pin), so the answer is to leave it to the hold. Never set `MFETL_ALLOW_REGRESSION`, never edit the
+snapshot or `ld50_held.json` by hand, never delete a cache entry to change the outcome.

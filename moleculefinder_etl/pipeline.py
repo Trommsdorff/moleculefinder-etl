@@ -27,7 +27,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold
 from .transform import presence, claims, doors, drawings, drawing_guard
-from .transform import wikidata_age
+from .transform import wikidata_age, ld50_hold
 from .sources import cache, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
 from . import freshness, inputs
@@ -150,6 +150,31 @@ def _report_products_held(held: list[dict], removed: list[dict]) -> None:
                 f.write("\n")
 
 
+def _report_ld50_held(events: list[dict]) -> None:
+    """LD50s held, released or back this run (``transform/ld50_hold.py``, 2026-11-21): one line each
+    in the log, the held ones in the committed ``data/seed/ld50_held.json``, and a section of the run
+    summary, so an LD50 never leaves a page silently and never stops the run by leaving."""
+    ld50_hold.write_held(events)
+    held = [e for e in events if e["kind"] == ld50_hold.HELD]
+    lines = [ld50_hold.report_line(e) for e in sorted(events, key=lambda e: (e.get("slug") or "", e["cid"]))]
+    log.info("  ld50: %d held, %d released, %d back", len(held),
+             sum(e["kind"] == ld50_hold.RELEASED for e in events), sum(e["kind"] == ld50_hold.BACK for e in events))
+    for line in lines:
+        log.info("  ld50: %s", line)
+    if weekly_run():
+        for line in lines:
+            print(f"::notice title=LD50 held or released::{line}", flush=True)
+        summary = summary_path()
+        if summary:
+            with open(summary, "a", encoding="utf-8") as f:
+                f.write(f"### LD50 values held ({len(held)})\n\n"
+                        f"An LD50 a live PubChem answer stops reporting keeps its shipped value until the "
+                        f"removal is seen again on a live fetch at least {ld50_hold.DAYS} days later; then "
+                        f"it is released and the page shows none.\n\n")
+                f.writelines(f"- {line}\n" for line in lines)
+                f.write("\n")
+
+
 def _report_presence_unmarked(unmarked: list[dict]) -> None:
     """Wikidata ingredient rows with no presence mark (build plan everyday chemistry, phase 1): one log
     line each, the committed ``data/seed/presence_unmarked.json``, and on GitHub Actions a notice and a
@@ -259,6 +284,34 @@ def _report_throttle() -> None:
         print(f"::notice title=PubChem throttle::{line}", flush=True)
 
 
+def _warm_annotations(cids: list[int]) -> tuple[int, int]:
+    """Fetch (or read) each CID's PUG-View Toxicity and GHS answers into the cache, and record in
+    the freshness map which Toxicity answers came off the network in this run.
+
+    The record is what lets ``stage_transform`` tell the export guard the truth (2026-11-21): it
+    reads these same files back, which is a cache hit by construction, and ``freshness.carried``
+    marks it live again only when this stage fetched exactly that entry live. A molecule whose
+    LD50 is held (``transform/ld50_hold.py``) is asked again every run, whatever the cache's age,
+    so the hold is decided on a live answer. Returns (Toxicity answers, GHS answers) found."""
+    held = ld50_hold.read_held()
+    tox: dict[int, object] = {}
+    tox_hits = ghs_hits = 0
+    for i, cid in enumerate(cids, 1):
+        e = pubchem.pug_view_dated(cid, "Toxicity", max_age_days=0 if cid in held else None)
+        tox[cid] = e
+        if e.value:
+            tox_hits += 1
+        if pubchem.pug_view(cid, "GHS Classification"):
+            ghs_hits += 1
+        if i % 25 == 0:
+            log.info("  annotations: %d/%d CIDs", i, len(cids))
+    freshness.merge({freshness.TOXICITY: freshness.from_entries(tox)})
+    live = sum(1 for e in tox.values() if e.live)
+    log.info("  toxicity: %d of %d answers fetched live this run (%d held LD50s asked again)",
+             live, len(tox), sum(1 for c in cids if c in held))
+    return tox_hits, ghs_hits
+
+
 def stage_fetch(settings: Settings) -> None:
     """Pull PubChem properties/synonyms/annotations for the canon (all cached)."""
     _require(SEED_DIR / "canon.parquet", "seed")
@@ -279,14 +332,7 @@ def stage_fetch(settings: Settings) -> None:
     _report_throttle()
 
     # Warm the PUG-View caches (Toxicity + GHS) so transform parses offline.
-    tox_hits = ghs_hits = 0
-    for i, cid in enumerate(cids, 1):
-        if pubchem.pug_view(cid, "Toxicity"):
-            tox_hits += 1
-        if pubchem.pug_view(cid, "GHS Classification"):
-            ghs_hits += 1
-        if i % 25 == 0:
-            log.info("  annotations: %d/%d CIDs", i, len(cids))
+    tox_hits, ghs_hits = _warm_annotations(cids)
 
     # What's in it (run C1): the seeded products' labels and Wikidata parts, and every
     # molecule's UNII codes, into raw_cache like everything else. After the synonym POSTs, so
@@ -355,6 +401,10 @@ def stage_transform(settings: Settings) -> list[dict]:
     taken: set[str] = set()
     records: list[dict] = []
     tox_freshness: dict[int, object] = {}
+    # What the fetch stage fetched live (freshness.carried), and last run's held LD50s.
+    fetched_fresh = freshness.load()
+    ld50_previous = ld50_hold.read_held()
+    ld50_events: list[dict] = []
     for row in canon:
         cid = int(row["cid"])
         if row.get("hand_model"):                          # structureless macromolecule variant
@@ -370,13 +420,20 @@ def stage_transform(settings: Settings) -> list[dict]:
         f = fetched_by_cid.get(cid, {})
         # Dated: the LD50 the export guard protects is parsed out of this annotation, so
         # the guard has to know whether the annotation came off the network or off the disk.
-        tox_entry = pubchem.pug_view_dated(cid, "Toxicity")
+        tox_entry = freshness.carried(fetched_fresh, freshness.TOXICITY, cid,
+                                      pubchem.pug_view_dated(cid, "Toxicity"))
         tox_freshness[cid] = tox_entry
+        # An LD50 a live answer stopped reporting is held 7 days, then released (ld50_hold.py).
+        tox_rows, ld50_event = ld50_hold.decide(
+            cid, toxicity.parse_ld50(tox_entry.value), prior_by_cid.get(cid),
+            live=tox_entry.live, fetched_at=tox_entry.fetched_at, previous=ld50_previous.get(cid))
+        if ld50_event:
+            ld50_events.append(ld50_event)
         fetched = {
             "props": f.get("props") or {},
             "synonyms": f.get("synonyms") or [],
             "curated": curated_by_cid.get(cid),
-            "toxicity": toxicity.parse_ld50(tox_entry.value),
+            "toxicity": tox_rows,
             "ghs": ghs.parse_ghs(pubchem.pug_view(cid, "GHS Classification")),
         }
         rec = assemble.assemble_record(row, fetched, taken, prior=prior_by_cid.get(cid))
@@ -452,6 +509,7 @@ def stage_transform(settings: Settings) -> list[dict]:
     # on the records: a per-record timestamp would move every run and put all 788 molecule
     # files into every weekly diff, which is the churn run 3 existed to remove.
     freshness.merge({freshness.TOXICITY: freshness.from_entries(tox_freshness)})
+    _report_ld50_held(ld50_events)
 
     # What's in it (run C1): the products whose source lists 3+ molecules this catalog holds,
     # and on each of those molecules the products it is in. Offline: the cache only. Last, so

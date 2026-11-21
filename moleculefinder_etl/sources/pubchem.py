@@ -291,7 +291,7 @@ def unii_parents(unii: str) -> list[int]:
 
 
 @_pubchem_retry
-def pug_view_dated(cid: int, heading: str) -> "cache.Entry":
+def pug_view_dated(cid: int, heading: str, max_age_days: float | None = None) -> "cache.Entry":
     """Fetch a PUG-View annotation heading, and say how old the answer is.
 
     Cached under data/raw_cache/pubchem/<cid>-<heading>.json, and **the entry expires**
@@ -304,9 +304,13 @@ def pug_view_dated(cid: int, heading: str) -> "cache.Entry":
     The returned ``Entry`` carries ``fetched_at``, which the freshness map and
     ``load.snapshot_guard`` use to tell an upstream change from a stale cache overwriting
     a good value.
+
+    ``max_age_days`` overrides the expiry for one call: 0 asks PubChem again whatever the
+    cache's age (a held LD50 is re-checked live every run, ``transform/ld50_hold.py``). A
+    pinned build still reads its inputs (``cache.is_fresh``).
     """
     path = RAW_CACHE / "pubchem" / f"{cid}-{heading.replace(' ', '_')}.json"
-    hit = cache.read_json(path, PUGVIEW_CACHE_TTL_DAYS)
+    hit = cache.read_json(path, PUGVIEW_CACHE_TTL_DAYS if max_age_days is None else max_age_days)
     if hit is not None:
         return hit
     _throttle()
