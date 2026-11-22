@@ -2,6 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The dyes finding, the inactive-ingredient methods note (2026-11-21, DEPLOYED)
+Full record `../HISTORY.md`. Web `1f4f860` (deployment 7972394655, 01:54:56 UTC 11-22) adds the methods sentence on 21 CFR 201.66(c)(8) and 201.100(b)(5). ETL: no code change; only the waiting record `9026d71` was pushed.
+
 ## The dyes finding, DEPLOYED (2026-11-21)
 Full record `../HISTORY.md`, "The dyes finding, the deploy". Garrett pushed `de8f25e..dfab28b` (with the web, deployment 7972241471, 01:38 UTC 11-22). From Monday 2026-11-23 the weekly run rebuilds `findings/dyes-in-medicines.json` and its summary has "Findings (1)".
 
