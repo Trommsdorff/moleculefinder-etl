@@ -2,6 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The second finding: `findings/inactive-ingredients.json` (2026-11-22, branch `findings-inactive-2026-11`, NOT merged, NOT pushed)
+Brief `../FINDINGS-INACTIVE-PROMPT.md`; full record `../HISTORY.md`, 2026-11-22. `accfd87` `transform/findings.py::compile_inactive` (every inactive code a label lists in exactly one group: a seeded group of `inactive_groups.yaml`, a colour of `colour_additives.yaml` with its lake, or the code on its own under the FDA's name; groups at least one label in ten lists are charted; per label its groups, codes, class, routes and edition; `pages` lactose, gelatin, titanium dioxide), the seed (34 groups, 79 codes, 13 kept apart, each read from GSRS 2026-11-22 and equal to the FDA UNII table), `findings.summary_lines` (the weekly summary's Findings section names both), 25 tests; `d6f0489` the iron oxides' phrase; `77cfb0c` the file rebuilt. Suite 1,534 passed (main 1,509 plus 25), ruff 130 (= main). Pinned build twice byte-identical (951 files), 0 PubChem POSTs, only the new file differs from main, Drawings 903 / 723 / 147 / 3. `weekly-refresh.sh --dry-run --ref findings-inactive-2026-11` at `77cfb0c`: DRY RUN complete, Findings (2), levonorgestrel held. Lactose 84, gelatin 45, titanium dioxide 130 of 300.
+
 ## The dyes finding, the inactive-ingredient methods note (2026-11-21, DEPLOYED)
 Full record `../HISTORY.md`. Web `1f4f860` (deployment 7972394655, 01:54:56 UTC 11-22) adds the methods sentence on 21 CFR 201.66(c)(8) and 201.100(b)(5). ETL: no code change; only the waiting record `9026d71` was pushed.
 
