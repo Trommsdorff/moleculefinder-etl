@@ -1,0 +1,358 @@
+# The inactive-ingredient groups the second finding counts on medicine labels (2026-11-22).
+# HAND-MAINTAINED. A label ingredient joins a group ONLY by its UNII code, never by its name (the
+# label-ingredient rule, ETL CLAUDE.md). A code in no group here, and in no colour of
+# colour_additives.yaml, is counted as its own group under the FDA's name for it, so nothing a
+# label lists is ever dropped from the count; grouping only ever joins codes.
+#
+# Every code below was read from the FDA's Global Substance Registration System (GSRS, the FDA's
+# own registry of substances and their UNII codes; public domain) on 2026-11-22 through
+#     https://gsrs.ncats.nih.gov/ginas/app/api/v1/substances(<UNII>)?view=full
+# `gsrs_name` is the registry's preferred name, `gsrs_status` the record status it returned that
+# day (FAILED is a validation flag on the registry record; the FDA's UNII table still lists the code
+# under the name and labels use it, as with D&C Yellow No. 10's lake in colour_additives.yaml). The
+# test checks every name against the FDA UNII table the build reads.
+#
+# THE RULE (a chemistry judgment, stated on the page). A group is one substance in the forms the
+# labels name it: with or without water of crystallisation (hydrate and anhydrous), the grades of
+# one material that differ by chain length, viscosity, molecular weight or particle size, the FDA's
+# "unspecified" record for it, and for starch the plant it came from. Something made from a
+# substance by changing it chemically is its own group: cross-linked, made into an ether, an ester
+# or another salt, or a copolymer. The iron oxides are one group because the FDA lists them as one
+# colour additive (21 CFR 73.1200, "any one or any combination of synthetically prepared iron
+# oxides"); their members are shown. The colours come from colour_additives.yaml, each dye with
+# its lake, so the two findings pages count a colour the same way.
+# WHERE A GROUPING COULD BE ARGUED EITHER WAY, THE CODES ARE KEPT APART (`kept_apart`), with the
+# reason, and the page lists them.
+#
+# `watch` (optional) is a pattern on a label ingredient's NAME used only to find a code that looks
+# like a member but is in no group and not kept apart (`unrecognised`, logged and in the weekly
+# summary): a person reads it. It never counts anything.
+#
+# `pages`: the groups with their own page (/findings/inactive-ingredients/<id>).
+
+checked: "2026-11-22"
+registry_url: "https://gsrs.ncats.nih.gov/ginas/app/api/v1/substances({unii})?view=full"
+pages: [lactose, gelatin, titanium-dioxide]
+
+groups:
+  - id: magnesium-stearate
+    name: "Magnesium stearate"
+    phrase: "magnesium stearate"
+    watch: "MAGNESIUM STEARATE"
+    codes:
+      - {unii: 70097M6I30, member: "magnesium stearate", gsrs_name: "MAGNESIUM STEARATE", gsrs_status: approved}
+  - id: titanium-dioxide
+    name: "Titanium dioxide"
+    phrase: "titanium dioxide"
+    watch: "TITANIUM DIOXIDE"
+    codes:
+      - {unii: 15FIX9V2JP, member: "titanium dioxide", gsrs_name: "TITANIUM DIOXIDE", gsrs_status: approved}
+  - id: cellulose
+    name: "Cellulose"
+    phrase: "cellulose"
+    note: "Microcrystalline and powdered cellulose, the grades of one material. The cellulose ethers and esters are their own groups."
+    watch: "MICROCRYSTALLINE CELLULOSE|POWDERED CELLULOSE|^CELLULOSE\\b"
+    codes:
+      - {unii: OP1R32D61U, member: "microcrystalline cellulose", gsrs_name: "MICROCRYSTALLINE CELLULOSE", gsrs_status: FAILED}
+      - {unii: PNR0YF693Y, member: "microcrystalline cellulose 102", gsrs_name: "MICROCRYSTALLINE CELLULOSE 102", gsrs_status: approved}
+      - {unii: 7T9FYH5QMK, member: "microcrystalline cellulose 101", gsrs_name: "MICROCRYSTALLINE CELLULOSE 101", gsrs_status: approved}
+      - {unii: SMD1X3XO9M, member: "powdered cellulose", gsrs_name: "POWDERED CELLULOSE", gsrs_status: approved}
+  - id: water
+    name: "Water"
+    phrase: "water"
+    codes:
+      - {unii: 059QF0KO0R, member: "water", gsrs_name: "WATER", gsrs_status: approved}
+  - id: hypromellose
+    name: "Hypromellose"
+    phrase: "hypromellose"
+    note: "Every viscosity grade of hypromellose (hydroxypropyl methylcellulose), a cellulose ether. Its phthalate and acetate succinate esters are kept apart."
+    watch: "HYPROMELLOSE|HYDROXYPROPYL ?METHYL ?CELLULOSE"
+    codes:
+      - {unii: 3NXW29V3WO, member: "hypromellose, grade not given", gsrs_name: "HYPROMELLOSE, UNSPECIFIED", gsrs_status: FAILED}
+      - {unii: 0WZ8WG20P6, member: "hypromellose 2910 (6 mPa.s)", gsrs_name: "HYPROMELLOSE 2910 (6 MPA.S)", gsrs_status: FAILED}
+      - {unii: 0VUT3PMY82, member: "hypromellose 2910 (3 mPa.s)", gsrs_name: "HYPROMELLOSE 2910 (3 MPA.S)", gsrs_status: approved}
+      - {unii: R75537T0T4, member: "hypromellose 2910 (5 mPa.s)", gsrs_name: "HYPROMELLOSE 2910 (5 MPA.S)", gsrs_status: approved}
+      - {unii: 1IVH67816N, member: "hypromellose 2910 (50 mPa.s)", gsrs_name: "HYPROMELLOSE 2910 (50 MPA.S)", gsrs_status: FAILED}
+      - {unii: 0HO1H52958, member: "hypromellose 2910 (10000 mPa.s)", gsrs_name: "HYPROMELLOSE 2910 (10000 MPA.S)", gsrs_status: approved}
+      - {unii: Z78RG6M2N2, member: "hypromellose 2208 (15000 mPa.s)", gsrs_name: "HYPROMELLOSE 2208 (15000 MPA.S)", gsrs_status: FAILED}
+  - id: starch
+    name: "Starch"
+    phrase: "starch"
+    note: "Corn, potato and rice starch. Sodium starch glycolate, maltodextrin and dextrates are made from starch and are their own groups."
+    watch: "^STARCH\\b|\\bSTARCH, |PREGELATINI[SZ]ED"
+    codes:
+      - {unii: O8232NY3SJ, member: "corn starch", gsrs_name: "STARCH, CORN", gsrs_status: approved}
+      - {unii: 8I089SAH3T, member: "potato starch", gsrs_name: "STARCH, POTATO", gsrs_status: approved}
+      - {unii: 4DGK8B7I3S, member: "rice starch", gsrs_name: "STARCH, RICE", gsrs_status: approved}
+  - id: polyethylene-glycol
+    name: "Polyethylene glycol"
+    phrase: "polyethylene glycol"
+    note: "Every chain length the labels name (300 to 8000, and the grade not given). The polyethylene glycol esters and ethers are their own groups."
+    watch: "POLYETHYLENE GLYCOL|MACROGOL|^PEG \\d"
+    codes:
+      - {unii: 3WJQ0SDW1A, member: "polyethylene glycol, grade not given", gsrs_name: "POLYETHYLENE GLYCOL, UNSPECIFIED", gsrs_status: approved}
+      - {unii: 5655G9Y8AQ, member: "polyethylene glycol 300", gsrs_name: "POLYETHYLENE GLYCOL 300", gsrs_status: FAILED}
+      - {unii: B697894SGQ, member: "polyethylene glycol 400", gsrs_name: "POLYETHYLENE GLYCOL 400", gsrs_status: approved}
+      - {unii: G2M7P15E5P, member: "polyethylene glycol 3350", gsrs_name: "POLYETHYLENE GLYCOL 3350", gsrs_status: approved}
+      - {unii: 4R4HFI6D95, member: "polyethylene glycol 4000", gsrs_name: "POLYETHYLENE GLYCOL 4000", gsrs_status: approved}
+      - {unii: 30IQX730WE, member: "polyethylene glycol 6000", gsrs_name: "POLYETHYLENE GLYCOL 6000", gsrs_status: approved}
+      - {unii: Q662QK8M3B, member: "polyethylene glycol 8000", gsrs_name: "POLYETHYLENE GLYCOL 8000", gsrs_status: approved}
+  - id: silicon-dioxide
+    name: "Silicon dioxide"
+    phrase: "silicon dioxide"
+    watch: "SILICON DIOXIDE|\\bSILICA\\b"
+    codes:
+      - {unii: ETJ7Z6XBU4, member: "silicon dioxide", gsrs_name: "SILICON DIOXIDE", gsrs_status: approved}
+  - id: talc
+    name: "Talc"
+    phrase: "talc"
+    codes:
+      - {unii: 7SEV7J4R1U, member: "talc", gsrs_name: "TALC", gsrs_status: approved}
+  - id: propylene-glycol
+    name: "Propylene glycol"
+    phrase: "propylene glycol"
+    codes:
+      - {unii: 6DC9Q167V3, member: "propylene glycol", gsrs_name: "PROPYLENE GLYCOL", gsrs_status: approved}
+  - id: lactose
+    name: "Lactose"
+    phrase: "lactose"
+    note: "Lactose monohydrate, anhydrous lactose and lactose with no form given."
+    watch: "LACTOSE"
+    codes:
+      - {unii: EWQ57Q8I5X, member: "lactose monohydrate", gsrs_name: "LACTOSE MONOHYDRATE", gsrs_status: approved}
+      - {unii: 3SY5LH9PMK, member: "anhydrous lactose", gsrs_name: "ANHYDROUS LACTOSE", gsrs_status: approved}
+      - {unii: J2B2A4N98G, member: "lactose, form not given", gsrs_name: "LACTOSE, UNSPECIFIED FORM", gsrs_status: approved}
+  - id: iron-oxides
+    name: "Iron oxides"
+    phrase: "an iron oxide"
+    note: "Red, yellow, black and brown iron oxide are different oxides of iron. The FDA lists them as one colour additive, synthetic iron oxide, which is any one or any combination of them (21 CFR 73.1200), so they are one group here and each is shown."
+    watch: "IRON OXIDE|FERRIC OXIDE|FERROSOFERRIC"
+    codes:
+      - {unii: 1K09F3G675, member: "red iron oxide", gsrs_name: "FERRIC OXIDE RED", gsrs_status: approved}
+      - {unii: EX438O2MRT, member: "yellow iron oxide", gsrs_name: "FERRIC OXIDE YELLOW", gsrs_status: approved}
+      - {unii: XM0M87F357, member: "black iron oxide", gsrs_name: "FERROSOFERRIC OXIDE", gsrs_status: approved}
+      - {unii: 1N032N7MFO, member: "brown iron oxide", gsrs_name: "BROWN IRON OXIDE", gsrs_status: approved}
+  - id: glycerin
+    name: "Glycerin"
+    phrase: "glycerin"
+    codes:
+      - {unii: PDC6A3C0OX, member: "glycerin", gsrs_name: "GLYCERIN", gsrs_status: approved}
+  - id: croscarmellose-sodium
+    name: "Croscarmellose sodium"
+    phrase: "croscarmellose sodium"
+    note: "Cross-linked carboxymethylcellulose sodium, so its own group."
+    codes:
+      - {unii: M28OL1HH48, member: "croscarmellose sodium", gsrs_name: "CROSCARMELLOSE SODIUM", gsrs_status: approved}
+  - id: gelatin
+    name: "Gelatin"
+    phrase: "gelatin"
+    note: "The labels give one code for gelatin, the FDA's record for gelatin with no type given."
+    watch: "GELATIN(?!I[SZ]ED)"
+    codes:
+      - {unii: 2G86QN327L, member: "gelatin, type not given", gsrs_name: "GELATIN, UNSPECIFIED", gsrs_status: approved}
+  - id: polysorbate-80
+    name: "Polysorbate 80"
+    phrase: "polysorbate 80"
+    note: "The other polysorbates (20, 40, 60, 81) are made with other fatty acids and are their own groups."
+    codes:
+      - {unii: 6OZP39ZG8H, member: "polysorbate 80", gsrs_name: "POLYSORBATE 80", gsrs_status: approved}
+  - id: povidone
+    name: "Povidone"
+    phrase: "povidone"
+    note: "Every K grade of povidone. Crospovidone (cross-linked) and copovidone (a copolymer) are their own groups."
+    watch: "^POVIDONE\\b"
+    codes:
+      - {unii: FZ989GH94E, member: "povidone, grade not given", gsrs_name: "POVIDONE, UNSPECIFIED", gsrs_status: approved}
+      - {unii: 333AG72FWJ, member: "povidone K12", gsrs_name: "POVIDONE K12", gsrs_status: FAILED}
+      - {unii: U725QWY32X, member: "povidone K30", gsrs_name: "POVIDONE K30", gsrs_status: FAILED}
+      - {unii: SZR7Z3Q2YH, member: "povidone K60", gsrs_name: "POVIDONE K60", gsrs_status: FAILED}
+      - {unii: RDH86HJV5Z, member: "povidone K90", gsrs_name: "POVIDONE K90", gsrs_status: approved}
+  - id: sucrose
+    name: "Sucrose"
+    phrase: "sucrose"
+    codes:
+      - {unii: C151H8M554, member: "sucrose", gsrs_name: "SUCROSE", gsrs_status: approved}
+  - id: sodium-hydroxide
+    name: "Sodium hydroxide"
+    phrase: "sodium hydroxide"
+    codes:
+      - {unii: 55X04QC32I, member: "sodium hydroxide", gsrs_name: "SODIUM HYDROXIDE", gsrs_status: approved}
+  - id: mannitol
+    name: "Mannitol"
+    phrase: "mannitol"
+    codes:
+      - {unii: 3OWL53L36A, member: "mannitol", gsrs_name: "MANNITOL", gsrs_status: approved}
+  - id: citric-acid
+    name: "Citric acid"
+    phrase: "citric acid"
+    note: "Anhydrous citric acid and citric acid monohydrate. Its salts are their own groups."
+    watch: "^(ANHYDROUS )?CITRIC ACID"
+    codes:
+      - {unii: XF417D3PSL, member: "anhydrous citric acid", gsrs_name: "ANHYDROUS CITRIC ACID", gsrs_status: approved}
+      - {unii: 2968PHW8QP, member: "citric acid monohydrate", gsrs_name: "CITRIC ACID MONOHYDRATE", gsrs_status: approved}
+  - id: sorbitol
+    name: "Sorbitol"
+    phrase: "sorbitol"
+    codes:
+      - {unii: 506T60A25R, member: "sorbitol", gsrs_name: "SORBITOL", gsrs_status: approved}
+  - id: sodium-chloride
+    name: "Sodium chloride"
+    phrase: "sodium chloride"
+    codes:
+      - {unii: 451W47IQ8X, member: "sodium chloride", gsrs_name: "SODIUM CHLORIDE", gsrs_status: approved}
+  - id: carnauba-wax
+    name: "Carnauba wax"
+    phrase: "carnauba wax"
+    codes:
+      - {unii: R12CBM0EIZ, member: "carnauba wax", gsrs_name: "CARNAUBA WAX", gsrs_status: approved}
+  - id: hydroxypropyl-cellulose
+    name: "Hydroxypropyl cellulose"
+    phrase: "hydroxypropyl cellulose"
+    note: "Every molecular weight grade of hydroxypropyl cellulose, a cellulose ether. Low-substituted hydroxypropyl cellulose is kept apart."
+    watch: "HYDROXYPROPYL CELLULOSE"
+    codes:
+      - {unii: 9XZ8H6N6OH, member: "hydroxypropyl cellulose, grade not given", gsrs_name: "HYDROXYPROPYL CELLULOSE, UNSPECIFIED", gsrs_status: approved}
+      - {unii: 8VAB711C5E, member: "hydroxypropyl cellulose (45000 WAMW)", gsrs_name: "HYDROXYPROPYL CELLULOSE (45000 WAMW)", gsrs_status: FAILED}
+      - {unii: UKE75GEA7F, member: "hydroxypropyl cellulose (90000 WAMW)", gsrs_name: "HYDROXYPROPYL CELLULOSE (90000 WAMW)", gsrs_status: FAILED}
+      - {unii: RFW2ET671P, member: "hydroxypropyl cellulose (1600000 WAMW)", gsrs_name: "HYDROXYPROPYL CELLULOSE (1600000 WAMW)", gsrs_status: FAILED}
+  - id: sodium-starch-glycolate
+    name: "Sodium starch glycolate"
+    phrase: "sodium starch glycolate"
+    note: "Types A and B, from potato or corn starch. Made from starch by changing it chemically, so its own group."
+    watch: "STARCH GLYCOLATE"
+    codes:
+      - {unii: H8AV0SQX4D, member: "sodium starch glycolate type A", gsrs_name: "SODIUM STARCH GLYCOLATE TYPE A", gsrs_status: approved}
+      - {unii: 5856J3G2A2, member: "sodium starch glycolate type A, potato", gsrs_name: "SODIUM STARCH GLYCOLATE TYPE A POTATO", gsrs_status: approved}
+      - {unii: AG9B65PV6B, member: "sodium starch glycolate type A, corn", gsrs_name: "SODIUM STARCH GLYCOLATE TYPE A CORN", gsrs_status: approved}
+      - {unii: 27NA468985, member: "sodium starch glycolate type B, potato", gsrs_name: "SODIUM STARCH GLYCOLATE TYPE B POTATO", gsrs_status: approved}
+  - id: crospovidone
+    name: "Crospovidone"
+    phrase: "crospovidone"
+    watch: "CROSPOVIDONE"
+    codes:
+      - {unii: 2S7830E561, member: "crospovidone, grade not given", gsrs_name: "CROSPOVIDONE, UNSPECIFIED", gsrs_status: approved}
+      - {unii: 68401960MK, member: "crospovidone (120 micrometres)", gsrs_name: "CROSPOVIDONE (120 .MU.M)", gsrs_status: approved}
+  - id: ethylcellulose
+    name: "Ethylcellulose"
+    phrase: "ethylcellulose"
+    watch: "\\bETHYL ?CELLULOSE"
+    codes:
+      - {unii: 7Z8S9VYZ4B, member: "ethylcellulose, grade not given", gsrs_name: "ETHYLCELLULOSE, UNSPECIFIED", gsrs_status: approved}
+      - {unii: H3UP11403C, member: "ethylcellulose (7 mPa.s)", gsrs_name: "ETHYLCELLULOSE (7 MPA.S)", gsrs_status: approved}
+      - {unii: 3DYK7UYZ62, member: "ethylcellulose (10 mPa.s)", gsrs_name: "ETHYLCELLULOSE (10 MPA.S)", gsrs_status: approved}
+      - {unii: 47MLB0F1MV, member: "ethylcellulose (100 mPa.s)", gsrs_name: "ETHYLCELLULOSE (100 MPA.S)", gsrs_status: approved}
+  - id: carboxymethylcellulose-sodium
+    name: "Carboxymethylcellulose sodium"
+    phrase: "carboxymethylcellulose sodium"
+    watch: "CARBOXYMETHYL ?CELLULOSE"
+    codes:
+      - {unii: K679OBS311, member: "carboxymethylcellulose sodium", gsrs_name: "CARBOXYMETHYLCELLULOSE SODIUM, UNSPECIFIED", gsrs_status: approved}
+  - id: dibasic-calcium-phosphate
+    name: "Dibasic calcium phosphate"
+    phrase: "dibasic calcium phosphate"
+    codes:
+      - {unii: L11K75P92J, member: "anhydrous dibasic calcium phosphate", gsrs_name: "ANHYDROUS DIBASIC CALCIUM PHOSPHATE", gsrs_status: approved}
+      - {unii: O7TSZ97GEP, member: "dibasic calcium phosphate dihydrate", gsrs_name: "DIBASIC CALCIUM PHOSPHATE DIHYDRATE", gsrs_status: approved}
+  - id: dextrose
+    name: "Dextrose"
+    phrase: "dextrose"
+    codes:
+      - {unii: IY9XDZ35W2, member: "dextrose, form not given", gsrs_name: "DEXTROSE, UNSPECIFIED FORM", gsrs_status: approved}
+      - {unii: 5SL0G7R0OK, member: "anhydrous dextrose", gsrs_name: "ANHYDROUS DEXTROSE", gsrs_status: approved}
+      - {unii: LX22YL083G, member: "dextrose monohydrate", gsrs_name: "DEXTROSE MONOHYDRATE", gsrs_status: approved}
+  - id: dibasic-sodium-phosphate
+    name: "Dibasic sodium phosphate"
+    phrase: "dibasic sodium phosphate"
+    codes:
+      - {unii: GR686LBA74, member: "dibasic sodium phosphate, form not given", gsrs_name: "SODIUM PHOSPHATE, DIBASIC, UNSPECIFIED FORM", gsrs_status: approved}
+      - {unii: 22ADO53M6F, member: "dibasic sodium phosphate, anhydrous", gsrs_name: "SODIUM PHOSPHATE, DIBASIC, ANHYDROUS", gsrs_status: approved}
+      - {unii: 94255I6E2T, member: "dibasic sodium phosphate dihydrate", gsrs_name: "SODIUM PHOSPHATE, DIBASIC, DIHYDRATE", gsrs_status: approved}
+      - {unii: 70WT22SF4B, member: "dibasic sodium phosphate heptahydrate", gsrs_name: "SODIUM PHOSPHATE, DIBASIC, HEPTAHYDRATE", gsrs_status: approved}
+  - id: mineral-oil
+    name: "Mineral oil"
+    phrase: "mineral oil"
+    codes:
+      - {unii: T5L8T28FGP, member: "mineral oil", gsrs_name: "MINERAL OIL", gsrs_status: approved}
+      - {unii: N6K5787QVP, member: "light mineral oil", gsrs_name: "LIGHT MINERAL OIL", gsrs_status: approved}
+  - id: sodium-citrate
+    name: "Sodium citrate"
+    phrase: "sodium citrate"
+    note: "Trisodium citrate, with or without water. Monosodium citrate is its own group."
+    codes:
+      - {unii: 1Q73Q2JULR, member: "sodium citrate, form not given", gsrs_name: "SODIUM CITRATE, UNSPECIFIED FORM", gsrs_status: approved}
+      - {unii: B22547B95K, member: "trisodium citrate dihydrate", gsrs_name: "TRISODIUM CITRATE DIHYDRATE", gsrs_status: approved}
+
+# Codes a label carries whose name sits near a group above, which the group does NOT take, with the
+# reason. The page lists them. `near` is the group a reader may expect them in.
+kept_apart:
+  - unii: Y6O7T4G8P9
+    near: silicon-dioxide
+    gsrs_name: "HYDRATED SILICA"
+    gsrs_status: approved
+    arguable: true
+    reason: "The registry links hydrated silica to silicon dioxide as its hydrate, which would put it in the group by the rule. It is a different material in use (a precipitated silica), so it is kept apart and shown."
+  - unii: 5K3991GVWI
+    near: polyethylene-glycol
+    gsrs_name: "POLYETHYLENE OXIDE 2000000"
+    gsrs_status: approved
+    arguable: true
+    reason: "The same polymer as polyethylene glycol at a far greater chain length, sold and named as a different material. Kept apart and shown."
+  - unii: 2165RE0K14
+    near: hydroxypropyl-cellulose
+    gsrs_name: "LOW-SUBSTITUTED HYDROXYPROPYL CELLULOSE, UNSPECIFIED"
+    gsrs_status: approved
+    arguable: true
+    reason: "Hydroxypropyl cellulose with far fewer hydroxypropyl groups, a separate pharmacopoeia material that does not dissolve in water. Kept apart and shown."
+  - unii: NZ94SDL6WR
+    near: hydroxypropyl-cellulose
+    gsrs_name: "LOW-SUBSTITUTED HYDROXYPROPYL CELLULOSE (11% HYDROXYPROPYL; 120000 MW)"
+    gsrs_status: FAILED
+    arguable: true
+    reason: "Low-substituted hydroxypropyl cellulose, kept apart for the same reason."
+  - unii: 8M707QY5GH
+    near: sucrose
+    gsrs_name: "RAW SUGAR"
+    gsrs_status: approved
+    arguable: true
+    reason: "Mostly sucrose, but a less refined material with other parts of the cane left in. Kept apart and shown."
+  - unii: 8KW3E207O2
+    near: sorbitol
+    gsrs_name: "SORBITOL SOLUTION"
+    gsrs_status: approved
+    arguable: true
+    reason: "Sorbitol dissolved in water, a mixture rather than a form of sorbitol. Kept apart and shown."
+  - unii: 87Y6436BKR
+    near: hypromellose
+    gsrs_name: "HYPROMELLOSE PHTHALATE (24% PHTHALATE, 55 CST)"
+    gsrs_status: approved
+    reason: "An ester made from hypromellose: chemically changed, so its own group."
+  - unii: G4U024CQK6
+    near: hypromellose
+    gsrs_name: "HYPROMELLOSE PHTHALATE (31% PHTHALATE, 40 CST)"
+    gsrs_status: FAILED
+    reason: "An ester made from hypromellose: chemically changed, so its own group."
+  - unii: A7ZHS2RJ34
+    near: hypromellose
+    gsrs_name: "HYPROMELLOSE ACETATE SUCCINATE, UNSPECIFIED"
+    gsrs_status: approved
+    reason: "An ester made from hypromellose: chemically changed, so its own group."
+  - unii: 3J2P07GVB6
+    near: cellulose
+    gsrs_name: "CELLULOSE ACETATE"
+    gsrs_status: FAILED
+    reason: "An ester made from cellulose: chemically changed, so its own group."
+  - unii: 05JZI7B19X
+    near: carboxymethylcellulose-sodium
+    gsrs_name: "CARBOXYMETHYLCELLULOSE"
+    gsrs_status: approved
+    reason: "The registry's record for carboxymethylcellulose itself, not its sodium salt, so its own group."
+  - unii: UTY7PDF93L
+    near: carboxymethylcellulose-sodium
+    gsrs_name: "CARBOXYMETHYLCELLULOSE CALCIUM"
+    gsrs_status: FAILED
+    reason: "The calcium salt, not the sodium salt, so its own group."
+  - unii: D9C330MD8B
+    near: povidone
+    gsrs_name: "COPOVIDONE K25-31"
+    gsrs_status: approved
+    reason: "A copolymer of povidone's building block with another, so its own group."

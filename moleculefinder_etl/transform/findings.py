@@ -326,3 +326,285 @@ def compile_dyes(products: list[dict], *,
         "sources": list(SOURCE_KEYS),
         "license": "CC0 1.0",
     }
+
+
+# ══ THE SECOND FINDING, ``inactive-ingredients`` (2026-11-22) ══════════════════
+# Across the same medicine labels, which inactive ingredients the labels list, grouped by FDA code.
+# A group is a hand-seeded set of UNII codes (``inactive_groups.yaml``, each code checked against
+# the FDA's registry), or a colour of ``colour_additives.yaml`` (each dye with its lake, as the dyes
+# finding counts it), or, for any other code, the code on its own under the FDA's name for it. So
+# every inactive ingredient a label lists is in exactly one group and nothing is dropped; grouping
+# only ever joins codes. Counted from the label's own list (or the page's own data when the label
+# is not cached: the same codes), inactive role only. The groups at least one in ten labels list are
+# the ones the page charts (``shown``); the rest are in the per-label table. Every total is computed
+# here; nothing in the file is typed except the seed's names and notes.
+
+INACTIVE_YAML = SEEDS_DIR / "inactive_groups.yaml"
+INACTIVE_FINDING = "inactive-ingredients"
+INACTIVE_VERSION = 1
+# A group is shown (charted) when at least SHOWN_IN_TEN labels in every ten list it.
+SHOWN_IN_TEN = 1
+INACTIVE_SOURCE_KEYS = ("dailymed", "fda_unii", "curated")
+SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+CODE_GROUP = "code-"                       # the id prefix of a group that is one code on its own
+COLOUR_MEMBER = {"dye": "the straight dye", "lake": "its lake"}
+
+
+def load_inactive_groups(path: Path | None = None, colours: dict | None = None) -> dict:
+    """Read and validate inactive_groups.yaml -> {"checked", "registry_url", "pages", "groups",
+    "kept_apart", "by_unii"}. A code may be in one group only, never also a colour's or kept apart.
+    Every problem is named at once."""
+    path = path or INACTIVE_YAML
+    colours = load_colours() if colours is None else colours
+    data = yaml.safe_load(path.read_text()) or {}
+    errors: list[str] = []
+    groups = data.get("groups") or []
+    ids: set[str] = set()
+    by_unii: dict[str, tuple[dict, dict]] = {}
+    colour_ids = {d["id"] for d in colours["dyes"]}
+    for i, g in enumerate(groups):
+        where = f"groups[{i}] {g.get('id') if isinstance(g, dict) else g!r}"
+        if not isinstance(g, dict) or not all(g.get(k) for k in ("id", "name", "phrase", "codes")):
+            errors.append(f"{where}: needs id, name, phrase and codes")
+            continue
+        if not SLUG_RE.match(g["id"]) or g["id"].startswith(CODE_GROUP) or g["id"] in colour_ids:
+            errors.append(f"{where}: id must be a slug, not start {CODE_GROUP!r} and not be a colour's id")
+        if g["id"] in ids:
+            errors.append(f"{where}: id used twice")
+        ids.add(g["id"])
+        if g.get("watch"):
+            try:
+                re.compile(g["watch"])
+            except re.error as e:
+                errors.append(f"{where}: watch is not a pattern ({e})")
+        for j, c in enumerate(g["codes"]):
+            u = str(c.get("unii") or "")
+            if not UNII_RE.match(u):
+                errors.append(f"{where}.codes[{j}]: {u!r} is not a UNII")
+                continue
+            if not c.get("member") or not c.get("gsrs_name") or not c.get("gsrs_status"):
+                errors.append(f"{where}.codes[{j}] {u}: member, gsrs_name and gsrs_status are required")
+            if u in by_unii:
+                errors.append(f"{where}.codes[{j}]: {u} is already {by_unii[u][0]['id']}'s")
+            if u in colours["by_unii"]:
+                errors.append(f"{where}.codes[{j}]: {u} is a colour in colour_additives.yaml")
+            by_unii[u] = (g, c)
+    kept = data.get("kept_apart") or []
+    for k in kept:
+        u = str(k.get("unii") or "")
+        if not UNII_RE.match(u) or not k.get("reason") or not k.get("gsrs_name") or not k.get("gsrs_status"):
+            errors.append(f"kept_apart {k!r}: needs a UNII, gsrs_name, gsrs_status and a reason")
+        elif u in by_unii or u in colours["by_unii"]:
+            errors.append(f"kept_apart {u} is also in a group")
+        if k.get("near") not in ids:
+            errors.append(f"kept_apart {u}: near must be a group id, not {k.get('near')!r}")
+    if len({k.get("unii") for k in kept}) != len(kept):
+        errors.append("kept_apart names a code twice")
+    pages = data.get("pages") or []
+    for p in pages:
+        if p not in ids:
+            errors.append(f"pages: {p!r} is not a group id")
+    if not data.get("checked"):
+        errors.append("checked: the date the codes were read from the FDA's registry is required")
+    if errors:
+        raise FindingsError("inactive_groups.yaml: " + "; ".join(errors))
+    return {"checked": data["checked"], "registry_url": data.get("registry_url"), "pages": list(pages),
+            "groups": groups, "kept_apart": kept, "by_unii": by_unii}
+
+
+def _selection(products: list[dict], statements: dict, labels: int) -> dict:
+    """What a findings page says about the choice of labels, with its numbers computed here."""
+    actives_all = sum(1 for p in products if p.get("kind") == "medicine" and (p.get("source") or {}).get("type") == "dailymed"
+                      and not p.get("actives_not_in_catalog"))
+    return {**statements["selection"], "labels": labels, "every_active_is_a_molecule": actives_all}
+
+
+_GREEK = re.compile(r"\.(ALPHA|BETA|GAMMA|DELTA|OMEGA)\.", re.IGNORECASE)
+
+
+def registry_words(name: str) -> str:
+    """An FDA registry name as a page prints it among other ingredients: lower case, its notation
+    in words (".ALPHA." -> "alpha", ".MU.M" -> "micrometres"), a colour's "D&C"/"FD&C" kept."""
+    s = _GREEK.sub(lambda m: m.group(1).lower(), name)
+    s = re.sub(r"\.MU\.M\b", " micrometres", s, flags=re.IGNORECASE).lower()
+    return re.sub(r"\b(fd&c|d&c)\b", lambda m: m.group(1).upper(), " ".join(s.split()))
+
+
+def compile_inactive(products: list[dict], *,
+                     spl: Callable[[str], dict | None],
+                     routes: Callable[[str, int | None], list[dict] | None],
+                     fda_name: Callable[[str], str | None] | None = None,
+                     groups: dict | None = None, colours: dict | None = None,
+                     statements: dict | None = None) -> dict:
+    """The ``inactive-ingredients`` finding for the products a run publishes (see the block above).
+    ``fda_name`` gives the FDA UNII table's name for a code (a code in no seeded group is named by
+    it); without it, or for a code the table lacks, the label's own words name it."""
+    colours = load_colours() if colours is None else colours
+    groups = load_inactive_groups(colours=colours) if groups is None else groups
+    statements = load_statements() if statements is None else statements
+    for key in INACTIVE_SOURCE_KEYS:
+        if not registry.may_display(key):
+            raise registry.LicenceRuleError(f"findings cite source {key!r}, which is unregistered or may not be displayed")
+    seeded = groups["by_unii"]
+    kept = {k["unii"] for k in groups["kept_apart"]}
+    watches = [(g["id"], re.compile(g["watch"], re.IGNORECASE)) for g in groups["groups"] if g.get("watch")]
+
+    def group_of(u: str) -> str:
+        if u in seeded:
+            return seeded[u][0]["id"]
+        if u in colours["by_unii"]:
+            return colours["by_unii"][u][0]["id"]
+        return CODE_GROUP + u.lower()
+
+    labels: list[dict] = []
+    unrecognised: dict[tuple[str, str], dict] = {}
+    listed: dict[str, Counter] = {}           # code -> the label's own words for it, counted
+    molecules: dict[str, set[str]] = {}       # code -> the molecule pages it matched to
+    uncoded = 0
+    for p in sorted((p for p in products if p.get("kind") == "medicine"
+                     and (p.get("source") or {}).get("type") == "dailymed"), key=lambda x: x["slug"]):
+        src = p["source"]
+        ings, _origin = label_ingredients(p, spl(src["setid"]))
+        for m in p.get("molecules", []):
+            if m.get("role") == "inactive" and m.get("unii"):
+                molecules.setdefault(m["unii"], set()).add(m["slug"])
+        seen: dict[str, dict] = {}
+        for ing in ings:
+            if ing["role"] != "inactive":
+                continue
+            u = ing["unii"]
+            if not u:
+                uncoded += 1
+                continue
+            if u in seen:
+                continue
+            name = " ".join(str(ing["name"]).split())
+            listed.setdefault(u, Counter())[name.upper()] += 1
+            seen[u] = {"unii": u, "listed_as": name, "group": group_of(u)}
+            if u not in seeded and u not in colours["by_unii"] and u not in kept:
+                for gid, pat in watches:
+                    if pat.search(name):
+                        unrecognised.setdefault((u, gid), {"unii": u, "name": name, "looks_like": gid, "slugs": []})["slugs"].append(p["slug"])
+        rows = sorted(seen.values(), key=lambda r: r["unii"])
+        names, how = _routes(routes(src["setid"], src.get("version")))
+        labels.append({
+            "slug": p["slug"], "name": p["name"], "class": _class(src.get("doc_type")),
+            "labeler": src.get("labeler"), "setid": src["setid"], "version": src.get("version"),
+            "effective": src.get("effective"), "url": src["url"],
+            "routes": names, "taken": how,
+            "groups": sorted({r["group"] for r in rows}),
+            "codes": [r["unii"] for r in rows],
+        })
+    labels.sort(key=lambda lb: (lb["name"].lower(), lb["slug"]))
+    if unrecognised:
+        log.warning("findings: %d inactive code(s) look like a group's by name but are in no group and not kept apart "
+                    "(counted on their own): %s", len(unrecognised),
+                    "; ".join(f"{u['unii']} {u['name']} (like {u['looks_like']})" for u in list(unrecognised.values())[:8]))
+
+    def by_mouth(lb): return lb["taken"] in ("oral", "oral+other")
+    def split(rows):
+        return {"labels": len(rows), "otc": sum(lb["class"] == "otc" for lb in rows),
+                "prescription": sum(lb["class"] == "prescription" for lb in rows),
+                "by_mouth": sum(by_mouth(lb) for lb in rows)}
+    total = len(labels)
+    with_group: dict[str, list[dict]] = {}
+    with_code: Counter = Counter()
+    for lb in labels:
+        for g in lb["groups"]:
+            with_group.setdefault(g, []).append(lb)
+        for u in lb["codes"]:
+            with_code[u] += 1
+
+    def code_row(u: str, member: str, gsrs_name: str | None, gsrs_status: str | None, form: str | None = None) -> dict:
+        row = {"unii": u, "member": member, "gsrs_name": gsrs_name, "gsrs_status": gsrs_status, "labels": with_code[u]}
+        if form:
+            row["form"] = form
+        return row
+
+    def common_words(u: str) -> str:
+        c = listed.get(u) or Counter()
+        return min(c.items(), key=lambda kv: (-kv[1], kv[0]))[0] if c else u
+
+    def mols(codes: list[str]) -> list[str]:
+        return sorted(set().union(*(molecules.get(u, set()) for u in codes))) if codes else []
+
+    out_groups: list[dict] = []
+    for g in groups["groups"]:
+        codes = [c["unii"] for c in g["codes"]]
+        out_groups.append({"id": g["id"], "kind": "group", "name": g["name"], "phrase": g["phrase"], "note": g.get("note"),
+                           "codes": [code_row(c["unii"], c["member"], c["gsrs_name"], c["gsrs_status"]) for c in g["codes"]],
+                           "molecules": mols(codes), **split(with_group.get(g["id"], []))})
+    for d in colours["dyes"]:
+        codes = [c["unii"] for c in d["codes"]]
+        out_groups.append({"id": d["id"], "kind": "colour", "name": d["name"], "phrase": d["name"], "note": None,
+                           "codes": [code_row(c["unii"], COLOUR_MEMBER[c["form"]], c["gsrs_name"], c["gsrs_status"], c["form"])
+                                     for c in d["codes"]],
+                           "molecules": mols(codes), **split(with_group.get(d["id"], []))})
+    for gid in sorted(g for g in with_group if g.startswith(CODE_GROUP)):
+        u = gid[len(CODE_GROUP):].upper()
+        official = fda_name(u) if fda_name else None
+        words = registry_words(official or common_words(u))
+        out_groups.append({"id": gid, "kind": "code", "name": words[:1].upper() + words[1:], "phrase": words, "note": None,
+                           "codes": [code_row(u, words, official, None)],
+                           "molecules": mols([u]), **split(with_group[gid])})
+    floor = -(-total * SHOWN_IN_TEN // 10)          # at least one label in ten: ceil(total / 10)
+    order = sorted(out_groups, key=lambda g: (-g["labels"], g["name"].lower(), g["id"]))
+    shown = [g["id"] for g in order if total and g["labels"] >= floor]
+    for g in out_groups:
+        g["shown"] = g["id"] in shown
+    out_groups.sort(key=lambda g: (-g["labels"], g["name"].lower(), g["id"]))
+
+    none = [lb for lb in labels if not lb["codes"]]
+    known = [lb for lb in labels if lb["routes"] is not None]
+    totals = {
+        "labels": split(labels),
+        "lists_none": {**split(none), "slugs": [lb["slug"] for lb in none]},
+        "codes": len(with_code),
+        "groups": len(with_group),
+        "uncoded": uncoded,
+        "shown": {"floor": floor, "in_ten": SHOWN_IN_TEN, "groups": shown},
+        "routes_read": len(known),
+    }
+    kept_rows = [{**{k: x[k] for k in ("unii", "near", "gsrs_name", "gsrs_status", "reason")},
+                  "arguable": bool(x.get("arguable")), "labels": with_code[x["unii"]],
+                  "group": group_of(x["unii"])} for x in groups["kept_apart"]]
+    return {
+        "id": INACTIVE_FINDING, "version": INACTIVE_VERSION,
+        "question": "Which inactive ingredients do the medicine labels on MoleculeFinder list, and which labels list each?",
+        "totals": totals,
+        "pages": groups["pages"],
+        "groups": out_groups,
+        "kept_apart": kept_rows,
+        "registry": {"checked": groups["checked"], "url": groups.get("registry_url"),
+                     "name": "FDA Global Substance Registration System (GSRS)"},
+        "labels": labels,
+        "unrecognised": sorted(({**u, "slugs": sorted(u["slugs"])} for u in unrecognised.values()),
+                               key=lambda u: (u["unii"], u["looks_like"])),
+        "selection": _selection(products, statements, total),
+        "sources": list(INACTIVE_SOURCE_KEYS),
+        "license": "CC0 1.0",
+    }
+
+
+# ── the run's report ──────────────────────────────────────────────────────────
+def summary_lines(name: str, f: dict, state: str) -> list[str]:
+    """The log and weekly-summary lines for one finding rebuilt (``state``: new, changed or unchanged
+    from the shipped file). Words only: a finding never stops a run."""
+    t = f["totals"]
+    if name == DYES_FINDING:
+        ex = f.get("examples") or {}
+        line = (f"{name}: rebuilt ({state} from the shipped file): {t['any_of_six']['labels']} of the "
+                f"{t['labels']['labels']} medicine labels list one of the six; familiar labels named "
+                f"{len(ex.get('lists') or [])} and {len(ex.get('lists_none') or [])}, "
+                f"{len(ex.get('dropped') or [])} left out")
+        return [line] + [f"{name}: {d['slug']} left out of the {d['side']} sentence: {d['why']}" for d in ex.get("dropped") or []]
+    if name == INACTIVE_FINDING:
+        by = {g["id"]: g for g in f["groups"]}
+        pages = ", ".join(f"{by[p]['phrase']} {by[p]['labels']}" for p in f.get("pages") or [] if p in by)
+        un = f.get("unrecognised") or []
+        line = (f"{name}: rebuilt ({state} from the shipped file): {t['labels']['labels']} medicine labels, "
+                f"{t['codes']} inactive codes in {t['groups']} groups, {len(t['shown']['groups'])} listed by at least "
+                f"{t['shown']['floor']} labels; {pages}; {len(un)} code(s) look like a group's and are in none")
+        return [line] + [f"{name}: {u['unii']} {u['name']} looks like {u['looks_like']} and is counted on its own "
+                         f"({len(u['slugs'])} label(s)); add it to inactive_groups.yaml or kept_apart" for u in un]
+    return [f"{name}: rebuilt ({state} from the shipped file)"]
