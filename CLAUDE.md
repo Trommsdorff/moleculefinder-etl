@@ -20,7 +20,7 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
 - **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
-  hand `mfetl zenodo` runs it). Hook branch `zenodo-weekly-hook-2026-11` (release and mirrors steps): unmerged to 11-23.
+  hand `mfetl zenodo` runs it). The weekly job's release and mirrors steps are merged (11-23).
 - **Queued:** extended solids. **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 

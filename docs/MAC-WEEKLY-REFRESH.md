@@ -258,15 +258,15 @@ versions is not Zenodo's, another draft is open, or the draft's files differ aft
 draft it made and puts `data/dataset/` and `dataset_published.yaml` back; if the delete fails it names the draft:
 discard it with `mfetl zenodo --discard` or at `https://zenodo.org/uploads/<id>` (Delete).
 
-**When the weekly job does it (branch `zenodo-weekly-hook-2026-11`, NOT merged: it waits until after the first Mac
-Monday, 2026-11-23).** `dataset_published.yaml` gains a `release:` line, the version the dataset should be at. Cutting a
+**When the weekly job does it (merged to `main` 2026-11-23, after the first Mac Monday ended cleanly; it runs from the
+week of 2026-11-30, once `main` is pushed).** `dataset_published.yaml` gains a `release:` line, the version the dataset should be at. Cutting a
 version is changing that one line (Garrett decides; a session commits it). After a weekly run's data is live and the
 week's success is written, the job runs `mfetl zenodo --release`: when `release` is newer than Zenodo's latest, it
 builds that version from the live snapshot, publishes it with every check above, commits the DOI to the ETL's main
 (`dataset: 2026.12 published on Zenodo (10.5281/zenodo.N)`) and runs `--check` (six tries, two minutes apart, for
 doi.org). Nothing due is silent. The step cannot fail, retry or block the refresh.
 
-**What its alarm looks like (once the hook is merged).** An email from GitHub saying the `mac-alarm` run failed, and an
+**What its alarm looks like.** An email from GitHub saying the `mac-alarm` run failed, and an
 open issue on `Trommsdorff/moleculefinder-etl` titled **MoleculeFinder dataset publish FAILED** (label
 `dataset-failure`, separate from the refresh's `refresh-failure`). It says what happened, that the refresh itself
 succeeded and the site's data is live, where the log is, and the step's last 60 lines (token-shaped strings
@@ -344,7 +344,7 @@ to the owner is already the new one and the new version's files are public by nu
 `mfetl mirrors --dry-run` and a login-less `--check` read the public one and may say "the description does not name
 the concept DOI" until it catches up. That is the lag, not a failed upload.
 
-**The weekly job (branch `zenodo-weekly-hook-2026-11`, NOT merged until after the first Mac Monday, 2026-11-23).** After
+**The weekly job (merged to `main` 2026-11-23; runs from the week of 2026-11-30).** After
 the dataset step ends green, a `mirrors_step` runs `mfetl mirrors --env-file`: most weeks both mirrors already hold
 the version and it only reads. It cannot fail, retry or block the refresh, never runs when Zenodo is not current, and
 a failure raises its OWN alarm: a GitHub email that `mac-alarm` failed and an open issue **MoleculeFinder dataset
