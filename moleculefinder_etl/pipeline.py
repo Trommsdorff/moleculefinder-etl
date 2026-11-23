@@ -28,7 +28,7 @@ from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold, findings
 from .transform import presence, claims, doors, drawings, drawing_guard
 from .transform import wikidata_age, ld50_hold
-from .sources import cache, pubchem
+from .sources import cache, fda_unii, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
 from . import freshness, inputs
 
@@ -195,14 +195,7 @@ def _report_findings(found: dict | None, before: dict[str, str | None]) -> None:
         path = SNAPSHOTS / "findings" / f"{name}.json"
         now = path.read_text() if path.exists() else None
         state = "new" if before.get(name) is None else ("changed" if now != before[name] else "unchanged")
-        t = f["totals"]
-        ex = f.get("examples") or {}
-        line = (f"{name}: rebuilt ({state} from the shipped file): {t['any_of_six']['labels']} of the "
-                f"{t['labels']['labels']} medicine labels list one of the six; familiar labels named "
-                f"{len(ex.get('lists') or [])} and {len(ex.get('lists_none') or [])}, "
-                f"{len(ex.get('dropped') or [])} left out")
-        lines.append(line)
-        lines += [f"{name}: {d['slug']} left out of the {d['side']} sentence: {d['why']}" for d in ex.get("dropped") or []]
+        lines += findings.summary_lines(name, f, state)
     for line in lines:
         log.info("  findings: %s", line)
     if weekly_run():
@@ -701,9 +694,17 @@ def stage_export(settings: Settings) -> Path:
                  if staged is not None else None)
     # Findings (2026-11-21): facts computed from the products this run publishes, one file each in
     # snapshots/findings/. Offline (the label cache), so the weekly refresh keeps them current.
-    found = ({findings.DYES_FINDING: findings.compile_dyes(staged, spl=products.spl_cached,
-                                                           routes=products.routes_cached)}
-             if staged is not None else None)
+    # The second (2026-11-22): the inactive ingredients the same labels list, grouped by FDA code; a code
+    # in no seeded group is named from the FDA's UNII table the products stage already holds.
+    if staged is not None:
+        unii_table = fda_unii.cached()
+        found = {findings.DYES_FINDING: findings.compile_dyes(staged, spl=products.spl_cached,
+                                                              routes=products.routes_cached),
+                 findings.INACTIVE_FINDING: findings.compile_inactive(
+                     staged, spl=products.spl_cached, routes=products.routes_cached,
+                     fda_name=unii_table.name if unii_table is not None else None)}
+    else:
+        found = None
     before = _findings_shipped(found)
     path = snapshot_export.export(molecules, boards, comparisons, featured=builder,
                                   today=inputs.refreshed_date(SNAPSHOTS / snapshot_export.META),
