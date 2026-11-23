@@ -2,6 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The second finding, DEPLOYED (2026-11-22)
+ETL `main` pushed `9026d71..76e36c0` 2026-11-22 (about 20:10 Eastern). Live checks, IndexNow (4 new, 3 changed, 7 accepted) and Lighthouse in `../HISTORY.md`, 2026-11-22. The merge record above stands; this line closes it.
+
 ## The second finding, merged for the deploy (2026-11-22, `main` locally, NOT pushed until Garrett's push line)
 Branch `findings-inactive-2026-11` (tip `c7fd35a`) merged `--no-ff` to `main` as `9a0b303`; no ETL change since the build, so its pinned build and weekly dry run stand. Suite 1,534 passed, 1 skipped; ruff 130 (= main). Full record `../HISTORY.md`, 2026-11-22. Pushed ETL first, then the web (the web needs the ETL's new file).
 
