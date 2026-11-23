@@ -56,7 +56,7 @@ def main(argv: list[str] | None = None) -> int:
                    help="zenodo: publish dataset_published.yaml's release when it is newer than Zenodo's latest "
                         "(the Mac's weekly job); with --dry-run, build it in a temporary folder and check only")
     p.add_argument("--env-file", dest="zenodo_env_file", type=Path, default=None,
-                   help="zenodo: the file holding ZENODO_TOKEN (default: this repo's .env)")
+                   help="zenodo, mirrors: the file holding the logins (default: this repo's .env)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -93,7 +93,7 @@ def main(argv: list[str] | None = None) -> int:
                         do_discard=args.zenodo_discard, check=args.zenodo_check, release=args.zenodo_release,
                         env_file=args.zenodo_env_file or zenodo.ENV_FILE)
         publishing = not (args.zenodo_dry_run or args.zenodo_draft_only or args.zenodo_discard or args.zenodo_check)
-        if rc == 0 and publishing:
+        if rc == 0 and publishing and not args.zenodo_release:   # the weekly job runs its own mirrors step
             # One word updates all three copies: a published version is followed by the mirrors (mirrors.py).
             from . import mirrors
             rc = mirrors.run(wait_for_zenodo=8)
@@ -107,7 +107,7 @@ def main(argv: list[str] | None = None) -> int:
         if sum([args.zenodo_dry_run, args.zenodo_check, args.mirrors_whoami]) > 1:
             p.error("mirrors: --dry-run, --check and --whoami go one at a time")
         return mirrors.run(dry_run=args.zenodo_dry_run, check=args.zenodo_check, whoami=args.mirrors_whoami,
-                           only=args.only)
+                           only=args.only, env_file=args.zenodo_env_file or mirrors.ENV_FILE)
     if args.stage == "migrate":
         # Database migrations over SUPABASE_DB_URL; needs no REST keys.
         from . import migrate
