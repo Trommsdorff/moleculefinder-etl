@@ -10,6 +10,10 @@ never printed, never logged, and never in a URL; every message that could carry 
     mfetl zenodo                 the same, then publish (or publish the draft --draft-only left)
     mfetl zenodo --discard       delete this version's open draft and put the repo's files back
     mfetl zenodo --check         after a publish: the public record, its files and the DOIs, read only
+    mfetl zenodo --release       the Mac's weekly job: when dataset_published.yaml's `release` is newer than
+                                 Zenodo's latest, build it from this checkout's snapshot and publish it
+                                 (with --dry-run: build it in a temporary folder and check; create nothing)
+    --env-file PATH              where ZENODO_TOKEN is (default: this repo's .env; the job's checkout has none)
 
 WHAT A PUBLISH DOES, in order. Every check runs before the publish call, because a published Zenodo version
 cannot be deleted:
@@ -28,7 +32,7 @@ cannot be deleted:
   7. Publish. Zenodo's reply must carry the reserved DOI and the concept DOI.
 A failed run deletes the draft it made and puts dataset_published.yaml and data/dataset/ back as they were; if
 the delete itself fails, it names the draft and how to discard it. Nothing is committed here: the caller
-commits the recorded version (by hand today, the Mac's weekly job later).
+commits the recorded version (by hand, or the Mac's weekly job after `--release`).
 """
 from __future__ import annotations
 
@@ -409,11 +413,62 @@ def _show(pkg: Package, rec: Record, metadata: dict[str, Any]) -> None:
                  hashlib.sha256(data).hexdigest()[:16], md5(data))
 
 
+def release_due(rec: Record, pub: dict[str, Any]) -> str | None:
+    """The version dataset_published.yaml's `release` names, when it is newer than Zenodo's latest; None when nothing
+    is due. Refuses when the repo's record of versions is not Zenodo's (a version published another way, or a DOI
+    recorded for a version Zenodo does not have)."""
+    if pub["versions"] != rec.versions:
+        raise Refused(f"dataset_published.yaml's versions {sorted(pub['versions'])} are not Zenodo's "
+                      f"{sorted(rec.versions)}; record or remove the odd one before a release can publish")
+    r = pub["release"]
+    if r in rec.versions or version_key(r) <= version_key(rec.latest_version):
+        return None
+    return r
+
+
+def _release(*, dry_run: bool, root: Path, client: Client | None, env_file: Path) -> int:
+    """`mfetl zenodo --release` (the Mac's weekly job, after the site's data is live): when the release the repo
+    names is newer than Zenodo's latest, build it from this checkout's snapshot (`mfetl dataset --version R`) and
+    publish it, every check of a hand publish included. Nothing due is a success."""
+    from . import dataset
+    pub = dataset.published()
+    rec = find_record(client or Client(None), pub)
+    due = release_due(rec, pub)
+    if not due:
+        log.info("zenodo: release %s: nothing due (Zenodo's latest is %s)", pub["release"], rec.latest_version)
+        return 0
+    log.info("zenodo: release %s is due (Zenodo's latest is %s): building it from this checkout's snapshot",
+             due, rec.latest_version)
+    if dry_run:
+        with tempfile.TemporaryDirectory(prefix="mf-release-") as tmp:
+            out = Path(tmp) / "dataset"
+            if dataset.run(version=due, out=out) != 0:
+                raise Refused(f"`mfetl dataset --version {due}` refused (its log says why)")
+            pkg = read_package(out)
+            check_plan(pkg, rec, pub)
+            _show(pkg, rec, deposit_metadata(pkg.zenodo))
+        log.info("zenodo: DRY RUN passed: release %s would publish; nothing was built here or created on Zenodo", due)
+        return 0
+    c = client or Client(token(env_file))      # the token before the build: a missing one refuses at once
+    drafts = open_drafts(c, rec)
+    if drafts:
+        names = ", ".join(str(d["id"]) for d in drafts)
+        raise Refused(f"an open draft already exists under this record ({names}); a release never resumes a draft. "
+                      "Discard it (`mfetl zenodo --discard`, or https://zenodo.org/uploads/<id>, Delete)")
+    if dataset.run(version=due, out=root) != 0:
+        raise Refused(f"`mfetl dataset --version {due}` refused (its log says why); "
+                      "put data/dataset back with `git checkout -- data/dataset`")
+    return _publish(c, rec, read_package(root), pub, [], root, draft_only=False)
+
+
 def run(*, dry_run: bool = False, draft_only: bool = False, do_discard: bool = False, check: bool = False,
-        out: Path | None = None, client: Client | None = None) -> int:
+        release: bool = False, out: Path | None = None, client: Client | None = None,
+        env_file: Path = ENV_FILE) -> int:
     from . import dataset
     root = out or dataset.OUT
     try:
+        if release:
+            return _release(dry_run=dry_run, root=root, client=client, env_file=env_file)
         pub = dataset.published()
         if check:
             return verify_published(client or Client(None), read_package(root), pub)
@@ -426,7 +481,7 @@ def run(*, dry_run: bool = False, draft_only: bool = False, do_discard: bool = F
             _show(pkg, rec, meta)
             log.info("zenodo: DRY RUN passed: every check holds; nothing was created on Zenodo")
             return 0
-        c = client or Client(token())
+        c = client or Client(token(env_file))
         drafts = open_drafts(c, rec)
         if do_discard:
             return _discard_ours(c, drafts, pkg, pub)

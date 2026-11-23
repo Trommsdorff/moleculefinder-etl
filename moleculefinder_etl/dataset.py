@@ -55,6 +55,7 @@ TITLE = "MoleculeFinder: the molecules in everyday foods, drinks and products"
 PUBLISHED = Path(__file__).resolve().parent / "sources" / "seeds" / "dataset_published.yaml"
 _DOI = re.compile(r"^10\.\d{4,9}/\S+$")
 _ZENODO_DOI = re.compile(r"^10\.5281/zenodo\.(\d+)$")
+_RELEASE = re.compile(r"^20\d\d\.(0[1-9]|1[0-2])(\.\d+)?$")
 
 
 class Unpublished(RuntimeError):
@@ -91,11 +92,17 @@ def published(path: Path = PUBLISHED) -> dict[str, Any]:
     hf = str(p.get("huggingface") or "").strip()
     if hf and (hf.count("/") != 1 or hf.startswith("/") or hf.endswith("/")):
         problems.append("huggingface is not owner/name")
+    # The version the dataset should be at (2026-11-20): `mfetl zenodo --release` publishes it when it is newer
+    # than Zenodo's latest. Optional; empty means the latest recorded version.
+    release = str(p.get("release") or "").strip()
+    if release and not _RELEASE.match(release):
+        problems.append(f"release {release!r} is not a version (YYYY.MM or YYYY.MM.N)")
     if problems:
         raise Unpublished(f"{path.name}: " + "; ".join(problems))
+    vs = {str(v): str(d) for v, d in versions.items()}
     return {"concept_doi": str(p["concept_doi"]), "zenodo_record": p["zenodo_record"],
-            "kaggle": p["kaggle"], "versions": {str(v): str(d) for v, d in versions.items()},
-            "huggingface": hf}
+            "kaggle": p["kaggle"], "versions": vs, "huggingface": hf,
+            "release": release or list(vs)[-1]}
 
 
 def _zenodo_record(doi: str) -> str | None:

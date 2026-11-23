@@ -316,3 +316,91 @@ def test_the_published_record_is_checked_read_only(repo, monkeypatch):
     monkeypatch.setattr(requests, "get", lambda *a, **k: R())
     assert zenodo.run(check=True, client=client(fake, None)) == 0
     assert seen and set(seen) == {"GET"}
+
+
+# ── `mfetl zenodo --release`: the Mac's weekly job publishes the version the repo names (2026-11-20) ─────────────
+def _release(pub: Path, version: str) -> None:
+    text = pub.read_text()
+    pub.write_text(text.replace("versions:\n", f'release: "{version}"\nversions:\n', 1))
+
+
+@pytest.fixture
+def builds(repo, monkeypatch):
+    """`mfetl dataset --version V` stubbed: it writes a package of that version and records each call."""
+    made: list[tuple[str, Path]] = []
+
+    def run(version=None, out=dataset.OUT, doi=None, card=False):
+        made.append((version, out))
+        _write_package(out, version)
+        return 0
+    monkeypatch.setattr(dataset, "run", run)
+    return made
+
+
+def test_the_release_line_is_read_and_defaults_to_the_latest_version(repo):
+    _, _, pub = repo
+    assert dataset.published()["release"] == "2026.10.1"
+    _release(pub, "2026.12")
+    assert dataset.published()["release"] == "2026.12"
+    pub.write_text(pub.read_text().replace('release: "2026.12"', 'release: "December"'))
+    with pytest.raises(dataset.Unpublished, match="release 'December' is not a version"):
+        dataset.published()
+
+
+def test_a_release_not_newer_than_zenodos_latest_is_nothing_due(repo, builds, tmp_path):
+    fake = FakeZenodo()
+    env = tmp_path / "no.env"                     # never read: nothing due needs no token
+    assert zenodo.run(release=True, client=client(fake, None), env_file=env) == 0
+    assert not builds and all(m == "GET" for m, _ in fake.calls)
+
+
+def test_a_due_release_is_built_from_the_snapshot_then_published(repo, builds, monkeypatch):
+    _, pkg, pub = repo
+    _release(pub, "2026.12")
+    fake = FakeZenodo()
+    assert zenodo.run(release=True, client=client(fake)) == 0
+    assert builds == [("2026.12", pkg)]
+    assert fake.published == [200] and fake.versions[-1] == ("2026.12", 200)
+    assert '"2026.12": 10.5281/zenodo.200' in pub.read_text()
+    assert zenodo.run(release=True, client=client(fake)) == 0          # the next week: nothing due
+    assert fake.published == [200] and len(builds) == 1
+
+
+def test_a_release_dry_run_builds_in_a_temporary_folder_and_creates_nothing(repo, builds):
+    _, pkg, pub = repo
+    _release(pub, "2026.12")
+    before = {p.name: p.read_bytes() for p in pkg.iterdir()}
+    fake = FakeZenodo()
+    assert zenodo.run(release=True, dry_run=True, client=client(fake, None)) == 0
+    assert builds and builds[0][1] != pkg and not builds[0][1].exists()
+    assert {p.name: p.read_bytes() for p in pkg.iterdir()} == before
+    assert all(m == "GET" for m, _ in fake.calls)
+
+
+@pytest.mark.parametrize("versions, drafts, match", [
+    ((("2026.10", 101), ("2026.10.1", 102), ("2026.11", 103)), False, "are not Zenodo's"),   # published elsewhere
+    ((("2026.10", 101), ("2026.10.1", 102)), True, "a release never resumes a draft"),
+])
+def test_a_release_refuses_before_building_when_the_record_is_out_of_step(repo, builds, versions, drafts, match,
+                                                                           caplog):
+    _, _, pub = repo
+    _release(pub, "2026.12")
+    fake = FakeZenodo(versions=versions)
+    if drafts:
+        fake.drafts[150] = {"id": 150, "conceptrecid": "100", "submitted": False, "metadata": {},
+                            "links": {"bucket": "https://zenodo.org/api/files/b150"}}
+    assert zenodo.run(release=True, client=client(fake)) == 1
+    assert match in caplog.text and not builds and not fake.published
+    assert not any("newversion" in u for _, u in fake.calls)
+
+
+def test_a_release_without_a_token_refuses_before_building(repo, builds, tmp_path, monkeypatch, caplog):
+    _, _, pub = repo
+    _release(pub, "2026.12")
+    env = tmp_path / ".env"
+    env.write_text("SUPABASE_URL=x\n")
+    fake = FakeZenodo()
+    real = zenodo.Client
+    monkeypatch.setattr(zenodo, "Client", lambda tok, *a, **k: real(tok, session=_Session(fake)))
+    assert zenodo.run(release=True, env_file=env) == 1
+    assert "has no ZENODO_TOKEN" in caplog.text and not builds and not fake.published

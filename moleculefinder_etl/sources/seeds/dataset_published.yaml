@@ -13,6 +13,11 @@ kaggle: trommsdorff/moleculefinder-molecules-in-everyday-products
 # `mfetl dataset --card` so the card links it, re-upload the card, and add the same URL to the web
 # repo's lib/dataset.ts. Keep this line ABOVE `versions:` (record_version appends to the file's end).
 huggingface: Trommsdorff/moleculefinder-molecules-in-everyday-products
+# The version the dataset should be at (2026-11-20). Cutting a new version is changing this one line (a
+# session, on Garrett's word). When it is newer than Zenodo's latest, the Mac's weekly refresh, once the site's
+# data is live, builds that version from the live snapshot and publishes it (`mfetl zenodo --release`).
+# Keep it ABOVE `versions:`.
+release: "2026.11"
 versions:                                # each published version's own DOI
   "2026.10": 10.5281/zenodo.23605768
   "2026.10.1": 10.5281/zenodo.23620892
