@@ -2,6 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The dye pages, merged for the deploy (2026-11-22, `main` locally, NOT pushed until Garrett's push line)
+This branch's record commit only: no ETL code or snapshot change, so Monday's weekly run is not touched. It keeps local `main` level with GitHub before the weekly job pushes its refresh. Full record `../HISTORY.md`, 2026-11-22. Astepro Allergy and Zetia show "Not read" under Route because their snapshot label is one edition behind the route cache (v8 vs v9); the weekly refresh reads them together.
+
 ## A page per dye, and the labels that list none (2026-11-22, branch `findings-dye-pages-2026-11`, NOT merged, NOT pushed)
 No ETL change: this branch holds only this record. The pages are web-only (`../moleculefinder-web/lib/dye-pages.ts`), built from `findings/dyes-in-medicines.json` and `findings/inactive-ingredients.json` as they are. Full record `../HISTORY.md`, 2026-11-22.
 
