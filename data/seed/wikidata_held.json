@@ -1,5 +1,538 @@
 [
  {
+  "slug": "2-nonenal",
+  "cid": 17166,
+  "qid": "Q27131346",
+  "field": "aliases",
+  "shipped": [
+   "beta-hexylacrolein",
+   "2-nonen-1-al",
+   "heptylideneacetaldehyde",
+   "3-hexyl-acrolein",
+   "3-hexylacrolein",
+   "alpha-Nonenyl aldehyde",
+   "3-hexyl-2-propenal",
+   "2-nonenal",
+   "2-Nonenal (ACD/Name 4.0)",
+   "Non-2-enal"
+  ],
+  "held": [
+   "beta-hexylacrolein",
+   "2-nonen-1-al",
+   "heptylideneacetaldehyde",
+   "3-hexyl-acrolein",
+   "3-hexylacrolein",
+   "alpha-Nonenyl aldehyde",
+   "3-hexyl-2-propenal",
+   "2-nonenal"
+  ],
+  "modified": "2026-11-18T09:09:00Z"
+ },
+ {
+  "slug": "acetylcholine",
+  "cid": 187,
+  "qid": "Q180623",
+  "field": "aliases",
+  "shipped": [
+   "ACh",
+   "E1001",
+   "O-acetylcholine",
+   "choline acetate",
+   "2-acetoxyethyl(trimethyl)ammonium",
+   "2-acetyloxyethyl(trimethyl)ammonium",
+   "2-acetyloxyethyl(trimethyl)azanium",
+   "[2-(acetyloxy)ethyl]trimethylazanium",
+   "acetylcholine cation",
+   "acetyl choline ion"
+  ],
+  "held": [
+   "O-acetylcholine",
+   "choline acetate",
+   "2-acetoxyethyl(trimethyl)ammonium",
+   "2-acetyloxyethyl(trimethyl)ammonium",
+   "2-acetyloxyethyl(trimethyl)azanium",
+   "[2-(acetyloxy)ethyl]trimethylazanium",
+   "acetylcholine cation",
+   "acetyl choline ion"
+  ],
+  "modified": "2026-11-23T03:38:53Z"
+ },
+ {
+  "slug": "acetylcysteine",
+  "cid": 12035,
+  "qid": "Q375613",
+  "field": "aliases",
+  "shipped": [
+   "N-acetylcysteine",
+   "NAC",
+   "(2R)-2-acetamido-3-sulfanylpropanoic acid",
+   "(2R)-2-acetylamino-3-sulfanylpropanoic acid",
+   "(R)-2-acetylamino-3-mercaptopropanoic acid",
+   "N-acetyl-L-(+)-cysteine",
+   "L-acetylcysteine",
+   "(R)-mercapturic acid",
+   "L-α-acetamido-β-mercaptopropionic acid",
+   "L-alpha-acetamido-beta-mercaptopropionic acid",
+   "mercapturic acid",
+   "N-acetyl-3-mercaptoalanine",
+   "2-acetylamino-3-mercaptopropionic acid",
+   "2-acetylamino-3-mercaptopropionate",
+   "acetylcysteine"
+  ],
+  "held": [
+   "N-acetylcysteine",
+   "(2R)-2-acetamido-3-sulfanylpropanoic acid",
+   "(2R)-2-acetylamino-3-sulfanylpropanoic acid",
+   "(R)-2-acetylamino-3-mercaptopropanoic acid",
+   "N-acetyl-L-(+)-cysteine",
+   "L-acetylcysteine",
+   "(R)-mercapturic acid",
+   "L-α-acetamido-β-mercaptopropionic acid",
+   "L-alpha-acetamido-beta-mercaptopropionic acid",
+   "mercapturic acid",
+   "N-acetyl-3-mercaptoalanine",
+   "2-acetylamino-3-mercaptopropionic acid",
+   "acetylcysteine"
+  ],
+  "modified": "2026-11-23T03:37:51Z"
+ },
+ {
+  "slug": "aciclovir",
+  "cid": 135398513,
+  "qid": "Q147101",
+  "field": "aliases",
+  "shipped": [
+   "acyclovir",
+   "acycloguanosine",
+   "zovirax",
+   "ACV"
+  ],
+  "held": [
+   "acyclovir",
+   "acycloguanosine",
+   "ACV"
+  ],
+  "modified": "2026-11-23T02:53:01Z"
+ },
+ {
+  "slug": "aspartic-acid",
+  "cid": 5960,
+  "qid": "Q178450",
+  "field": "aliases",
+  "shipped": [
+   "L-Asp",
+   "L-aspartate",
+   "(S)-2-aminobutanedioic acid",
+   "(S)-2-aminosuccinic acid",
+   "(2S)-2-aminobutanedioic acid",
+   "(2S)-2-aminosuccinic acid",
+   "(2S)-Aspartate",
+   "L-Aminosuccinic acid",
+   "L-Asparaginic acid",
+   "(S)-(+)-Aspartic acid",
+   "(+)-Aspartate",
+   "(S)-Aspartate",
+   "2-Aminosuccinate",
+   "alpha-Aminosuccinic acid",
+   "(+)-Aspartic acid",
+   "alpha-Aminosuccinate",
+   "L-Asparaginate",
+   "(S)-amino-Butanedioate",
+   "Asparagic acid",
+   "L-(+)-Aspartic acid",
+   "(L)-Aspartic acid",
+   "Asparatate",
+   "2-Amino-3-methylsuccinate",
+   "(R)-2-aminosuccinate",
+   "L-Asparagic acid",
+   "(S)-Aminobutanedioate",
+   "(S)-Aspartic acid",
+   "(2S)-Aspartic acid",
+   "(S)-amino-Butanedioic acid",
+   "Aminosuccinate",
+   "Asparagate",
+   "(S)-(+)-Aspartate",
+   "(S)-Aminobutanedioic acid",
+   "L-(+)-Aspartate",
+   "H-Asp-OH",
+   "(S)-2-aminosuccinate",
+   "2-Amino-3-methylsuccinic acid",
+   "2-Aminosuccinic acid",
+   "Asp",
+   "D",
+   "ASP",
+   "L-asparagate",
+   "asparaginate",
+   "(L)-aspartate",
+   "L-aminosuccinate",
+   "aspartate",
+   "asparaginic acid",
+   "aspartic acid",
+   "L-aspartic acid",
+   "L-aspartic Acid"
+  ],
+  "held": [
+   "(S)-2-aminobutanedioic acid",
+   "(S)-2-aminosuccinic acid",
+   "(2S)-2-aminobutanedioic acid",
+   "(2S)-2-aminosuccinic acid",
+   "L-aminosuccinic acid",
+   "L-asparaginic acid",
+   "(S)-(+)-aspartic acid",
+   "alpha-aminosuccinic acid",
+   "(+)-aspartic acid",
+   "asparagic acid",
+   "L-(+)-aspartic acid",
+   "(L)-aspartic acid",
+   "L-asparagic acid",
+   "(S)-aspartic acid",
+   "(2S)-aspartic acid",
+   "(S)-amino-butanedioic acid",
+   "(S)-aminobutanedioic acid",
+   "2-amino-3-methylsuccinic acid",
+   "2-aminosuccinic acid",
+   "asparaginic acid",
+   "aspartic acid"
+  ],
+  "modified": "2026-11-23T01:34:31Z"
+ },
+ {
+  "slug": "borax",
+  "cid": 10219853,
+  "qid": "Q5319",
+  "field": "aliases",
+  "shipped": [
+   "sodium borate",
+   "sodium tetraborate",
+   "disodium tetraborate",
+   "Na2B4O710H2O",
+   "E285",
+   "sodium borate decahydrate",
+   "disodium tetraborate octahydrate"
+  ],
+  "held": [
+   "sodium borate",
+   "sodium tetraborate",
+   "disodium tetraborate",
+   "sodium borate decahydrate",
+   "disodium tetraborate octahydrate"
+  ],
+  "modified": "2026-11-19T04:28:09Z"
+ },
+ {
+  "slug": "calcium-hydroxide",
+  "cid": 14777,
+  "qid": "Q182849",
+  "field": "aliases",
+  "shipped": [
+   "slaked lime",
+   "Ca(OH)2",
+   "hydralime",
+   "builders' lime",
+   "calcium hydrate",
+   "caustic lime",
+   "hydrated lime"
+  ],
+  "held": [
+   "slaked lime",
+   "hydralime",
+   "builders' lime",
+   "calcium hydrate",
+   "caustic lime",
+   "hydrated lime"
+  ],
+  "modified": "2026-11-22T23:10:53Z"
+ },
+ {
+  "slug": "copper-ii-sulfate",
+  "cid": 24462,
+  "qid": "Q107184",
+  "field": "aliases",
+  "shipped": [
+   "CuSO4",
+   "copper sulfate",
+   "copper(II) sulfate",
+   "cupric sulfate anhydrous",
+   "copper monosulphate",
+   "copper sulphate",
+   "copper(2+) sulfate",
+   "copper(II) sulphate",
+   "copper monosulfate",
+   "blue vitriol"
+  ],
+  "held": [
+   "copper sulfate",
+   "copper(II) sulfate",
+   "cupric sulfate anhydrous",
+   "copper monosulphate",
+   "copper sulphate",
+   "copper(2+) sulfate",
+   "copper(II) sulphate",
+   "copper monosulfate",
+   "blue vitriol"
+  ],
+  "modified": "2026-11-22T21:39:22Z"
+ },
+ {
+  "slug": "daraxonrasib",
+  "cid": 164726578,
+  "qid": "Q136659312",
+  "field": "aliases",
+  "shipped": [
+   "RMC-6236"
+  ],
+  "held": [
+   "RMC-6236",
+   "Rasonque"
+  ],
+  "modified": "2026-11-21T21:47:42Z"
+ },
+ {
+  "slug": "estrone",
+  "cid": 5870,
+  "qid": "Q414986",
+  "field": "aliases",
+  "shipped": [
+   "Aquest®",
+   "Kestrone®",
+   "oestrone",
+   "follicular hormone",
+   "folliculin",
+   "(8R,9S,13S,14S)-3-hydroxy-13-methyl-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-17-one",
+   "3-Hydroxyoestra-1,3,5(10)-trien-17-one",
+   "D1,3,5(10)-Estratrien-3-ol-17-one",
+   "1,3,5(10)-Estratrien-3-ol-17-one",
+   "3-Hydroxyestra-1,3,5(10)-trien-17-one",
+   "(1S,10R,11S,15S)-5-hydroxy-15-methyltetracyclo[8.7.0.0^{2,7}.0^{11,15}]heptadeca-2,4,6-trien-14-one",
+   "3-Hydroxy-17-keto-estra-1,3,5-triene",
+   "3-Hydroxyestra-1,3,5(10)-triene-17-one",
+   "(+)-Estrone",
+   "Estrone：E1",
+   "E1",
+   "Estronum",
+   "Estrone",
+   "Estrona",
+   "3-Hydroxy-1,3,5(10)-estratrien-17-one",
+   "Oestrone",
+   "Folliculin"
+  ],
+  "held": [
+   "oestrone",
+   "follicular hormone",
+   "folliculin",
+   "(8R,9S,13S,14S)-3-hydroxy-13-methyl-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-17-one",
+   "3-hydroxyoestra-1,3,5(10)-trien-17-one",
+   "D1,3,5(10)-estratrien-3-ol-17-one",
+   "1,3,5(10)-estratrien-3-ol-17-one",
+   "3-hydroxyestra-1,3,5(10)-trien-17-one",
+   "(1S,10R,11S,15S)-5-hydroxy-15-methyltetracyclo[8.7.0.0^{2,7}.0^{11,15}]heptadeca-2,4,6-trien-14-one",
+   "3-hydroxy-17-keto-estra-1,3,5-triene",
+   "3-hydroxyestra-1,3,5(10)-triene-17-one",
+   "(+)-estrone",
+   "E1",
+   "3-hydroxy-1,3,5(10)-estratrien-17-one",
+   "estrone E1"
+  ],
+  "modified": "2026-11-23T03:42:19Z"
+ },
+ {
+  "slug": "manganese",
+  "cid": 23930,
+  "qid": "Q731",
+  "field": "aliases",
+  "shipped": [
+   "Mn",
+   "25Mn",
+   "element 25"
+  ],
+  "held": [
+   "element 25"
+  ],
+  "modified": "2026-11-23T03:46:27Z"
+ },
+ {
+  "slug": "methanol",
+  "cid": 887,
+  "qid": "Q14982",
+  "field": "aliases",
+  "shipped": [
+   "methyl alcohol",
+   "wood alcohol",
+   "wood naphtha",
+   "wood spirits",
+   "Columbian spirits",
+   "wood spirit",
+   "Pyro alcohol",
+   "Methylol",
+   "spirit of wood",
+   "Columbian spirit",
+   "Colonial spirit",
+   "methyl hydrate",
+   "carbinol",
+   "pyroligneous spirit",
+   "pyroxylic spirit",
+   "monohydroxymethane",
+   "hydroxymethane",
+   "methyl hydroxide"
+  ],
+  "held": [
+   "methyl alcohol",
+   "wood alcohol",
+   "wood naphtha",
+   "wood spirits",
+   "columbian spirits",
+   "wood spirit",
+   "pyro alcohol",
+   "methylol",
+   "spirit of wood",
+   "columbian spirit",
+   "colonial spirit",
+   "methyl hydrate",
+   "carbinol",
+   "pyroligneous spirit",
+   "pyroxylic spirit",
+   "monohydroxymethane",
+   "hydroxymethane",
+   "methyl hydroxide"
+  ],
+  "modified": "2026-11-22T23:03:01Z"
+ },
+ {
+  "slug": "methionine",
+  "cid": 876,
+  "qid": "Q180341",
+  "field": "aliases",
+  "shipped": [
+   "Met",
+   "M",
+   "2-amino-4-(methylthio)butanoic acid",
+   "Methionine",
+   "Hmet",
+   "alpha-amino-gamma-methylmercaptobutyric acid",
+   "2-amino-4-(methylsulfanyl)butanoic acid",
+   "Racemethionine",
+   "DL-Methionine",
+   "racemethionine",
+   "(+-)-Methionine",
+   "DL-Methioninum"
+  ],
+  "held": [
+   "2-amino-4-(methylthio)butanoic acid",
+   "methionine",
+   "alpha-amino-gamma-methylmercaptobutyric acid",
+   "2-amino-4-(methylsulfanyl)butanoic acid",
+   "racemethionine",
+   "(+-)-methionine"
+  ],
+  "modified": "2026-11-23T03:24:51Z"
+ },
+ {
+  "slug": "metoprolol",
+  "cid": 4171,
+  "qid": "Q409468",
+  "field": "aliases",
+  "shipped": [
+   "CGP-2175C",
+   "GP-2175E",
+   "H-93/26",
+   "Lopressor®",
+   "Toprol®",
+   "Seloken",
+   "Lopresor"
+  ],
+  "held": [],
+  "modified": "2026-11-23T01:50:09Z"
+ },
+ {
+  "slug": "metoprolol",
+  "cid": 4171,
+  "qid": "Q409468",
+  "field": "description",
+  "shipped": "medication of the selective β1 receptor blocker type",
+  "held": "group of stereoisomers",
+  "modified": "2026-11-23T01:50:09Z"
+ },
+ {
+  "slug": "morphine",
+  "cid": 5288826,
+  "qid": "Q81225",
+  "field": "aliases",
+  "shipped": [
+   "(-)-morphine",
+   "(5R,6S,9R,13S,14R)-4,5-epoxy-N-methyl-7-morphinen-3,6-diol",
+   "Morphia",
+   "morphium",
+   "(5alpha,6alpha)-17-methyl-7,8-didehydro-4,5-epoxymorphinan-3,6-diol",
+   "(5alpha,6alpha)-didehydro-4,5-epoxy-17-methylmorphinan-3,6-diol",
+   "(5α,6α)-didehydro-4,5-epoxy-17-methylmorphinan-3,6-diol",
+   "(7R,7AS,12bs)-3-methyl-2,3,4,4a,7,7a-hexahydro-1H-4,12-methano[1]benzofuro[3,2-e]isoquinoline-7,9-diol",
+   "Morphin",
+   "Morphium",
+   "anhydrous morphine",
+   "(−)-morphine",
+   "morfina",
+   "Morphinum",
+   "Morphine",
+   "(5α,6α)-17-methyl-7,8-didehydro-4,5-epoxymorphinan-3,6-diol"
+  ],
+  "held": [
+   "(-)-morphine",
+   "(5R,6S,9R,13S,14R)-4,5-epoxy-N-methyl-7-morphinen-3,6-diol",
+   "(5alpha,6alpha)-17-methyl-7,8-didehydro-4,5-epoxymorphinan-3,6-diol",
+   "(5alpha,6alpha)-didehydro-4,5-epoxy-17-methylmorphinan-3,6-diol",
+   "(5α,6α)-didehydro-4,5-epoxy-17-methylmorphinan-3,6-diol",
+   "(7R,7aS,12bS)-3-methyl-2,3,4,4a,7,7a-hexahydro-1H-4,12-methano[1]benzofuro[3,2-e]isoquinoline-7,9-diol",
+   "anhydrous morphine",
+   "(−)-morphine",
+   "(5α,6α)-17-methyl-7,8-didehydro-4,5-epoxymorphinan-3,6-diol"
+  ],
+  "modified": "2026-11-23T03:15:35Z"
+ },
+ {
+  "slug": "naloxone",
+  "cid": 5284596,
+  "qid": "Q282902",
+  "field": "aliases",
+  "shipped": [
+   "(-)-naloxone",
+   "l-naloxone",
+   "Narcan®",
+   "1-N-Allyl-14-hydroxynordihydromorphinone",
+   "17-allyl-3,14-dihydroxy-4,5alpha-epoxymorphinan-6-one",
+   "Naloxone",
+   "17-allyl-3,14-dihydroxy-4,5α-epoxymorphinan-6-one",
+   "(−)-naloxone",
+   "Nalossone",
+   "Naloxonum",
+   "Naloxona"
+  ],
+  "held": [
+   "(-)-naloxone",
+   "l-naloxone",
+   "1-N-allyl-14-hydroxynordihydromorphinone",
+   "17-allyl-3,14-dihydroxy-4,5alpha-epoxymorphinan-6-one",
+   "17-allyl-3,14-dihydroxy-4,5α-epoxymorphinan-6-one",
+   "(−)-naloxone"
+  ],
+  "modified": "2026-11-23T03:10:25Z"
+ },
+ {
+  "slug": "neodymium",
+  "cid": 23934,
+  "qid": "Q1388",
+  "field": "aliases",
+  "shipped": [
+   "Neodymium",
+   "60Nd",
+   "element 60",
+   "Nd"
+  ],
+  "held": [
+   "element 60"
+  ],
+  "modified": "2026-11-23T03:09:02Z"
+ },
+ {
   "slug": "nickel",
   "cid": 935,
   "qid": "Q744",
@@ -11,51 +544,419 @@
   ],
   "held": [
    "element 28",
-   "₂₈Ni",
-   "Ni",
    "nickel metal"
   ],
-  "modified": "2026-11-12T01:27:42Z"
+  "modified": "2026-11-23T03:00:18Z"
  },
  {
-  "slug": "valproate",
-  "cid": 3121,
-  "qid": "Q240642",
+  "slug": "nicotine",
+  "cid": 89594,
+  "qid": "Q28086552",
   "field": "aliases",
   "shipped": [
-   "LEP321",
-   "A-44090",
-   "2-n-propyl-n-valeric acid",
-   "n-DPA",
-   "DPA",
-   "dipropylacetic acid",
-   "VPA",
-   "2-n-propyl-4-pentenoic acid",
-   "propylvaleric acid",
-   "2-propylpentanoic acid",
-   "2-propylvaleric acid",
-   "di-n-propylacetic acid",
-   "4-heptanecarboxylic acid",
-   "Divalproex"
+   "nicotine",
+   "3-(N-methylpyrollidino)pyridine",
+   "Nicotine betadex",
+   "Nicotine polacrilex",
+   "Nicotine",
+   "(S)-3-(1-methylpyrrolidin-2-yl)pyridine",
+   "(S)-Nicotine",
+   "(S)-(−)-nicotine",
+   "(S)-3-(N-methylpyrrolidin-2-yl)pyridine",
+   "L(−)-nicotine",
+   "3-(2-(N-methylpyrrolidinyl))pyridine"
   ],
   "held": [
-   "LEP321",
-   "A-44090",
-   "2-n-propyl-n-valeric acid",
-   "n-DPA",
-   "DPA",
-   "dipropylacetic acid",
-   "VPA",
-   "2-n-propyl-4-pentenoic acid",
-   "propylvaleric acid",
-   "2-propylpentanoic acid",
-   "2-propylvaleric acid",
-   "di-n-propylacetic acid",
-   "4-heptanecarboxylic acid",
-   "Divalproex",
-   "sodium valproate",
-   "valproate semisodium"
+   "nicotine",
+   "3-(N-methylpyrollidino)pyridine",
+   "(S)-3-(1-methylpyrrolidin-2-yl)pyridine",
+   "(S)-nicotine",
+   "(S)-(−)-nicotine",
+   "(S)-3-(N-methylpyrrolidin-2-yl)pyridine",
+   "L(−)-nicotine",
+   "3-[2-(N-methylpyrrolidinyl)]pyridine"
   ],
-  "modified": "2026-11-11T23:05:55Z"
+  "modified": "2026-11-23T03:03:51Z"
+ },
+ {
+  "slug": "niobium",
+  "cid": 23936,
+  "qid": "Q1046",
+  "field": "aliases",
+  "shipped": [
+   "element 41",
+   "Cb",
+   "Nb",
+   "Columbite",
+   "columbium",
+   "41Nb"
+  ],
+  "held": [
+   "element 41",
+   "columbite",
+   "columbium"
+  ],
+  "modified": "2026-11-23T03:01:38Z"
+ },
+ {
+  "slug": "omeprazole",
+  "cid": 4594,
+  "qid": "Q422210",
+  "field": "aliases",
+  "shipped": [
+   "H 168/68",
+   "Losec®",
+   "Prilosec®",
+   "OMEP",
+   "Omeprazole",
+   "Omeprazolum",
+   "Omeprazol",
+   "Losec"
+  ],
+  "held": [
+   "OMEP"
+  ],
+  "modified": "2026-11-23T01:45:21Z"
+ },
+ {
+  "slug": "omeprazole",
+  "cid": 4594,
+  "qid": "Q422210",
+  "field": "description",
+  "shipped": "medication used in the treatment of gastroesophageal reflux disease, peptic ulcer disease, and Zollinger–Ellison syndrome.",
+  "held": "group of stereoisomers",
+  "modified": "2026-11-23T01:45:21Z"
+ },
+ {
+  "slug": "ornithine",
+  "cid": 6262,
+  "qid": "Q410198",
+  "field": "aliases",
+  "shipped": [
+   "(S)-ornithine",
+   "(S)-alpha,delta-diaminovaleric acid",
+   "(2S)-2,5-diaminopentanoic acid",
+   "L-(-)-Ornithine",
+   "(S)-a,D-Diaminovaleric acid",
+   "(S)-a,D-Diaminovalerate",
+   "(+)-S-Ornithine",
+   "5-Amino-L-Norvaline",
+   "(S)-2,5-Diaminopentanoate",
+   "(S)-2,5-Diaminopentanoic acid",
+   "(S)-2,5-diaminovaleric acid",
+   "(S)-α,δ-diaminovaleric acid"
+  ],
+  "held": [
+   "(S)-ornithine",
+   "(S)-alpha,delta-diaminovaleric acid",
+   "(2S)-2,5-diaminopentanoic acid",
+   "L-(-)-ornithine",
+   "(+)-S-ornithine",
+   "5-amino-L-norvaline",
+   "(S)-2,5-diaminopentanoic acid",
+   "(S)-2,5-diaminovaleric acid",
+   "(S)-α,δ-diaminovaleric acid"
+  ],
+  "modified": "2026-11-23T02:47:26Z"
+ },
+ {
+  "slug": "osmium",
+  "cid": 23937,
+  "qid": "Q751",
+  "field": "aliases",
+  "shipped": [
+   "element 76",
+   "Os",
+   "76Os"
+  ],
+  "held": [
+   "element 76"
+  ],
+  "modified": "2026-11-23T02:12:35Z"
+ },
+ {
+  "slug": "palladium",
+  "cid": 23938,
+  "qid": "Q1089",
+  "field": "aliases",
+  "shipped": [
+   "46Pd",
+   "element 46",
+   "Pd"
+  ],
+  "held": [
+   "element 46"
+  ],
+  "modified": "2026-11-23T01:57:21Z"
+ },
+ {
+  "slug": "phenibut",
+  "cid": 14113,
+  "qid": "Q419559",
+  "field": "description",
+  "shipped": "chemical compound",
+  "held": "group of stereoisomers",
+  "modified": "2026-11-18T02:44:11Z"
+ },
+ {
+  "slug": "phosphocreatine",
+  "cid": 587,
+  "qid": "Q1984607",
+  "field": "aliases",
+  "shipped": [
+   "N-(N-phosphonoamido)sarcosine",
+   "N(omega)-phosphonocreatine",
+   "{[imino(phosphonoamino)methyl](methyl)amino}acetic acid",
+   "Creatine phosphic acid",
+   "N-Phosphorylcreatine",
+   "phosphorylcreatine",
+   "N-(Phosphonoamidino)sarcosine",
+   "N-(Phosphonoamidino)-Sarcosine",
+   "Neo-ton",
+   "N-Phosphorocreatine",
+   "P-Creatine",
+   "N-[Imino(phosphonoamino)methyl]-N-methyl-Glycine",
+   "Creatine-P",
+   "Creatine-phosphate",
+   "Creatinephosphoric acid",
+   "2-(1-methyl-3-phosphonocarbamimidamido)acetic acid",
+   "2-[methyl-(N'-phosphonocarbamimidoyl)amino]ethanoic acid",
+   "2-[methyl-(N'-phosphonocarbamimidoyl)amino]acetic acid",
+   "2-[(amino-phosphonoimino-methyl)-methyl-amino]acetic acid",
+   "Phosphocreatine",
+   "N-phosphocreatine",
+   "Creatine phosphate",
+   "Fosfocreatine",
+   "CP"
+  ],
+  "held": [
+   "N-(N-phosphonoamido)sarcosine",
+   "N(omega)-phosphonocreatine",
+   "{[imino(phosphonoamino)methyl](methyl)amino}acetic acid",
+   "creatine phosphic acid",
+   "N-phosphorylcreatine",
+   "phosphorylcreatine",
+   "N-(phosphonoamidino)sarcosine",
+   "N-(phosphonoamidino)-sarcosine",
+   "N-phosphorocreatine",
+   "P-creatine",
+   "N-[imino(phosphonoamino)methyl]-N-methyl-glycine",
+   "creatine-phosphate",
+   "creatinephosphoric acid",
+   "2-(1-methyl-3-phosphonocarbamimidamido)acetic acid",
+   "2-[methyl-(N'-phosphonocarbamimidoyl)amino]ethanoic acid",
+   "2-[methyl-(N'-phosphonocarbamimidoyl)amino]acetic acid",
+   "2-[(amino-phosphonoimino-methyl)-methyl-amino]acetic acid",
+   "N-phosphocreatine",
+   "creatine phosphate",
+   "fosfocreatine"
+  ],
+  "modified": "2026-11-23T03:43:41Z"
+ },
+ {
+  "slug": "plutonium",
+  "cid": 23940,
+  "qid": "Q1102",
+  "field": "aliases",
+  "shipped": [
+   "94Pu",
+   "element 94"
+  ],
+  "held": [
+   "element 94"
+  ],
+  "modified": "2026-11-23T01:27:37Z"
+ },
+ {
+  "slug": "polonium",
+  "cid": 6328143,
+  "qid": "Q979",
+  "field": "aliases",
+  "shipped": [
+   "element 84",
+   "84Po",
+   "Po"
+  ],
+  "held": [
+   "element 84"
+  ],
+  "modified": "2026-11-23T01:25:59Z"
+ },
+ {
+  "slug": "potassium",
+  "cid": 5462222,
+  "qid": "Q703",
+  "field": "aliases",
+  "shipped": [
+   "19K",
+   "element 19",
+   "K"
+  ],
+  "held": [
+   "element 19"
+  ],
+  "modified": "2026-11-23T01:24:16Z"
+ },
+ {
+  "slug": "protactinium",
+  "cid": 23945,
+  "qid": "Q1109",
+  "field": "aliases",
+  "shipped": [
+   "protoactinium",
+   "brevium",
+   "Pa",
+   "91Pa",
+   "element 91"
+  ],
+  "held": [
+   "protoactinium",
+   "brevium",
+   "element 91"
+  ],
+  "modified": "2026-11-23T01:16:23Z"
+ },
+ {
+  "slug": "pyrazine",
+  "cid": 9261,
+  "qid": "Q424284",
+  "field": "aliases",
+  "shipped": [
+   "p-diazine",
+   "paradiazine",
+   "1,4-diazine",
+   "pyz"
+  ],
+  "held": [
+   "p-diazine",
+   "paradiazine",
+   "1,4-diazine"
+  ],
+  "modified": "2026-11-22T22:00:44Z"
+ },
+ {
+  "slug": "radon",
+  "cid": 24857,
+  "qid": "Q1133",
+  "field": "aliases",
+  "shipped": [
+   "86Rn",
+   "element 86"
+  ],
+  "held": [
+   "element 86"
+  ],
+  "modified": "2026-11-23T01:17:35Z"
+ },
+ {
+  "slug": "rhodium",
+  "cid": 23948,
+  "qid": "Q1087",
+  "field": "aliases",
+  "shipped": [
+   "element 45",
+   "45Rh",
+   "Rh"
+  ],
+  "held": [
+   "element 45"
+  ],
+  "modified": "2026-11-23T03:48:01Z"
+ },
+ {
+  "slug": "silicon-dioxide",
+  "cid": 24261,
+  "qid": "Q2122463",
+  "field": "label",
+  "shipped": "fused quartz",
+  "held": "Fused quartz",
+  "modified": "2026-11-16T20:45:05Z"
+ },
+ {
+  "slug": "sodium-sulfite",
+  "cid": 24437,
+  "qid": "Q407806",
+  "field": "aliases",
+  "shipped": [
+   "Na2SO3",
+   "anhydrous sodium sulfite",
+   "sodium sulfite anhydrous",
+   "sodium sulphite",
+   "sulfurous acid, disodium salt",
+   "dried sodium sulfite"
+  ],
+  "held": [
+   "anhydrous sodium sulfite",
+   "sodium sulfite anhydrous",
+   "sodium sulphite",
+   "sulfurous acid, disodium salt",
+   "dried sodium sulfite"
+  ],
+  "modified": "2026-11-22T22:26:00Z"
+ },
+ {
+  "slug": "sulfur-dioxide",
+  "cid": 1119,
+  "qid": "Q5282",
+  "field": "aliases",
+  "shipped": [
+   "sulfurous acid anhydride",
+   "sulfurous oxide",
+   "sulfur oxide",
+   "SO2",
+   "sulfurous anhydride",
+   "R-764",
+   "sulphur dioxide",
+   "Sulphur dioxide, sulfur dioxide"
+  ],
+  "held": [
+   "sulfurous acid anhydride",
+   "sulfurous oxide",
+   "sulfur oxide",
+   "sulfurous anhydride",
+   "R-764",
+   "sulphur dioxide",
+   "Sulphur dioxide, sulfur dioxide"
+  ],
+  "modified": "2026-11-16T17:45:04Z"
+ },
+ {
+  "slug": "tranexamic-acid",
+  "cid": 5526,
+  "qid": "Q418666",
+  "field": "aliases",
+  "shipped": [
+   "CL-65336",
+   "Cyclo-F®",
+   "Cyklokapron®",
+   "Femstrual®",
+   "trans AMCHA",
+   "trans-Tranexamic acid",
+   "trans-Amcha",
+   "Tranhexamic acid",
+   "tranexmic acid",
+   "Tranexamic acid",
+   "(1r,4r)-4-(aminomethyl)cyclohexane-1-carboxylic acid",
+   "Tranexamate",
+   "trans-4-Aminomethylcyclohexane-1-carboxylic acid",
+   "Trans AMCHA",
+   "trans-4-aminomethylcyclohexane-1-carboxylic acid",
+   "trans-4-(Aminomethyl)cyclohexanecarboxylic acid",
+   "Acide tranexamique",
+   "Tranexamic Acid",
+   "Acidum tranexamicum",
+   "Tranexmic acid",
+   "Tranexamsaeure",
+   "Acido tranexamico"
+  ],
+  "held": [
+   "trans-tranexamic acid",
+   "tranhexamic acid",
+   "tranexmic acid",
+   "(1r,4r)-4-(aminomethyl)cyclohexane-1-carboxylic acid",
+   "trans-4-aminomethylcyclohexane-1-carboxylic acid",
+   "trans-4-(aminomethyl)cyclohexanecarboxylic acid"
+  ],
+  "modified": "2026-11-23T01:59:54Z"
  }
 ]

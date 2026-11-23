@@ -1,1 +1,11 @@
-[]
+[
+ {
+  "slug": "levonorgestrel",
+  "cid": 13109,
+  "ld50_mg_per_kg": 5010.0,
+  "species": "rat",
+  "route": "oral",
+  "since": "2026-11-23",
+  "seen": "2026-11-23"
+ }
+]

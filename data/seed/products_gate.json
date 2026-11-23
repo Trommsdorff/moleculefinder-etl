@@ -1,23 +1,23 @@
 {
  "seeded": 475,
- "passed": 430,
- "failed": 45,
+ "passed": 429,
+ "failed": 46,
  "by_kind": {
   "food": 34,
   "drink": 14,
   "medicine": 300,
   "cosmetic": 65,
-  "household": 12,
+  "household": 11,
   "chemistry": 1,
   "moment": 4
  },
  "min_molecules": 3,
  "matched_by_code": {
-  "unii": 2080,
+  "unii": 2073,
   "moiety": 156
  },
  "matched_by_rule": {
-  "parent": 129,
+  "parent": 128,
   "skeleton": 32,
   "alias": 352
  },
@@ -531,6 +531,16 @@
     "isopropyl-alcohol",
     "water"
    ]
+  },
+  {
+   "slug": "softsoap-antibacterial-hand-soap",
+   "name": "Softsoap Antibacterial Hand Soap",
+   "kind": "household",
+   "source": "dailymed",
+   "item": "e82e12d9-5f08-40bf-bef9-a13cd378e421",
+   "reason": "label not found on DailyMed (withdrawn, archived or not yet fetched)",
+   "matched": [],
+   "held": true
   }
  ],
  "label_ingredients_not_in_catalog": [
@@ -600,7 +610,7 @@
   },
   {
    "name": "BENZALKONIUM CHLORIDE",
-   "labels": 22
+   "labels": 21
   },
   {
    "name": "MINERAL OIL",
@@ -695,10 +705,6 @@
    "labels": 10
   },
   {
-   "name": "D&C RED NO. 33",
-   "labels": 10
-  },
-  {
    "name": "STEARYL ALCOHOL",
    "labels": 10
   },
@@ -709,6 +715,10 @@
   {
    "name": "YELLOW WAX",
    "labels": 10
+  },
+  {
+   "name": "D&C RED NO. 33",
+   "labels": 9
   },
   {
    "name": "ISOPROPYL MYRISTATE",
@@ -775,8 +785,10 @@
    "labels": 7
   }
  ],
- "held": 0,
- "held_products": [],
+ "held": 1,
+ "held_products": [
+  "softsoap-antibacterial-hand-soap"
+ ],
  "removed_products": [],
  "product_pairs": {
   "seeded": 11,

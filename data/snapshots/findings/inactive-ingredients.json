@@ -7,7 +7,7 @@
    "labels": 300,
    "otc": 116,
    "prescription": 184,
-   "by_mouth": 224
+   "by_mouth": 225
   },
   "lists_none": {
    "labels": 1,
@@ -55,7 +55,7 @@
     "sodium-starch-glycolate"
    ]
   },
-  "routes_read": 298
+  "routes_read": 300
  },
  "pages": [
   "lactose",
@@ -84,7 +84,7 @@
    "labels": 145,
    "otc": 37,
    "prescription": 108,
-   "by_mouth": 143,
+   "by_mouth": 144,
    "shown": true
   },
   {
@@ -153,7 +153,7 @@
    "labels": 128,
    "otc": 43,
    "prescription": 85,
-   "by_mouth": 125,
+   "by_mouth": 126,
    "shown": true
   },
   {
@@ -343,7 +343,7 @@
    "labels": 84,
    "otc": 13,
    "prescription": 71,
-   "by_mouth": 83,
+   "by_mouth": 84,
    "shown": true
   },
   {
@@ -601,7 +601,7 @@
    "labels": 52,
    "otc": 19,
    "prescription": 33,
-   "by_mouth": 51,
+   "by_mouth": 52,
    "shown": true
   },
   {
@@ -623,7 +623,7 @@
    "labels": 48,
    "otc": 18,
    "prescription": 30,
-   "by_mouth": 47,
+   "by_mouth": 48,
    "shown": true
   },
   {
@@ -1133,7 +1133,7 @@
    "labels": 24,
    "otc": 7,
    "prescription": 17,
-   "by_mouth": 21,
+   "by_mouth": 22,
    "shown": false
   },
   {
@@ -9166,11 +9166,13 @@
    "class": "otc",
    "labeler": "Bayer HealthCare LLC.",
    "setid": "e0640846-19a6-7f79-e053-2995a90a8176",
-   "version": 8,
-   "effective": "20251204",
+   "version": 9,
+   "effective": "20261116",
    "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e0640846-19a6-7f79-e053-2995a90a8176",
-   "routes": null,
-   "taken": null,
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
    "groups": [
     "code-7fld91c86k",
     "code-96k6uq3zd4",
@@ -18959,11 +18961,13 @@
    "class": "prescription",
    "labeler": "Organon LLC",
    "setid": "174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
-   "version": 8,
-   "effective": "20251125",
+   "version": 9,
+   "effective": "20261116",
    "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
-   "routes": null,
-   "taken": null,
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
    "groups": [
     "cellulose",
     "code-368gb5141j",

@@ -109,12 +109,12 @@
    }
   },
   "routes": {
-   "read": 298,
+   "read": 300,
    "all": {
-    "oral": 218,
+    "oral": 219,
     "oral+other": 6,
-    "other": 74,
-    "unstated": 2
+    "other": 75,
+    "unstated": 0
    },
    "any_of_six": {
     "oral": 109,
@@ -1184,11 +1184,13 @@
    "class": "otc",
    "labeler": "Bayer HealthCare LLC.",
    "setid": "e0640846-19a6-7f79-e053-2995a90a8176",
-   "version": 8,
-   "effective": "20251204",
+   "version": 9,
+   "effective": "20261116",
    "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e0640846-19a6-7f79-e053-2995a90a8176",
-   "routes": null,
-   "taken": null,
+   "routes": [
+    "NASAL"
+   ],
+   "taken": "other",
    "six": [],
    "red_3": false,
    "d_and_c": [],
@@ -7552,11 +7554,13 @@
    "class": "prescription",
    "labeler": "Organon LLC",
    "setid": "174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
-   "version": 8,
-   "effective": "20251125",
+   "version": 9,
+   "effective": "20261116",
    "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
-   "routes": null,
-   "taken": null,
+   "routes": [
+    "ORAL"
+   ],
+   "taken": "oral",
    "six": [],
    "red_3": false,
    "d_and_c": [],
