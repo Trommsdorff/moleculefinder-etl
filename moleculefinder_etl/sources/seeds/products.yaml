@@ -522,5 +522,5 @@ products:
   - {slug: purell-advanced-hand-sanitizer-foam, name: "Purell Advanced Hand Sanitizer Foam", kind: household, dailymed: 57d91ee6-a166-dc13-e063-6294a90a2f5e}
   - {slug: safeguard-antibacterial-hand-wash, name: "Safeguard Antibacterial Hand Wash", kind: household, dailymed: 1eb57c03-d5eb-8d2f-e063-6394a90aebea}
   - {slug: simply-saline-wound-care, name: "Simply Saline Wound Care", kind: household, dailymed: 6c802e91-b69e-cdd0-e053-2991aa0aa781}
-  - {slug: softsoap-antibacterial-hand-soap, name: "Softsoap Antibacterial Hand Soap", kind: household, dailymed: e82e12d9-5f08-40bf-bef9-a13cd378e421}
+  - {slug: softsoap-antibacterial-hand-soap, name: "Softsoap Antibacterial Hand Soap", kind: household, dailymed: 7e978e04-9b1a-44ef-b082-429a6a752028}
   - {slug: wet-ones, name: "Wet Ones", kind: household, dailymed: 225275f3-58aa-36d6-e063-6394a90adc13}
