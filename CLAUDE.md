@@ -12,15 +12,14 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 929 molecules; 430 product pages; 6 doors.
-- **Next weekly run's Drawings:** 901 / 723 / 147 / 3 carried, 28 with no drawing (903 and 26 until extended solids
-  merges), made: none; the exact lines are in `docs/DRAWING-RECIPES.md` section 13. On a stop: sections 10 and 11.
+- **Next weekly run's Drawings:** 901 / 723 / 147 / 3 carried, 28 with no drawing (903 and 26 before extended solids), made: none; the exact lines are in `docs/DRAWING-RECIPES.md` section 13. On a stop: sections 10 and 11.
 - **Both scheduled jobs run on the Mac mini:** the weekly refresh (`scripts/mac/weekly-refresh.sh`, Mon 03:10 ET, from
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
 - **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
   hand `mfetl zenodo` runs it). The weekly job's release and mirrors steps are merged (11-23).
-- **Extended solids** (branch `extended-solids-2026-11`, NOT merged): SiO2 and ZnO drawn with nothing; the rest wait
-  for Garrett (web `docs/design/extended-solids-review-2026-11.html`). **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
+- **Extended solids** (merged to `main` 2026-11-26, push pending): SiO2 and ZnO drawn with nothing, and the three no-structure
+  entries' conventional `formula` and `drop_names`; the rest wait for Garrett (web `docs/design/extended-solids-review-2026-11.html`). **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 
 ## Golden rules (do not break these)
