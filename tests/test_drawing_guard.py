@@ -58,7 +58,8 @@ WORKFLOW = ROOT / ".github" / "workflows" / "etl.yml"
 MONDAY = [
     # The 2026-12-care tranche (2026-11-15): octinoxate and oxybenzone drawn, each with parts; titanium dioxide has
     # no drawing (seeds/structure_none.yaml), so it is the 26th with none and has no part.
-    "structure drawings: 903 carried, 0 repainted, 0 drawn, 26 with no drawing",
+    # The extended-solids pass (2026-11-26): silicon dioxide and zinc oxide join it (27th and 28th; neither had a part).
+    "structure drawings: 901 carried, 0 repainted, 0 drawn, 28 with no drawing",
     "structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
     # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).

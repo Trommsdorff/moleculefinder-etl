@@ -531,7 +531,27 @@ web's "No single structure" panel prints "<title> is <line>". Its formula, weigh
 and weight are those of one formula unit). The `line` is checked by the claim rule (kind `part`, key `none.<slug>.line`).
 A new record listed here is simply one more "with no drawing"; listing a record that has a shipped drawing would remove
 it, and the guard lists that removal ("it no longer has a drawing"), so it is a reviewed change, never a silent one.
-Silicon dioxide (`O=[Si]=O`) and zinc oxide (`O=[Zn]`), both lattices too, are live drawings and were not touched.
+Silicon dioxide (`O=[Si]=O`) and zinc oxide (`O=[Zn]`), both lattices too, were live drawings then and were not touched.
+
+**The extended-solids pass (2026-11-26, Garrett's ruling 2 on the 2026-12-care review):** silicon dioxide (a network
+of SiO4 tetrahedra sharing every corner) and zinc oxide (wurtzite) joined titanium dioxide in `structure_none.yaml`.
+The guard listed exactly two removals, `zinc-oxide (structure drawing): removed, it no longer has a drawing` and the
+same for silicon dioxide; neither had a part layer, a /vs pair or a pair drawing, so nothing else moved. Silicon
+dioxide also lost its 3D model (PubChem's conformer of O=Si=O); both lost their computed descriptors. Zinc oxide left
+the molecule of the week (week 22, avobenzone in its place): the compiler takes only a drawable molecule. The other
+extended solids in the catalog (calcium and magnesium oxide, the carbides, the ionic salts) are surveyed on the web's
+`docs/design/extended-solids-review-2026-11.html` and wait for Garrett's ruling; `tests/test_extended_solids.py` pins
+`structure_none.yaml` to the three, so a new entry comes only with a ruling.
+
+**The deploy's two amendments (2026-11-26):** the three no-structure pages show the conventional formula the panel
+uses. `structure_none.yaml` takes an optional `formula` per entry (TiO2, SiO2, ZnO): an editorial display form of
+PubChem's calculated formula (O2Ti, O2Si, OZn); the record's `molecular_formula`, the search index and the dataset keep
+PubChem's, `structure_none` carries `formula`, and the build stops if the two do not hold the same atoms. The seed's
+optional `drop_names` leaves a systematic name of the molecule that does not exist out of "Also called" (silicon
+dioxide's "Dioxosilane"; `display_synonyms` and `wikidata_names` only, the record's `synonyms` still hold it).
+
+**After the pass, the weekly run's lines:** `structure drawings: 901 carried, 0 repainted, 0 drawn, 28 with no
+drawing`; parts, pairs and repeat units as below; made or remade: none.
 
 **Carboxymethyl cellulose drops its record's structure** (Garrett's decision 5 on the phase 3B review). A record whose
 repeat unit `replaces` its PubChem drawing (section 12) now also drops, at assembly (`assemble._replaced_by_unit`),

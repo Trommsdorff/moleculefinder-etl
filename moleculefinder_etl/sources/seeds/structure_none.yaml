@@ -12,10 +12,17 @@
 # Each entry:
 #   line   what the panel says after "<title> is " (house rules; the claim rule, kind `part`).
 #   basis  why there is no drawing (not shown on the site).
+#   formula    (optional) the conventional way to write the formula, where PubChem's Hill order reads differently
+#              (O2Si for SiO2). Shown wherever a page displays the formula, marked as the conventional form; the
+#              record's molecular_formula, the search index and the dataset keep PubChem's. Must hold the same
+#              atoms as PubChem's formula (the build stops if not).
+#   drop_names (optional) names left out of "Also called": a systematic name of the one-formula-unit molecule
+#              that does not exist ("dioxosilane"). The record's `synonyms` (search) still hold them.
 # An entry for a record with a shipped drawing removes that drawing: the drawing guard lists it ("it no longer
 # has a drawing"), so it is a reviewed change, never a silent one (docs/DRAWING-RECIPES.md section 13).
 molecules:
   titanium-dioxide:
+    formula: TiO2
     line: >-
       a crystal lattice of titanium and oxygen with no single molecule; its formula, TiO2, gives the ratio,
       one titanium to every two oxygens.
@@ -26,3 +33,28 @@ molecules:
       in the gas phase. The FDA's own code for the substance (15FIX9V2JP) is filed under PubChem's ionic
       depiction [O-2].[O-2].[Ti+4] (CID 162651), whose PubChem title, CAS and Wikidata item belong to
       trititanium oxide, so it is not drawn either.
+  # The extended-solids pass (2026-11-26; Garrett's ruling 2 on the 2026-12-care review, 2026-11-15: silicon dioxide
+  # and zinc oxide get titanium dioxide's panel). Both had live drawings; the drawing guard lists each removal ("it no
+  # longer has a drawing"). Neither had a part layer, a /vs pair or a pair drawing.
+  silicon-dioxide:
+    formula: SiO2
+    drop_names: [Dioxosilane]
+    line: >-
+      a network of silicon and oxygen with no single molecule, each silicon bonded to four oxygens and each
+      oxygen to two silicons; its formula, SiO2, gives the ratio, one silicon to every two oxygens.
+    basis: >-
+      Quartz, the glassy and amorphous silicas (the food additive, the desiccant, diatomaceous earth) are all a
+      continuous network of SiO4 tetrahedra sharing every corner: silicon four-coordinate, oxygen bridging two
+      silicons. The recipe's drawing of PubChem's SMILES O=[Si]=O (CID 24261) showed a discrete molecule with two
+      Si=O double bonds, a species known only in the gas phase or trapped in a frozen matrix, and PubChem's 3D model
+      and computed descriptors are of that molecule.
+  zinc-oxide:
+    formula: ZnO
+    line: >-
+      a crystal lattice of zinc and oxygen with no single molecule, each zinc among four oxygens; its formula,
+      ZnO, gives the ratio, one zinc to each oxygen.
+    basis: >-
+      Zinc oxide crystallises as wurtzite (zincite): every zinc sits at the centre of a tetrahedron of four oxygens
+      and every oxygen among four zincs. The recipe's drawing of PubChem's SMILES O=[Zn] (CID 14806) showed a
+      diatomic molecule with a Zn=O double bond, which exists only in the gas phase, and PubChem's computed
+      descriptors are of that molecule.

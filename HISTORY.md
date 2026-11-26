@@ -2,6 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## The extended-solids pass (2026-11-26, branch `extended-solids-2026-11`, NOT merged, NOT pushed)
+Brief `../EXTENDED-SOLIDS-PROMPT.md`; full record `../HISTORY.md`, 2026-11-26. `7ea5715` main's Softsoap repoint as the pinned build makes it (not part of the pass); `ab783fc` silicon dioxide and zinc oxide in `structure_none.yaml` (no drawing, no 3D, no computed descriptors), week 22 of `featured.yaml` to avobenzone, `tests/test_extended_solids.py`, DRAWING-RECIPES section 13; then `scripts/extended_solids_review.py` (the survey of 119 entries and the review page) and these records. Guard: exactly two removals listed; Drawings 901 / 723 / 147 / 3 carried, 28 with no drawing. Suite 1,566 passed, 1 skipped; ruff 130; pinned build twice byte-identical, 0 PubChem POSTs; weekly dry run complete.
+
 ## Softsoap repointed (2026-11-23, `main` locally `b68b8bf`, NOT pushed)
 `products.yaml`'s Softsoap row now names set id 7e978e04-9b1a-44ef-b082-429a6a752028; the page is no longer held (dry run "product pages held: 0"). Old branches `removals-2026-11` and `zenodo-weekly-hook-2026-11` deleted. The hook merge was pushed (`ad2d868..97a219b`). Full record `../HISTORY.md`, 2026-11-23.
 

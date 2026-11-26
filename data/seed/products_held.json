@@ -1,17 +1,1 @@
-[
- {
-  "slug": "softsoap-antibacterial-hand-soap",
-  "name": "Softsoap Antibacterial Hand Soap",
-  "kind": "household",
-  "reason": "label not found on DailyMed (withdrawn, archived or not yet fetched)",
-  "item": "e82e12d9-5f08-40bf-bef9-a13cd378e421",
-  "shipped": {
-   "type": "dailymed",
-   "setid": "e82e12d9-5f08-40bf-bef9-a13cd378e421",
-   "labeler": "Colgate-Palmolive Company",
-   "version": 12,
-   "effective": "20260909"
-  },
-  "since": "2026-11-23"
- }
-]
+[]
