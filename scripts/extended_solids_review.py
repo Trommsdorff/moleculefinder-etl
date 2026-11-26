@@ -253,7 +253,10 @@ def jpg(shots: Path, name: str, top: int | None = None) -> str | None:
     `top`, only the first `top` pixels of the capture (the heading and the structure panel)."""
     p = shots / f"{name}.png"
     if not p.exists():
-        return None
+        # A capture that is not in <shots-dir> keeps the JPEG already beside the page (the "before" pictures are taken
+        # once, from main; the deploy's amendments retook only the "after" ones).
+        kept = SHOTS_OUT / f"{name}{'-top' if top else ''}.jpg"
+        return f"{NAME}/{kept.name}" if kept.exists() else None
     SHOTS_OUT.mkdir(parents=True, exist_ok=True)
     im = Image.open(p).convert("RGB")
     suffix = ""
@@ -335,8 +338,8 @@ details { margin:8px 0; } summary { cursor:pointer; color:var(--accent); }
 @media (max-width:800px) { .two, .five { grid-template-columns:1fr 1fr; } }
 </style></head><body><main>""")
     w(f"<p><code>moleculefinder-web/docs/design/{NAME}.html</code> · built 2026-11-26 on <code>extended-solids-2026-11</code> "
-      f"in both repos (ETL <code>{e(facts['etl_tip'])}</code>, web <code>{e(facts['web_tip'])}</code>) · <b>not merged, not "
-      f"pushed, not deployed; waiting for your rulings below</b>.</p>")
+      f"in both repos (ETL <code>{e(facts['etl_tip'])}</code>, web <code>{e(facts['web_tip'])}</code>) · "
+      f"<b>{facts.get('status') or 'not merged, not pushed, not deployed; waiting for your rulings below'}</b>.</p>")
     w("<h1>Extended solids</h1>")
     w("<p>Some entries in the catalog are not molecules: they are solids built as one endless lattice or network, with no "
       "small molecule anywhere in them. PubChem still gives each a one-line structure, and our recipe draws whatever that "
@@ -404,6 +407,22 @@ details { margin:8px 0; } summary { cursor:pointer; color:var(--accent); }
         w(fig(shots, f"after-{s}-390", f"{records[s]['title']}, after", 1150))
     w(fig(shots, "after-titanium-dioxide-390", "Titanium dioxide (live)", 1150))
     w("</div>")
+    # ── The deploy's two amendments (2026-11-26) ──
+    if facts.get("amendments"):
+        am = facts["amendments"]
+        w("<h2>Two amendments for the deploy (2026-11-26)</h2>")
+        w("<p>From the review of the pictures above: the formula line read PubChem's alphabetical order (O2Si) while the panel "
+          "beside it says SiO2, and silicon dioxide's &ldquo;Also called&rdquo; named the one molecule that does not exist. "
+          "Both are fixed on the three no-structure pages. The pictures above are the amended pages.</p>")
+        w("<table><tr><th>Page</th><th>Formula line before</th><th>after</th><th>Also called before</th><th>after</th></tr>")
+        for s in ("silicon-dioxide", "zinc-oxide", "titanium-dioxide"):
+            a = am[s]
+            w(f"<tr><td>/m/{e(s)}</td><td>{e(a['formula_before'])}</td><td><b>{e(a['formula_after'])}</b></td>"
+              f"<td>{e(a['names_before'])}</td><td><b>{e(a['names_after'])}</b></td></tr>")
+        w("</table>")
+        for line in am["notes"]:
+            w(f"<p>{line}</p>")
+
     w("<h3>What moved on the two pages (from the built HTML, text compared line by line)</h3><table><tr><th>Page</th><th>Leaves</th><th>Arrives</th></tr>")
     for s in ("silicon-dioxide", "zinc-oxide"):
         f = facts_of(s)
