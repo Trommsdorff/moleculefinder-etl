@@ -93,8 +93,11 @@ weeks:
     slug: propane
     hook: "Grilling season: propane turns liquid under modest pressure, which is how a small barbecue tank holds so much fuel."
   - week: 22          # 2027-05-31, SUNSCREEN SEASON (Memorial Day is Monday 2027-05-31)
-    slug: zinc-oxide
-    hook: "Sunscreen season: zinc oxide is one of the two mineral sunscreen filters, a white powder that blocks ultraviolet light at the skin's surface."
+    # The extended-solids pass (2026-11-26): zinc oxide, this week until then, is a lattice drawn with nothing
+    # (structure_none.yaml), and the week needs a drawable molecule, so avobenzone takes it (a future week: no
+    # archive page or RSS item moves). Garrett's decision on the review page.
+    slug: avobenzone
+    hook: "Sunscreen season: avobenzone filters long-wave UVA, and sunscreens pair it with a second filter that keeps sunlight from breaking it down."
   - week: 23          # 2027-06-07, strawberry season
     slug: furaneol
     hook: "Strawberry season: furaneol gives a ripe strawberry its sweet, cooked-sugar note, and the same molecule forms as bread bakes."
