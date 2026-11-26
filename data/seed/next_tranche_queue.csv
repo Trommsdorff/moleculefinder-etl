@@ -2,7 +2,7 @@ rank,section,name,unii,labels,labels_as_active,pubchem_parent_cid,example_produc
 1,active,FERRIC OXIDE RED,1K09F3G675,57,2,,abilify absorica aciphex
 2,active,DIMETHICONE,92RU3N3Y1O,32,5,,alka-seltzer-plus-cold-day-and-night aveeno-eczema-therapy aveeno-protect-plus-hydrate-spf-60
 3,active,POLYETHYLENE GLYCOL 400,B697894SGQ,23,2,,amrix aquafresh-extreme-clean ativan
-4,active,BENZALKONIUM CHLORIDE,F5UM2KM3W7,21,5,,alaway astepro-allergy aveeno-eczema-therapy
+4,active,BENZALKONIUM CHLORIDE,F5UM2KM3W7,22,6,,alaway astepro-allergy aveeno-eczema-therapy
 5,active,PETROLATUM,4T6H12BN9U,14,4,,australian-gold-lip-balm-spf-30 aveeno-eczema-therapy banana-boat-sport-ultra-lip-balm
 6,active,POLYETHYLENE GLYCOL 3350,G2M7P15E5P,11,1,,delsym depo-provera dulcolax
 7,active,DOCOSANOL,9G1OE216XY,7,1,12620,abreva neutrogena-ultra-sheer-spf-55 olay-complete-spf-15-sensitive
@@ -78,10 +78,10 @@ rank,section,name,unii,labels,labels_as_active,pubchem_parent_cid,example_produc
 77,inactive,GLYCERYL MONOSTEARATE,230OU9XXE4,11,0,,aveeno-protect-plus-hydrate-spf-60 compro eucerin-eczema-relief
 78,inactive,POLOXAMER 407,TUF2IVW3M2,11,0,10154203,act-anticavity-fluoride-rinse benadryl-allergy childrens-benadryl
 79,inactive,CYCLOMETHICONE 5,0THT5PCI0R,10,0,10913,arrid-extra-dry certain-dri coppertone-waterbabies-mineral-spf-50
-80,inactive,STEARYL ALCOHOL,2KR89I4H1Y,10,0,8221,finacea monistat-1-combination-pack monistat-7
-81,inactive,TRIETHYL CITRATE,8Z96QXD6UM,10,0,6506,adzenys-xr-odt bayer-low-dose-aspirin cerave-hydrating-mineral-sunscreen-spf-30
-82,inactive,YELLOW WAX,2ZA36H0S2V,10,0,,balmex-diaper-rash-cream blistex carmex-lip-balm-spf-30
-83,inactive,D&C RED NO. 33,9DBA0SBB0L,9,0,19117,advil-pm anafranil benadryl-allergy
+80,inactive,D&C RED NO. 33,9DBA0SBB0L,10,0,19117,advil-pm anafranil benadryl-allergy
+81,inactive,STEARYL ALCOHOL,2KR89I4H1Y,10,0,8221,finacea monistat-1-combination-pack monistat-7
+82,inactive,TRIETHYL CITRATE,8Z96QXD6UM,10,0,6506,adzenys-xr-odt bayer-low-dose-aspirin cerave-hydrating-mineral-sunscreen-spf-30
+83,inactive,YELLOW WAX,2ZA36H0S2V,10,0,,balmex-diaper-rash-cream blistex carmex-lip-balm-spf-30
 84,inactive,ISOPROPYL MYRISTATE,0RE8K4LNJS,9,0,8042,arrid-extra-dry biofreeze certain-dri
 85,inactive,POLYETHYLENE GLYCOL 8000,Q662QK8M3B,9,0,,amrix aricept atacand
 86,inactive,CANDELILLA WAX,WL0328HX19,8,0,,blue-lizard-sport-spf-50 carmex-lip-balm-spf-30 cetaphil-sheer-mineral-stick-spf-50
@@ -157,182 +157,182 @@ rank,section,name,unii,labels,labels_as_active,pubchem_parent_cid,example_produc
 156,inactive,CAPRYLYL TRISILOXANE,Q95M2P1KJL,3,0,87373,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55 sun-bum-face-stick-spf-30
 157,inactive,CARAMEL,T9D99G2B1R,3,0,61634,imodium-a-d listerine-original norvir
 158,inactive,"CARBOMER HOMOPOLYMER, UNSPECIFIED TYPE",0A5MM307FC,3,0,,bengay-vanishing-scent cerave-hydrating-mineral-sunscreen-spf-30 crest-kids-color-changing
-159,inactive,CETYL DIMETHICONE 25,U4AS1BW4ZB,3,0,,blue-lizard-sport-spf-50 neutrogena-sheer-zinc-face-spf-50 neutrogena-ultra-sheer-spf-55
-160,inactive,D&C YELLOW NO. 10 ALUMINUM LAKE,CQ3XH3DET6,3,0,,sudafed-sinus-congestion trexall tylenol-cold-plus-flu-severe
-161,inactive,DIACETYLATED MONOGLYCERIDES,5Z17386USF,3,0,,aciphex advil depakote
-162,inactive,DIMETHICONOL (40 CST),343C7U75XW,3,0,,degree dove-advanced-care dove-dermacare-scalp-anti-dandruff
-163,inactive,DISTEARDIMONIUM HECTORITE,X687XDK09L,3,0,,cerave-hydrating-mineral-sunscreen-spf-30 degree dove-advanced-care
-164,inactive,DMDM HYDANTOIN,BYR0546TOW,3,0,22947,bengay-vanishing-scent dove-dermacare-scalp-anti-dandruff selsun-blue-normal-to-oily
-165,inactive,ETHYLHEXYL PALMITATE,2865993309,3,0,62851,banana-boat-sport-ultra-lip-balm blue-lizard-sport-spf-50 sun-bum-face-stick-spf-30
-166,inactive,ETHYLHEXYL STEARATE,EG3PA2K3K5,3,0,13132266,blue-lizard-sport-spf-50 neutrogena-ultra-sheer-spf-55 sun-bum-face-stick-spf-30
-167,inactive,HIGH DENSITY POLYETHYLENE,UG00KM4WR7,3,0,,cetaphil-sheer-mineral-stick-spf-50 nicoderm-cq sun-bum-face-stick-spf-30
-168,inactive,HYDROXYPROPYL CELLULOSE (90000 WAMW),UKE75GEA7F,3,0,,aciphex aricept trintellix
-169,inactive,HYPROMELLOSE 2910 (3 MPA.S),0VUT3PMY82,3,0,,aricept gocovri trexall
-170,inactive,ISOHEXADECANE,918X1OUF1E,3,0,15267,cerave-hydrating-mineral-sunscreen-spf-30 gold-bond-eczema-relief olay-complete-spf-15-sensitive
-171,inactive,KAOLIN,24H4NWX5CO,3,0,,lotrimin-af secret-invisible-solid tiger-balm
-172,inactive,LEMON,24RS0A988O,3,0,,blistex emetrol-chewables trileptal
-173,inactive,METHACRYLIC ACID,1CS02G8656,3,0,4093,adzenys-xr-odt nexium prevacid
-174,inactive,METHYLCHLOROISOTHIAZOLINONE,DEL7T5QRPN,3,0,33344,dove-dermacare-scalp-anti-dandruff lysol-no-touch-hand-soap safeguard-antibacterial-hand-wash
-175,inactive,MICROCRYSTALLINE WAX,XOF597Q3KY,3,0,,balmex-diaper-rash-cream blistex tucks-triple-relief
-176,inactive,OAT,Z6J799EAJK,3,0,,aveeno-eczema-therapy aveeno-protect-plus-hydrate-spf-60 gold-bond-eczema-relief
-177,inactive,PEG-12 DIMETHICONE,ZEL54N6W95,3,0,,coppertone-waterbabies-mineral-spf-50 mitchum-clear-gel purell-advanced-hand-sanitizer-foam
-178,inactive,PENTYLENE GLYCOL,50C1307PZG,3,0,93000,aveeno-protect-plus-hydrate-spf-60 blue-lizard-sport-spf-50 head-and-shoulders-classic-clean
-179,inactive,POLYHYDROXYSTEARIC ACID (2300 MW),YXH47AOU0F,3,0,,blue-lizard-sport-spf-50 cerave-hydrating-mineral-sunscreen-spf-30 neutrogena-sheer-zinc-face-spf-50
-180,inactive,POLYQUATERNIUM-7,0L414VCS5Y,3,0,,epsolay mens-rogaine-anti-dandruff-shampoo neutrogena-oil-free-acne-wash-pink-grapefruit
-181,inactive,SODIUM LAURETH-3 SULFATE,BPV390UAP0,3,0,25745,clearasil-rapid-rescue-wash dove-dermacare-scalp-anti-dandruff head-and-shoulders-classic-clean
-182,inactive,SODIUM PHOSPHATE,SE337SVY37,3,0,,act-anticavity-fluoride-rinse crest-cavity-protection crest-kids-color-changing
-183,inactive,"SODIUM PHOSPHATE, MONOBASIC, UNSPECIFIED FORM",3980JIH2SW,3,0,,atoncy theraflu-nasal-mist tinactin
-184,inactive,SODIUM PYROPHOSPHATE,O352864B8Z,3,0,,colgate-optic-white-renewal colgate-total-active-prevention toms-of-maine-kids-silly-strawberry
-185,inactive,TRIDECETH-6,3T5PCR2H0C,3,0,,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55 sun-bum-face-stick-spf-30
-186,inactive,"2-ETHYLHEXYL ACRYLATE, METHACRYLATE, METHYL METHACRYLATE, OR BUTYL METHACRYLATE/HYDROXYPROPYL DIMETHICONE COPOLYMER (30000-300000 MW)",S7ZA3CCJ4M,2,0,,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55
-187,inactive,ALPHA-ISOMETHYL IONONE,9XP4LC555B,2,0,5372174,degree dove-advanced-care
-188,inactive,ALUMINUM STARCH OCTENYLSUCCINATE,I9PJ0O6294,2,0,,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55
-189,inactive,AMMONIUM LAURYL SULFATE,Q7AO2R1M0B,2,0,8778,selsun-blue-normal-to-oily stridex-maximum-pads
-190,inactive,BEHENTRIMONIUM METHOSULFATE,5SHP745C61,2,0,157847,cerave-hydrating-mineral-sunscreen-spf-30 finacea
-191,inactive,BENZYL SALICYLATE,WAO5MNK9TU,2,0,8363,degree dove-advanced-care
-192,inactive,C12-15 ALKYL LACTATE,GC844VRD7E,2,0,,clean-and-clear-essentials-acne-toner neutrogena-oil-free-acne-wash-pink-grapefruit
-193,inactive,CALENDULA OFFICINALIS FLOWER,P0M7O4Y7YD,2,0,,biofreeze sun-bum-face-stick-spf-30
-194,inactive,carboxymethylcellulose calcium,UTY7PDF93L,2,0,9421,actos atacand
-195,inactive,CERAMIDE 6 II,F1X8L2B00J,2,0,44625889,cerave-hydrating-mineral-sunscreen-spf-30 finacea
-196,inactive,CETRIMONIUM CHLORIDE,UC9PE95IBP,2,0,2681,epsolay lysol-no-touch-hand-soap
+159,inactive,CETRIMONIUM CHLORIDE,UC9PE95IBP,3,0,2681,epsolay lysol-no-touch-hand-soap softsoap-antibacterial-hand-soap
+160,inactive,CETYL DIMETHICONE 25,U4AS1BW4ZB,3,0,,blue-lizard-sport-spf-50 neutrogena-sheer-zinc-face-spf-50 neutrogena-ultra-sheer-spf-55
+161,inactive,D&C YELLOW NO. 10 ALUMINUM LAKE,CQ3XH3DET6,3,0,,sudafed-sinus-congestion trexall tylenol-cold-plus-flu-severe
+162,inactive,DIACETYLATED MONOGLYCERIDES,5Z17386USF,3,0,,aciphex advil depakote
+163,inactive,DIMETHICONOL (40 CST),343C7U75XW,3,0,,degree dove-advanced-care dove-dermacare-scalp-anti-dandruff
+164,inactive,DISTEARDIMONIUM HECTORITE,X687XDK09L,3,0,,cerave-hydrating-mineral-sunscreen-spf-30 degree dove-advanced-care
+165,inactive,DMDM HYDANTOIN,BYR0546TOW,3,0,22947,bengay-vanishing-scent dove-dermacare-scalp-anti-dandruff selsun-blue-normal-to-oily
+166,inactive,ETHYLHEXYL PALMITATE,2865993309,3,0,62851,banana-boat-sport-ultra-lip-balm blue-lizard-sport-spf-50 sun-bum-face-stick-spf-30
+167,inactive,ETHYLHEXYL STEARATE,EG3PA2K3K5,3,0,13132266,blue-lizard-sport-spf-50 neutrogena-ultra-sheer-spf-55 sun-bum-face-stick-spf-30
+168,inactive,HIGH DENSITY POLYETHYLENE,UG00KM4WR7,3,0,,cetaphil-sheer-mineral-stick-spf-50 nicoderm-cq sun-bum-face-stick-spf-30
+169,inactive,HYDROXYPROPYL CELLULOSE (90000 WAMW),UKE75GEA7F,3,0,,aciphex aricept trintellix
+170,inactive,HYPROMELLOSE 2910 (3 MPA.S),0VUT3PMY82,3,0,,aricept gocovri trexall
+171,inactive,ISOHEXADECANE,918X1OUF1E,3,0,15267,cerave-hydrating-mineral-sunscreen-spf-30 gold-bond-eczema-relief olay-complete-spf-15-sensitive
+172,inactive,KAOLIN,24H4NWX5CO,3,0,,lotrimin-af secret-invisible-solid tiger-balm
+173,inactive,LEMON,24RS0A988O,3,0,,blistex emetrol-chewables trileptal
+174,inactive,METHACRYLIC ACID,1CS02G8656,3,0,4093,adzenys-xr-odt nexium prevacid
+175,inactive,METHYLCHLOROISOTHIAZOLINONE,DEL7T5QRPN,3,0,33344,dove-dermacare-scalp-anti-dandruff lysol-no-touch-hand-soap safeguard-antibacterial-hand-wash
+176,inactive,MICROCRYSTALLINE WAX,XOF597Q3KY,3,0,,balmex-diaper-rash-cream blistex tucks-triple-relief
+177,inactive,OAT,Z6J799EAJK,3,0,,aveeno-eczema-therapy aveeno-protect-plus-hydrate-spf-60 gold-bond-eczema-relief
+178,inactive,PEG-12 DIMETHICONE,ZEL54N6W95,3,0,,coppertone-waterbabies-mineral-spf-50 mitchum-clear-gel purell-advanced-hand-sanitizer-foam
+179,inactive,PENTYLENE GLYCOL,50C1307PZG,3,0,93000,aveeno-protect-plus-hydrate-spf-60 blue-lizard-sport-spf-50 head-and-shoulders-classic-clean
+180,inactive,POLYHYDROXYSTEARIC ACID (2300 MW),YXH47AOU0F,3,0,,blue-lizard-sport-spf-50 cerave-hydrating-mineral-sunscreen-spf-30 neutrogena-sheer-zinc-face-spf-50
+181,inactive,POLYQUATERNIUM-7,0L414VCS5Y,3,0,,epsolay mens-rogaine-anti-dandruff-shampoo neutrogena-oil-free-acne-wash-pink-grapefruit
+182,inactive,SODIUM LAURETH-3 SULFATE,BPV390UAP0,3,0,25745,clearasil-rapid-rescue-wash dove-dermacare-scalp-anti-dandruff head-and-shoulders-classic-clean
+183,inactive,SODIUM PHOSPHATE,SE337SVY37,3,0,,act-anticavity-fluoride-rinse crest-cavity-protection crest-kids-color-changing
+184,inactive,"SODIUM PHOSPHATE, MONOBASIC, UNSPECIFIED FORM",3980JIH2SW,3,0,,atoncy theraflu-nasal-mist tinactin
+185,inactive,SODIUM PYROPHOSPHATE,O352864B8Z,3,0,,colgate-optic-white-renewal colgate-total-active-prevention toms-of-maine-kids-silly-strawberry
+186,inactive,TRIDECETH-6,3T5PCR2H0C,3,0,,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55 sun-bum-face-stick-spf-30
+187,inactive,"2-ETHYLHEXYL ACRYLATE, METHACRYLATE, METHYL METHACRYLATE, OR BUTYL METHACRYLATE/HYDROXYPROPYL DIMETHICONE COPOLYMER (30000-300000 MW)",S7ZA3CCJ4M,2,0,,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55
+188,inactive,ALPHA-ISOMETHYL IONONE,9XP4LC555B,2,0,5372174,degree dove-advanced-care
+189,inactive,ALUMINUM STARCH OCTENYLSUCCINATE,I9PJ0O6294,2,0,,aveeno-protect-plus-hydrate-spf-60 neutrogena-ultra-sheer-spf-55
+190,inactive,AMMONIUM LAURYL SULFATE,Q7AO2R1M0B,2,0,8778,selsun-blue-normal-to-oily stridex-maximum-pads
+191,inactive,BEHENTRIMONIUM METHOSULFATE,5SHP745C61,2,0,157847,cerave-hydrating-mineral-sunscreen-spf-30 finacea
+192,inactive,BENZYL SALICYLATE,WAO5MNK9TU,2,0,8363,degree dove-advanced-care
+193,inactive,C12-15 ALKYL LACTATE,GC844VRD7E,2,0,,clean-and-clear-essentials-acne-toner neutrogena-oil-free-acne-wash-pink-grapefruit
+194,inactive,CALENDULA OFFICINALIS FLOWER,P0M7O4Y7YD,2,0,,biofreeze sun-bum-face-stick-spf-30
+195,inactive,carboxymethylcellulose calcium,UTY7PDF93L,2,0,9421,actos atacand
+196,inactive,CERAMIDE 6 II,F1X8L2B00J,2,0,44625889,cerave-hydrating-mineral-sunscreen-spf-30 finacea
 197,inactive,CETYL PEG/PPG-10/1 DIMETHICONE (HLB 5),035JKJ76MT,2,0,,blue-lizard-sport-spf-50 neutrogena-sheer-zinc-face-spf-50
 198,inactive,CETYLPYRIDINIUM CHLORIDE,D9OM4SK49P,2,0,2683,act-anticavity-fluoride-rinse crest-pro-health-sensitivity-relief
 199,inactive,COCAMIDOPROPYL PG-DIMONIUM CHLORIDE PHOSPHATE,H2KVQ74JM4,2,0,71587309,clean-and-clear-essentials-acne-toner neutrogena-oil-free-acne-wash-pink-grapefruit
-200,inactive,COCO-CAPRYLATE/CAPRATE,8D9H4QU99H,2,0,,salonpas voltaren-arthritis-pain
-201,inactive,COCO-GLUCOSIDE,ICS790225B,2,0,,dickinsons-witch-hazel-exfoliating-toner hawaiian-tropic
-202,inactive,COCOA,D9108TZ9KG,2,0,,carmex-lip-balm-spf-30 ex-lax-chocolated
-203,inactive,CORN OIL,8470G57WFM,2,0,,gas-x-total-relief sandimmune
-204,inactive,CYCLOMETHICONE,NMQ347994Z,2,0,,dermoplast-first-aid-spray epsolay
-205,inactive,DENATONIUM BENZOATE,4YK5Z54AT2,2,0,15488,biofreeze ethyl-rubbing-alcohol
-206,inactive,DIAZOLIDINYL UREA,H5RIZ3MPW4,2,0,62277,benadryl-itch-stopping-cream caladryl
-207,inactive,DICAPRYLYL ETHER,77JZM5516Z,2,0,12399,cerave-hydrating-mineral-sunscreen-spf-30 speed-stick-power
-208,inactive,DIETHYL PHTHALATE,UF064M00AF,2,0,6781,amrix inderal-la
-209,inactive,DIETHYLHEXYL SYRINGYLIDENEMALONATE,3V5U97P248,2,0,10163591,cerave-hydrating-mineral-sunscreen-spf-30 supergoop-unseen-sunscreen-spf-50
-210,inactive,DIMETHICONE 350,2Y53S6ATLU,2,0,,balmex-diaper-rash-cream pamelor
-211,inactive,DIPROPYLENE GLYCOL,E107L85C40,2,0,,dermoplast-first-aid-spray mitchum-clear-gel
-212,inactive,ETHYLCELLULOSE (10 MPA.S),3DYK7UYZ62,2,0,,amrix inderal-la
-213,inactive,ETHYLCELLULOSE (100 MPA.S),47MLB0F1MV,2,0,,effexor-xr lamictal
-214,inactive,ETHYLHEXYL METHOXYCRYLENE,S3KFG6Q5X8,2,0,66661267,coppertone-waterbabies-mineral-spf-50 eltamd-uv-clear
-215,inactive,FD&C RED NO. 40 ALUMINUM LAKE,6T47AS764T,2,0,,gas-x-total-relief mucinex-fast-max-cold-and-flu
-216,inactive,FD&C YELLOW NO. 6 ALUMINUM LAKE,GYP6Z2JR6Q,2,0,17731,mucinex-fast-max-cold-and-flu sudafed-sinus-congestion-plus-cold-severe
-217,inactive,GINGER,C5529G5JPQ,2,0,,certain-dri gold-bond-eczema-relief
-218,inactive,GUAR HYDROXYPROPYLTRIMONIUM CHLORIDE (1.7 SUBSTITUENTS PER SACCHARIDE),B16G315W7A,2,0,,dove-dermacare-scalp-anti-dandruff head-and-shoulders-classic-clean
-219,inactive,HAMAMELIS VIRGINIANA TOP WATER,NT00Y05A2V,2,0,,dickinsons-witch-hazel-exfoliating-toner tucks-triple-relief
-220,inactive,HEXYLENE GLYCOL,KEH0A3F75J,2,0,7870,mens-rogaine-anti-dandruff-shampoo neutrogena-t-sal-shampoo
-221,inactive,HYDROGENATED COCONUT OIL,JY81OXM1OM,2,0,,compro rolaids-advanced-soft-chews
-222,inactive,HYDROGENATED PALM KERNEL OIL,FM8D1RE2VP,2,0,,compro ex-lax-chocolated
-223,inactive,HYDROLYZED JOJOBA ESTERS (ACID FORM),UDR641JW8W,2,0,,gold-bond-eczema-relief neutrogena-ultra-sheer-spf-55
-224,inactive,HYDROXYETHYL ACRYLATE/SODIUM ACRYLOYLDIMETHYL TAURATE COPOLYMER (45000 MPA.S AT 1%),86FQE96TZ4,2,0,,eltamd-uv-clear gold-bond-eczema-relief
-225,inactive,HYPROMELLOSE 2208 (15000 MPA.S),Z78RG6M2N2,2,0,,intuniv pristiq
-226,inactive,ISOCETYL STEARATE,3RJ7186O9W,2,0,91410,australian-gold-lip-balm-spf-30 chapstick
-227,inactive,ISODODECANE,A8289P68Y2,2,0,26058,banana-boat-kids-clear-sunscreen-spf-65 supergoop-unseen-sunscreen-spf-50
-228,inactive,JOJOBA OIL,724GKU717M,2,0,,blistex coppertone-sport-lip-balm-spf-30
-229,inactive,"JOJOBA OIL, RANDOMIZED",7F0EV20QYL,2,0,,gold-bond-eczema-relief neutrogena-ultra-sheer-spf-55
-230,inactive,LINOLEAMIDOPROPYL PG-DIMONIUM CHLORIDE PHOSPHATE,5Q87K461JO,2,0,71587309,mens-rogaine-anti-dandruff-shampoo neutrogena-t-sal-shampoo
-231,inactive,NONOXYNOL-30,JJX07DG188,2,0,,aspercreme icy-hot
-232,inactive,OCTYLDODECYL NEOPENTANOATE,X8725R883T,2,0,10221530,blue-lizard-sport-spf-50 eltamd-uv-clear
-233,inactive,OLETH-3 PHOSPHATE,8Q0Z18J1VL,2,0,17754289,eltamd-uv-clear olay-complete-spf-15-sensitive
-234,inactive,PEG-6 METHYL ETHER,WXH089JZ5E,2,0,,dial-antibacterial nayzilam
-235,inactive,PEG/PPG-18/18 DIMETHICONE,9H0AO7T794,2,0,,gillette-clear-shield-sport mitchum-clear-gel
-236,inactive,PEPPERMINT OIL,AV092KU4JH,2,0,,norvir risperdal
-237,inactive,PHENYL TRIMETHICONE,DR0K5NOJ4R,2,0,,chapstick neutrogena-sheer-zinc-face-spf-50
-238,inactive,PHENYLETHYL ALCOHOL,ML9LGA7468,2,0,6054,flonase-allergy-relief neutrogena-sheer-zinc-face-spf-50
-239,inactive,PHYTOSPHINGOSINE,GIN46U9Q2Q,2,0,122121,cerave-hydrating-mineral-sunscreen-spf-30 finacea
-240,inactive,POLYDEXTROSE,VH2XOU12IE,2,0,,advil-dual-action ecotrin
-241,inactive,POLYETHYLENE GLYCOL 300,5655G9Y8AQ,2,0,,robaxin sunlenca
-242,inactive,POLYETHYLENE GLYCOL 600,NL4J9F21N9,2,0,,colgate-cavity-protection colgate-max-fresh-watermelon-blast
-243,inactive,POLYGLYCERYL-3 DIISOSTEARATE,46P231IQV8,2,0,10305987,finacea tucks-triple-relief
-244,inactive,POLYGLYCERYL-4 ISOSTEARATE,820DPX33S7,2,0,,blue-lizard-sport-spf-50 cerave-hydrating-mineral-sunscreen-spf-30
-245,inactive,POLYISOBUTYLENE (1100000 MW),FLT10CH37X,2,0,,catapres-tts-1 transderm-scop
-246,inactive,POLYISOBUTYLENE (35000 MW),98553S1MHQ,2,0,,catapres-tts-1 transderm-scop
-247,inactive,POLYOXYL 40 STEARATE,13A4J4NH9I,2,0,,finacea retin-a
-248,inactive,Polyvinyl Acetate Phthalate,58QVG85GW3,2,0,,ecotrin unisom-sleepgels
-249,inactive,PROPANEDIOL,5965N8W85T,2,0,10442,blue-lizard-sport-spf-50 gold-bond-eczema-relief
-250,inactive,RICE BRAN,R60QEP13IC,2,0,,banana-boat-sport-ultra-lip-balm secret-invisible-solid
-251,inactive,SODIUM ACID PYROPHOSPHATE,H5WVD9LZUD,2,0,,colgate-optic-white-renewal crest-3d-white-ultra-whitening
-252,inactive,SODIUM ALGINATE,C269C4G2ZQ,2,0,,ecotrin gaviscon
-253,inactive,SODIUM ASCORBYL PHOSPHATE,836SJG51DR,2,0,54679073,hawaiian-tropic neutrogena-oil-free-acne-wash-pink-grapefruit
-254,inactive,SODIUM COCOATE,R1TQH25F4I,2,0,,dial-antibacterial panoxyl
-255,inactive,SODIUM LAUROYL LACTYLATE,7243K85WFO,2,0,9951058,cerave-hydrating-mineral-sunscreen-spf-30 finacea
-256,inactive,SODIUM PALM KERNELATE,6H91L1NXTW,2,0,,dial-antibacterial panoxyl
-257,inactive,SODIUM PALMATE,S0A6004K3Z,2,0,,dial-antibacterial panoxyl
-258,inactive,"SODIUM PHOSPHATE, TRIBASIC, ANHYDROUS",SX01TZO3QZ,2,0,,crest-kids-color-changing crest-pro-health-sensitivity-relief
-259,inactive,SODIUM POLYSTYRENE SULFONATE,1699G8679Z,2,0,,adzenys-xr-odt myrbetriq
-260,inactive,SODIUM TRIPOLYPHOSPHATE ANHYDROUS,9SW4PFD2FZ,2,0,,parodontax sensodyne
-261,inactive,SODIUM XYLENESULFONATE,G4LZF950UR,2,0,14756,head-and-shoulders-classic-clean safeguard-antibacterial-hand-wash
-262,inactive,STEARALKONIUM HECTORITE,OLX698AH5P,2,0,,certain-dri lotrimin-af
-263,inactive,STEARETH-2,V56DFE46J5,2,0,4165923,ban-roll-on-unscented olay-complete-spf-15-sensitive
-264,inactive,STEARETH-20,L0Q8IK9E08,2,0,,aveeno-eczema-therapy ban-roll-on-unscented
-265,inactive,SUCROSE STEARATE,274KW0O50M,2,0,,abreva conzip
-266,inactive,SYNTHETIC BEESWAX,08MNR5YE2R,2,0,,balmex-diaper-rash-cream coppertone-waterbabies-mineral-spf-50
-267,inactive,TERT-BUTYL ALCOHOL,MD83SFE959,2,0,6386,biofreeze retin-a
-268,inactive,TRAGACANTH,2944357O2O,2,0,,delsym ritalin
-269,inactive,TRIHYDROXYSTEARIN,06YD7896S3,2,0,25100,head-and-shoulders-classic-clean vusion
-270,inactive,WHITE WAX,7G1J5DA97F,2,0,,advil chapstick
-271,inactive,.ALPHA.-TOCOPHEROL,H4N855PNZ1,1,0,14985,thinkbaby-spf-30-stick
-272,inactive,".ALPHA.-TOCOPHEROL LINOLEATE, D-",G0N132Q0ED,1,0,6442395,chapstick
-273,inactive,.BETA.-SITOSTEROL,S347WMO6M4,1,0,222284,thinkbaby-spf-30-stick
-274,inactive,.IOTA.-CARRAGEENAN,3582R1F52W,1,0,11966246,vazalore
-275,inactive,"1,2-DIARACHIDOYL-SN-GLYCERO-3-PHOSPHOCHOLINE",HE0P2D9ZLS,1,0,5313597,finacea
-276,inactive,ACER SACCHARUM BARK/SAP,Z120VL0KAC,1,0,,blistex
-277,inactive,ADIPIC ACID,76A0JE0FKJ,1,0,196,tums
-278,inactive,ADIPIC ACID/DIGLYCOL CROSSPOLYMER (20000 MPA.S),R9TPS68K19,1,0,,sun-bum-face-stick-spf-30
-279,inactive,ALBUMIN HUMAN,ZIF514RVZR,1,0,,abraxane
-280,inactive,ALOE BARBADENSIS LEAF JUICE,RUE8E6T4NB,1,0,,selsun-blue-normal-to-oily
-281,inactive,ALPHA CELLULOSE,I355QGZ19A,1,0,,closeup-toothpaste
-282,inactive,ALUMINUM SILICATE,T1FAD4SS2M,1,0,,nicorette
-283,inactive,ALUMINUM SULFATE,34S289N54E,1,0,,cortizone-10-soothing-aloe
-284,inactive,Aminomethylpropanol,LU49E6626Q,1,0,11807,systane
-285,inactive,AMMONIUM LAURETH-3 SULFATE,896SJ235FN,1,0,25745,selsun-blue-normal-to-oily
-286,inactive,AMMONIUM XYLENESULFONATE,4FZY6L6XCM,1,0,6938,stridex-maximum-pads
-287,inactive,ANISE,21C2F5E8RE,1,0,,soltamox
-288,inactive,ARACHIDYL ALCOHOL,1QR1QRA9BU,1,0,12404,tucks-triple-relief
-289,inactive,ARACHIDYL GLUCOSIDE,6JVW35JOOJ,1,0,9933984,tucks-triple-relief
-290,inactive,ARACHIDYL PROPIONATE,QV5DAH3MSB,1,0,94615,chapstick
-291,inactive,ARNICA MONTANA FLOWER,OZ0E5Y15PZ,1,0,,biofreeze
-292,inactive,AVENA SATIVA (OAT) KERNEL OIL,3UVP41R77R,1,0,,aveeno-eczema-therapy
-293,inactive,AVOCADO OIL,6VNO72PFC1,1,0,,coppertone-sport-lip-balm-spf-30
-294,inactive,BALSAM PERU,8P5F881OCY,1,0,,balmex-diaper-rash-cream
-295,inactive,BARLEY,5PWM7YLI7R,1,0,,ban-roll-on-unscented
-296,inactive,BEHENYL ACRYLATE POLYMER,D64PM5UT4U,1,0,,cerave-hydrating-mineral-sunscreen-spf-30
-297,inactive,BETADEX SULFOBUTYL ETHER SODIUM,2PP9364507,1,0,131634908,veklury
-298,inactive,BILBERRY,9P2U39H18W,1,0,,blistex
-299,inactive,BIS-DIGLYCERYL POLYACYLADIPATE-2,6L246LAM9T,1,0,,coppertone-sport-lip-balm-spf-30
-300,inactive,BIS-OCTYLDODECYL DIMER DILINOLEATE/PROPANEDIOL COPOLYMER,TY3J98ZR7R,1,0,,coppertone-waterbabies-mineral-spf-50
-301,inactive,BRUCINE SULFATE HEPTAHYDRATE,O900CDH328,1,0,442021,retin-a
-302,inactive,BUTYL SALICYLATE,QPR9LM8VZO,1,0,16330,sun-bum-face-stick-spf-30
-303,inactive,Butylparaben,3QPI1U3FV8,1,0,7184,prozac
-304,inactive,C10-30 CHOLESTEROL/LANOSTEROL ESTERS,137SL7IL0Y,1,0,,blistex
-305,inactive,C13-14 ISOPARAFFIN,E4F12ROE70,1,0,,olay-complete-spf-15-sensitive
-306,inactive,C20-40 PARETH-10,TE3MZI4V3F,1,0,,secret-invisible-solid
-307,inactive,CALCIUM PYROPHOSPHATE,X69NU20D19,1,0,,colgate-optic-white-renewal
-308,inactive,CALCIUM SILICATE,S4255P4G5M,1,0,,alka-seltzer-plus-cold-day-and-night
-309,inactive,CALCIUM SULFATE DIHYDRATE,4846Q921YM,1,0,,levoxyl
-310,inactive,CAMELLIA SINENSIS LEAF,W2ZU1RY8B0,1,0,,sun-bum-face-stick-spf-30
-311,inactive,CANOLA OIL,331KBJ17RK,1,0,,eltamd-uv-clear
-312,inactive,CAPRYLIC/CAPRIC/LAURIC TRIGLYCERIDE,FJ1H6M2JG9,1,0,121596031,australian-gold-lip-balm-spf-30
-313,inactive,CAPRYLOYL SALICYLIC ACID,5F7PJF6AA4,1,0,9838158,cerave-hydrating-mineral-sunscreen-spf-30
-314,inactive,CARBOMER COPOLYMER TYPE A (ALLYL PENTAERYTHRITOL CROSSLINKED),71DD5V995L,1,0,,restasis
-315,inactive,CARBOMER INTERPOLYMER TYPE A (ALLYL SUCROSE CROSSLINKED),59TL3WG5CO,1,0,,clearasil-rapid-rescue-wash
-316,inactive,CEDAR LEAF OIL,BJ169U4NLG,1,0,,vicks-vaporub
-317,inactive,CERAMIDE 1,5THT33P7X7,1,0,58418606,finacea
-318,inactive,CERAMIDE NG,C04977SRJ5,1,0,5283573,gold-bond-eczema-relief
-319,inactive,CETETH-10 PHOSPHATE,4E05O5N49G,1,0,,hawaiian-tropic
-320,inactive,CETETH-20,I835H2IHHX,1,0,2724259,tinactin
-321,inactive,CETYL DIMETHICONE/BIS-VINYLDIMETHICONE CROSSPOLYMER,AE7QA6TW0Q,1,0,,neutrogena-sheer-zinc-face-spf-50
-322,inactive,CETYL ESTERS WAX,D072FFP9GU,1,0,,carmex-lip-balm-spf-30
-323,inactive,CETYL LACTATE,A7EVH2RK4O,1,0,37098,clean-and-clear-essentials-acne-toner
-324,inactive,CETYL PALMITATE,5ZA2S6B08X,1,0,10889,eucerin-eczema-relief
-325,inactive,CETYL PEG/PPG-10/1 DIMETHICONE (HLB 2),V2W71V8T0X,1,0,,coppertone-waterbabies-mineral-spf-50
-326,inactive,CHAMOMILE,FGL3685T2X,1,0,,biofreeze
-327,inactive,CHLOROCRESOL,36W53O7109,1,0,1732,tinactin
-328,inactive,CITRUS LIMON (LEMON) PEEL,72O054U628,1,0,,sun-bum-face-stick-spf-30
-329,inactive,COCAMIDOPROPYL DIMETHYLAMINE,L36BM7DG2T,1,0,,dickinsons-witch-hazel-exfoliating-toner
-330,inactive,COCAMIDOPROPYL HYDROXYSULTAINE,62V75NI93W,1,0,,panoxyl
-331,inactive,COCHINEAL,TZ8Z31B35M,1,0,14950,hysingla-er
-332,inactive,COCO ACID CHLORIDES,R7N8Y0XMX7,1,0,,balmex-diaper-rash-cream
-333,inactive,COCO DIETHANOLAMIDE,92005F972D,1,0,,selsun-blue-normal-to-oily
-334,inactive,Coco Monoethanolamide,C80684146D,1,0,,lysol-no-touch-hand-soap
+200,inactive,Coco Monoethanolamide,C80684146D,2,0,,lysol-no-touch-hand-soap softsoap-antibacterial-hand-soap
+201,inactive,COCO-CAPRYLATE/CAPRATE,8D9H4QU99H,2,0,,salonpas voltaren-arthritis-pain
+202,inactive,COCO-GLUCOSIDE,ICS790225B,2,0,,dickinsons-witch-hazel-exfoliating-toner hawaiian-tropic
+203,inactive,COCOA,D9108TZ9KG,2,0,,carmex-lip-balm-spf-30 ex-lax-chocolated
+204,inactive,CORN OIL,8470G57WFM,2,0,,gas-x-total-relief sandimmune
+205,inactive,CYCLOMETHICONE,NMQ347994Z,2,0,,dermoplast-first-aid-spray epsolay
+206,inactive,DENATONIUM BENZOATE,4YK5Z54AT2,2,0,15488,biofreeze ethyl-rubbing-alcohol
+207,inactive,DIAZOLIDINYL UREA,H5RIZ3MPW4,2,0,62277,benadryl-itch-stopping-cream caladryl
+208,inactive,DICAPRYLYL ETHER,77JZM5516Z,2,0,12399,cerave-hydrating-mineral-sunscreen-spf-30 speed-stick-power
+209,inactive,DIETHYL PHTHALATE,UF064M00AF,2,0,6781,amrix inderal-la
+210,inactive,DIETHYLHEXYL SYRINGYLIDENEMALONATE,3V5U97P248,2,0,10163591,cerave-hydrating-mineral-sunscreen-spf-30 supergoop-unseen-sunscreen-spf-50
+211,inactive,DIMETHICONE 350,2Y53S6ATLU,2,0,,balmex-diaper-rash-cream pamelor
+212,inactive,DIPROPYLENE GLYCOL,E107L85C40,2,0,,dermoplast-first-aid-spray mitchum-clear-gel
+213,inactive,ETHYLCELLULOSE (10 MPA.S),3DYK7UYZ62,2,0,,amrix inderal-la
+214,inactive,ETHYLCELLULOSE (100 MPA.S),47MLB0F1MV,2,0,,effexor-xr lamictal
+215,inactive,ETHYLHEXYL METHOXYCRYLENE,S3KFG6Q5X8,2,0,66661267,coppertone-waterbabies-mineral-spf-50 eltamd-uv-clear
+216,inactive,FD&C RED NO. 40 ALUMINUM LAKE,6T47AS764T,2,0,,gas-x-total-relief mucinex-fast-max-cold-and-flu
+217,inactive,FD&C YELLOW NO. 6 ALUMINUM LAKE,GYP6Z2JR6Q,2,0,17731,mucinex-fast-max-cold-and-flu sudafed-sinus-congestion-plus-cold-severe
+218,inactive,GINGER,C5529G5JPQ,2,0,,certain-dri gold-bond-eczema-relief
+219,inactive,GUAR HYDROXYPROPYLTRIMONIUM CHLORIDE (1.7 SUBSTITUENTS PER SACCHARIDE),B16G315W7A,2,0,,dove-dermacare-scalp-anti-dandruff head-and-shoulders-classic-clean
+220,inactive,HAMAMELIS VIRGINIANA TOP WATER,NT00Y05A2V,2,0,,dickinsons-witch-hazel-exfoliating-toner tucks-triple-relief
+221,inactive,HEXYLENE GLYCOL,KEH0A3F75J,2,0,7870,mens-rogaine-anti-dandruff-shampoo neutrogena-t-sal-shampoo
+222,inactive,HYDROGENATED COCONUT OIL,JY81OXM1OM,2,0,,compro rolaids-advanced-soft-chews
+223,inactive,HYDROGENATED PALM KERNEL OIL,FM8D1RE2VP,2,0,,compro ex-lax-chocolated
+224,inactive,HYDROLYZED JOJOBA ESTERS (ACID FORM),UDR641JW8W,2,0,,gold-bond-eczema-relief neutrogena-ultra-sheer-spf-55
+225,inactive,HYDROXYETHYL ACRYLATE/SODIUM ACRYLOYLDIMETHYL TAURATE COPOLYMER (45000 MPA.S AT 1%),86FQE96TZ4,2,0,,eltamd-uv-clear gold-bond-eczema-relief
+226,inactive,HYPROMELLOSE 2208 (15000 MPA.S),Z78RG6M2N2,2,0,,intuniv pristiq
+227,inactive,ISOCETYL STEARATE,3RJ7186O9W,2,0,91410,australian-gold-lip-balm-spf-30 chapstick
+228,inactive,ISODODECANE,A8289P68Y2,2,0,26058,banana-boat-kids-clear-sunscreen-spf-65 supergoop-unseen-sunscreen-spf-50
+229,inactive,JOJOBA OIL,724GKU717M,2,0,,blistex coppertone-sport-lip-balm-spf-30
+230,inactive,"JOJOBA OIL, RANDOMIZED",7F0EV20QYL,2,0,,gold-bond-eczema-relief neutrogena-ultra-sheer-spf-55
+231,inactive,LINOLEAMIDOPROPYL PG-DIMONIUM CHLORIDE PHOSPHATE,5Q87K461JO,2,0,71587309,mens-rogaine-anti-dandruff-shampoo neutrogena-t-sal-shampoo
+232,inactive,NONOXYNOL-30,JJX07DG188,2,0,,aspercreme icy-hot
+233,inactive,OCTYLDODECYL NEOPENTANOATE,X8725R883T,2,0,10221530,blue-lizard-sport-spf-50 eltamd-uv-clear
+234,inactive,OLETH-3 PHOSPHATE,8Q0Z18J1VL,2,0,17754289,eltamd-uv-clear olay-complete-spf-15-sensitive
+235,inactive,PEG-6 METHYL ETHER,WXH089JZ5E,2,0,,dial-antibacterial nayzilam
+236,inactive,PEG/PPG-18/18 DIMETHICONE,9H0AO7T794,2,0,,gillette-clear-shield-sport mitchum-clear-gel
+237,inactive,PEPPERMINT OIL,AV092KU4JH,2,0,,norvir risperdal
+238,inactive,PHENYL TRIMETHICONE,DR0K5NOJ4R,2,0,,chapstick neutrogena-sheer-zinc-face-spf-50
+239,inactive,PHENYLETHYL ALCOHOL,ML9LGA7468,2,0,6054,flonase-allergy-relief neutrogena-sheer-zinc-face-spf-50
+240,inactive,PHYTOSPHINGOSINE,GIN46U9Q2Q,2,0,122121,cerave-hydrating-mineral-sunscreen-spf-30 finacea
+241,inactive,POLYDEXTROSE,VH2XOU12IE,2,0,,advil-dual-action ecotrin
+242,inactive,POLYETHYLENE GLYCOL 300,5655G9Y8AQ,2,0,,robaxin sunlenca
+243,inactive,POLYETHYLENE GLYCOL 600,NL4J9F21N9,2,0,,colgate-cavity-protection colgate-max-fresh-watermelon-blast
+244,inactive,POLYGLYCERYL-3 DIISOSTEARATE,46P231IQV8,2,0,10305987,finacea tucks-triple-relief
+245,inactive,POLYGLYCERYL-4 ISOSTEARATE,820DPX33S7,2,0,,blue-lizard-sport-spf-50 cerave-hydrating-mineral-sunscreen-spf-30
+246,inactive,POLYISOBUTYLENE (1100000 MW),FLT10CH37X,2,0,,catapres-tts-1 transderm-scop
+247,inactive,POLYISOBUTYLENE (35000 MW),98553S1MHQ,2,0,,catapres-tts-1 transderm-scop
+248,inactive,POLYOXYL 40 STEARATE,13A4J4NH9I,2,0,,finacea retin-a
+249,inactive,Polyvinyl Acetate Phthalate,58QVG85GW3,2,0,,ecotrin unisom-sleepgels
+250,inactive,PROPANEDIOL,5965N8W85T,2,0,10442,blue-lizard-sport-spf-50 gold-bond-eczema-relief
+251,inactive,RICE BRAN,R60QEP13IC,2,0,,banana-boat-sport-ultra-lip-balm secret-invisible-solid
+252,inactive,SODIUM ACID PYROPHOSPHATE,H5WVD9LZUD,2,0,,colgate-optic-white-renewal crest-3d-white-ultra-whitening
+253,inactive,SODIUM ALGINATE,C269C4G2ZQ,2,0,,ecotrin gaviscon
+254,inactive,SODIUM ASCORBYL PHOSPHATE,836SJG51DR,2,0,54679073,hawaiian-tropic neutrogena-oil-free-acne-wash-pink-grapefruit
+255,inactive,SODIUM COCOATE,R1TQH25F4I,2,0,,dial-antibacterial panoxyl
+256,inactive,SODIUM LAUROYL LACTYLATE,7243K85WFO,2,0,9951058,cerave-hydrating-mineral-sunscreen-spf-30 finacea
+257,inactive,SODIUM PALM KERNELATE,6H91L1NXTW,2,0,,dial-antibacterial panoxyl
+258,inactive,SODIUM PALMATE,S0A6004K3Z,2,0,,dial-antibacterial panoxyl
+259,inactive,"SODIUM PHOSPHATE, TRIBASIC, ANHYDROUS",SX01TZO3QZ,2,0,,crest-kids-color-changing crest-pro-health-sensitivity-relief
+260,inactive,SODIUM POLYSTYRENE SULFONATE,1699G8679Z,2,0,,adzenys-xr-odt myrbetriq
+261,inactive,SODIUM TRIPOLYPHOSPHATE ANHYDROUS,9SW4PFD2FZ,2,0,,parodontax sensodyne
+262,inactive,SODIUM XYLENESULFONATE,G4LZF950UR,2,0,14756,head-and-shoulders-classic-clean safeguard-antibacterial-hand-wash
+263,inactive,STEARALKONIUM HECTORITE,OLX698AH5P,2,0,,certain-dri lotrimin-af
+264,inactive,STEARETH-2,V56DFE46J5,2,0,4165923,ban-roll-on-unscented olay-complete-spf-15-sensitive
+265,inactive,STEARETH-20,L0Q8IK9E08,2,0,,aveeno-eczema-therapy ban-roll-on-unscented
+266,inactive,SUCROSE STEARATE,274KW0O50M,2,0,,abreva conzip
+267,inactive,SYNTHETIC BEESWAX,08MNR5YE2R,2,0,,balmex-diaper-rash-cream coppertone-waterbabies-mineral-spf-50
+268,inactive,TERT-BUTYL ALCOHOL,MD83SFE959,2,0,6386,biofreeze retin-a
+269,inactive,TRAGACANTH,2944357O2O,2,0,,delsym ritalin
+270,inactive,TRIHYDROXYSTEARIN,06YD7896S3,2,0,25100,head-and-shoulders-classic-clean vusion
+271,inactive,WHITE WAX,7G1J5DA97F,2,0,,advil chapstick
+272,inactive,.ALPHA.-TOCOPHEROL,H4N855PNZ1,1,0,14985,thinkbaby-spf-30-stick
+273,inactive,".ALPHA.-TOCOPHEROL LINOLEATE, D-",G0N132Q0ED,1,0,6442395,chapstick
+274,inactive,.BETA.-SITOSTEROL,S347WMO6M4,1,0,222284,thinkbaby-spf-30-stick
+275,inactive,.IOTA.-CARRAGEENAN,3582R1F52W,1,0,11966246,vazalore
+276,inactive,"1,2-DIARACHIDOYL-SN-GLYCERO-3-PHOSPHOCHOLINE",HE0P2D9ZLS,1,0,5313597,finacea
+277,inactive,ACER SACCHARUM BARK/SAP,Z120VL0KAC,1,0,,blistex
+278,inactive,ADIPIC ACID,76A0JE0FKJ,1,0,196,tums
+279,inactive,ADIPIC ACID/DIGLYCOL CROSSPOLYMER (20000 MPA.S),R9TPS68K19,1,0,,sun-bum-face-stick-spf-30
+280,inactive,ALBUMIN HUMAN,ZIF514RVZR,1,0,,abraxane
+281,inactive,ALOE BARBADENSIS LEAF JUICE,RUE8E6T4NB,1,0,,selsun-blue-normal-to-oily
+282,inactive,ALPHA CELLULOSE,I355QGZ19A,1,0,,closeup-toothpaste
+283,inactive,ALUMINUM SILICATE,T1FAD4SS2M,1,0,,nicorette
+284,inactive,ALUMINUM SULFATE,34S289N54E,1,0,,cortizone-10-soothing-aloe
+285,inactive,Aminomethylpropanol,LU49E6626Q,1,0,11807,systane
+286,inactive,AMMONIUM LAURETH-3 SULFATE,896SJ235FN,1,0,25745,selsun-blue-normal-to-oily
+287,inactive,AMMONIUM XYLENESULFONATE,4FZY6L6XCM,1,0,6938,stridex-maximum-pads
+288,inactive,ANISE,21C2F5E8RE,1,0,,soltamox
+289,inactive,ARACHIDYL ALCOHOL,1QR1QRA9BU,1,0,12404,tucks-triple-relief
+290,inactive,ARACHIDYL GLUCOSIDE,6JVW35JOOJ,1,0,9933984,tucks-triple-relief
+291,inactive,ARACHIDYL PROPIONATE,QV5DAH3MSB,1,0,94615,chapstick
+292,inactive,ARNICA MONTANA FLOWER,OZ0E5Y15PZ,1,0,,biofreeze
+293,inactive,AVENA SATIVA (OAT) KERNEL OIL,3UVP41R77R,1,0,,aveeno-eczema-therapy
+294,inactive,AVOCADO OIL,6VNO72PFC1,1,0,,coppertone-sport-lip-balm-spf-30
+295,inactive,BALSAM PERU,8P5F881OCY,1,0,,balmex-diaper-rash-cream
+296,inactive,BARLEY,5PWM7YLI7R,1,0,,ban-roll-on-unscented
+297,inactive,BEHENYL ACRYLATE POLYMER,D64PM5UT4U,1,0,,cerave-hydrating-mineral-sunscreen-spf-30
+298,inactive,BETADEX SULFOBUTYL ETHER SODIUM,2PP9364507,1,0,131634908,veklury
+299,inactive,BILBERRY,9P2U39H18W,1,0,,blistex
+300,inactive,BIS-DIGLYCERYL POLYACYLADIPATE-2,6L246LAM9T,1,0,,coppertone-sport-lip-balm-spf-30
+301,inactive,BIS-OCTYLDODECYL DIMER DILINOLEATE/PROPANEDIOL COPOLYMER,TY3J98ZR7R,1,0,,coppertone-waterbabies-mineral-spf-50
+302,inactive,BRUCINE SULFATE HEPTAHYDRATE,O900CDH328,1,0,442021,retin-a
+303,inactive,BUTYL SALICYLATE,QPR9LM8VZO,1,0,16330,sun-bum-face-stick-spf-30
+304,inactive,Butylparaben,3QPI1U3FV8,1,0,7184,prozac
+305,inactive,C10-30 CHOLESTEROL/LANOSTEROL ESTERS,137SL7IL0Y,1,0,,blistex
+306,inactive,C13-14 ISOPARAFFIN,E4F12ROE70,1,0,,olay-complete-spf-15-sensitive
+307,inactive,C20-40 PARETH-10,TE3MZI4V3F,1,0,,secret-invisible-solid
+308,inactive,CALCIUM PYROPHOSPHATE,X69NU20D19,1,0,,colgate-optic-white-renewal
+309,inactive,CALCIUM SILICATE,S4255P4G5M,1,0,,alka-seltzer-plus-cold-day-and-night
+310,inactive,CALCIUM SULFATE DIHYDRATE,4846Q921YM,1,0,,levoxyl
+311,inactive,CAMELLIA SINENSIS LEAF,W2ZU1RY8B0,1,0,,sun-bum-face-stick-spf-30
+312,inactive,CANOLA OIL,331KBJ17RK,1,0,,eltamd-uv-clear
+313,inactive,CAPRYLIC/CAPRIC/LAURIC TRIGLYCERIDE,FJ1H6M2JG9,1,0,121596031,australian-gold-lip-balm-spf-30
+314,inactive,CAPRYLOYL SALICYLIC ACID,5F7PJF6AA4,1,0,9838158,cerave-hydrating-mineral-sunscreen-spf-30
+315,inactive,CARBOMER COPOLYMER TYPE A (ALLYL PENTAERYTHRITOL CROSSLINKED),71DD5V995L,1,0,,restasis
+316,inactive,CARBOMER INTERPOLYMER TYPE A (ALLYL SUCROSE CROSSLINKED),59TL3WG5CO,1,0,,clearasil-rapid-rescue-wash
+317,inactive,CEDAR LEAF OIL,BJ169U4NLG,1,0,,vicks-vaporub
+318,inactive,CERAMIDE 1,5THT33P7X7,1,0,58418606,finacea
+319,inactive,CERAMIDE NG,C04977SRJ5,1,0,5283573,gold-bond-eczema-relief
+320,inactive,CETETH-10 PHOSPHATE,4E05O5N49G,1,0,,hawaiian-tropic
+321,inactive,CETETH-20,I835H2IHHX,1,0,2724259,tinactin
+322,inactive,CETYL DIMETHICONE/BIS-VINYLDIMETHICONE CROSSPOLYMER,AE7QA6TW0Q,1,0,,neutrogena-sheer-zinc-face-spf-50
+323,inactive,CETYL ESTERS WAX,D072FFP9GU,1,0,,carmex-lip-balm-spf-30
+324,inactive,CETYL LACTATE,A7EVH2RK4O,1,0,37098,clean-and-clear-essentials-acne-toner
+325,inactive,CETYL PALMITATE,5ZA2S6B08X,1,0,10889,eucerin-eczema-relief
+326,inactive,CETYL PEG/PPG-10/1 DIMETHICONE (HLB 2),V2W71V8T0X,1,0,,coppertone-waterbabies-mineral-spf-50
+327,inactive,CHAMOMILE,FGL3685T2X,1,0,,biofreeze
+328,inactive,CHLOROCRESOL,36W53O7109,1,0,1732,tinactin
+329,inactive,CITRUS LIMON (LEMON) PEEL,72O054U628,1,0,,sun-bum-face-stick-spf-30
+330,inactive,COCAMIDOPROPYL DIMETHYLAMINE,L36BM7DG2T,1,0,,dickinsons-witch-hazel-exfoliating-toner
+331,inactive,COCAMIDOPROPYL HYDROXYSULTAINE,62V75NI93W,1,0,,panoxyl
+332,inactive,COCHINEAL,TZ8Z31B35M,1,0,14950,hysingla-er
+333,inactive,COCO ACID CHLORIDES,R7N8Y0XMX7,1,0,,balmex-diaper-rash-cream
+334,inactive,COCO DIETHANOLAMIDE,92005F972D,1,0,,selsun-blue-normal-to-oily
 335,inactive,COCONUT ACID,40U37V505D,1,0,,dial-antibacterial
 336,inactive,COTTONSEED OIL,H3E878020N,1,0,,depo-testosterone
 337,inactive,CUCUMIS SATIVUS (CUCUMBER) FRUIT,YY7C30VXJT,1,0,,sun-bum-face-stick-spf-30
@@ -421,154 +421,156 @@ rank,section,name,unii,labels,labels_as_active,pubchem_parent_cid,example_produc
 420,inactive,ISOPROPYL ISOSTEARATE,C67IXB9Y7T,1,0,94625,dove-advanced-care
 421,inactive,ISOSTEARYL LINOLEATE,4778M3HR0N,1,0,16718441,sun-bum-face-stick-spf-30
 422,inactive,JUNIPER BERRY,O84B5194RL,1,0,,biofreeze
-423,inactive,Lauramine Oxide,4F6FC4MI8W,1,0,15433,lysol-no-touch-hand-soap
-424,inactive,LAURETH-7,Z95S6G8201,1,0,2724258,olay-complete-spf-15-sensitive
-425,inactive,LAURYL GLUCOSIDE,76LN7P7UCU,1,0,93321,burts-bees-extra-white-toothpaste
-426,inactive,LAVENDER OIL,ZBP1YXW0H8,1,0,,calamine-lotion
-427,inactive,"LEMON OIL, COLD PRESSED",I9GRO824LL,1,0,,chapstick
-428,inactive,LICORICE,61ZBX54883,1,0,,soltamox
-429,inactive,LIME JUICE,6416LES0Y6,1,0,,dove-dermacare-scalp-anti-dandruff
-430,inactive,LOW-SUBSTITUTED HYDROXYPROPYL CELLULOSE (11% HYDROXYPROPYL; 120000 MW),NZ94SDL6WR,1,0,,dayvigo
-431,inactive,MACROCYSTIS PYRIFERA (KELP),K31S3OG5C4,1,0,,sun-bum-face-stick-spf-30
-432,inactive,MAGNESIUM ASCORBYL PHOSPHATE,0R822556M5,1,0,54679073,gold-bond-eczema-relief
-433,inactive,MAGNESIUM CARBONATE HYDROXIDE,YQO029V1L4,1,0,,head-and-shoulders-classic-clean
-434,inactive,MANDELIC ACID,NH496X0UJX,1,0,1292,panoxyl
-435,inactive,MANGIFERA INDICA SEED BUTTER,4OXD9M35X2,1,0,,hawaiian-tropic
-436,inactive,MANGO,I629I3NR86,1,0,,hawaiian-tropic
-437,inactive,MEADOWFOAM ESTOLIDE,3HH93SL2H9,1,0,16719232,supergoop-unseen-sunscreen-spf-50
-438,inactive,MEADOWFOAM SEED OIL,412ZHA4T4Y,1,0,,carmex-lip-balm-spf-30
-439,inactive,MELALEUCA ALTERNIFOLIA FLOWERING TOP,5AZ4S6N66F,1,0,,dickinsons-witch-hazel-exfoliating-toner
-440,inactive,MELALEUCA ALTERNIFOLIA WHOLE,976KV4FXYF,1,0,,closeup-toothpaste
-441,inactive,MENTHA ARVENSIS LEAF OIL,1AEY1M553N,1,0,,tiger-balm
-442,inactive,METACRESOL,GGO4Y809LO,1,0,342,demerol
-443,inactive,Methacrylic Acid - Methyl Methacrylate Copolymer (1:2),5KY68S2577,1,0,,dexilant
-444,inactive,METHYL GLUCOSE DIOLEATE,FA9KFJ4Z6P,1,0,87976207,blue-lizard-sport-spf-50
-445,inactive,METHYL ISOBUTYL KETONE,U5T7B88CNP,1,0,7909,ethyl-rubbing-alcohol
-446,inactive,Methylparaben Sodium,CR6K9C2NHK,1,0,7456,zyprexa
-447,inactive,MINT,FV98Z8GITP,1,0,,act-anticavity-fluoride-rinse
-448,inactive,MYRISTYL MYRISTATE,4042ZC00DY,1,0,18605,blistex
-449,inactive,Neopentyl Glycol Diethylhexanoate,U68ZV6W62C,1,0,34260,cetaphil-sheer-mineral-stick-spf-50
-450,inactive,NONOXYNOL-9,48Q180SH9T,1,0,,bactine-max
-451,inactive,NORFLURANE,DH9E53K1Y8,1,0,13129,ventolin-hfa
-452,inactive,NUTMEG OIL,Z1CLM48948,1,0,,vicks-vaporub
-453,inactive,OCTYL PALMITATE,UYY8LE6Q5Y,1,0,85651,sun-bum-face-stick-spf-30
-454,inactive,OCTYLDODECYL CITRATE CROSSPOLYMER,X323T6QO4M,1,0,,neutrogena-sheer-zinc-face-spf-50
-455,inactive,OLEA EUROPAEA LEAF,MJ95C3OH47,1,0,,balmex-diaper-rash-cream
-456,inactive,OLEYL ALCOHOL,172F2WN8DV,1,0,5284499,chapstick
-457,inactive,OLEYL OLEATE,3X3L452Y85,1,0,5364672,butrans
-458,inactive,OLIVE OIL,6UYK2W1W1E,1,0,,sandimmune
-459,inactive,ORANGE,5EVU04N5QU,1,0,,blistex
-460,inactive,P-ANISIC ACID,4SB6Y7DMM3,1,0,7478,cerave-hydrating-mineral-sunscreen-spf-30
-461,inactive,PALM ACID,B6G0Y5Z616,1,0,,dial-antibacterial
-462,inactive,PALM KERNEL ACID,79P21R4317,1,0,,dial-antibacterial
-463,inactive,PALM KERNEL OIL,B0S90M0233,1,0,,speed-stick-power
-464,inactive,PALMITOYL HEXAPEPTIDE-12,HO4ZT5S86C,1,0,10212452,gold-bond-eczema-relief
-465,inactive,PANAX GINSENG ROOT,CUQ3A77YXI,1,0,,sun-bum-face-stick-spf-30
-466,inactive,PAPAYA,KU94FIY6JB,1,0,,hawaiian-tropic
-467,inactive,PASSIFLORA INCARNATA FRUIT,SF206I8G4P,1,0,,hawaiian-tropic
-468,inactive,PEG-10 GLYCERYL STEARATE,YTQ40QRP5W,1,0,,zonalon
-469,inactive,PEG-150 Distearate,6F36Q0I0AC,1,0,,lysol-no-touch-hand-soap
-470,inactive,PEG-30 DIPOLYHYDROXYSTEARATE,9713Q0S7FO,1,0,,cerave-hydrating-mineral-sunscreen-spf-30
-471,inactive,PEG-32 HYDROGENATED PALM GLYCERIDES,G6EP177239,1,0,,absorica
-472,inactive,PEG-32 LAURATE,F8XJF81O0F,1,0,,closeup-toothpaste
-473,inactive,PEG-40 STEARATE,ECU18C66Q7,1,0,,eucerin-eczema-relief
-474,inactive,PEG-60 HYDROGENATED CASTOR OIL,02NG325BQG,1,0,,prograf
-475,inactive,PEG-7 HYDROGENATED CASTOR OIL,WE09129TH5,1,0,,blue-lizard-sport-spf-50
-476,inactive,PEG-7 TRIMETHYLOLPROPANE COCONUT ETHER,MVJ3AD73GG,1,0,,eltamd-uv-clear
-477,inactive,PEG-75 LANOLIN,09179OX7TB,1,0,,orajel-4x-toothache-and-gum
-478,inactive,PEG-8 DIMETHICONE,GIA7T764OD,1,0,,wet-ones
-479,inactive,PEG-8 DISTEARATE,7JNC8VN07M,1,0,,speed-stick-power
-480,inactive,PEG/PPG-116/66 COPOLYMER,JP0CK963E0,1,0,,colgate-optic-white-renewal
-481,inactive,PEG/PPG-19/19 DIMETHICONE,EHH90CO7TL,1,0,,mitchum-clear-gel
-482,inactive,"PENTAERYTHRITOL TETRAKIS(3-(3,5-DI-TERT-BUTYL-4-HYDROXYPHENYL)PROPIONATE)",255PIF62MS,1,0,64819,speed-stick-power
-483,inactive,PENTASODIUM PENTETATE,961TOZ5L7T,1,0,3053,dial-antibacterial
-484,inactive,PEPPERMINT,V95R5KMY2B,1,0,,lexapro
-485,inactive,PHELLODENDRON AMURENSE BARK,PBG27B754G,1,0,,ban-roll-on-unscented
-486,inactive,PHYSALIS ANGULATA WHOLE,W4TKW9D5GG,1,0,,supergoop-unseen-sunscreen-spf-50
-487,inactive,PIDOLIC ACID,SZB83O1W42,1,0,7405,safeguard-antibacterial-hand-wash
-488,inactive,PLUM,67M3EQ6BE1,1,0,,trileptal
-489,inactive,PLUMERIA RUBRA FLOWER,8P7XXY759H,1,0,,hawaiian-tropic
-490,inactive,POLACRILIN,RCZ785HI7S,1,0,,nicorette
-491,inactive,Polidronium Chloride,6716Z5YR3G,1,0,5282454,systane
-492,inactive,POLISTIREX,5H9W9GTW27,1,0,,delsym
-493,inactive,Poloxamer 124,1S66E28KXA,1,0,10154203,differin
-494,inactive,POLOXAMER 182,JX0HIX6OAG,1,0,10154203,la-roche-posay-effaclar
-495,inactive,POLYACRYLAMIDE (1300000 MW),SC5Y4X78TG,1,0,,olay-complete-spf-15-sensitive
-496,inactive,POLYACRYLATE CROSSPOLYMER-6,Q7UI015FF9,1,0,,selsun-blue-normal-to-oily
-497,inactive,POLYACRYLIC ACID (250000 MW),9G2MAD7J6W,1,0,6581,finacea
-498,inactive,POLYAMINOPROPYL BIGUANIDE,DT9D8Z79ET,1,0,,sun-bum-face-stick-spf-30
-499,inactive,POLYESTER-7,0841698D2F,1,0,,coppertone-waterbabies-mineral-spf-50
-500,inactive,"POLYESTER-8 (1400 MW, CYANODIPHENYLPROPENOYL CAPPED)",T9296U138P,1,0,,sun-bum-face-stick-spf-30
-501,inactive,POLYETHYLENE OXIDE 2000000,5K3991GVWI,1,0,,myrbetriq
-502,inactive,POLYISOBUTYLENE (1000 MW),5XB3A63Y52,1,0,,eltamd-uv-clear
-503,inactive,POLYMETHYLSILSESQUIOXANE (4.5 MICRONS),59Z907ZB69,1,0,,supergoop-unseen-sunscreen-spf-50
-504,inactive,POLYOXYL 35 CASTOR OIL,6D4M1DAL6O,1,0,,norvir
-505,inactive,POLYOXYL 40 HYDROGENATED CASTOR OIL,7YC686GQ8F,1,0,,bengay-vanishing-scent
-506,inactive,POLYQUATERNIUM-7 (76/24 ACRYLAMIDE/DADMAC; 120000 MW),AAJ238UT03,1,0,,head-and-shoulders-classic-clean
-507,inactive,POLYSORBATE 40,STI11B5A2X,1,0,92329579,dilantin-125
-508,inactive,POLYSORBATE 81,2MSF640LWM,1,0,,solarcaine-burn-relief
-509,inactive,POLYURETHANE-62,TBK645J3J8,1,0,,aveeno-protect-plus-hydrate-spf-60
-510,inactive,POMEGRANATE,56687D1Z4D,1,0,,sun-bum-face-stick-spf-30
-511,inactive,PONGAMIA PINNATA SEED,C2BRV53B1V,1,0,,eltamd-uv-clear
-512,inactive,POTASSIUM BISULFITE,QJK5LO891P,1,0,,xylocaine
-513,inactive,POTASSIUM CETYL PHOSPHATE,03KCY6P7UT,1,0,19059,neutrogena-ultra-sheer-spf-55
-514,inactive,"POTASSIUM PHOSPHATE, UNSPECIFIED FORM",B7862WZ632,1,0,,finacea
-515,inactive,POVIDONE K12,333AG72FWJ,1,0,,vicks-sinex-severe-pain-mucus-and-chest
-516,inactive,POVIDONE K60,SZR7Z3Q2YH,1,0,,prilosec-otc
-517,inactive,POVIDONE K90,RDH86HJV5Z,1,0,,gocovri
-518,inactive,PPG-11 STEARYL ETHER,S4G2J0Y0LG,1,0,,ban-roll-on-unscented
-519,inactive,PPG-12-Buteth-16,58CG7042J1,1,0,,lysol-no-touch-hand-soap
-520,inactive,PPG-5-CETETH-20,4AAN25P8P4,1,0,,clean-and-clear-essentials-acne-toner
-521,inactive,Propylparaben Sodium,625NNB0G9N,1,0,7175,zyprexa
-522,inactive,PUMMELO,ET1TN5W71X,1,0,,sun-bum-face-stick-spf-30
-523,inactive,RAW SUGAR,8M707QY5GH,1,0,,topamax
-524,inactive,ROSEMARY,IJ67X351P9,1,0,,sun-bum-face-stick-spf-30
-525,inactive,ROSEMARY OIL,8LGU7VM393,1,0,,calamine-lotion
-526,inactive,SAFFLOWER OIL,65UEH262IS,1,0,,certain-dri
-527,inactive,SAGE,065C5D077J,1,0,,sun-bum-face-stick-spf-30
-528,inactive,SALCAPROZATE SODIUM,1YTW0422YU,1,0,158789,wegovy
-529,inactive,SALIX ALBA BARK,205MXS71H7,1,0,,sun-bum-face-stick-spf-30
-530,inactive,SANDALWOOD,3641YW25N2,1,0,,ban-roll-on-unscented
-531,inactive,SARCOSINE,Z711V88R5F,1,0,1088,balmex-diaper-rash-cream
-532,inactive,SODIUM CETOSTEARYL SULFATE,7ZBS06BH4B,1,0,,cortizone-10-soothing-aloe
-533,inactive,SODIUM COCOAMPHOACETATE,W7Q5E87674,1,0,,clearasil-rapid-rescue-wash
-534,inactive,SODIUM COCOYL ISETHIONATE,518XTE8493,1,0,121338492,clearasil-rapid-rescue-wash
-535,inactive,SODIUM LAUROYL SARCOSINATE,632GS99618,1,0,7348,debrox
-536,inactive,SODIUM LAURYL GLYCOL CARBOXYLATE,8L0472VMYL,1,0,15001795,burts-bees-extra-white-toothpaste
-537,inactive,"SODIUM PHOSPHATE, MONOBASIC, MONOHYDRATE",593YOG76RN,1,0,,xalatan
-538,inactive,SODIUM POLYACRYLATE (2500000 MW),05I15JNI2J,1,0,6581,sun-bum-face-stick-spf-30
-539,inactive,SODIUM POLYACRYLATE (8000 MW),285CYO341L,1,0,6581,tiger-balm
-540,inactive,SODIUM POLYMETAPHOSPHATE,P1BM4ZH95L,1,0,,tums
-541,inactive,SODIUM SILICATE,IJF18F77L3,1,0,,closeup-toothpaste
-542,inactive,SODIUM STARCH GLYCOLATE TYPE A CORN,AG9B65PV6B,1,0,,ambien
-543,inactive,SODIUM STARCH GLYCOLATE TYPE B POTATO,27NA468985,1,0,,paxil
-544,inactive,"SODIUM TALLOWATE, BEEF",07RIK6QMEW,1,0,,dial-antibacterial
-545,inactive,SORBITAN ISOSTEARATE,01S2G2C1E4,1,0,91886584,tucks-triple-relief
-546,inactive,SORBITAN MONOOLEATE,06XEA2VD56,1,0,9920342,absorica
-547,inactive,SORBITAN SESQUIOLEATE,0W8RRI5W5A,1,0,,balmex-diaper-rash-cream
-548,inactive,SQUALANE,GW89575KF9,1,0,8089,blistex
-549,inactive,STEARETH-100,4OH5W9UM87,1,0,,suave
-550,inactive,STEARETH-21,53J3F32P58,1,0,,olay-complete-spf-15-sensitive
-551,inactive,STEARYL BEHENATE,A68S9UI39D,1,0,90435,tucks-triple-relief
-552,inactive,STEVIA REBAUDIANA WHOLE,6U422Y08O2,1,0,,burts-bees-extra-white-toothpaste
-553,inactive,STYRENE/ACRYLAMIDE COPOLYMER (500000 MW),5Z4DPO246A,1,0,,sun-bum-face-stick-spf-30
-554,inactive,SUCROSE DISTEARATE,33X4X4B90S,1,0,5360827,abreva
-555,inactive,SUGARCANE,81H2R5AOH3,1,0,,blistex
-556,inactive,"TALLOW ACID, BEEF",5U9XZ261ER,1,0,,dial-antibacterial
-557,inactive,TEA LEAF OIL,VC855RRT77,1,0,,biofreeze
-558,inactive,TETRASODIUM GLUTAMATE DIACETATE,5EHL50I4MY,1,0,18711581,panoxyl
-559,inactive,TRIBASIC CALCIUM PHOSPHATE,91D9GV0Z28,1,0,,crestor
-560,inactive,TRIBEHENIN,8OC9U7TQZ0,1,0,62726,gold-bond-eczema-relief
-561,inactive,TRIETHANOLAMINE DODECYLBENZENESULFONATE,8HM7ZD48HN,1,0,,dove-dermacare-scalp-anti-dandruff
-562,inactive,TRIETHYLHEXANOIN,7K3W1BIU6K,1,0,110973,cerave-hydrating-mineral-sunscreen-spf-30
-563,inactive,TRIMETHYLSILOXYSILICATE (M/Q 0.6-0.8),5041RX63GN,1,0,,sun-bum-face-stick-spf-30
-564,inactive,TRIMETHYLSILOXYSILICATE (M/Q 0.8-1.0),25LXE464L2,1,0,,blue-lizard-sport-spf-50
-565,inactive,TRISODIUM ETHYLENEDIAMINE DISUCCINATE,YA22H34H9Q,1,0,497266,cerave-hydrating-mineral-sunscreen-spf-30
-566,inactive,TURPENTINE OIL,C5H0QJ6V7F,1,0,,vicks-vaporub
-567,inactive,VINYLPYRROLIDONE/EICOSENE COPOLYMER,035MV9S1C3,1,0,,banana-boat-sport-ultra-lip-balm
-568,inactive,VIOLET 2,350KA7O6HK,1,0,6680,neutrogena-oil-free-acne-wash-pink-grapefruit
-569,inactive,VP/HEXADECENE COPOLYMER,KFR5QEN0N9,1,0,,sun-bum-face-stick-spf-30
-570,inactive,WHEY,8617Z5FMF6,1,0,,ex-lax-chocolated
-571,inactive,ZINC CARBONATE,EQR32Y7H0M,1,0,,head-and-shoulders-classic-clean
-572,inactive,ZINC PCA,C32PQ86DH4,1,0,7405,panoxyl
-573,inactive,ZINGIBER OFFICINALE (GINGER) ROOT OIL,SAS9Z1SVUK,1,0,,eltamd-uv-clear
+423,inactive,LAURAMIDOPROPYLAMINE OXIDE,I6KX160QTV,1,0,94599,softsoap-antibacterial-hand-soap
+424,inactive,Lauramine Oxide,4F6FC4MI8W,1,0,15433,lysol-no-touch-hand-soap
+425,inactive,LAURETH-7,Z95S6G8201,1,0,2724258,olay-complete-spf-15-sensitive
+426,inactive,LAURYL GLUCOSIDE,76LN7P7UCU,1,0,93321,burts-bees-extra-white-toothpaste
+427,inactive,LAVENDER OIL,ZBP1YXW0H8,1,0,,calamine-lotion
+428,inactive,"LEMON OIL, COLD PRESSED",I9GRO824LL,1,0,,chapstick
+429,inactive,LICORICE,61ZBX54883,1,0,,soltamox
+430,inactive,LIME JUICE,6416LES0Y6,1,0,,dove-dermacare-scalp-anti-dandruff
+431,inactive,LOW-SUBSTITUTED HYDROXYPROPYL CELLULOSE (11% HYDROXYPROPYL; 120000 MW),NZ94SDL6WR,1,0,,dayvigo
+432,inactive,MACROCYSTIS PYRIFERA (KELP),K31S3OG5C4,1,0,,sun-bum-face-stick-spf-30
+433,inactive,MAGNESIUM ASCORBYL PHOSPHATE,0R822556M5,1,0,54679073,gold-bond-eczema-relief
+434,inactive,MAGNESIUM CARBONATE HYDROXIDE,YQO029V1L4,1,0,,head-and-shoulders-classic-clean
+435,inactive,MANDELIC ACID,NH496X0UJX,1,0,1292,panoxyl
+436,inactive,MANGIFERA INDICA SEED BUTTER,4OXD9M35X2,1,0,,hawaiian-tropic
+437,inactive,MANGO,I629I3NR86,1,0,,hawaiian-tropic
+438,inactive,MEADOWFOAM ESTOLIDE,3HH93SL2H9,1,0,16719232,supergoop-unseen-sunscreen-spf-50
+439,inactive,MEADOWFOAM SEED OIL,412ZHA4T4Y,1,0,,carmex-lip-balm-spf-30
+440,inactive,MELALEUCA ALTERNIFOLIA FLOWERING TOP,5AZ4S6N66F,1,0,,dickinsons-witch-hazel-exfoliating-toner
+441,inactive,MELALEUCA ALTERNIFOLIA WHOLE,976KV4FXYF,1,0,,closeup-toothpaste
+442,inactive,MENTHA ARVENSIS LEAF OIL,1AEY1M553N,1,0,,tiger-balm
+443,inactive,METACRESOL,GGO4Y809LO,1,0,342,demerol
+444,inactive,Methacrylic Acid - Methyl Methacrylate Copolymer (1:2),5KY68S2577,1,0,,dexilant
+445,inactive,METHYL GLUCOSE DIOLEATE,FA9KFJ4Z6P,1,0,87976207,blue-lizard-sport-spf-50
+446,inactive,METHYL ISOBUTYL KETONE,U5T7B88CNP,1,0,7909,ethyl-rubbing-alcohol
+447,inactive,Methylparaben Sodium,CR6K9C2NHK,1,0,7456,zyprexa
+448,inactive,MINT,FV98Z8GITP,1,0,,act-anticavity-fluoride-rinse
+449,inactive,MYRISTYL MYRISTATE,4042ZC00DY,1,0,18605,blistex
+450,inactive,Neopentyl Glycol Diethylhexanoate,U68ZV6W62C,1,0,34260,cetaphil-sheer-mineral-stick-spf-50
+451,inactive,NONOXYNOL-9,48Q180SH9T,1,0,,bactine-max
+452,inactive,NORFLURANE,DH9E53K1Y8,1,0,13129,ventolin-hfa
+453,inactive,NUTMEG OIL,Z1CLM48948,1,0,,vicks-vaporub
+454,inactive,OCTYL PALMITATE,UYY8LE6Q5Y,1,0,85651,sun-bum-face-stick-spf-30
+455,inactive,OCTYLDODECYL CITRATE CROSSPOLYMER,X323T6QO4M,1,0,,neutrogena-sheer-zinc-face-spf-50
+456,inactive,OLEA EUROPAEA LEAF,MJ95C3OH47,1,0,,balmex-diaper-rash-cream
+457,inactive,OLEYL ALCOHOL,172F2WN8DV,1,0,5284499,chapstick
+458,inactive,OLEYL OLEATE,3X3L452Y85,1,0,5364672,butrans
+459,inactive,OLIVE OIL,6UYK2W1W1E,1,0,,sandimmune
+460,inactive,ORANGE,5EVU04N5QU,1,0,,blistex
+461,inactive,P-ANISIC ACID,4SB6Y7DMM3,1,0,7478,cerave-hydrating-mineral-sunscreen-spf-30
+462,inactive,PALM ACID,B6G0Y5Z616,1,0,,dial-antibacterial
+463,inactive,PALM KERNEL ACID,79P21R4317,1,0,,dial-antibacterial
+464,inactive,PALM KERNEL OIL,B0S90M0233,1,0,,speed-stick-power
+465,inactive,PALMITOYL HEXAPEPTIDE-12,HO4ZT5S86C,1,0,10212452,gold-bond-eczema-relief
+466,inactive,PANAX GINSENG ROOT,CUQ3A77YXI,1,0,,sun-bum-face-stick-spf-30
+467,inactive,PAPAYA,KU94FIY6JB,1,0,,hawaiian-tropic
+468,inactive,PASSIFLORA INCARNATA FRUIT,SF206I8G4P,1,0,,hawaiian-tropic
+469,inactive,PEG-10 GLYCERYL STEARATE,YTQ40QRP5W,1,0,,zonalon
+470,inactive,PEG-120 METHYL GLUCOSE DIOLEATE,YM0K64F20V,1,0,,softsoap-antibacterial-hand-soap
+471,inactive,PEG-150 Distearate,6F36Q0I0AC,1,0,,lysol-no-touch-hand-soap
+472,inactive,PEG-30 DIPOLYHYDROXYSTEARATE,9713Q0S7FO,1,0,,cerave-hydrating-mineral-sunscreen-spf-30
+473,inactive,PEG-32 HYDROGENATED PALM GLYCERIDES,G6EP177239,1,0,,absorica
+474,inactive,PEG-32 LAURATE,F8XJF81O0F,1,0,,closeup-toothpaste
+475,inactive,PEG-40 STEARATE,ECU18C66Q7,1,0,,eucerin-eczema-relief
+476,inactive,PEG-60 HYDROGENATED CASTOR OIL,02NG325BQG,1,0,,prograf
+477,inactive,PEG-7 HYDROGENATED CASTOR OIL,WE09129TH5,1,0,,blue-lizard-sport-spf-50
+478,inactive,PEG-7 TRIMETHYLOLPROPANE COCONUT ETHER,MVJ3AD73GG,1,0,,eltamd-uv-clear
+479,inactive,PEG-75 LANOLIN,09179OX7TB,1,0,,orajel-4x-toothache-and-gum
+480,inactive,PEG-8 DIMETHICONE,GIA7T764OD,1,0,,wet-ones
+481,inactive,PEG-8 DISTEARATE,7JNC8VN07M,1,0,,speed-stick-power
+482,inactive,PEG/PPG-116/66 COPOLYMER,JP0CK963E0,1,0,,colgate-optic-white-renewal
+483,inactive,PEG/PPG-19/19 DIMETHICONE,EHH90CO7TL,1,0,,mitchum-clear-gel
+484,inactive,"PENTAERYTHRITOL TETRAKIS(3-(3,5-DI-TERT-BUTYL-4-HYDROXYPHENYL)PROPIONATE)",255PIF62MS,1,0,64819,speed-stick-power
+485,inactive,PENTASODIUM PENTETATE,961TOZ5L7T,1,0,3053,dial-antibacterial
+486,inactive,PEPPERMINT,V95R5KMY2B,1,0,,lexapro
+487,inactive,PHELLODENDRON AMURENSE BARK,PBG27B754G,1,0,,ban-roll-on-unscented
+488,inactive,PHYSALIS ANGULATA WHOLE,W4TKW9D5GG,1,0,,supergoop-unseen-sunscreen-spf-50
+489,inactive,PIDOLIC ACID,SZB83O1W42,1,0,7405,safeguard-antibacterial-hand-wash
+490,inactive,PLUM,67M3EQ6BE1,1,0,,trileptal
+491,inactive,PLUMERIA RUBRA FLOWER,8P7XXY759H,1,0,,hawaiian-tropic
+492,inactive,POLACRILIN,RCZ785HI7S,1,0,,nicorette
+493,inactive,Polidronium Chloride,6716Z5YR3G,1,0,5282454,systane
+494,inactive,POLISTIREX,5H9W9GTW27,1,0,,delsym
+495,inactive,Poloxamer 124,1S66E28KXA,1,0,10154203,differin
+496,inactive,POLOXAMER 182,JX0HIX6OAG,1,0,10154203,la-roche-posay-effaclar
+497,inactive,POLYACRYLAMIDE (1300000 MW),SC5Y4X78TG,1,0,,olay-complete-spf-15-sensitive
+498,inactive,POLYACRYLATE CROSSPOLYMER-6,Q7UI015FF9,1,0,,selsun-blue-normal-to-oily
+499,inactive,POLYACRYLIC ACID (250000 MW),9G2MAD7J6W,1,0,6581,finacea
+500,inactive,POLYAMINOPROPYL BIGUANIDE,DT9D8Z79ET,1,0,,sun-bum-face-stick-spf-30
+501,inactive,POLYESTER-7,0841698D2F,1,0,,coppertone-waterbabies-mineral-spf-50
+502,inactive,"POLYESTER-8 (1400 MW, CYANODIPHENYLPROPENOYL CAPPED)",T9296U138P,1,0,,sun-bum-face-stick-spf-30
+503,inactive,POLYETHYLENE OXIDE 2000000,5K3991GVWI,1,0,,myrbetriq
+504,inactive,POLYISOBUTYLENE (1000 MW),5XB3A63Y52,1,0,,eltamd-uv-clear
+505,inactive,POLYMETHYLSILSESQUIOXANE (4.5 MICRONS),59Z907ZB69,1,0,,supergoop-unseen-sunscreen-spf-50
+506,inactive,POLYOXYL 35 CASTOR OIL,6D4M1DAL6O,1,0,,norvir
+507,inactive,POLYOXYL 40 HYDROGENATED CASTOR OIL,7YC686GQ8F,1,0,,bengay-vanishing-scent
+508,inactive,POLYQUATERNIUM-7 (76/24 ACRYLAMIDE/DADMAC; 120000 MW),AAJ238UT03,1,0,,head-and-shoulders-classic-clean
+509,inactive,POLYSORBATE 40,STI11B5A2X,1,0,92329579,dilantin-125
+510,inactive,POLYSORBATE 81,2MSF640LWM,1,0,,solarcaine-burn-relief
+511,inactive,POLYURETHANE-62,TBK645J3J8,1,0,,aveeno-protect-plus-hydrate-spf-60
+512,inactive,POMEGRANATE,56687D1Z4D,1,0,,sun-bum-face-stick-spf-30
+513,inactive,PONGAMIA PINNATA SEED,C2BRV53B1V,1,0,,eltamd-uv-clear
+514,inactive,POTASSIUM BISULFITE,QJK5LO891P,1,0,,xylocaine
+515,inactive,POTASSIUM CETYL PHOSPHATE,03KCY6P7UT,1,0,19059,neutrogena-ultra-sheer-spf-55
+516,inactive,"POTASSIUM PHOSPHATE, UNSPECIFIED FORM",B7862WZ632,1,0,,finacea
+517,inactive,POVIDONE K12,333AG72FWJ,1,0,,vicks-sinex-severe-pain-mucus-and-chest
+518,inactive,POVIDONE K60,SZR7Z3Q2YH,1,0,,prilosec-otc
+519,inactive,POVIDONE K90,RDH86HJV5Z,1,0,,gocovri
+520,inactive,PPG-11 STEARYL ETHER,S4G2J0Y0LG,1,0,,ban-roll-on-unscented
+521,inactive,PPG-12-Buteth-16,58CG7042J1,1,0,,lysol-no-touch-hand-soap
+522,inactive,PPG-5-CETETH-20,4AAN25P8P4,1,0,,clean-and-clear-essentials-acne-toner
+523,inactive,Propylparaben Sodium,625NNB0G9N,1,0,7175,zyprexa
+524,inactive,PUMMELO,ET1TN5W71X,1,0,,sun-bum-face-stick-spf-30
+525,inactive,RAW SUGAR,8M707QY5GH,1,0,,topamax
+526,inactive,ROSEMARY,IJ67X351P9,1,0,,sun-bum-face-stick-spf-30
+527,inactive,ROSEMARY OIL,8LGU7VM393,1,0,,calamine-lotion
+528,inactive,SAFFLOWER OIL,65UEH262IS,1,0,,certain-dri
+529,inactive,SAGE,065C5D077J,1,0,,sun-bum-face-stick-spf-30
+530,inactive,SALCAPROZATE SODIUM,1YTW0422YU,1,0,158789,wegovy
+531,inactive,SALIX ALBA BARK,205MXS71H7,1,0,,sun-bum-face-stick-spf-30
+532,inactive,SANDALWOOD,3641YW25N2,1,0,,ban-roll-on-unscented
+533,inactive,SARCOSINE,Z711V88R5F,1,0,1088,balmex-diaper-rash-cream
+534,inactive,SODIUM CETOSTEARYL SULFATE,7ZBS06BH4B,1,0,,cortizone-10-soothing-aloe
+535,inactive,SODIUM COCOAMPHOACETATE,W7Q5E87674,1,0,,clearasil-rapid-rescue-wash
+536,inactive,SODIUM COCOYL ISETHIONATE,518XTE8493,1,0,121338492,clearasil-rapid-rescue-wash
+537,inactive,SODIUM LAUROYL SARCOSINATE,632GS99618,1,0,7348,debrox
+538,inactive,SODIUM LAURYL GLYCOL CARBOXYLATE,8L0472VMYL,1,0,15001795,burts-bees-extra-white-toothpaste
+539,inactive,"SODIUM PHOSPHATE, MONOBASIC, MONOHYDRATE",593YOG76RN,1,0,,xalatan
+540,inactive,SODIUM POLYACRYLATE (2500000 MW),05I15JNI2J,1,0,6581,sun-bum-face-stick-spf-30
+541,inactive,SODIUM POLYACRYLATE (8000 MW),285CYO341L,1,0,6581,tiger-balm
+542,inactive,SODIUM POLYMETAPHOSPHATE,P1BM4ZH95L,1,0,,tums
+543,inactive,SODIUM SILICATE,IJF18F77L3,1,0,,closeup-toothpaste
+544,inactive,SODIUM STARCH GLYCOLATE TYPE A CORN,AG9B65PV6B,1,0,,ambien
+545,inactive,SODIUM STARCH GLYCOLATE TYPE B POTATO,27NA468985,1,0,,paxil
+546,inactive,"SODIUM TALLOWATE, BEEF",07RIK6QMEW,1,0,,dial-antibacterial
+547,inactive,SORBITAN ISOSTEARATE,01S2G2C1E4,1,0,91886584,tucks-triple-relief
+548,inactive,SORBITAN MONOOLEATE,06XEA2VD56,1,0,9920342,absorica
+549,inactive,SORBITAN SESQUIOLEATE,0W8RRI5W5A,1,0,,balmex-diaper-rash-cream
+550,inactive,SQUALANE,GW89575KF9,1,0,8089,blistex
+551,inactive,STEARETH-100,4OH5W9UM87,1,0,,suave
+552,inactive,STEARETH-21,53J3F32P58,1,0,,olay-complete-spf-15-sensitive
+553,inactive,STEARYL BEHENATE,A68S9UI39D,1,0,90435,tucks-triple-relief
+554,inactive,STEVIA REBAUDIANA WHOLE,6U422Y08O2,1,0,,burts-bees-extra-white-toothpaste
+555,inactive,STYRENE/ACRYLAMIDE COPOLYMER (500000 MW),5Z4DPO246A,1,0,,sun-bum-face-stick-spf-30
+556,inactive,SUCROSE DISTEARATE,33X4X4B90S,1,0,5360827,abreva
+557,inactive,SUGARCANE,81H2R5AOH3,1,0,,blistex
+558,inactive,"TALLOW ACID, BEEF",5U9XZ261ER,1,0,,dial-antibacterial
+559,inactive,TEA LEAF OIL,VC855RRT77,1,0,,biofreeze
+560,inactive,TETRASODIUM GLUTAMATE DIACETATE,5EHL50I4MY,1,0,18711581,panoxyl
+561,inactive,TRIBASIC CALCIUM PHOSPHATE,91D9GV0Z28,1,0,,crestor
+562,inactive,TRIBEHENIN,8OC9U7TQZ0,1,0,62726,gold-bond-eczema-relief
+563,inactive,TRIETHANOLAMINE DODECYLBENZENESULFONATE,8HM7ZD48HN,1,0,,dove-dermacare-scalp-anti-dandruff
+564,inactive,TRIETHYLHEXANOIN,7K3W1BIU6K,1,0,110973,cerave-hydrating-mineral-sunscreen-spf-30
+565,inactive,TRIMETHYLSILOXYSILICATE (M/Q 0.6-0.8),5041RX63GN,1,0,,sun-bum-face-stick-spf-30
+566,inactive,TRIMETHYLSILOXYSILICATE (M/Q 0.8-1.0),25LXE464L2,1,0,,blue-lizard-sport-spf-50
+567,inactive,TRISODIUM ETHYLENEDIAMINE DISUCCINATE,YA22H34H9Q,1,0,497266,cerave-hydrating-mineral-sunscreen-spf-30
+568,inactive,TURPENTINE OIL,C5H0QJ6V7F,1,0,,vicks-vaporub
+569,inactive,VINYLPYRROLIDONE/EICOSENE COPOLYMER,035MV9S1C3,1,0,,banana-boat-sport-ultra-lip-balm
+570,inactive,VIOLET 2,350KA7O6HK,1,0,6680,neutrogena-oil-free-acne-wash-pink-grapefruit
+571,inactive,VP/HEXADECENE COPOLYMER,KFR5QEN0N9,1,0,,sun-bum-face-stick-spf-30
+572,inactive,WHEY,8617Z5FMF6,1,0,,ex-lax-chocolated
+573,inactive,ZINC CARBONATE,EQR32Y7H0M,1,0,,head-and-shoulders-classic-clean
+574,inactive,ZINC PCA,C32PQ86DH4,1,0,7405,panoxyl
+575,inactive,ZINGIBER OFFICINALE (GINGER) ROOT OIL,SAS9Z1SVUK,1,0,,eltamd-uv-clear
