@@ -543,6 +543,13 @@ extended solids in the catalog (calcium and magnesium oxide, the carbides, the i
 `docs/design/extended-solids-review-2026-11.html` and wait for Garrett's ruling; `tests/test_extended_solids.py` pins
 `structure_none.yaml` to the three, so a new entry comes only with a ruling.
 
+**The deploy's two amendments (2026-11-26):** the three no-structure pages show the conventional formula the panel
+uses. `structure_none.yaml` takes an optional `formula` per entry (TiO2, SiO2, ZnO): an editorial display form of
+PubChem's calculated formula (O2Ti, O2Si, OZn); the record's `molecular_formula`, the search index and the dataset keep
+PubChem's, `structure_none` carries `formula`, and the build stops if the two do not hold the same atoms. The seed's
+optional `drop_names` leaves a systematic name of the molecule that does not exist out of "Also called" (silicon
+dioxide's "Dioxosilane"; `display_synonyms` and `wikidata_names` only, the record's `synonyms` still hold it).
+
 **After the pass, the weekly run's lines:** `structure drawings: 901 carried, 0 repainted, 0 drawn, 28 with no
 drawing`; parts, pairs and repeat units as below; made or remade: none.
 

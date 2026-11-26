@@ -1102,22 +1102,47 @@ def _none_seed() -> dict:
     return (yaml.safe_load(STRUCTURE_NONE.read_text()) or {}).get("molecules") or {}
 
 
-def structure_none_for(slug: str) -> dict | None:
-    """The record's ``structure_none`` ({line, confidence, source}) or None (the 2026-12-care tranche,
-    seeds/structure_none.yaml): an extended solid PubChem gives a SMILES for, drawn with nothing. A bad
-    entry stops the build."""
+def _formula_counts(formula: str) -> dict:
+    """Element counts of a formula written in any order (``O2Si`` and ``SiO2`` both give {O: 2, Si: 1})."""
+    counts: dict = {}
+    for el, n in re.findall(r"([A-Z][a-z]?)(\d*)", formula):
+        counts[el] = counts.get(el, 0) + int(n or 1)
+    return counts
+
+
+def structure_none_for(slug: str, formula: str | None = None) -> dict | None:
+    """The record's ``structure_none`` ({line, confidence, source} and, when the seed gives one, ``formula``) or
+    None (the 2026-12-care tranche, seeds/structure_none.yaml): an extended solid PubChem gives a SMILES for, drawn
+    with nothing. A bad entry stops the build.
+
+    ``formula`` (the extended-solids deploy, 2026-11-26) is the conventional way to write the formula (SiO2) where
+    PubChem's Hill order reads O2Si: an editorial display form of the same calculated formula. The record's
+    ``molecular_formula`` stays PubChem's. When PubChem's formula is passed in, the two must hold the same atoms."""
     e = _none_seed().get(slug)
     if not e:
         return None
     line = " ".join(str(e.get("line") or "").split())
+    shown = str(e.get("formula") or "").strip()
     problems = []
     if not (line and str(e.get("basis") or "").strip()):
         problems.append("needs line and basis")
     elif any(d in line for d in ("\u2014", "\u2013")):
         problems.append("a dash in the line")
+    if shown and formula and _formula_counts(shown) != _formula_counts(formula):
+        problems.append(f"formula {shown} does not hold the atoms of PubChem's {formula}")
     if problems:
         raise SystemExit(f"{STRUCTURE_NONE.name}: {slug}: " + "; ".join(problems))
-    return {"line": line, "confidence": "from_source", "source": _src("curated")}
+    out = {"line": line, "confidence": "from_source", "source": _src("curated")}
+    if shown:
+        out["formula"] = shown
+    return out
+
+
+def structure_none_dropped_names(slug: str) -> set:
+    """Lower-cased names a lattice's page does not list under "Also called" (seeds/structure_none.yaml
+    ``drop_names``): a systematic name of the one-formula-unit molecule that does not exist ("dioxosilane")."""
+    e = _none_seed().get(slug) or {}
+    return {str(n).strip().lower() for n in (e.get("drop_names") or [])}
 
 
 def _carried_svg(smiles: "str | None", prior: dict | None) -> dict:
@@ -1224,7 +1249,7 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         iso = can = None
         props = {}
     display = structure_display_for(slug, iso)
-    no_drawing = structure_none_for(slug)
+    no_drawing = structure_none_for(slug, props.get("MolecularFormula"))
 
     rec = {
         "cid": cid, "slug": slug, "title": _normalize_greek(title), "preferred_name": pref,
@@ -1290,6 +1315,11 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         rec["structure_display"] = display
     if no_drawing:
         rec["structure_none"] = no_drawing
+        drop = structure_none_dropped_names(slug)
+        if drop:
+            for key in ("display_synonyms", "wikidata_names"):
+                if rec.get(key):
+                    rec[key] = [n for n in rec[key] if n.strip().lower() not in drop]
     if curated:
         _merge_curated(rec, curated)
 

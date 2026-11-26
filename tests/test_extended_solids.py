@@ -92,3 +92,43 @@ def test_zinc_oxide_leaves_the_molecule_of_the_week_for_avobenzone():
                                    "second filter that keeps sunlight from breaking it down.")
     assert not any(w.get("slug") in SOLIDS for w in weeks)
     assert _rec("avobenzone")["structure_svg"]
+
+
+# ── The deploy's two amendments (2026-11-26, Cowork's review of the screenshots) ─────────────────────────────────
+CONVENTIONAL = {"titanium-dioxide": ("O2Ti", "TiO2"), "silicon-dioxide": ("O2Si", "SiO2"), "zinc-oxide": ("OZn", "ZnO")}
+
+
+def test_each_no_structure_page_shows_the_conventional_formula_and_keeps_pubchems():
+    # An editorial display form of the same calculated formula, a seed field on the entry (never a rule guessed from
+    # the formula). The record's molecular_formula (search, dataset, the formula-based logic) stays PubChem's.
+    seed = yaml.safe_load((SEEDS_DIR / "structure_none.yaml").read_text())["molecules"]
+    for slug, (hill, shown) in CONVENTIONAL.items():
+        r = _rec(slug)
+        assert seed[slug]["formula"] == shown and r["structure_none"]["formula"] == shown, slug
+        assert r["molecular_formula"] == hill, slug
+        assert assemble._formula_counts(shown) == assemble._formula_counts(hill), slug
+
+
+def test_a_display_formula_with_other_atoms_stops_the_build(monkeypatch):
+    import pytest
+    monkeypatch.setitem(assemble._none_seed()["silicon-dioxide"], "formula", "SiO")
+    with pytest.raises(SystemExit, match="does not hold the atoms"):
+        assemble.structure_none_for("silicon-dioxide", "O2Si")
+
+
+def test_the_counts_ignore_order():
+    assert assemble._formula_counts("O2Si") == assemble._formula_counts("SiO2") == {"Si": 1, "O": 2}
+    assert assemble._formula_counts("OZn") == assemble._formula_counts("ZnO")
+    assert assemble._formula_counts("O2Ti") != assemble._formula_counts("TiO")
+
+
+def test_also_called_drops_the_name_of_the_molecule_that_does_not_exist():
+    # "Dioxosilane" names the single SiO2 molecule; silicon dioxide is a network. Everyday names stay, and the
+    # record's `synonyms` (the search index) still hold it. Zinc oxide and titanium dioxide carry no such name.
+    si = _rec("silicon-dioxide")
+    assert "Dioxosilane" not in (si["display_synonyms"] or []) and "Dioxosilane" in si["synonyms"]
+    assert si["display_synonyms"] == ["Acticel", "Carplex", "Diatomaceous silica"]
+    assert _rec("zinc-oxide")["display_synonyms"] == ["ZnO", "calamine", "philosopher's wool", "Chinese white"]
+    assert _rec("titanium-dioxide")["display_synonyms"] == ["titania", "Hombitan", "Tiofine", "Tioxide"]
+    seed = yaml.safe_load((SEEDS_DIR / "structure_none.yaml").read_text())["molecules"]
+    assert {s for s, e in seed.items() if e.get("drop_names")} == {"silicon-dioxide"}
