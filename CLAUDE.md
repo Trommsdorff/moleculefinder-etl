@@ -18,7 +18,7 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
 - **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
   hand `mfetl zenodo` runs it). The weekly job's release and mirrors steps are merged (11-23).
-- **Extended solids** (merged to `main` 2026-11-26, push pending): SiO2 and ZnO drawn with nothing, and the three no-structure
+- **Extended solids** (DEPLOYED 2026-11-26, ETL `c3b5259`): SiO2 and ZnO drawn with nothing, and the three no-structure
   entries' conventional `formula` and `drop_names`; the rest wait for Garrett (web `docs/design/extended-solids-review-2026-11.html`). **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 

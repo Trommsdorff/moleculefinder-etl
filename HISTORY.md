@@ -2,8 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
-## Extended solids, amended and merged for the deploy (2026-11-26, `main` locally `217af06`, NOT pushed)
+## Extended solids, amended and merged for the deploy (2026-11-26, `main` `c3b5259`, DEPLOYED)
 Brief `../EXTENDED-SOLIDS-DEPLOY-PROMPT.md`; full record `../HISTORY.md`, 2026-11-26. `940901b`: `structure_none.yaml` takes an optional `formula` (TiO2, SiO2, ZnO: the conventional form of PubChem's O2Ti, O2Si, OZn; `assemble.structure_none_for` stops the build if the atoms differ; carried on the record's `structure_none`) and `drop_names` (silicon dioxide: "Dioxosilane" out of `display_synonyms` and `wikidata_names`; `synonyms` keep it); `molecular_formula` stays PubChem's; four tests in `tests/test_extended_solids.py`; DRAWING-RECIPES section 13. `c10cd99`: the review-page generator's amendments section. Suite 1,570 passed, 1 skipped; ruff 130; pinned build twice byte-identical, 0 PubChem POSTs, only three records moved; weekly dry run `--ref extended-solids-2026-11` complete (Drawings 901 / 723 / 147 / 3, 28 with no drawing). Merged `--no-ff`.
+DEPLOYED 2026-11-26: ETL `main` pushed `eee2c73..c3b5259`; Vercel Production success, deployment 8099594976, 01:36:07 UTC 11-27 (20:36 Eastern); live checks and IndexNow (0 new, 4 changed, 4 accepted) in `../HISTORY.md`, 2026-11-26. The merge record above stands; this line closes it.
 
 
 ## The extended-solids pass (2026-11-26, branch `extended-solids-2026-11`, NOT merged, NOT pushed)
