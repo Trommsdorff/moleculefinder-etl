@@ -67,13 +67,15 @@ def _co(m):
 def test_each_cobalamin_is_drawn_from_its_checked_display_structure(slug):
     r, e = _rec(slug), _seed()[slug]
     d = r["structure_display"]
-    assert d["kind"] == "metal_bonds" and d["metal"] == "Co" and d["smiles"] == e["smiles"]
+    assert d["kind"] == "metal_bonds" and d["metal"] == "Co" and d["smiles"] == (
+        structures.labelled_top(e["smiles"].strip(), "Co", e["top"], e["top_label"]) if "top_label" in e else e["smiles"])
     assert r["cid"] == CIDS[slug] and r["has_3d"] is False and d["has_3d"] is False
     assert r["structure_svg_key"] == structures.svg_key(d["smiles"]) and structures.drawn_smiles(r) == d["smiles"]
     assert structures.svg_for(d["smiles"]) == r["structure_svg"]
-    assert set(d) == {"kind", "smiles", "metal", "has_3d", "line", "confidence", "source"}   # top, stereo_from stay
+    assert set(d) == {"kind", "smiles", "metal", "has_3d", "line", "confidence", "source"}   # top, stereo_from, top_label stay
     assert r["isomeric_smiles"] != d["smiles"] and "." in r["isomeric_smiles"]              # the record is PubChem's
     assert _problems(slug) == []
+    assert _problems(slug, d["smiles"]) == []                          # the labelled drawing passes the check too
 
 
 @pytest.mark.parametrize("slug", COBALAMINS)
@@ -410,7 +412,9 @@ def test_the_shipped_drawing_is_readable(slug):
     for where, s in RENDER.items():
         aa, ab = PX[where]
         assert k["atom_atom"] * s >= aa and k["atom_bond"] * s >= ab, (where, k["atom_atom"] * s, k["atom_bond"] * s)
-    assert not k["label_over_bond"] and not k["label_over_label"] and not k["carbon_labels"]
+    assert not k["label_over_bond"] and not k["label_over_label"]
+    # no carbon is labelled, except methylcobalamin's methyl on the cobalt (its entry's top_label, "H3C")
+    assert len(k["carbon_labels"]) == (1 if slug == "methylcobalamin" else 0)
     assert not k["contact_flag"]
     # exactly one crossing: the bond from the cobalt to the benzimidazole over the ring's C14-C15 bond
     assert len(k["crossings"]) == 1
@@ -491,3 +495,50 @@ def test_none_of_the_four_is_in_a_pair_a_door_or_a_week():
     for slug in COBALAMINS:
         assert f'"{slug}"' not in text and f"{slug}-vs-" not in text and f"-vs-{slug}" not in text, slug
         assert slug not in {w["slug"] for w in weeks}
+
+
+# ── methylcobalamin's methyl group is labelled "H3C" (2026-11-27, COBALAMINS-DEPLOY-PROMPT.md, amendment 1) ───────────
+def _labelled_atoms(slug):
+    """(atom index, label) for every carbon-label glyph group the shipped SVG draws, read from the SVG alone."""
+    r = _rec(slug)
+    dm = G.drawing_mol(Chem.MolFromSmiles(r["structure_display"]["smiles"]), r["structure_svg"])
+    _, labels = G._bonds_and_labels(G.parse_svg(r["structure_svg"]), 10 ** 6)
+    return [(i, len(ps)) for i, ps in labels.items() if i < dm.GetNumAtoms() and dm.GetAtomWithIdx(i).GetSymbol() == "C"]
+
+
+def test_methylcobalamins_methyl_carries_the_label_and_no_other_carbon_of_the_four_does():
+    assert _seed()["methylcobalamin"]["top_label"] == "H3C"
+    assert [s for s in COBALAMINS if "top_label" in _seed()[s]] == ["methylcobalamin"]
+    for slug in COBALAMINS:
+        r = _rec(slug)
+        m = Chem.MolFromSmiles(r["structure_display"]["smiles"])
+        tagged = [(a.GetIdx(), a.GetProp("atomLabel")) for a in m.GetAtoms() if a.HasProp("atomLabel")]
+        if slug != "methylcobalamin":
+            assert tagged == [] and _labelled_atoms(slug) == [], slug
+            continue
+        (idx, text), = tagged
+        a = m.GetAtomWithIdx(idx)
+        assert text == "H<sub>3</sub>C" and a.GetSymbol() == "C" and a.GetDegree() == 1 and a.GetTotalNumHs() == 3
+        assert a.GetNeighbors()[0].GetSymbol() == "Co"                      # the methyl on the cobalt, no other carbon
+        got = _labelled_atoms(slug)
+        assert [i for i, _ in got] == [idx]                                # the shipped SVG draws exactly that label
+        assert got[0][1] == 3                                              # three glyphs: H, the subscript 3, C
+        assert f"class='atom-{idx}'" in r["structure_svg"]
+
+
+def test_the_label_is_written_by_the_build_from_the_entry_not_into_the_seed_smiles():
+    e = _seed()["methylcobalamin"]
+    assert "$" not in e["smiles"]
+    assert structures.labelled_top(e["smiles"].strip(), "Co", e["top"], "H3C") == \
+        assemble.metal_bonds_for("methylcobalamin", _rec("methylcobalamin")["isomeric_smiles"])["smiles"]
+
+
+def test_a_top_label_that_is_not_the_atom_and_its_hydrogens_stops_the_build():
+    e = _seed()["methylcobalamin"]
+    for bad in ("H2C", "H3C2", "OH", "H3O", "h3c", ""):
+        with pytest.raises(ValueError):
+            structures.labelled_top(e["smiles"].strip(), "Co", e["top"], bad)
+    h = _seed()["hydroxocobalamin"]
+    assert structures.labelled_top(h["smiles"].strip(), "Co", h["top"], "HO").count("$") == 2   # no digit, no tag
+    with pytest.raises(ValueError):
+        structures.labelled_top(h["smiles"].strip(), "Co", h["top"], "H3C")   # an oxygen is not a methyl group

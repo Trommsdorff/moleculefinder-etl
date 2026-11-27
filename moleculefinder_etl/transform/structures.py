@@ -383,6 +383,43 @@ def _top_group(mol, metal_idx: int, top: str) -> list[int] | None:
     return sorted(seen)
 
 
+def labelled_top(display: str, metal: str, top: str, label: str) -> str:
+    """``display`` (a CXSMILES with coordinates) with the label ``label`` written on the first atom of the group on
+    top of the metal, as the CXSMILES ``$...$`` atom-label field RDKit's drawer shows in place of the carbon's
+    bare end (a methyl group drawn "H3C", the 3 a subscript as in the drawing's "H2N", joined to the metal, not a stub). The entry sets the label
+    (``top_label`` in seeds/structure_display.yaml metal_bonds); this finds the atom (``top``, exactly one) and checks
+    that the label is that atom and its hydrogens, nothing else, so it cannot name a different group. Raises
+    ValueError when it cannot be done."""
+    import re
+
+    from rdkit import Chem
+
+    m = Chem.MolFromSmiles(display or "")
+    if m is None or "|" not in display or "$" in display:
+        raise ValueError("needs a CXSMILES with coordinates and no atom labels of its own")
+    ms = [a.GetIdx() for a in m.GetAtoms() if a.GetSymbol() == metal]
+    grp = _top_group(m, ms[0], top) if len(ms) == 1 else None
+    if grp is None:
+        raise ValueError("top matches no single atom bonded to the metal")
+    atom = next(a for a in m.GetAtomWithIdx(ms[0]).GetNeighbors() if a.GetIdx() in grp)
+    want = {atom.GetSymbol(): 1}
+    if atom.GetTotalNumHs():
+        want["H"] = atom.GetTotalNumHs()
+    got: dict[str, int] = {}
+    if not re.fullmatch(r"(?:[A-Z][a-z]?\d*)+", label or ""):
+        raise ValueError(f"label {label!r} is not a formula-style label")
+    for el, n in re.findall(r"([A-Z][a-z]?)(\d*)", label):
+        got[el] = got.get(el, 0) + int(n or 1)
+    if got != want:
+        raise ValueError(f"label {label!r} is not the atom and its hydrogens ({want})")
+    body, _, tail = display.rstrip().rpartition("|")
+    if tail or not body.endswith(")"):
+        raise ValueError("the CXSMILES must end with its coordinates")
+    fields = [""] * m.GetNumAtoms()
+    fields[atom.GetIdx()] = re.sub(r"(?<=[A-Za-z])(\d+)", r"<sub>\1</sub>", label)    # H3C is drawn H, subscript 3, C
+    return f"{body},${';'.join(fields)}$|"
+
+
 def skeleton_key(display: str, metal: str, top: str) -> str | None:
     """The display structure with its top group removed, as one string that two drawings share exactly when they are
     the same skeleton: the same atoms, bonds, hydrogens, charges and every stereocentre and double-bond geometry, the

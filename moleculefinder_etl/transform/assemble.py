@@ -1074,7 +1074,8 @@ def metal_bonds_for(slug: str, iso: str | None) -> dict | None:
     conformer of the record shows the metal apart, which must not sit beside a drawing that bonds it.
     The cobalamins (2026-11-26) add two optional fields: ``top`` (the pattern of the group on top of the metal) and
     ``stereo_from`` (the entry whose stereo a record that leaves centres unspecified is drawn with; checked by
-    ``structures.metal_bonds_problems``, ruling 4(d)). Neither reaches the record."""
+    ``structures.metal_bonds_problems``, ruling 4(d)). Neither reaches the record. A third, ``top_label`` (2026-11-27),
+    writes a label on the top group's first atom into the drawn SMILES (``structures.labelled_top``)."""
     e = _metal_bonds_seed().get(slug)
     if not e:
         return None
@@ -1101,6 +1102,11 @@ def metal_bonds_for(slug: str, iso: str | None) -> dict | None:
             reference=(str(ref["smiles"]).strip(), ref["top"]) if ref else None)
     if problems:
         raise SystemExit(f"{STRUCTURE_DISPLAY.name}: metal_bonds: {slug}: " + "; ".join(problems))
+    if "top_label" in e:                    # the one carbon labelled in the drawing, set by the entry (2026-11-27)
+        try:
+            smiles = structures.labelled_top(smiles, metal, str(e.get("top") or ""), str(e["top_label"]).strip())
+        except ValueError as err:
+            raise SystemExit(f"{STRUCTURE_DISPLAY.name}: metal_bonds: {slug}: top_label: {err}") from err
     out = {"kind": "metal_bonds", "smiles": smiles, "metal": metal, "has_3d": False, "line": " ".join(line.split())}
     if "cid" in e:
         out.update({"cid": int(e["cid"]), "form": str(e["form"]).strip()})

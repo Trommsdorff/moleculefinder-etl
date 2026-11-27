@@ -646,10 +646,16 @@ equivalent places) and the record's own top group in the same place. Coordinates
 Neither field reaches the record. Today: hydroxocobalamin the reference (14 carbon centres, all its own; RDKit also
 flags the phosphorus, which no record specifies and none draws); cyanocobalamin 13 of its own, all agreeing with the
 reference, plus the anomeric carbon from it; vitamin B12 and methylcobalamin all 14 from it.
+**One labelled carbon (2026-11-27, `COBALAMINS-DEPLOY-PROMPT.md` amendment 1):** methylcobalamin's entry carries
+`top_label: "H3C"`, so the methyl on the cobalt reads "H3C" (the 3 a subscript, as in "H2N") and not as a short bare stub.
+The build (`assemble.metal_bonds_for` -> `structures.labelled_top`) finds the atom by the entry's `top`, checks that the
+label is that atom and its hydrogens, and writes it into the drawn SMILES as a CXSMILES `$...$` atom label
+(`H<sub>3</sub>C`); the drawing engine and `RECIPE_VERSION` are untouched, and the other three entries and every other
+shipped drawing carry no label and did not move.
 
 **The layout test** (`tests/test_cobalamins.py`) reads the shipped SVG itself (`read_positions` from the SVG alone,
 proven by a redraw): nothing closer than 0.65 bond lengths between atoms not bonded, or 0.40 between an atom and a bond
-it is not part of; no label over a bond or a label; no carbon drawn with a label (a straight run); no close-contact
+it is not part of; no label over a bond or a label; no carbon drawn with a label except methylcobalamin's one (a straight run); no close-contact
 flag; exactly one crossing, the cobalt-benzimidazole bond over C14-C15. In screen pixels at the drawing's own 400 px,
 at the molecule page's desktop size (464 x 348) and at its phone size (272 x 204, the 220 px stage below 720 px).
 
