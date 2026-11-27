@@ -122,6 +122,12 @@ pre { white-space:pre-wrap; font:13px/1.5 ui-monospace,Menlo,monospace; backgrou
       "cobalamins</b> (vitamin B12 and its three forms), for the reasons in the last section, with a recommendation. "
       "Every title, description and H1 is unchanged.</p>")
 
+    # ── The deploy's amendments (Cowork's review, 2026-11-26) ──
+    if facts.get("amendments"):
+        w("<h2>The deploy's amendments</h2><p>Garrett's word, 2026-11-26: deploy the ten pages, with Cowork's four "
+          "amendments. The pictures of sodium ferrocyanide and simeticone below are retaken from the amended build.</p><ul>"
+          + "".join(f"<li>{e(a)}</li>" for a in facts["amendments"]) + "</ul>")
+
     # ── Needs you ──
     w("<h2>Needs you</h2>")
     w('<div class="box"><h3>1. The ten pages as built</h3><p>Pictures below, before and after, at 1440 and 390, and each new '
