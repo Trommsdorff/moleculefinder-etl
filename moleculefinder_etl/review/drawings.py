@@ -881,10 +881,11 @@ def summarise(rv: Review) -> dict[str, dict]:
     return dict(sorted(classes.items(), key=lambda kv: (order.get(kv[1]["fact"], 99), kv[0])))
 
 
-def previous_report(out: Path, day: dt.date) -> dict | None:
+def previous_report(out: Path, day: dt.date, name: str = "drawings") -> dict | None:
+    """The latest ``<name>-<date>.json`` report before ``day`` (shared by every trust review)."""
     best = None
-    for p in out.glob("drawings-*.json"):
-        m = re.fullmatch(r"drawings-(\d{4}-\d\d-\d\d)\.json", p.name)
+    for p in out.glob(f"{name}-*.json"):
+        m = re.fullmatch(rf"{re.escape(name)}-(\d{{4}}-\d\d-\d\d)\.json", p.name)
         if m and m.group(1) < day.isoformat() and (best is None or m.group(1) > best[0]):
             best = (m.group(1), p)
     if not best:
@@ -895,8 +896,11 @@ def previous_report(out: Path, day: dt.date) -> dict | None:
         return None
 
 
-def queue_new(out: Path, classes: dict, prev: dict | None, day: dt.date) -> list[str]:
-    """Append each class present on this run and the one before to QUEUE.md, once (a marker per class)."""
+def queue_new(out: Path, classes: dict, prev: dict | None, day: dt.date, name: str = "drawings",
+              recommend=None) -> list[str]:
+    """Append each class present on this run and the one before to QUEUE.md, once (a marker per class). Shared by
+    every trust review: ``name`` prefixes the line and the marker, ``recommend(class)`` gives the one-line fix."""
+    recommend = recommend or (lambda c: FACTS[c["fact"]][2])
     if not prev:
         return []
     q = out / "QUEUE.md"
@@ -905,11 +909,11 @@ def queue_new(out: Path, classes: dict, prev: dict | None, day: dt.date) -> list
                                              "fix is merged or a ruling covers it.\n\n")
     added = []
     for k, c in classes.items():
-        marker = f"<!-- drawings: {k} -->"
+        marker = f"<!-- {name}: {k} -->"
         if k in (prev.get("classes") or {}) and marker not in text:
-            line = (f"- [ ] {day.isoformat()} drawings: **{k}**: {c['count']} of {c['of']} {c['noun']} "
+            line = (f"- [ ] {day.isoformat()} {name}: **{k}**: {c['count']} of {c['of']} {c['noun']} "
                     f"({', '.join(c['records'][:5])}{', ...' if c['count'] > 5 else ''}). "
-                    f"Recommended: {FACTS[c['fact']][2]} {marker}")
+                    f"Recommended: {recommend(c)} {marker}")
             text += line + "\n"
             added.append(k)
     if added:
@@ -1036,14 +1040,14 @@ def render_md(d: dict) -> str:
 
 
 def heartbeat(out: Path, state: str, verdict: str, exit_code: int, report: str | None = None,
-              reason: str | None = None) -> None:
+              reason: str | None = None, name: str = "drawings") -> None:
     hb = {"time": dt.datetime.now().astimezone().isoformat(timespec="seconds"), "state": state,
           "verdict": verdict, "exit": exit_code}
     if report:
         hb["report"] = report
     if reason:
         hb["reason"] = reason
-    (out / "drawings-last-run.json").write_text(json.dumps(hb, indent=2) + "\n")
+    (out / f"{name}-last-run.json").write_text(json.dumps(hb, indent=2) + "\n")
 
 
 def run(snap: Path = SNAP, out: Path = DEFAULT_OUT, day: dt.date | None = None, live: bool = True,

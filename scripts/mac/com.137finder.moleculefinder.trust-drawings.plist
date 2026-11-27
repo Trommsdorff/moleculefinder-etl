@@ -3,9 +3,11 @@
 <!-- MoleculeFinder's drawing-truth review on the Mac mini (trust review 3, 2026-11-27; docs/MAC-TRUST-REVIEWS.md).
      Source of truth: moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.trust-drawings.plist; the installed
      copy is ~/Library/LaunchAgents/com.137finder.moleculefinder.trust-drawings.plist.
-     It runs ORIGIN/MAIN's scripts/mac/trust-drawings.sh from the job's own clone of the public repository (fetched
-     here, then copied beside the state files), as the news job does; until origin/main carries the script (before
-     Garrett's push of the branch that added it) it takes the interactive repository's local main's copy, read only.
+     It runs ORIGIN/MAIN's scripts/mac/trust-review.sh (shared by the trust reviews since 2026-11-27, trust review 2;
+     it was trust-drawings.sh) with the argument `drawings`, from the job's own clone of the public repository (fetched
+     here, then copied beside the state files as trust-review-drawings.sh), as the news job does; until origin/main
+     carries the script (before Garrett's push of the branch that added it) it takes the interactive repository's local
+     main's copy, read only.
      Fires every day at 06:30 Eastern: after Monday's 03:10 weekly refresh (it ends about 03:30), 80 minutes clear of
      the 07:50 news slot, and on no other job's minute (~/Library/LaunchAgents read 2026-11-27: MoleculeFinder weekly
      Monday 03:10 and retries :10, news :50; JudicialFinder news 00:20, 06:20, 12:20, 18:20 and Monday 03:10;
@@ -22,7 +24,7 @@
   <array>
     <string>/bin/bash</string>
     <string>-c</string>
-    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/trust-checkout"; S=scripts/mac/trust-drawings.sh; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; fi; { /opt/homebrew/bin/git -C "$C" show origin/main:$S 2&gt;/dev/null || /opt/homebrew/bin/git -C "$R" show main:$S; } &gt; "$D/trust-drawings.sh.tmp" &amp;&amp; [ -s "$D/trust-drawings.sh.tmp" ] &amp;&amp; mv "$D/trust-drawings.sh.tmp" "$D/trust-drawings.sh"; rm -f "$D/trust-drawings.sh.tmp"; exec /bin/bash "$D/trust-drawings.sh"</string>
+    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/trust-checkout"; S=scripts/mac/trust-review.sh; F="$D/trust-review-drawings.sh"; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; fi; { /opt/homebrew/bin/git -C "$C" show origin/main:$S 2&gt;/dev/null || /opt/homebrew/bin/git -C "$R" show main:$S; } &gt; "$F.tmp" &amp;&amp; [ -s "$F.tmp" ] &amp;&amp; mv "$F.tmp" "$F"; rm -f "$F.tmp"; exec /bin/bash "$F" drawings</string>
   </array>
   <key>StartCalendarInterval</key>
   <dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>

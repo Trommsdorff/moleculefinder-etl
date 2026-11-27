@@ -1,0 +1,39 @@
+# Deliberate differences: the ONLY way `mfetl review facts` (moleculefinder_etl/review/facts.py) excuses two
+# surfaces that state the same fact differently. Trust review 2, "one fact, every surface" (brief
+# ../TRUST-3-ONE-FACT-PROMPT.md, 2026-11-27). Runbook: docs/MAC-TRUST-REVIEWS.md.
+#
+# Each entry is ONE ruling already on the record: `date` (the ruling's date), `by` (who ruled, and where it is written
+# down), `what` (the ruling in a line), `reason`, and what it covers: the `fact` kind, the finding `shape`, the
+# `surfaces` it excuses (the review's surface names) and the `subjects` (a named rule the review evaluates from the
+# snapshot, listed in facts.py SUBJECT_RULES; never a hand list grown to fit a finding).
+#
+# RULES. An entry is added only on a ruling (Garrett rules; Cowork reviews the chemistry and brings him the question
+# with a recommended answer). Never add an entry to make a finding go away. A test holds that every entry is honoured
+# and that nothing outside an entry is excused.
+#
+# Not here, on purpose: a rounding of the molecular weight that differs between a board and a page. No record rules
+# one, so any found is reported.
+differences:
+  conventional-formula-on-panel-pages:
+    date: 2026-11-26
+    by: "Garrett, the extended solids deploy, amendment 1 (folder HISTORY.md, 2026-11-26; the wrong-drawings pass extended it to SiC, WC, CaO, MgO)"
+    what: >-
+      A no-structure panel page prints the conventional formula its panel uses (SiO2, ZnO, TiO2, SiC, WC, CaO, MgO) in
+      its top line, its Properties row, its "The formula as written" line in Sources and notes, and its short answer; the record's molecular_formula, the JSON-LD, the search
+      index, the dataset and every other surface keep PubChem's writing (O2Si).
+    reason: "The same atoms written two ways: the conventional form where a reader looks for it, PubChem's everywhere a machine reads."
+    fact: formula
+    shape: one value, written two ways
+    surfaces: [molecule page top line, molecule page Properties, molecule page short answers, molecule page text]
+    subjects: panel-formula
+  repeat-unit-hubs:
+    date: 2026-11-27
+    by: "Garrett, ruling 1 at the drawing findings' deploy (folder HISTORY.md, 2026-11-27)"
+    what: >-
+      The six polymers and ABS show no formula or weight on their pages, while their functional-group and element hubs
+      come from the repeat unit (each membership marked `from: repeat_unit`).
+    reason: "Groups are matched on the repeat unit's atoms; the chain itself has no single formula or weight."
+    fact: structure hub
+    shape: listed in a structure hub, no formula on its page
+    surfaces: [hub page row]
+    subjects: repeat-unit-membership
