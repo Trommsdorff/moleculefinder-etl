@@ -97,9 +97,10 @@ def sweep(records):
 def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
     unproven = {s for s, row in sweep.items() if row["bonded"] and row["reading"] is None}
     assert unproven == UNPROVEN
-    assert len(sweep) == 901          # phase 3B: +6 new drawings, -1 (carboxymethyl cellulose, now its repeat unit);
+    assert len(sweep) == 896          # phase 3B: +6 new drawings, -1 (carboxymethyl cellulose, now its repeat unit);
                                       # 2026-12-care: +2 (octinoxate, oxybenzone; titanium dioxide has none);
-                                      # extended solids (2026-11-26): -2 (silicon dioxide, zinc oxide: lattices)
+                                      # extended solids (2026-11-26): -2 (silicon dioxide, zinc oxide: lattices);
+                                      # wrong drawings (2026-11-26): -5 (four lattices; simeticone, its repeat unit)
     methods = {}
     for row in sweep.values():
         if row["reading"]:
@@ -114,8 +115,13 @@ def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
 # alone does not prove itself: inorganic centres drawn with long or crossing bonds (cisplatin,
 # permanganate, the siloxane of simeticone, sucralfate's aluminium) and liraglutide's close-contact layout.
 # Wherever the reading does prove itself, it is right (the test below). Silicon dioxide left the set with its
-# drawing (the extended-solids pass, 2026-11-26: a network solid, drawn with nothing).
-READ_ALONE_FAILS = {"cisplatin", "liraglutide", "potassium-permanganate", "simeticone", "sucralfate"}
+# drawing (the extended-solids pass, 2026-11-26: a network solid, drawn with nothing). The wrong-drawings pass
+# (2026-11-26): simeticone left (drawn as its repeat unit); chlorophyll a and chromium(III) picolinate joined, drawn
+# with their metal's bonds (dative arrows, long bonds to the metal), proven like cisplatin by being byte-identical.
+# The deploy's amendment (2026-11-26): sodium ferrocyanide joined, its layout now stored in the SMILES (six straight
+# cyanides 60 degrees apart).
+READ_ALONE_FAILS = {"chlorophyll-a", "chromium-iii-picolinate", "cisplatin", "liraglutide", "potassium-permanganate",
+                    "sodium-ferrocyanide", "sucralfate"}
 
 
 def test_the_reading_alone_agrees_with_rdkit_wherever_the_truth_is_known(sweep):

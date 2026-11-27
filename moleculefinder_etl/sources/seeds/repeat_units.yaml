@@ -52,3 +52,25 @@ units:
     label: Two units of the chain
     line: One carboxymethyl group is shown. How many the chain carries, on average per glucose unit, varies from one grade to another.
     replaces: PubChem's record of it, CID 24748, is two small molecules, open-chain glucose and acetic acid, not the polymer.
+  # Simeticone (the wrong-drawings pass, 2026-11-26; Garrett's word: drawn as a repeat unit, not the panel). Drawn IN
+  # PLACE OF its PubChem record's drawing, as carboxymethyl cellulose is (phase 3B): a deliberate, reviewed remake the
+  # drawing guard lists, and with `replaces` the record drops everything derived from PubChem's structure (formula,
+  # weight, SMILES, InChI, computed descriptors, 3D, functional groups, similarity edges, the weight boards;
+  # assemble._replaced_by_unit). PubChem's CID 6433516 is a short trisiloxane plus a lone O=Si=O molecule, which
+  # describes neither the polymer nor the mixture. The unit: two dimethylsiloxane units, -Si(CH3)2-O-, joined by a
+  # siloxane (Si-O-Si) linkage. With its two ends joined it is a ring in which every silicon carries two methyls and
+  # two oxygens and silicon and oxygen alternate, as in polydimethylsiloxane (tests/test_wrong_drawings.py). The silica
+  # is not drawn. The silica share (the USP monograph's 4.0 to 7.0 percent) is left out of the line: no source the
+  # licence rule allows (registry.py) states it.
+  simeticone:
+    smiles: "*[Si](C)(C)O[Si](C)(C)O*"
+    linkage: siloxane
+    linkage_smarts: "[Si]-[O]-[Si]"
+    linkages: 1
+    units: 2
+    label: Two units of the chain
+    line: >-
+      Simeticone is polydimethylsiloxane, a silicone chain of alternating silicon and oxygen with two methyl groups
+      on each silicon, mixed with a small share of finely divided silica.
+    replaces: >-
+      PubChem's record of it, CID 6433516, is a short siloxane and a lone O=Si=O molecule, not the polymer.

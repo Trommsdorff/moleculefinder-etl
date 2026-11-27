@@ -566,6 +566,56 @@ drawing`; `structure parts: 723 carried, 0 made, 202 with no part, 4 drawings un
 (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units: 3
 (3 carried, 0 repainted, 0 drawn this run)`; made or remade: none.
 
+## 14. Metal bonds, four more lattices and simeticone (the wrong-drawings pass, 2026-11-26)
+
+Garrett's word on decisions (2) and (5) of the extended-solids review. Brief `../EXTENDED-SOLIDS-2-PROMPT.md`. Built on
+branch `wrong-drawings-2026-11`; every change is one the drawing guard LISTS.
+
+**Four more lattices** (`structure_none.yaml`): calcium oxide and magnesium oxide (rock salt), silicon carbide (a
+network like diamond's; it also loses PubChem's 3D model of the false [C-]#[Si+]) and tungsten carbide (hexagonal),
+with `formula` SiC and WC where PubChem writes CSi and CW, and `drop_names` for tungsten carbide's two
+"methanidylidyne" names (not on its line today; its line is empty).
+
+**Simeticone** (`repeat_units.yaml`, `replaces`): two dimethylsiloxane units, `*[Si](C)(C)O[Si](C)(C)O*`, the
+siloxane linkage marked, in place of PubChem's CID 6433516 (a short siloxane plus a lone O=Si=O). As for carboxymethyl
+cellulose (section 13) the record drops everything derived from that structure, so it leaves the biggest and lightest
+boards (904 to 903 each) and its formula leaves the index. The guard names it "removed, replaced by its repeat unit"
+(it named a unit whose record had also lost its SMILES "its SMILES is gone" before; the order is fixed).
+
+**Metal bonds** (`structure_display.yaml`, a second kind of entry, `metal_bonds:`). PubChem's one-line structure keeps
+a metal apart from the atoms it bonds, so the recipe drew the metal floating. An entry gives the SMILES the drawing is
+drawn from, read through `structures.drawn_smiles` like a sugar's ring, so the key, the parts and the guard all follow
+it; the record's identifiers stay PubChem's. Checked at every build (`assemble.metal_bonds_for` ->
+`structures.metal_bonds_problems`): the record's formula and charge; the metal bonded to exactly the atoms `bonded`
+names (a pattern's first atom); the record's own metal bonds kept; deleting the metal's bonds gives back the record's
+own pieces (atoms, bonds, hydrogens, stereo), charges moved only as `charges` lists them. One bond rule for all: a
+partner charged negative in PubChem's record shares a plain bond with the metal (the charges pair off); a neutral
+partner gives a dative bond, which RDKit draws as an arrow. No 3D model (`has_3d: false`).
+
+**Layouts in the SMILES.** RDKit does not treat a bond to a metal as a ring bond, so its own layout drew cisplatin
+trans and crushed the chelate rings and the chlorin. Cisplatin, chromium(III) picolinate and chlorophyll a carry their
+coordinates as CXSMILES (`... |(x,y,;...)|`): `Chem.MolFromSmiles` keeps them as the conformer and `structures.draw`
+draws from it, and `svg_key` covers the whole string, so a layout is as fixed as a SMILES and no machine lays it out
+again. Cisplatin is a square (ammonia left, chlorides right; a test reads the corners from the SVG); chromium
+picolinate three chelate rings at 120 degrees; chlorophyll a the live drawing's own layout (read from its SVG) with the
+magnesium at the centre of its four nitrogens; sodium ferrocyanide (the deploy's amendment) iron in the middle, six
+straight cyanides 60 degrees apart, the four sodium ions in a column to one side. Thiomersal (PubChem's own thimerosal
+record, CID 16684434, verbatim) needs no coordinates. Ferrocyanide's line also says the 4- on the iron is the whole
+ion's charge (the iron is iron(II)), and simeticone's "Also called" leaves out "Simethicon - USP CRS"
+(`synonym_do_not_use.yaml`).
+
+**Stopped, not drawn: the four cobalamins.** A flat drawing of a cobalamin must cross the corrin once (the nucleotide
+loop runs from the corrin's side chain back to the cobalt). The best layout tried (the live corrin, cobalt at its
+centre, cyanide in the cavity, the nucleotide moved outside the rim with one crossing) still drew a close-contact flag
+at a ring-junction hydrogen and depended on rounding; and vitamin B12's and methylcobalamin's records carry no
+stereocentres while cyanocobalamin's do, and the corrin's double-bond geometry cannot ride in a metal-bonded SMILES
+(RDKit drops it in a ring under eight atoms). Each needs a ruling first (HISTORY, 2026-11-26).
+
+**After the pass, the weekly run's lines:** `structure drawings: 896 carried, 0 repainted, 0 drawn, 33 with no
+drawing`; `structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable`; `compare drawings: 147
+pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat
+units: 4 (4 carried, 0 repainted, 0 drawn this run)`; made or remade: none.
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under

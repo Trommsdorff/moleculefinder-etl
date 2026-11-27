@@ -249,7 +249,11 @@ def _smiles_moved(rec: dict, old: dict) -> str:
     (phase 3A, seeds/structure_display.yaml), which is a named input like any SMILES."""
     if rec.get("isomeric_smiles") != old.get("isomeric_smiles"):
         return "its SMILES changed"
-    form = (rec.get("structure_display") or {}).get("form")
+    disp = rec.get("structure_display") or {}
+    if disp.get("kind") == "metal_bonds":
+        # The wrong-drawings pass (2026-11-26): PubChem's one-line structure with its metal's bonds drawn in.
+        return f"its display structure changed (structure_display.yaml metal_bonds: drawn with the {disp['metal']} bonds)"
+    form = disp.get("form")
     return (f"its display structure changed (structure_display.yaml: drawn as {form})" if form
             else "its display structure was removed (structure_display.yaml)")
 
@@ -263,9 +267,11 @@ def _structure_svg(g: _Guard, t: _Tally, rec: dict, old: dict | None) -> None:
         t.add("none")
         if was:
             ru = rec.get("structure_repeat_unit") or {}
-            g.made(name, "removed", "its SMILES is gone" if not rec.get("isomeric_smiles")
-                   else "replaced by its repeat unit (repeat_units.yaml `replaces`), a deliberate remake"
-                   if ru.get("replaces") else "it no longer has a drawing")
+            # A unit that `replaces` the drawing also drops the record's SMILES (assemble._replaced_by_unit), so it
+            # is named first: the wrong-drawings pass (simeticone) is the first to do both in one build.
+            g.made(name, "removed", "replaced by its repeat unit (repeat_units.yaml `replaces`), a deliberate remake"
+                   if ru.get("replaces") else "its SMILES is gone" if not rec.get("isomeric_smiles")
+                   else "it no longer has a drawing")
         return
     if old is None or not was:
         t.add("drawn")

@@ -59,13 +59,17 @@ MONDAY = [
     # The 2026-12-care tranche (2026-11-15): octinoxate and oxybenzone drawn, each with parts; titanium dioxide has
     # no drawing (seeds/structure_none.yaml), so it is the 26th with none and has no part.
     # The extended-solids pass (2026-11-26): silicon dioxide and zinc oxide join it (27th and 28th; neither had a part).
-    "structure drawings: 901 carried, 0 repainted, 0 drawn, 28 with no drawing",
+    # The wrong-drawings pass (2026-11-26): calcium oxide, magnesium oxide, silicon carbide and tungsten carbide join
+    # them (29th to 32nd) and simeticone is drawn as its repeat unit (33rd with no drawing, a fourth repeat unit); five
+    # metal compounds are redrawn with their metal's bonds (structure_display.yaml metal_bonds), their three part
+    # sets remade from the new drawings (the counts hold: 723 with parts).
+    "structure drawings: 896 carried, 0 repainted, 0 drawn, 33 with no drawing",
     "structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
     # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).
     ("compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); "
     "147 carried, 0 repainted, 0 made"),
-    "repeat units: 3 (3 carried, 0 repainted, 0 drawn this run)",
+    "repeat units: 4 (4 carried, 0 repainted, 0 drawn this run)",
 ]
 
 SMALL = ["caffeine", "theobromine", "isotretinoin", "tretinoin", "sodium-bicarbonate", "sodium-carbonate",
@@ -151,7 +155,7 @@ def test_the_guard_counts_in_the_recipes_own_words(caplog):
     logged = [r.getMessage().strip() for r in caplog.records]
     v = DG.check(fresh, again, SNAP, allow_seeds=False)
     assert v.lines[1] in logged and v.lines[2] in logged
-    assert "repeat units: 3 (0 drawn this run)" in logged and made == 0
+    assert "repeat units: 4 (0 drawn this run)" in logged and made == 0
     assert v.lines == MONDAY and v.made == []
 
 
