@@ -2,8 +2,9 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
-## The wrong-drawings pass, amended and merged for the deploy (2026-11-26, `main` `256f239`, NOT pushed)
+## The wrong-drawings pass, amended and merged for the deploy (2026-11-26, `main` `256f239`, DEPLOYED)
 Brief `../WRONG-DRAWINGS-DEPLOY-PROMPT.md`; full record `../HISTORY.md`, 2026-11-26. `ef2afde`: sodium ferrocyanide's layout in its display SMILES and its line's sentence on the 4-; "Simethicon - USP CRS" on `synonym_do_not_use.yaml`; four tests; DRAWING-RECIPES section 14. Tungsten carbide's "alloy" sentence held (its frozen description). `fce12c3`: the review page's amendments section. Suite 1,594 passed, 1 skipped; ruff 130; pinned build twice byte-identical, 0 PubChem POSTs; guard against main the same 14; weekly dry run on `ef2afde` complete. Merged `--no-ff`.
+DEPLOYED 2026-11-26: ETL `main` pushed `c3b5259..175cce2`; Vercel Production success, deployment 8101306161, 03:47:58 UTC 11-27 (22:47 Eastern); live checks and IndexNow (0 new, 21 changed, 21 accepted) in `../HISTORY.md`, 2026-11-26. The merge record above stands; this line closes it.
 
 
 ## The wrong-drawings pass (2026-11-26, branch `wrong-drawings-2026-11`, NOT merged, NOT pushed)
