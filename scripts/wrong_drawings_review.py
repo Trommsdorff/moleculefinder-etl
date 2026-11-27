@@ -85,7 +85,6 @@ def main() -> None:
     was = {s: json.loads(git("show", f"main:data/snapshots/molecules/{s}.json")) for s in ALL}
     none_seed = yaml.safe_load((SEEDS / "structure_none.yaml").read_text())["molecules"]
     metal_seed = yaml.safe_load((SEEDS / "structure_display.yaml").read_text())["metal_bonds"]
-    unit_seed = yaml.safe_load((SEEDS / "repeat_units.yaml").read_text())["units"]["simeticone"]
     title = {s: now[s]["title"] for s in ALL}
 
     h: list[str] = []
