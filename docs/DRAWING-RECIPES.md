@@ -616,6 +616,52 @@ drawing`; `structure parts: 723 carried, 0 made, 202 with no part, 4 drawings un
 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat
 units: 4 (4 carried, 0 repainted, 0 drawn this run)`; made or remade: none.
 
+## 15. The cobalamins drawn with their cobalt bonded (the cobalamins pass, 2026-11-26)
+
+Brief `../COBALAMINS-PROMPT.md` (Cowork's rulings). Built on branch `cobalamins-2026-11`; every change is one the
+drawing guard LISTS: four redraws, "its display structure changed (structure_display.yaml metal_bonds: drawn with the
+Co bonds)", and their twelve part layers remade (the same three parts on each, the same atoms lit: amide 28, phosphate
+5, hydroxyl 4).
+
+**One skeleton, one layout, four drawings.** `scripts/cobalamin_layout.py` (not run by the build) lays hydroxocobalamin
+out once: the cobalt at the origin, the four nitrogens 2.0 from it (four equal Co-N bonds), each pyrroline a regular
+pentagon pointing its nitrogen at the cobalt, the meso carbons on the bisectors, the ring A-ring D bond 1.5 long; the
+bond to the benzimidazole due east, crossing the ring's edge once at the C14-C15 bond (the one crossing every flat
+drawing of a cobalamin has); the top group due west inside the ring (its first atom 1.4 from the cobalt, a cyanide's
+nitrogen 2.5); the nucleotide loop to the right, the linker on an arc above; every corrin substituent pinned outside
+its ring; RDKit places the rest with all that locked, and a short relaxation (numpy) moves only the side chains and
+the linker. Each of the four drawings is that skeleton itself (its atoms, its stereocentres, its coordinates) with the
+record's OWN bond orders and charges (cyanocobalamin's record writes the corrin's double bonds and N- in other,
+equivalent places) and the record's own top group in the same place. Coordinates to three decimals, in the SMILES.
+
+**The check, extended** (`structures.metal_bonds_problems`, for every entry, at every build):
+- (e) a double bond whose geometry the record gives may go unmarked in the drawing only inside a ring of eight atoms
+  or fewer that the metal closes (`structures.metal_ring`, which counts dative bonds RDKit's ring perception leaves
+  out), and only when the record's geometry is the one that ring forces. Double bonds are now compared one by one
+  (cis or trans about the same neighbours), and a drawing may give no geometry the record does not.
+- (d) a stereocentre the record leaves unspecified may be drawn only when the entry names `stereo_from` (and `top`, the
+  pattern of the group on the metal) and the drawing's skeleton, top group removed, is the named entry's skeleton,
+  stereo included (`structures.skeleton_key`: the bonds and charges of the rings the metal closes compared as one
+  conjugated system, everything else exactly). Every centre the record does specify must be the drawing's.
+Neither field reaches the record. Today: hydroxocobalamin the reference (14 carbon centres, all its own; RDKit also
+flags the phosphorus, which no record specifies and none draws); cyanocobalamin 13 of its own, all agreeing with the
+reference, plus the anomeric carbon from it; vitamin B12 and methylcobalamin all 14 from it.
+**One labelled carbon (2026-11-27, `COBALAMINS-DEPLOY-PROMPT.md` amendment 1):** methylcobalamin's entry carries
+`top_label: "H3C"`, so the methyl on the cobalt reads "H3C" (the 3 a subscript, as in "H2N") and not as a short bare stub.
+The build (`assemble.metal_bonds_for` -> `structures.labelled_top`) finds the atom by the entry's `top`, checks that the
+label is that atom and its hydrogens, and writes it into the drawn SMILES as a CXSMILES `$...$` atom label
+(`H<sub>3</sub>C`); the drawing engine and `RECIPE_VERSION` are untouched, and the other three entries and every other
+shipped drawing carry no label and did not move.
+
+**The layout test** (`tests/test_cobalamins.py`) reads the shipped SVG itself (`read_positions` from the SVG alone,
+proven by a redraw): nothing closer than 0.65 bond lengths between atoms not bonded, or 0.40 between an atom and a bond
+it is not part of; no label over a bond or a label; no carbon drawn with a label except methylcobalamin's one (a straight run); no close-contact
+flag; exactly one crossing, the cobalt-benzimidazole bond over C14-C15. In screen pixels at the drawing's own 400 px,
+at the molecule page's desktop size (464 x 348) and at its phone size (272 x 204, the 220 px stage below 720 px).
+
+**After the pass, the weekly run's lines** are those of section 14 (896 / 723 / 147 / 4 carried, 33 with no drawing);
+made or remade: none.
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under

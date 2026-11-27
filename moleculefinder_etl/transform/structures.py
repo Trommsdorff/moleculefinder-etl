@@ -329,8 +329,172 @@ def _frozen_without_metal_bonds(mol, metal_idx: int):
     return rw, nbrs
 
 
+def metal_ring(mol, a: int, b: int, metal_idx: int, most: int = 8) -> list[int] | None:
+    """The smallest ring through the bond a-b that passes through the metal, as atoms in order from a round to b
+    (a, ..., metal, ..., b), or None when there is none of ``most`` atoms or fewer (the cobalamins pass, ruling 4(e)).
+    Every bond counts, a dative one included (RDKit's own ring perception leaves dative bonds out)."""
+    from collections import deque
+
+    def path(src, dst, banned):
+        prev, todo = {src: None}, deque([src])
+        while todo:
+            x = todo.popleft()
+            if x == dst:
+                out = [x]
+                while prev[out[-1]] is not None:
+                    out.append(prev[out[-1]])
+                return out[::-1]
+            for nb in mol.GetAtomWithIdx(x).GetNeighbors():
+                y = nb.GetIdx()
+                if y not in prev and y not in banned:
+                    prev[y] = x
+                    todo.append(y)
+        return None
+
+    best = None
+    first = path(a, metal_idx, {b})
+    if first is not None:
+        second = path(metal_idx, b, {a, *first[:-1]})
+        if second is not None:
+            best = first + second[1:]
+    second = path(b, metal_idx, {a})
+    if second is not None:
+        first = path(metal_idx, a, {b, *second[:-1]})
+        if first is not None and (best is None or len(second) + len(first) - 1 < len(best)):
+            best = (second + first[1:])[::-1]
+    return best if best is not None and len(best) <= most else None
+
+
+def _top_group(mol, metal_idx: int, top: str) -> list[int] | None:
+    """The atoms of the group on top of the metal: the metal's one neighbour the pattern ``top`` matches (its first
+    atom) and everything beyond it away from the metal; None unless exactly one neighbour matches."""
+    from rdkit import Chem
+
+    hits = {h[0] for h in mol.GetSubstructMatches(Chem.MolFromSmarts(top))} & {
+        n.GetIdx() for n in mol.GetAtomWithIdx(metal_idx).GetNeighbors()}
+    if len(hits) != 1:
+        return None
+    seen, todo = set(hits), list(hits)
+    while todo:
+        for nb in mol.GetAtomWithIdx(todo.pop()).GetNeighbors():
+            if nb.GetIdx() not in seen and nb.GetIdx() != metal_idx:
+                seen.add(nb.GetIdx())
+                todo.append(nb.GetIdx())
+    return sorted(seen)
+
+
+def labelled_top(display: str, metal: str, top: str, label: str) -> str:
+    """``display`` (a CXSMILES with coordinates) with the label ``label`` written on the first atom of the group on
+    top of the metal, as the CXSMILES ``$...$`` atom-label field RDKit's drawer shows in place of the carbon's
+    bare end (a methyl group drawn "H3C", the 3 a subscript as in the drawing's "H2N", joined to the metal, not a stub). The entry sets the label
+    (``top_label`` in seeds/structure_display.yaml metal_bonds); this finds the atom (``top``, exactly one) and checks
+    that the label is that atom and its hydrogens, nothing else, so it cannot name a different group. Raises
+    ValueError when it cannot be done."""
+    import re
+
+    from rdkit import Chem
+
+    m = Chem.MolFromSmiles(display or "")
+    if m is None or "|" not in display or "$" in display:
+        raise ValueError("needs a CXSMILES with coordinates and no atom labels of its own")
+    ms = [a.GetIdx() for a in m.GetAtoms() if a.GetSymbol() == metal]
+    grp = _top_group(m, ms[0], top) if len(ms) == 1 else None
+    if grp is None:
+        raise ValueError("top matches no single atom bonded to the metal")
+    atom = next(a for a in m.GetAtomWithIdx(ms[0]).GetNeighbors() if a.GetIdx() in grp)
+    want = {atom.GetSymbol(): 1}
+    if atom.GetTotalNumHs():
+        want["H"] = atom.GetTotalNumHs()
+    got: dict[str, int] = {}
+    if not re.fullmatch(r"(?:[A-Z][a-z]?\d*)+", label or ""):
+        raise ValueError(f"label {label!r} is not a formula-style label")
+    for el, n in re.findall(r"([A-Z][a-z]?)(\d*)", label):
+        got[el] = got.get(el, 0) + int(n or 1)
+    if got != want:
+        raise ValueError(f"label {label!r} is not the atom and its hydrogens ({want})")
+    body, _, tail = display.rstrip().rpartition("|")
+    if tail or not body.endswith(")"):
+        raise ValueError("the CXSMILES must end with its coordinates")
+    fields = [""] * m.GetNumAtoms()
+    fields[atom.GetIdx()] = re.sub(r"(?<=[A-Za-z])(\d+)", r"<sub>\1</sub>", label)    # H3C is drawn H, subscript 3, C
+    return f"{body},${';'.join(fields)}$|"
+
+
+def skeleton_key(display: str, metal: str, top: str) -> str | None:
+    """The display structure with its top group removed, as one string that two drawings share exactly when they are
+    the same skeleton: the same atoms, bonds, hydrogens, charges and every stereocentre and double-bond geometry, the
+    bonds and charges of the rings the metal closes (eight atoms or fewer: a corrin's conjugated ring and the metal's
+    own bonds) compared as one conjugated system, so two records that write the corrin's double bonds and its N- in
+    different, equivalent places give the same key (the cobalamins pass, ruling 4(d)). None when it cannot be made."""
+    from rdkit import Chem
+
+    m = Chem.MolFromSmiles(display or "")
+    if m is None:
+        return None
+    ms = [a.GetIdx() for a in m.GetAtoms() if a.GetSymbol() == metal]
+    if len(ms) != 1:
+        return None
+    grp = _top_group(m, ms[0], top)
+    if grp is None:
+        return None
+    rw = Chem.RWMol(m)
+    for a in rw.GetAtoms():
+        a.SetNumExplicitHs(a.GetTotalNumHs())
+        a.SetNoImplicit(True)
+    for i in sorted(grp, reverse=True):
+        rw.RemoveAtom(i)
+    sk = rw.GetMol()
+    sk.UpdatePropertyCache(False)
+    metal_idx = next(a.GetIdx() for a in sk.GetAtoms() if a.GetSymbol() == metal)
+    chelate = {metal_idx}
+    for b in sk.GetBonds():
+        ring = metal_ring(sk, b.GetBeginAtomIdx(), b.GetEndAtomIdx(), metal_idx)
+        if ring:
+            chelate.update(ring)
+    flat = Chem.RWMol(sk)
+    for b in flat.GetBonds():
+        i, j = b.GetBeginAtomIdx(), b.GetEndAtomIdx()
+        if i in chelate and j in chelate:
+            b.SetBondType(Chem.BondType.SINGLE)
+            b.SetIsAromatic(False)
+            b.SetStereo(Chem.BondStereo.STEREONONE)
+    for i in chelate:
+        flat.GetAtomWithIdx(i).SetFormalCharge(0)
+        flat.GetAtomWithIdx(i).SetIsAromatic(False)
+    out = flat.GetMol()
+    out.UpdatePropertyCache(False)
+    return Chem.MolToSmiles(out)
+
+
+def _geometries(mol) -> dict[tuple[int, int], tuple[bool, int, int]]:
+    """Every double bond whose geometry the mol states, as RDKit reads it from the SMILES (a double bond in a ring of
+    fewer than eight atoms has none): (lower atom, higher atom) -> (cis, the neighbour on the lower atom's side, the
+    neighbour on the higher's) that the cis or trans is stated about."""
+    from rdkit import Chem
+
+    stated = {b.GetIdx() for b in mol.GetBonds() if b.GetBondType() == Chem.BondType.DOUBLE
+              and b.GetStereo() not in (Chem.BondStereo.STEREONONE, Chem.BondStereo.STEREOANY)}
+    m = Chem.Mol(mol)
+    Chem.SetBondStereoFromDirections(m)                    # E or Z as cis or trans about the marked neighbours
+    out = {}
+    for b in m.GetBonds():
+        if b.GetIdx() not in stated:
+            continue
+        st = b.GetStereo()
+        s1, s2 = list(b.GetStereoAtoms())
+        i, j = b.GetBeginAtomIdx(), b.GetEndAtomIdx()
+        if s1 not in [x.GetIdx() for x in m.GetAtomWithIdx(i).GetNeighbors()]:
+            s1, s2 = s2, s1
+        if st not in (Chem.BondStereo.STEREOCIS, Chem.BondStereo.STEREOTRANS):
+            raise ValueError("a double bond's geometry could not be read as cis or trans")
+        cis = st == Chem.BondStereo.STEREOCIS
+        out[(i, j) if i < j else (j, i)] = (cis, s1, s2) if i < j else (cis, s2, s1)
+    return out
+
+
 def metal_bonds_problems(display: str, record: str, metal: str, bonded: list[dict],
-                         charges: list[dict]) -> list[str]:
+                         charges: list[dict], *, top: str | None = None,
+                         reference: tuple[str, str] | None = None) -> list[str]:
     """Why ``display`` is not ``record`` with its metal's bonds drawn in, or [] when it is (the wrong-drawings pass,
     2026-11-26; seeds/structure_display.yaml ``metal_bonds``). PubChem's one-line structure keeps a metal apart from
     the atoms it bonds (cisplatin ``N.N.Cl[Pt]Cl``); the display structure bonds them. Proven here, at every build:
@@ -345,6 +509,16 @@ def metal_bonds_problems(display: str, record: str, metal: str, bonded: list[dic
        metal and the atoms bonded to it, and only as ``charges`` lists them, each {element, record, drawn}: the
        charges are set back to the record's and the two must then be identical (every way of choosing which
        bonded atom of that element carries a listed change is tried; one must give the record).
+
+    Two narrow allowances, added for the cobalamins (2026-11-26, brief ../COBALAMINS-PROMPT.md, ruling 4), each
+    proved here, never assumed:
+    (e) a double bond whose geometry the record specifies may go unmarked in the drawing only where it sits inside a
+        ring of eight atoms or fewer that the metal closes (``metal_ring``), and only when the record's geometry is the
+        one that ring forces (the ring's own neighbours on the two ends cis). Anywhere else a dropped geometry fails.
+    (d) a stereocentre the record leaves unspecified may be drawn only when ``reference`` is given (the entry names
+        ``stereo_from``: the reference entry's display SMILES and its ``top`` pattern) and the drawing's skeleton, with
+        its ``top`` group removed, is the reference's skeleton, stereo included (``skeleton_key``). Every centre the
+        record DOES specify must be the drawing's, as before.
     """
     from rdkit import Chem
     from rdkit.Chem.rdMolDescriptors import CalcMolFormula
@@ -397,7 +571,7 @@ def metal_bonds_problems(display: str, record: str, metal: str, bonded: list[dic
             return [f"{metal} is drawn with charge {m_atom.GetFormalCharge()}, the entry says {metal_change[0]['drawn']}"]
         m_atom.SetFormalCharge(int(metal_change[0]["record"]))
     rset = settled(rfree)
-    want = Chem.MolToSmiles(rset)
+    want = Chem.MolToSmiles(rset, isomericSmiles=False)
     choices = []
     for c in changes:
         cands = [i for i in dn if dfree.GetAtomWithIdx(i).GetSymbol() == c["element"]
@@ -416,17 +590,80 @@ def metal_bonds_problems(display: str, record: str, metal: str, bonded: list[dic
             got = settled(trial)
         except Chem.rdchem.MolSanitizeException:          # a wrong pick leaves an impossible valence
             got = None
-        if got is not None and Chem.MolToSmiles(got) == want:
+        if got is not None and Chem.MolToSmiles(got, isomericSmiles=False) == want:
             match = got
             break
     del quiet
     if match is None:
         return [(f"with the bonds to {metal} deleted and the listed charges set back, it is not the record's own "
-                 f"pieces {want}")]
-    # 3. the record's own bonds to the metal are kept
-    amap = match.GetSubstructMatch(rset, useChirality=True)
+                 f"pieces {Chem.MolToSmiles(rset)}")]
+    amap = match.GetSubstructMatch(rset)                    # record atom -> display atom (stereo compared below)
     if len(amap) != r.GetNumAtoms():
         return ["the pieces match as SMILES but not atom for atom"]
+    # 4, stereo. Double bonds, one by one: every geometry the record gives is the drawing's (cis or trans about the
+    # same neighbours), the drawing gives none the record does not, and (e): a geometry the drawing leaves unmarked is
+    # allowed only in a ring of eight atoms or fewer the metal closes, and only when the record's is the one that ring
+    # forces.
+    inv = {v: k for k, v in enumerate(amap)}
+    rgeo, dgeo = _geometries(r), _geometries(d)
+    for (a, b), (cis_r, s1, s2) in rgeo.items():
+        where = f"the double bond {r.GetAtomWithIdx(a).GetSymbol()}{a}={r.GetAtomWithIdx(b).GetSymbol()}{b}"
+        key = tuple(sorted((amap[a], amap[b])))
+        if key in dgeo:
+            cis_d, t1, t2 = dgeo[key]
+            if amap[a] != key[0]:
+                t1, t2 = t2, t1
+            if (cis_d ^ (t1 != amap[s1]) ^ (t2 != amap[s2])) != cis_r:
+                out.append(f"{where}: the drawing's geometry is not the record's")
+            continue
+        ring = metal_ring(d, amap[a], amap[b], dm)
+        if ring is None:
+            out.append(f"{where}'s geometry is the record's but unmarked in the drawing, outside any ring of eight "
+                       f"atoms or fewer that {metal} closes")
+        else:
+            # the ring's own neighbours of the two ends, in the record's atoms; where the ring reaches the metal
+            # straight from an end (no bond in the record), the end's other neighbour stands opposite it
+            flips, sides = 0, []
+            for end, partner, nb in ((a, b, ring[1]), (b, a, ring[-2])):
+                if inv[nb] in [x.GetIdx() for x in r.GetAtomWithIdx(end).GetNeighbors()]:
+                    sides.append(inv[nb])
+                    continue
+                others = [x.GetIdx() for x in r.GetAtomWithIdx(end).GetNeighbors() if x.GetIdx() != partner]
+                sides.append(others[0] if len(others) == 1 else None)
+                flips += 1
+            # the record's cis or trans, re-said about the ring's own neighbours: the ring forces cis
+            if None in sides or not (cis_r ^ (s1 != sides[0]) ^ (s2 != sides[1]) ^ (flips % 2 == 1)):
+                out.append(f"{where}: the record's geometry is not the one the ring {metal} closes forces")
+    for key in dgeo:
+        if tuple(sorted((inv[key[0]], inv[key[1]]))) not in rgeo:
+            out.append(f"the drawing gives the double bond {key[0]}-{key[1]} a geometry the record does not")
+    rs, ds = Chem.RWMol(rset), Chem.RWMol(match)
+    for m_ in (rs, ds):
+        for bd in m_.GetBonds():
+            bd.SetStereo(Chem.BondStereo.STEREONONE)
+            bd.SetBondDir(Chem.BondDir.NONE)
+    # (d): every centre the record specifies is the drawing's; a centre it leaves open may be drawn only from the
+    # reference, on the reference's own skeleton.
+    unspecified = Chem.ChiralType.CHI_UNSPECIFIED
+    extra = [amap[i] for i in range(rs.GetNumAtoms()) if rs.GetAtomWithIdx(i).GetChiralTag() == unspecified
+             and ds.GetAtomWithIdx(amap[i]).GetChiralTag() != unspecified]
+    for i in extra:
+        ds.GetAtomWithIdx(i).SetChiralTag(unspecified)
+    rs_m, ds_m = rs.GetMol(), ds.GetMol()
+    for m_ in (rs_m, ds_m):
+        Chem.AssignStereochemistry(m_, cleanIt=True, force=True)
+    if Chem.MolToSmiles(ds_m) != Chem.MolToSmiles(rs_m):
+        out.append(f"the drawing's stereocentres or double-bond geometry are not the record's {Chem.MolToSmiles(rs_m)}")
+    if extra:
+        if reference is None or not top:
+            out.append(f"{len(extra)} stereocentre(s) the record leaves unspecified are drawn, and the entry names no "
+                       "stereo_from")
+        else:
+            mine, theirs = skeleton_key(display, metal, top), skeleton_key(reference[0], metal, reference[1])
+            if mine is None or theirs is None or mine != theirs:
+                out.append(f"{len(extra)} stereocentre(s) the record leaves unspecified are drawn from the reference, "
+                           "but the drawing's skeleton is not the reference's (stereo included)")
+    # 3. the record's own bonds to the metal are kept
     for n in rn:
         if d.GetBondBetweenAtoms(amap[rm], amap[n]) is None:
             out.append(f"the record's own bond from {metal} to {r.GetAtomWithIdx(n).GetSymbol()} is missing")

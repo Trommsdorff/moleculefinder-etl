@@ -63,6 +63,8 @@ MONDAY = [
     # them (29th to 32nd) and simeticone is drawn as its repeat unit (33rd with no drawing, a fourth repeat unit); five
     # metal compounds are redrawn with their metal's bonds (structure_display.yaml metal_bonds), their three part
     # sets remade from the new drawings (the counts hold: 723 with parts).
+    # The cobalamins pass (2026-11-26): the four cobalamins redrawn with their cobalt's bonds, their twelve part
+    # layers remade (the counts hold).
     "structure drawings: 896 carried, 0 repainted, 0 drawn, 33 with no drawing",
     "structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs

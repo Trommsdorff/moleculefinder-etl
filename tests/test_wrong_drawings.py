@@ -242,10 +242,14 @@ def test_cisplatin_is_drawn_cis_in_the_finished_picture():
     assert angle(*cl) > 150
 
 
-def test_the_cobalamins_were_not_drawn_in_this_pass():
+def test_the_cobalamins_were_left_to_their_own_pass():
+    # Not drawn in this pass; the cobalamins pass (2026-11-26, tests/test_cobalamins.py) drew them, with `top` and
+    # `stereo_from`, which none of this pass's five entries uses.
     seed = _seed("structure_display.yaml")["metal_bonds"]
+    for slug in METALS:
+        assert "top" not in seed[slug] and "stereo_from" not in seed[slug], slug
     for slug in COBALAMINS:
-        assert slug not in seed and "structure_display" not in _rec(slug), slug
+        assert seed[slug]["metal"] == "Co" and _rec(slug)["structure_display"]["kind"] == "metal_bonds", slug
 
 
 # ── the guard lists exactly this pass's changes ─────────────────────────────────────────────────────────────────
