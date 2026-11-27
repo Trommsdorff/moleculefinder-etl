@@ -20,8 +20,9 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 - **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
   hand `mfetl zenodo` runs it). The weekly job's release and mirrors steps are merged (11-23).
 - **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
-- **Trust review 3, drawing truth** (merged `bc948e2` 2026-11-27, NOT pushed): `mfetl review drawings`, read-only; the Mac
-  job `scripts/mac/trust-drawings.sh` daily 06:30 ET; runbook `docs/MAC-TRUST-REVIEWS.md`; allowlists only on a ruling.
+- **Trust reviews** (read-only; `scripts/mac/trust-review.sh <review>`; runbook `docs/MAC-TRUST-REVIEWS.md`): 3, drawing
+  truth (`mfetl review drawings`, 06:30 ET; pushed) and 2, one fact every surface (`mfetl review facts`, 06:45 ET, all
+  pages Tue; `facts_differences.yaml`; merged 11-27, NOT pushed). Allowlists, differences: a ruling only.
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 
 ## Golden rules (do not break these)
