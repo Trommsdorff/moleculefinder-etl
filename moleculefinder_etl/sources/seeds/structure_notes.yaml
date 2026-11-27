@@ -1,0 +1,29 @@
+# Drawing notes (the drawing-findings pass, 2026-11-27; Cowork's ruling C on the drawing-truth review's first run,
+# Garrett's word; brief ../TRUST-2B-DRAWING-FINDINGS-PROMPT.md).
+#
+# A record whose PubChem drawing is TRUE but needs one plain sentence to be read right: a defined mixture of two
+# compounds, drawn as both. The sentence is printed with the drawing in the page's notes ("2D drawing"). Nothing here
+# changes a drawing, a key or an identifier: the record gets `structure_note` {line, confidence, source}
+# (assemble.structure_note_for), and only a record with a drawing and no display structure may have one (a display
+# structure carries its own line). The line is checked by the claim rule (kind `part`, key note.<slug>.line) and the
+# drawing seeds' house rules (drawings.text_problems, kind `note`). Each entry: line (shown), basis (why; not shown).
+# Each record here is also on the drawing-truth review's `kept-as-drawn` list (review/drawings_rulings.yaml).
+molecules:
+  butylated-hydroxyanisole:
+    line: >-
+      The drawing shows both of its isomers: BHA is a mixture of two, with the tert-butyl group next to the hydroxyl
+      group in one and next to the methoxy group in the other.
+    basis: >-
+      PubChem's record (CID 24667) is the two isomers together, 2-tert-butyl-4-methoxyphenol and 3-tert-butyl-4-
+      methoxyphenol, and its synonyms say so ("2(3)-tert-Butyl-4-methoxyphenol (Mixture of Isomers)"). The food
+      additive is that mixture, so drawing both is true. No share is given: no source the licence rule allows states one.
+  ivermectin:
+    line: >-
+      The drawing shows both of its compounds: ivermectin is a mixture of B1a and B1b, which differ by one carbon in a
+      side chain (a sec-butyl group in B1a, an isopropyl group in B1b). The US label for Stromectol gives at least 90
+      percent B1a and less than 10 percent B1b.
+    basis: >-
+      PubChem's record (CID 9812710) is the two compounds together, C48H74O14 (22,23-dihydroavermectin B1a) and
+      C47H72O14 (B1b). The proportions are the FDA label's (DailyMed, public domain; Stromectol, setid
+      681888c9-af79-4b7d-ae80-c3f4f6f1effd, version 21, effective 2024-09-20, read 2026-11-27): "a mixture containing
+      at least 90% 5-O-demethyl-22,23-dihydroavermectin A1a and less than 10% ... 22,23-dihydroavermectin B1a and B1b".

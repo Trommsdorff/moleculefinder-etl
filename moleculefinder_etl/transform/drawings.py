@@ -749,20 +749,100 @@ def load_repeat_seed(path: Path = REPEAT_YAML) -> dict:
     return (data or {}).get("units") or {}
 
 
-def draw_repeat_unit(spec: dict) -> dict:
+# The drawing-findings pass (2026-11-27): a unit drawn as several SEPARATE units with no linkage between them, for a
+# material with no single repeat unit (acrylonitrile butadiene styrene: three kinds of unit, joined in no fixed order,
+# in chains grafted onto and blended with a rubber). A named variant with its own check (`unit_monomers`), never a
+# special case in the drawing code: no amber layer, and each fragment must be its monomer with the double bond opened
+# into two chain ends.
+SEPARATE_UNITS = "separate-units"
+
+
+def unit_monomers(smiles: str) -> list[str]:
+    """Each fragment of a repeat unit as the monomer it comes from, canonical, sorted: the two chain ends (``*``)
+    taken off and the double bond the polymerisation opened put back. Two ends on neighbouring atoms (a vinyl
+    monomer, ``*CC(C#N)*``) close to a double bond between them; two ends four atoms apart across a double bond (a
+    1,4 diene unit, ``*CC=CC*``) give the diene back (the middle double bond moves out to both ends). Anything else
+    raises DrawingSeedError."""
     from rdkit import Chem
 
-    mol = Chem.MolFromSmiles(spec["smiles"])
+    mol = Chem.MolFromSmiles(smiles)
     if mol is None:
-        raise DrawingSeedError(f"repeat unit SMILES does not parse: {spec['smiles']}")
-    svg, d = structures.draw(Chem.Mol(mol), flag_close_contacts=False)
-    pos = {i: (d.GetDrawCoords(i).x, d.GetDrawCoords(i).y) for i in range(mol.GetNumAtoms())}
+        raise DrawingSeedError(f"repeat unit SMILES does not parse: {smiles}")
+    out = []
+    for frag in Chem.GetMolFrags(mol, asMols=True, sanitizeFrags=True):
+        Chem.Kekulize(frag, clearAromaticFlags=True)
+        rw = Chem.RWMol(frag)
+        ends = [a for a in rw.GetAtoms() if a.GetAtomicNum() == 0]
+        if len(ends) != 2 or any(a.GetDegree() != 1 for a in ends):
+            raise DrawingSeedError(f"a separate unit needs exactly two chain ends: {Chem.MolToSmiles(frag)}")
+        a, b = (e.GetNeighbors()[0].GetIdx() for e in ends)
+        path = list(Chem.GetShortestPath(rw, a, b)) if a != b else [a]
+        bond = rw.GetBondBetweenAtoms
+        if len(path) == 2 and bond(a, b).GetBondType() == Chem.BondType.SINGLE:
+            bond(a, b).SetBondType(Chem.BondType.DOUBLE)
+        elif len(path) == 4 and bond(path[1], path[2]).GetBondType() == Chem.BondType.DOUBLE \
+                and bond(path[0], path[1]).GetBondType() == bond(path[2], path[3]).GetBondType() == Chem.BondType.SINGLE:
+            bond(path[1], path[2]).SetStereo(Chem.BondStereo.STEREONONE)
+            bond(path[1], path[2]).SetBondType(Chem.BondType.SINGLE)
+            bond(path[0], path[1]).SetBondType(Chem.BondType.DOUBLE)
+            bond(path[2], path[3]).SetBondType(Chem.BondType.DOUBLE)
+        else:
+            raise DrawingSeedError(f"a separate unit's ends are not a vinyl or a 1,4 diene unit: {Chem.MolToSmiles(frag)}")
+        for e in sorted((e.GetIdx() for e in ends), reverse=True):
+            rw.RemoveAtom(e)
+        m = rw.GetMol()
+        for x in m.GetAtoms():
+            x.SetNoImplicit(False)
+            x.SetNumExplicitHs(0)
+        Chem.SanitizeMol(m)
+        out.append(Chem.MolToSmiles(m))
+    return sorted(out)
+
+
+def canonical_pieces(smiles: str) -> list[str]:
+    """A SMILES's pieces, canonical, sorted (the record's own monomers, to compare with ``unit_monomers``)."""
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        raise DrawingSeedError(f"SMILES does not parse: {smiles}")
+    return sorted(Chem.MolToSmiles(f) for f in Chem.GetMolFrags(mol, asMols=True))
+
+
+def repeat_unit_marks(spec: dict, mol) -> tuple[list[int], list[tuple[int, int]], dict]:
+    """(atoms, bonds, fields) the unit's amber layer lights, with the record's fields for them: ``linkage_atoms``;
+    ``also`` (2026-11-27: each further kind of joint, {linkage, linkage_atoms}: glycogen's alpha-1,6 branch, hyaluronic
+    acid's beta-1,4); ``group_atoms``. Each pattern must match exactly its count, or DrawingSeedError. A unit of the
+    separate-units variant lights nothing, and its fragments must each be a monomer of ``monomers`` (the record's own
+    SMILES, which assemble checks against PubChem's record at every build)."""
+    if spec.get("variant") == SEPARATE_UNITS:
+        if any(spec.get(k) for k in ("linkage", "linkage_smarts", "also", "group_smarts")):
+            raise DrawingSeedError("a separate-units unit marks no linkage and no group")
+        frags = len(canonical_pieces(spec["smiles"]))
+        if frags != int(spec.get("units", 0)):
+            raise DrawingSeedError(f"a separate-units unit has {frags} fragments, its `units` says {spec.get('units')}")
+        if not spec.get("monomers") or unit_monomers(spec["smiles"]) != canonical_pieces(spec["monomers"]):
+            raise DrawingSeedError(f"a separate-units unit's fragments, each opened back into its monomer "
+                                   f"({'.'.join(unit_monomers(spec['smiles']))}), are not `monomers` "
+                                   f"({spec.get('monomers')})")
+        return [], [], {"linkage_atoms": []}
+    if spec.get("variant"):
+        raise DrawingSeedError(f"unknown repeat unit variant {spec['variant']!r}")
     atoms, bonds, n = _match(mol, {"id": "linkage", "smarts": spec["linkage_smarts"]})
     if n != int(spec.get("linkages", 1)):
         raise DrawingSeedError(f"repeat unit linkage SMARTS matches {n} times, expected "
                                f"{spec.get('linkages', 1)}")
-    scale = svg_geometry.bond_px(mol, pos)
-    out = {"linkage_atoms": atoms}
+    out: dict = {"linkage_atoms": atoms}
+    for extra in spec.get("also") or []:
+        a2, b2, n2 = _match(mol, {"id": "linkage", "smarts": extra["linkage_smarts"]})
+        if n2 != int(extra.get("linkages", 1)):
+            raise DrawingSeedError(f"repeat unit {extra['linkage']} linkage SMARTS matches {n2} times, expected "
+                                   f"{extra.get('linkages', 1)}")
+        if set(a2) & set(out["linkage_atoms"]):
+            raise DrawingSeedError(f"repeat unit {extra['linkage']} linkage overlaps the {spec['linkage']} one")
+        out.setdefault("also", []).append({"linkage": extra["linkage"], "linkage_atoms": a2})
+        atoms = sorted(set(atoms) | set(a2))
+        bonds = sorted(set(bonds) | set(b2))
     if spec.get("group_smarts"):
         # Phase 3B: an added group (carboxymethyl cellulose's -CH2-COOH) is marked in the same amber layer as the
         # linkage, so the drawing shows both; the figure's caption names each.
@@ -773,6 +853,21 @@ def draw_repeat_unit(spec: dict) -> dict:
         atoms = sorted(set(atoms) | set(g_atoms))
         bonds = sorted(set(bonds) | set(g_bonds))
         out["group_atoms"] = g_atoms
+    return atoms, bonds, out
+
+
+def draw_repeat_unit(spec: dict) -> dict:
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(spec["smiles"])
+    if mol is None:
+        raise DrawingSeedError(f"repeat unit SMILES does not parse: {spec['smiles']}")
+    svg, d = structures.draw(Chem.Mol(mol), flag_close_contacts=False)
+    pos = {i: (d.GetDrawCoords(i).x, d.GetDrawCoords(i).y) for i in range(mol.GetNumAtoms())}
+    atoms, bonds, out = repeat_unit_marks(spec, mol)
+    if spec.get("variant") == SEPARATE_UNITS:
+        return {"svg": svg, "layer": None, **out}
+    scale = svg_geometry.bond_px(mol, pos)
     return {"svg": svg, "layer": layer(pos, atoms, bonds, scale, "mf-linkage"), **out}
 
 
@@ -827,9 +922,11 @@ def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = Non
         drawn = draw_repeat_unit(spec)
         rec["structure_repeat_unit"] = {
             "key": key, "recipe": REPEAT_RECIPE, "palette": structures.RECIPE_VERSION,
-            "smiles": spec["smiles"], "label": spec["label"], "linkage": spec["linkage"],
+            "smiles": spec["smiles"], "label": spec["label"], "linkage": spec.get("linkage"),
             "units": int(spec.get("units", 2)), "svg": drawn["svg"], "layer": drawn["layer"],
             "linkage_atoms": drawn["linkage_atoms"],
+            **({"also": drawn["also"]} if spec.get("also") else {}),
+            **({"variant": spec["variant"]} if spec.get("variant") else {}),
             **({"group": spec["group"], "group_atoms": drawn["group_atoms"]} if spec.get("group_smarts") else {}),
             **{k: " ".join(str(spec[k]).split()) for k in ("line", "replaces") if spec.get(k)},
             "confidence": "from_source", "source": "MoleculeFinder curated",
@@ -843,8 +940,8 @@ def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = Non
 # lib/copy-rules.ts): no em or en dash, no advice or dosing word, no completeness phrase, no LD50,
 # no "inferred"; plus lengths, and a sentence or caption ends with a full stop. The claim rule is
 # claims.check_lines (kind `part`).
-TEXT_LENGTHS = {"label": (6, 40), "sentence": (30, 280), "from": (10, 240), "caption": (15, 110),
-                "line": (30, 200), "replaces": (30, 200)}
+TEXT_LENGTHS = {"label": (6, 44), "sentence": (30, 280), "from": (10, 240), "caption": (15, 110),
+                "line": (30, 200), "replaces": (30, 200), "note": (30, 280)}
 
 
 def text_problems(items: list[tuple[str, str]] | None = None) -> list[str]:
@@ -862,7 +959,7 @@ def text_problems(items: list[tuple[str, str]] | None = None) -> list[str]:
         lo, hi = TEXT_LENGTHS.get(kind, (1, 240))
         if not lo <= len(text) <= hi:
             out.append(f"{key}: {len(text)} characters, outside {lo} to {hi}: {text!r}")
-        if kind in ("sentence", "caption", "line", "replaces") and not text.endswith("."):
+        if kind in ("sentence", "caption", "line", "replaces", "note") and not text.endswith("."):
             out.append(f"{key}: does not end with a full stop: {text!r}")
     return out
 

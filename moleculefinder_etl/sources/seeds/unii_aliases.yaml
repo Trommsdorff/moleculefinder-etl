@@ -82,6 +82,10 @@ aliases:
                                  # sodium tetraborate, CID 10219853. Found by the web's name sweep (trust run 3).
   K679OBS311: carboxymethyl-cellulose  # CARBOXYMETHYLCELLULOSE SODIUM, UNSPECIFIED ("cellulose gum" on labels; no PubChem CID):
                                  # the sodium salt of the polymer; the record is carboxymethylcellulose, CID 24748
+  YSE9PPT4TH: hyaluronic-acid    # SODIUM HYALURONATE (2 labels): the sodium salt of the polymer. Matched by the skeleton rule
+                                 # through the record's InChIKey until the drawing-findings pass (2026-11-27) drew the record as
+                                 # its repeat unit and dropped PubChem's structure (CID 24759, a four-sugar piece); ruled here
+                                 # so CeraVe Hydrating Mineral Sunscreen SPF 30 and EltaMD UV Clear keep their link.
   # Garrett's ruling (2026-10-25): "yes on linking cellulose, starch, and lecithin and other chemically
   # identical materials". The same substance in another physical form, grade, plant source or hydration
   # state, never a chemically altered one (croscarmellose, hydroxypropyl cellulose, sodium starch

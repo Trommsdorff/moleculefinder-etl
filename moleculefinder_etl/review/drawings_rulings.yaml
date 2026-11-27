@@ -8,7 +8,9 @@
 #
 # allow:   each list is one ruling: `date`, `by` (who ruled, and where), `what` (the ruling in a line), `covers` (the
 #          review's facts it answers: metal-floating, lattice, fragments) and `records` {slug: reason}. A record on a
-#          list is not a finding for the facts the list covers, and only for those.
+#          list is not a finding for the facts the list covers, and only for those. A later ruling of the same kind
+#          (2026-11-27) joins a list under `later:` (its own date, by, what), and each record it adds is
+#          {reason, date} with that ruling's date, so every entry still says which ruling put it there.
 # survey:  the extended-solids survey's classification of every record its scope rule catches (scripts/
 #          extended_solids_review.py SURVEY, 2026-11-26, copied verbatim; tests/test_review_drawings.py holds the two
 #          equal). Group a extended solid, b salt of a discrete organic ion, c discrete inorganic molecule, d unclear or
@@ -24,6 +26,10 @@ allow:
     date: 2026-11-26
     by: Garrett, ruling 3 on the extended-solids review (moleculefinder-web/docs/design/extended-solids-review-2026-11.html)
     what: Keep the 41 salts drawn as their ions; the ions drawn are the ones in the crystal (sodium ferrocyanide's complex ion since redrawn with its bonds).
+    later:
+      - date: 2026-11-27
+        by: Cowork's ruling A on the drawing-truth review of 2026-11-27, Garrett's word (../TRUST-2B-DRAWING-FINDINGS-PROMPT.md)
+        what: The 31 salts of a discrete organic ion (the survey's group b, magnesium glycinate aside) stay drawn as their ions.
     covers: [metal-floating, lattice, fragments]
     records:
       aluminium-hydroxide: "Gibbsite, layers of Al(OH)6 octahedra; drawn as Al3+ and three OH-."
@@ -67,16 +73,59 @@ allow:
       sodium-sulfite: "Na+ and sulfite; drawn as the ions."
       tricalcium-phosphate: "Ca2+ and phosphate; drawn as three Ca2+ and two PO4 3-."
       zinc-sulfate: "Zn2+ and sulfate; drawn as the ions."
+      # Joined 2026-11-27 (Cowork's ruling A on the drawing-truth review's first run, Garrett's word; brief
+      # ../TRUST-2B-DRAWING-FINDINGS-PROMPT.md): the survey's group b, salts of an organic acid with sodium, potassium,
+      # lithium, calcium or magnesium. Such a salt IS ions, and drawing the ions apart is how a chemist draws it. Each
+      # entry carries the later ruling's date. Magnesium glycinate, the one chelate among them, is redrawn instead.
+      acesulfame-potassium: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      allura-red-ac: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      amaranth-dye: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      brilliant-blue-fcf: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      calcium-acetate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      calcium-beta-hydroxy-beta-methylbutyrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      calcium-citrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      calcium-gluconate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      calcium-oxalate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      cyclamate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      disodium-inosinate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      docusate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      indigo-carmine: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      lithium-orotate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      magnesium-citrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      magnesium-l-threonate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      magnesium-stearate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      metamizole: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      monosodium-glutamate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      ponceau-4r: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      potassium-bitartrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      potassium-citrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      potassium-sodium-tartrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      potassium-sorbate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      sodium-acetate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      sodium-benzoate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      sodium-lauryl-sulfate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      sodium-thiopental: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      sunset-yellow-fcf: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      tartrazine: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
+      trisodium-citrate: {reason: "an ionic salt of a discrete organic ion, drawn as its ions", date: 2026-11-27}
   kept-as-drawn:
     date: 2026-11-26
     by: Garrett, the same review (group d, recommendation "Keep")
     what: Stannous fluoride, sucralfate, bismuth subsalicylate and povidone-iodine keep the drawing they have.
+    later:
+      - date: 2026-11-27
+        by: Cowork's ruling C on the drawing-truth review of 2026-11-27, Garrett's word (../TRUST-2B-DRAWING-FINDINGS-PROMPT.md)
+        what: Butylated hydroxyanisole and ivermectin, each a defined mixture of the two compounds drawn, keep their drawing.
     covers: [metal-floating, lattice, fragments]
     records:
       bismuth-subsalicylate: "A coordination polymer in the solid (layers of bismuth oxide and salicylate); drawn as one Bi salicylate ring."
       povidone-iodine: "Iodine held by a polymer (povidone); PubChem draws one vinylpyrrolidone unit and I2."
       stannous-fluoride: "SnF2 is a molecule in the gas; the solid is built of Sn4F8 rings; in toothpaste it is dissolved. F-Sn-F is the usual formula drawing."
       sucralfate: "Sucrose octasulfate with basic aluminium hydroxide, an amorphous complex; drawn as the sucrose octasulfate with Al(OH) groups."
+      # Joined 2026-11-27 (Cowork's ruling C, Garrett's word). Shellac, in the same ruling, is NOT here: its record's
+      # straight-chain acid is C15 (9,10,15-trihydroxypentadecanoic acid), not shellac's aleuritic acid (C16); held for a ruling.
+      butylated-hydroxyanisole: {reason: "a defined mixture of the two isomers shown", date: 2026-11-27}
+      ivermectin: {reason: "a defined mixture of the two compounds shown, B1a and B1b", date: 2026-11-27}
   discrete-inorganic:
     date: 2026-11-26
     by: the extended-solids survey, group c (16 entries, each rightly drawn as a molecule or a discrete ion); named as check 3's allowlist by the trust-2 brief, 2026-11-27

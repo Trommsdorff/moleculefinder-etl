@@ -118,6 +118,12 @@ def corpus(seeds: Path = SEEDS_DIR, curated: Path = CURATED_DIR) -> list[tuple[s
         for slug, d in (seed.get("metal_bonds") or {}).items():
             if isinstance((d or {}).get("line"), str) and d["line"].strip():
                 out.append(("part", f"display.{slug}.line", normalise(d["line"])))
+    # The drawing-findings pass (2026-11-27): the note printed with a true drawing of a defined mixture.
+    notes = seeds / "structure_notes.yaml"
+    if notes.exists():
+        for slug, d in ((yaml.safe_load(notes.read_text()) or {}).get("molecules") or {}).items():
+            if isinstance((d or {}).get("line"), str) and d["line"].strip():
+                out.append(("part", f"note.{slug}.line", normalise(d["line"])))
     # The 2026-12-care tranche: the no-structure line of a lattice drawn with nothing.
     none = seeds / "structure_none.yaml"
     if none.exists():

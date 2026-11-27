@@ -1155,6 +1155,20 @@ def _replaced_by_unit(slug: str) -> bool:
     return slug in _replacing_units()
 
 
+def _check_unit_monomers(slug: str, iso: str | None) -> None:
+    """The drawing-findings pass (2026-11-27): a separate-units repeat unit (acrylonitrile butadiene styrene) names in
+    `monomers` the record's own SMILES, its three monomers, and each of its drawn units must be one of them opened into
+    a chain (drawings.repeat_unit_marks). Here, before the record's structure is dropped, PubChem's SMILES must still
+    be exactly those monomers, so the units stay derived from the record's own; a change stops the build."""
+    from .drawings import canonical_pieces, load_repeat_seed
+    spec = load_repeat_seed().get(slug) or {}
+    if not spec.get("monomers"):
+        return
+    if not iso or canonical_pieces(iso) != canonical_pieces(spec["monomers"]):
+        raise SystemExit(f"repeat_units.yaml: {slug}: `monomers` ({spec['monomers']}) is no longer PubChem's record "
+                         f"of it ({iso}); read the record again before the units are drawn from it")
+
+
 STRUCTURE_NONE = SEEDS_DIR / "structure_none.yaml"
 
 
@@ -1199,6 +1213,42 @@ def structure_none_for(slug: str, formula: str | None = None) -> dict | None:
     if shown:
         out["formula"] = shown
     return out
+
+
+STRUCTURE_NOTES = SEEDS_DIR / "structure_notes.yaml"
+
+
+@functools.lru_cache(maxsize=1)
+def _notes_seed() -> dict:
+    if not STRUCTURE_NOTES.exists():
+        return {}
+    return (yaml.safe_load(STRUCTURE_NOTES.read_text()) or {}).get("molecules") or {}
+
+
+def structure_note_for(slug: str, has_drawing: bool, display: dict | None) -> dict | None:
+    """The record's ``structure_note`` ({line, confidence, source}) or None (the drawing-findings pass, 2026-11-27,
+    seeds/structure_notes.yaml): one plain sentence printed with a TRUE drawing that needs it to be read right (a
+    defined mixture drawn as its two compounds). It changes no drawing. Only a record that has a drawing and no display
+    structure (which carries its own line) may have one; a bad entry stops the build."""
+    e = _notes_seed().get(slug)
+    if not e:
+        return None
+    line = " ".join(str(e.get("line") or "").split())
+    problems = []
+    if not (line and str(e.get("basis") or "").strip()):
+        problems.append("needs line and basis")
+    elif any(d in line for d in ("\u2014", "\u2013")):
+        problems.append("a dash in the line")
+    else:                                    # the drawing seeds' house rules (kind `note`, 30 to 280 characters)
+        from .drawings import text_problems
+        problems += text_problems([(f"note.{slug}.note", line)])
+    if not has_drawing:
+        problems.append("the record has no drawing for the note to go with")
+    if display:
+        problems.append("the record has a display structure, which carries its own line")
+    if problems:
+        raise SystemExit(f"{STRUCTURE_NOTES.name}: {slug}: " + "; ".join(problems))
+    return {"line": line, "confidence": "from_source", "source": _src("curated")}
 
 
 def structure_none_dropped_names(slug: str) -> set:
@@ -1309,6 +1359,7 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         # functional groups (Aldehydes among them), the similarity edges and the weight boards. The record keeps
         # its CID (PubChem's record of the substance), its title, names, Wikidata item and curated fields, and
         # reads like cellulose: a polymer drawn as its repeat unit, no single formula or weight.
+        _check_unit_monomers(slug, iso)
         iso = can = None
         props = {}
     display = structure_display_for(slug, iso)
@@ -1376,6 +1427,9 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
 
     if display:
         rec["structure_display"] = display
+    note = structure_note_for(slug, bool(rec.get("structure_svg")), display)
+    if note:                                 # the drawing-findings pass: added only when there is one
+        rec["structure_note"] = note
     if no_drawing:
         rec["structure_none"] = no_drawing
         drop = structure_none_dropped_names(slug)

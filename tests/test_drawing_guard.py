@@ -65,13 +65,18 @@ MONDAY = [
     # sets remade from the new drawings (the counts hold: 723 with parts).
     # The cobalamins pass (2026-11-26): the four cobalamins redrawn with their cobalt's bonds, their twelve part
     # layers remade (the counts hold).
-    "structure drawings: 896 carried, 0 repainted, 0 drawn, 33 with no drawing",
-    "structure parts: 723 carried, 0 made, 202 with no part, 4 drawings unreadable",
+    # The drawing-findings pass (2026-11-27): chitin, hyaluronic acid, glycogen, maltodextrin, inulin, poly(methyl
+    # methacrylate) and acrylonitrile butadiene styrene drawn as their repeat units in place of PubChem's drawing (34th
+    # to 40th with no drawing; 11 repeat units); each of the six had a part set, and magnesium glycinate's (the amine,
+    # which no longer matches a nitrogen bonded to the magnesium) dropped with its redraw: 723 to 716 with parts;
+    # inulin was one of the four drawings no reading could prove (now three).
+    "structure drawings: 889 carried, 0 repainted, 0 drawn, 40 with no drawing",
+    "structure parts: 716 carried, 0 made, 210 with no part, 3 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
     # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).
     ("compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); "
     "147 carried, 0 repainted, 0 made"),
-    "repeat units: 4 (4 carried, 0 repainted, 0 drawn this run)",
+    "repeat units: 11 (11 carried, 0 repainted, 0 drawn this run)",
 ]
 
 SMALL = ["caffeine", "theobromine", "isotretinoin", "tretinoin", "sodium-bicarbonate", "sodium-carbonate",
@@ -157,7 +162,7 @@ def test_the_guard_counts_in_the_recipes_own_words(caplog):
     logged = [r.getMessage().strip() for r in caplog.records]
     v = DG.check(fresh, again, SNAP, allow_seeds=False)
     assert v.lines[1] in logged and v.lines[2] in logged
-    assert "repeat units: 4 (0 drawn this run)" in logged and made == 0
+    assert "repeat units: 11 (0 drawn this run)" in logged and made == 0
     assert v.lines == MONDAY and v.made == []
 
 

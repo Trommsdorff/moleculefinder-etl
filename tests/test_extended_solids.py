@@ -82,7 +82,8 @@ def test_the_guard_lists_exactly_the_two_drawings_that_leave(tmp_path):
     assert v.made == ["zinc-oxide (structure drawing): removed, it no longer has a drawing",
                       "silicon-dioxide (structure drawing): removed, it no longer has a drawing"]
     # 896 and 33 since the wrong-drawings pass (2026-11-26), which test_wrong_drawings.py lists on its own
-    assert v.lines[0] == "structure drawings: 896 carried, 0 repainted, 0 drawn, 33 with no drawing"
+    # 889 and 40 since the drawing-findings pass (2026-11-27), which tests/test_drawing_findings.py lists on its own
+    assert v.lines[0] == "structure drawings: 889 carried, 0 repainted, 0 drawn, 40 with no drawing"
 
 
 def test_zinc_oxide_leaves_the_molecule_of_the_week_for_avobenzone():
