@@ -689,8 +689,14 @@ one the guard LISTS (25 entries, pinned in `tests/test_drawing_findings.py`).
 - **Sodium hyaluronate** (UNII YSE9PPT4TH) is ruled a form in `unii_aliases.yaml`: it matched by the InChIKey skeleton the
   record dropped.
 
-**After the pass, the weekly run's lines:** `structure drawings: 889 carried, 0 repainted, 0 drawn, 40 with no
-drawing`; `structure parts: 716 carried, 0 made, 210 with no part, 3 drawings unreadable`; `compare drawings: 147 pairs
+**At the deploy (Garrett's rulings, 2026-11-27):** `repeat_units.yaml` `hubs: repeat-unit` (the seven units): the record's
+functional-group and element hubs are matched on the unit (`assemble.unit_hub_categories`, each `from: repeat_unit`); `hubs`
+feeds no drawing and is no input of the unit's key (`drawings.NOT_DRAWN`; adding it once stopped the guard on seven keys).
+`structure_none.yaml` `stand_in: true` (shellac): the panel, and PubChem's stand-in record dropped as for a replaced polymer
+(formula, weight, SMILES, identifiers, descriptors, 3D, computed hubs). ABS's units sit in one tighter row (coordinates only).
+
+**After the deploy's amendments, the weekly run's lines:** `structure drawings: 888 carried, 0 repainted, 0 drawn, 41 with no
+drawing`; `structure parts: 715 carried, 0 made, 211 with no part, 3 drawings unreadable`; `compare drawings: 147 pairs
 (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units:
 11 (11 carried, 0 repainted, 0 drawn this run)`; made or remade: none.
 
