@@ -286,3 +286,54 @@ def test_the_guard_lists_exactly_the_passs_changes(tmp_path):
     want |= {redrawn(s, m) for s, (m, _) in METALS.items()}
     want |= {parts(s, METALS[s][0]) for s in ("thiomersal", "chlorophyll-a", "chromium-iii-picolinate")}
     assert set(v.made) == want and len(v.made) == len(want) == 14
+
+
+# ── the deploy's amendments (Cowork's review, 2026-11-26) ────────────────────────────────────────────────────────
+def test_ferrocyanide_is_drawn_evenly_from_its_stored_layout():
+    """Iron in the middle, six Fe-C bonds 60 degrees apart, each Fe-C-N straight, read from the shipped drawing's own
+    geometry (this machine draws the display SMILES to the same bytes, so RDKit's drawer states every position)."""
+    r = _rec("sodium-ferrocyanide")
+    mol = Chem.MolFromSmiles(r["structure_display"]["smiles"])
+    assert mol.GetNumConformers() == 1                       # the layout rides in the SMILES
+    svg, d = structures.draw(Chem.Mol(mol))
+    assert svg == r["structure_svg"]
+    pos = {i: (d.GetDrawCoords(i).x, d.GetDrawCoords(i).y) for i in range(mol.GetNumAtoms())}
+    fe = next(a for a in mol.GetAtoms() if a.GetSymbol() == "Fe")
+    cs = [n.GetIdx() for n in fe.GetNeighbors()]
+    assert len(cs) == 6 and all(mol.GetAtomWithIdx(c).GetSymbol() == "C" for c in cs)
+
+    def bearing(a, b):
+        return math.degrees(math.atan2(pos[b][1] - pos[a][1], pos[b][0] - pos[a][0])) % 360
+
+    angles = sorted(bearing(fe.GetIdx(), c) for c in cs)
+    gaps = [(angles[(i + 1) % 6] - angles[i]) % 360 for i in range(6)]
+    assert all(abs(g - 60) < 3 for g in gaps), gaps
+    for c in cs:
+        n = next(x.GetIdx() for x in mol.GetAtomWithIdx(c).GetNeighbors() if x.GetSymbol() == "N")
+        bend = abs((bearing(fe.GetIdx(), c) - bearing(c, n) + 180) % 360 - 180)
+        assert bend < 3, (c, bend)                             # Fe, C and N in a line
+    # the four Na+ in a column clear of the complex: all to one side of every cyanide nitrogen
+    na = [a.GetIdx() for a in mol.GetAtoms() if a.GetSymbol() == "Na"]
+    xs = {round(pos[i][0]) for i in na}
+    assert len(na) == 4 and len(xs) == 1
+    assert min(pos[i][0] for i in na) > max(pos[a.GetIdx()][0] for a in mol.GetAtoms() if a.GetSymbol() == "N") + 20
+
+
+def test_ferrocyanide_says_whose_charge_the_4_minus_is():
+    line = _rec("sodium-ferrocyanide")["structure_display"]["line"]
+    assert line.endswith("The 4- written on the iron is the charge of the whole complex ion; the iron itself is "
+                         "iron(II).")
+    assert not CLAIM_WORDS.search(line) and "—" not in line and "–" not in line
+
+
+def test_simeticones_line_drops_the_reference_standard_label():
+    r = _rec("simeticone")
+    assert r["display_synonyms"] == ["Mylanta Gas Relief", "Mylicon Infant's Drops", "Sentry Simethicone"]
+    assert "Simethicon - USP CRS" in r["synonyms"]            # the search keeps it
+
+
+def test_tungsten_carbides_alloy_sentence_is_held_because_it_is_the_frozen_description():
+    # Cowork's amendment 3 is conditional: the sentence is the page's meta description (description, curated from
+    # why_it_matters), which is frozen until the 2026-12-08 read, so it stays and is queued.
+    r = _rec("tungsten-carbide")
+    assert r["description"].startswith("The alloy of drill bits") and r["description"] == r["why_it_matters"]["text"]

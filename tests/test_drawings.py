@@ -118,8 +118,10 @@ def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
 # drawing (the extended-solids pass, 2026-11-26: a network solid, drawn with nothing). The wrong-drawings pass
 # (2026-11-26): simeticone left (drawn as its repeat unit); chlorophyll a and chromium(III) picolinate joined, drawn
 # with their metal's bonds (dative arrows, long bonds to the metal), proven like cisplatin by being byte-identical.
+# The deploy's amendment (2026-11-26): sodium ferrocyanide joined, its layout now stored in the SMILES (six straight
+# cyanides 60 degrees apart).
 READ_ALONE_FAILS = {"chlorophyll-a", "chromium-iii-picolinate", "cisplatin", "liraglutide", "potassium-permanganate",
-                    "sucralfate"}
+                    "sodium-ferrocyanide", "sucralfate"}
 
 
 def test_the_reading_alone_agrees_with_rdkit_wherever_the_truth_is_known(sweep):

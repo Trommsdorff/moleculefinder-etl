@@ -598,8 +598,11 @@ coordinates as CXSMILES (`... |(x,y,;...)|`): `Chem.MolFromSmiles` keeps them as
 draws from it, and `svg_key` covers the whole string, so a layout is as fixed as a SMILES and no machine lays it out
 again. Cisplatin is a square (ammonia left, chlorides right; a test reads the corners from the SVG); chromium
 picolinate three chelate rings at 120 degrees; chlorophyll a the live drawing's own layout (read from its SVG) with the
-magnesium at the centre of its four nitrogens. Sodium ferrocyanide and thiomersal (PubChem's own thimerosal record,
-CID 16684434, verbatim) need no coordinates.
+magnesium at the centre of its four nitrogens; sodium ferrocyanide (the deploy's amendment) iron in the middle, six
+straight cyanides 60 degrees apart, the four sodium ions in a column to one side. Thiomersal (PubChem's own thimerosal
+record, CID 16684434, verbatim) needs no coordinates. Ferrocyanide's line also says the 4- on the iron is the whole
+ion's charge (the iron is iron(II)), and simeticone's "Also called" leaves out "Simethicon - USP CRS"
+(`synonym_do_not_use.yaml`).
 
 **Stopped, not drawn: the four cobalamins.** A flat drawing of a cobalamin must cross the corrin once (the nucleotide
 loop runs from the corrin's side chain back to the cobalt). The best layout tried (the live corrin, cobalt at its

@@ -134,7 +134,7 @@ metal_bonds:
       and two ammonia nitrogens, like groups on adjacent corners. Opposite corners would be transplatin, a different
       compound (PubChem CID 441203), so the layout is fixed in the SMILES and a test reads the drawn corners.
   sodium-ferrocyanide:
-    smiles: "N#C[Fe-4](C#N)(C#N)(C#N)(C#N)C#N.[Na+].[Na+].[Na+].[Na+]"
+    smiles: "N#C[Fe-4](C#N)(C#N)(C#N)(C#N)C#N.[Na+].[Na+].[Na+].[Na+] |(0,2.7,;0,1.5,;0,0,;1.299,0.75,;2.338,1.35,;1.299,-0.75,;2.338,-1.35,;0,-1.5,;0,-2.7,;-1.299,-0.75,;-2.338,-1.35,;-1.299,0.75,;-2.338,1.35,;4.6,1.65,;4.6,0.55,;4.6,-0.55,;4.6,-1.65,)|"
     metal: Fe
     bonded:
       - {smarts: "[#6]#[#7]", count: 6}
@@ -148,10 +148,13 @@ metal_bonds:
       - {element: C, record: -1, drawn: 0}
     line: >-
       Drawn with the iron bonded to the carbon of each of its six cyanides, the complex ion they form; PubChem's
-      one-line structure leaves the iron and the cyanides apart.
+      one-line structure leaves the iron and the cyanides apart. The 4- written on the iron is the charge of the whole
+      complex ion; the iron itself is iron(II).
     from: >-
       Written by hand from the record's SMILES (CID 26129): each cyanide's carbon bonded to the iron, the four sodium
-      ions left as ions. The same form as ChEBI's hexacyanoferrate(4-). RDKit's own layout (no coordinates needed).
+      ions left as ions. The same form as ChEBI's hexacyanoferrate(4-). Coordinates by hand (the deploy's amendment,
+      Cowork's review, 2026-11-26): iron in the middle, the six Fe-C bonds 60 degrees apart, each Fe-C-N straight,
+      the four sodium ions in a column to one side; RDKit's own layout set the cyanides unevenly.
     basis: >-
       Sodium ferrocyanide is Na4[Fe(CN)6]: the hexacyanoferrate(II) ion, iron octahedrally bonded to the carbon end
       of six cyanide ligands, with four sodium ions. With the six bonds drawn, the formal charges put the ion's 4-

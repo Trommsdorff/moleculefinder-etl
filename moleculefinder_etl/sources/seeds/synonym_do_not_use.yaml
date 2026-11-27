@@ -119,3 +119,7 @@
   why: the mineral, one crystal form of titanium dioxide (anatase and brookite are others), rather than the compound's name, as fused quartz is for silicon dioxide
 - name: Parsol
   why: a family of sunscreen filter trade names (Parsol 1789 is avobenzone, Parsol MCX octinoxate), listed by PubChem as a synonym of octinoxate; the name of one filter, Parsol MCX, stays
+# The wrong-drawings deploy (Cowork's review, 2026-11-26): simeticone's line ended with a reference-standard
+# catalogue label.
+- name: Simethicon - USP CRS
+  why: the USP's catalogue label for its simethicone reference standard (CRS, chemical reference substance), not a name
