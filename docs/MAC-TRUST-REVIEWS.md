@@ -137,7 +137,10 @@ each with the snapshot `main` holds and, through it, with every other surface th
 - **Code:** `moleculefinder_etl/review/facts.py` (its docstring is the method), `moleculefinder_etl/review/facts_differences.yaml`
   (the deliberate differences). Tests: `tests/test_review_facts.py`, `tests/test_mac_trust.py`.
 - **By hand:** `./.venv/bin/python3 -m moleculefinder_etl.cli review facts` (= `mfetl review facts`; `--full` reads
-  every sitemap address, `--sample` the day's sample, `--date`, `--out`, `--snapshot`, `--site`).
+  every sitemap address, `--sample` the day's sample, `--date`, `--out`, `--snapshot`, `--site`). A hand run through
+  `mfetl` (either review) is "another build" to the weekly refresh, which steps aside while it runs (seen 2026-11-27 on a
+  dry run); the Mac job runs the module directly and never is. Run a review by hand clear of Monday's refresh, or as
+  `python -m moleculefinder_etl.review.facts`.
 - **It only reads.** Cold reads of https://moleculefinder.com, four at a time, each reader pausing a quarter second
   after each page, User-Agent `MoleculeFinder-trust-review/1 (+https://moleculefinder.com/about)`. No PubChem request,
   no database key. It writes only into `trust-reports/`.

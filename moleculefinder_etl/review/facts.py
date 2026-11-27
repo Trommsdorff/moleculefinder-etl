@@ -1382,20 +1382,41 @@ def check_feed(rv: Review, body: str, path: str) -> None:
 
 
 # ── the repetition measure (reported, never a finding) ──────────────────────────────────────────
-BLOCK_TAGS = {"p", "li", "dd", "dt", "td", "th", "h1", "h2", "h3", "h4", "figcaption", "summary", "blockquote", "a",
+BLOCK_TAGS = {"p", "li", "dd", "dt", "td", "th", "h1", "h2", "h3", "h4", "figcaption", "summary", "blockquote",
               "label", "button", "caption"}
 
 
+def _own_text(n: Node) -> str:
+    """A block's text without the blocks nested in it (they are pieces of their own); its links' text stays."""
+    parts: list[str] = []
+
+    def walk(x: Node) -> None:
+        for k in x.kids:
+            if isinstance(k, str):
+                parts.append(k)
+            elif k.tag in SKIP or k.attrs.get("aria-hidden") == "true" or k.tag in BLOCK_TAGS:
+                continue
+            else:
+                sep = "" if k.tag in INLINE else " "
+                parts.append(sep)
+                walk(k)
+                parts.append(sep)
+    walk(n)
+    return " ".join("".join(parts).split())
+
+
 def pieces(node: Node) -> list[str]:
-    """The page's visible text cut into pieces: each paragraph, list item, cell, heading, caption or link with no such
-    element inside it, split into sentences; whitespace collapsed. Exact text, case kept."""
+    """The page's visible text cut into pieces: each paragraph, list item, cell, heading or caption (its own text, the
+    links in it included, the blocks nested in it cut out as pieces of their own) and each link that stands outside
+    any such block (a card), split into sentences; whitespace collapsed. Exact text, case kept."""
     out = []
-    for n in node.find_all(lambda n: n.tag in BLOCK_TAGS):
-        if any(k.tag in BLOCK_TAGS for k in n.iter()):
+    for n in node.find_all(lambda n: n.tag in BLOCK_TAGS or n.tag == "a"):
+        anc = list(_ancestors(n))
+        if any(a.tag in SKIP or a.attrs.get("aria-hidden") == "true" for a in anc):
             continue
-        if any(a.tag in SKIP or a.attrs.get("aria-hidden") == "true" for a in _ancestors(n)):
-            continue
-        out += sentences(n.text())
+        if n.tag == "a" and any(a.tag in BLOCK_TAGS or a.tag == "a" for a in anc):
+            continue                                # a link inside a block is part of the block's text
+        out += sentences(_own_text(n))
     return [p for p in out if p]
 
 

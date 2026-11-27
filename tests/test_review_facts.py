@@ -407,6 +407,14 @@ def test_repetition_on_three_small_pages():
     assert facts.repetition({"y": {"/y/a": ["one"], "/y/b": ["two"]}}) == {}         # under three pages: not measured
 
 
+def test_pieces_keep_a_paragraphs_links_and_count_a_card():
+    page = facts.page_of("/x", '<main><p>From the label on <a href="/d">DailyMed</a>, which lists 26.</p>'
+                               '<ul><li>Outer item<p>Inner paragraph.</p></li></ul>'
+                               '<div><a href="/m/c"><span>Caffeine</span> <span>C8H10N4O2</span></a></div></main>')
+    assert facts.pieces(page.body) == ["From the label on DailyMed , which lists 26.", "Outer item",
+                                       "Inner paragraph.", "Caffeine C8H10N4O2"]
+
+
 def test_the_report_and_heartbeat(snap, tmp_path, monkeypatch):
     monkeypatch.setattr(facts, "PINNED", {"/m/caffeine": "a pinned page"})
     fetch, _ = fake_site()
