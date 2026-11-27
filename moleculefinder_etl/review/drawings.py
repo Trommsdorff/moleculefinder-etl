@@ -518,7 +518,7 @@ def check_classification(rv: Review, recs: dict) -> None:
 
 # ── check 6: the seeds still true ───────────────────────────────────────────────────────────────
 def check_seeds(rv: Review, recs: dict, seeds: dict) -> None:
-    from ..transform import assemble, drawings, structures
+    from ..transform import assemble, structures
 
     n = sum(len(seeds[k]) for k in ("none", "display", "metal", "units")) + len(seeds["parts"].get("molecules") or {})
     rv.denom("seed", "seed entry", n, "seed entries")
@@ -581,7 +581,6 @@ def check_seeds(rv: Review, recs: dict, seeds: dict) -> None:
                     "names", slug)
         if r.get("structure_repeat_unit") and slug not in units:
             rv.find("seed", "repeat_units.yaml", "the record carries a repeat unit the seed no longer names", slug)
-    _ = drawings
 
 
 def repeat_unit_problems(slug: str, spec: dict, r: dict) -> list[str]:
