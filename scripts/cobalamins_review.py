@@ -26,9 +26,9 @@ from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tests"))
-from test_cobalamins import PX, RENDER, layout_numbers  # noqa: E402
+from test_cobalamins import PX, RENDER, layout_numbers
 
-from moleculefinder_etl.transform import drawings, structures  # noqa: E402
+from moleculefinder_etl.transform import drawings, structures
 
 SNAP = ROOT / "data" / "snapshots"
 SEEDS = ROOT / "moleculefinder_etl" / "sources" / "seeds"
@@ -118,13 +118,13 @@ def proofs(slug: str, seed: dict, rec: dict) -> list[tuple[str, str]]:
         e_["smiles"], rec["isomeric_smiles"], "Co", e_["bonded"], e_["charges"], top=e_.get("top"),
         reference=(ref["smiles"], ref["top"]) if "stereo_from" in e_ else None)
     out = [
-        ("(a) formula and charge", f"{CalcMolFormula(d)}, overall charge {Chem.GetFormalCharge(d)}: the record's "
-                                   f"({CalcMolFormula(r)}, {Chem.GetFormalCharge(r)})."),
-        ("(b) the six bonds", f"the cobalt has {len(nb)} bonds: the four corrin nitrogens, the benzimidazole's free "
-                              f"nitrogen and {TOP[slug]}; {kinds.count('single')} plain (the ring's N- and the top "
-                              f"group), {kinds.count('dative')} dative arrows; drawn Co+ (Co3+ in the record)."),
-        ("(c) the record's pieces", "deleting the six bonds and setting the charges back gives the record's own three "
-                                    "pieces (the ring and nucleotide, the top group, Co3+), atom for atom."),
+        ("(a) formula and charge", (f"{CalcMolFormula(d)}, overall charge {Chem.GetFormalCharge(d)}: the record's "
+                                    f"({CalcMolFormula(r)}, {Chem.GetFormalCharge(r)}).")),
+        ("(b) the six bonds", (f"the cobalt has {len(nb)} bonds: the four corrin nitrogens, the benzimidazole's free "
+                               f"nitrogen and {TOP[slug]}; {kinds.count('single')} plain (the ring's N- and the top "
+                               f"group), {kinds.count('dative')} dative arrows; drawn Co+ (Co3+ in the record).")),
+        ("(c) the record's pieces", ("deleting the six bonds and setting the charges back gives the record's own "
+                                     "three pieces (the ring and nucleotide, the top group, Co3+), atom for atom.")),
         ("(d) stereo", (f"the record specifies {own} carbon centres; the drawing shows {drawn}. "
                         + ("Every one is the record's own." if own == drawn else
                            f"The record's {own} are the drawing's; the other {drawn - own} come from hydroxocobalamin's "
