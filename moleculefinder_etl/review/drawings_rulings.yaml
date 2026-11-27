@@ -1,0 +1,232 @@
+# The drawing-truth review's rulings and its classification (trust review 3, `mfetl review drawings`,
+# moleculefinder_etl/review/drawings.py; brief ../TRUST-2-DRAWING-TRUTH-PROMPT.md, 2026-11-27).
+#
+# READ-ONLY DATA FOR THE REVIEW. Nothing here changes a drawing, a page or the snapshot: the review reads it to decide
+# which of its findings a ruling already covers. An entry is added ONLY on a ruling (Garrett's, or Cowork's when Garrett
+# has handed Cowork the chemistry), with its date and its reason; never to make a finding go away. How to add one, and
+# who rules: docs/MAC-TRUST-REVIEWS.md, "Adding an allowlist entry".
+#
+# allow:   each list is one ruling: `date`, `by` (who ruled, and where), `what` (the ruling in a line), `covers` (the
+#          review's facts it answers: metal-floating, lattice, fragments) and `records` {slug: reason}. A record on a
+#          list is not a finding for the facts the list covers, and only for those.
+# survey:  the extended-solids survey's classification of every record its scope rule catches (scripts/
+#          extended_solids_review.py SURVEY, 2026-11-26, copied verbatim; tests/test_review_drawings.py holds the two
+#          equal). Group a extended solid, b salt of a discrete organic ion, c discrete inorganic molecule, d unclear or
+#          another problem; `kind` (group a only) as the survey named it. Check 5 reports any in-scope record missing here.
+# models:  the 3D model compound of each display structure that names a `model_cid` (structure_display.yaml), its
+#          connectivity read from PubChem once (2026-11-27, PUG REST ConnectivitySMILES), so check 8 compares it with
+#          the drawing without a request. A display entry whose model_cid is not here is itself a finding.
+# pinned:  the live check's pages chosen by hand (check 9), each with its reason. Every structure_none, structure_display
+#          (sugar and metal bonds) and repeat_units entry is pinned automatically on top of these.
+
+allow:
+  salts-as-ions:
+    date: 2026-11-26
+    by: Garrett, ruling 3 on the extended-solids review (moleculefinder-web/docs/design/extended-solids-review-2026-11.html)
+    what: Keep the 41 salts drawn as their ions; the ions drawn are the ones in the crystal (sodium ferrocyanide's complex ion since redrawn with its bonds).
+    covers: [metal-floating, lattice, fragments]
+    records:
+      aluminium-hydroxide: "Gibbsite, layers of Al(OH)6 octahedra; drawn as Al3+ and three OH-."
+      aluminium-oxide: "Corundum, an ionic and partly covalent lattice; drawn as two Al3+ and three O2- ions."
+      ammonium-bicarbonate: "NH4+ and hydrogen carbonate; drawn as the ions."
+      ammonium-carbonate: "NH4+ and carbonate; drawn as the ions."
+      ammonium-chloride: "Ionic lattice of NH4+ and Cl-; drawn as the two ions."
+      borax: "Na+ and the tetraborate ion, a discrete B4O5(OH)4 cage; drawn as the ions (it has a part layer)."
+      calcium-carbonate: "Calcite or aragonite: Ca2+ and carbonate ions; drawn as Ca2+ and CO3 2-."
+      calcium-chloride: "Ionic lattice of Ca2+ and Cl-; drawn as one Ca2+ and two Cl-."
+      calcium-hydroxide: "Portlandite, a layered lattice; drawn as Ca2+ and two OH-."
+      copper-ii-sulfate: "Cu2+ and sulfate (the blue crystal is the pentahydrate); drawn as the ions."
+      dicalcium-phosphate: "Ca2+ and hydrogen phosphate; drawn as the ions."
+      dipotassium-phosphate: "K+ and hydrogen phosphate; drawn as the ions."
+      disodium-phosphate: "Na+ and hydrogen phosphate; drawn as the ions."
+      iron-ii-sulfate: "Fe2+ and sulfate; drawn as the ions."
+      magnesium-carbonate: "Magnesite: Mg2+ and carbonate; drawn as the ions."
+      magnesium-chloride: "Layered ionic lattice of Mg2+ and Cl-; drawn as the three ions."
+      magnesium-hydroxide: "Brucite, a layered lattice; drawn as Mg2+ and two OH-."
+      magnesium-sulfate: "Mg2+ and sulfate (Epsom salt is the heptahydrate); drawn as the ions."
+      monosodium-phosphate: "Na+ and dihydrogen phosphate; drawn as the ions."
+      potassium-bicarbonate: "K+ and hydrogen carbonate; drawn as the ions."
+      potassium-chloride: "Rock-salt lattice of K+ and Cl-; drawn as the two ions."
+      potassium-hydroxide: "Ionic lattice of K+ and OH-; drawn as the two ions."
+      potassium-iodide: "Rock-salt lattice of K+ and I-; drawn as the two ions."
+      potassium-nitrate: "K+ and nitrate; drawn as the ions."
+      potassium-permanganate: "K+ and the permanganate ion MnO4-; drawn as the ions."
+      sodium-bicarbonate: "Na+ and hydrogen carbonate; drawn as the ions (it has a part layer)."
+      sodium-bisulfite: "Na+ and hydrogen sulfite; drawn as the ions."
+      sodium-carbonate: "Na+ and carbonate; drawn as the ions (it has a part layer)."
+      sodium-chloride: "Rock-salt lattice of Na+ and Cl-; drawn as the two ions, no bond."
+      sodium-ferrocyanide: "Na+ and the ferrocyanide ion [Fe(CN)6]4-, a discrete complex; but drawn as Fe2+ and six loose cyanide ions, as if the cyanides were free."
+      sodium-fluoride: "Rock-salt lattice of Na+ and F-; drawn as the two ions."
+      sodium-hydroxide: "Ionic lattice of Na+ and OH-; drawn as the two ions."
+      sodium-hypochlorite: "Na+ and hypochlorite (sold as a solution, bleach); drawn as the ions."
+      sodium-iodide: "Rock-salt lattice of Na+ and I-; drawn as the two ions."
+      sodium-metabisulfite: "Na+ and the disulfite ion S2O5 2-; drawn as the ions."
+      sodium-monofluorophosphate: "Na+ and the monofluorophosphate ion PO3F 2-; drawn as the ions."
+      sodium-nitrate: "Na+ and nitrate; drawn as the ions."
+      sodium-nitrite: "Na+ and nitrite; drawn as the ions."
+      sodium-sulfite: "Na+ and sulfite; drawn as the ions."
+      tricalcium-phosphate: "Ca2+ and phosphate; drawn as three Ca2+ and two PO4 3-."
+      zinc-sulfate: "Zn2+ and sulfate; drawn as the ions."
+  kept-as-drawn:
+    date: 2026-11-26
+    by: Garrett, the same review (group d, recommendation "Keep")
+    what: Stannous fluoride, sucralfate, bismuth subsalicylate and povidone-iodine keep the drawing they have.
+    covers: [metal-floating, lattice, fragments]
+    records:
+      bismuth-subsalicylate: "A coordination polymer in the solid (layers of bismuth oxide and salicylate); drawn as one Bi salicylate ring."
+      povidone-iodine: "Iodine held by a polymer (povidone); PubChem draws one vinylpyrrolidone unit and I2."
+      stannous-fluoride: "SnF2 is a molecule in the gas; the solid is built of Sn4F8 rings; in toothpaste it is dissolved. F-Sn-F is the usual formula drawing."
+      sucralfate: "Sucrose octasulfate with basic aluminium hydroxide, an amorphous complex; drawn as the sucrose octasulfate with Al(OH) groups."
+  discrete-inorganic:
+    date: 2026-11-26
+    by: the extended-solids survey, group c (16 entries, each rightly drawn as a molecule or a discrete ion); named as check 3's allowlist by the trust-2 brief, 2026-11-27
+    what: Discrete inorganic molecules (and the bicarbonate ion) are drawn as what they are; not lattices.
+    covers: [lattice]
+    records:
+      ammonia: "NH3, a molecule."
+      bicarbonate: "The HCO3- ion itself, as it is in blood: a discrete ion, rightly drawn."
+      boric-acid: "B(OH)3, a molecule (its crystal is layers of molecules held by hydrogen bonds)."
+      carbon-dioxide: "CO2, a molecule (dry ice is a crystal of whole molecules)."
+      carbon-monoxide: "CO, a molecule."
+      hydrogen-peroxide: "H2O2, a molecule."
+      hydrogen-sulfide: "H2S, a molecule."
+      hypochlorous-acid: "HOCl, a molecule."
+      iodine: "I2, a molecule (solid iodine is a crystal of I2 molecules)."
+      nitric-oxide: "NO, a molecule (a radical)."
+      nitrous-oxide: "N2O, a molecule."
+      ozone: "O3, a molecule."
+      phosphoric-acid: "H3PO4, a molecule."
+      sulfur-dioxide: "SO2, a molecule."
+      sulfuric-acid: "H2SO4, a molecule."
+      water: "H2O, a molecule (ice is a lattice of whole molecules)."
+models:
+  439709: {title: beta-D-fructose, connectivity: "C(C1C(C(C(O1)(CO)O)O)O)O", for: fructose}
+  21581131: {title: alpha-D-psicofuranose, connectivity: "C(C1C(C(C(O1)(CO)O)O)O)O", for: allulose}
+pinned:
+  caffeine: An ordinary drawing, the site's best-known page (the deploy smoke's pin too).
+  sodium-chloride: A salt drawn as its ions (ruling 3).
+  sodium-benzoate: A salt of an organic ion drawn as its ions (the survey's group b).
+  aspirin: A drawing with a part layer and no stereo.
+  ibuprofen: A drawing with one stereocentre left unspecified by its record.
+  morphine: A drawing with several specified stereocentres.
+  gluten: A hand-modelled protein mixture with no drawing and no repeat unit.
+survey:
+  acesulfame-potassium: {group: b, why: "The acesulfame anion and K+."}
+  allura-red-ac: {group: b, why: "A sulfonated azo dye anion and Na+."}
+  aluminium-hydroxide: {group: a, kind: "ions", why: "Gibbsite, layers of Al(OH)6 octahedra; drawn as Al3+ and three OH-."}
+  aluminium-oxide: {group: a, kind: "ions", why: "Corundum, an ionic and partly covalent lattice; drawn as two Al3+ and three O2- ions."}
+  aluminum-chlorohydrate: {group: a, kind: "hand", why: "A basic aluminium chloride, a mix of polymeric Al-O-OH clusters; no PubChem structure."}
+  aluminum-sesquichlorohydrate: {group: a, kind: "hand", why: "A basic aluminium chloride; no PubChem structure."}
+  aluminum-zirconium-octachlorohydrex-gly: {group: a, kind: "hand", why: "Aluminium and zirconium chlorohydrate clusters with glycine; no PubChem structure."}
+  aluminum-zirconium-tetrachlorohydrex-gly: {group: a, kind: "hand", why: "Aluminium and zirconium chlorohydrate clusters with glycine; no PubChem structure."}
+  aluminum-zirconium-trichlorohydrex-gly: {group: a, kind: "hand", why: "Aluminium and zirconium chlorohydrate clusters with glycine; no PubChem structure."}
+  amaranth-dye: {group: b, why: "A sulfonated azo dye anion and Na+."}
+  ammonia: {group: c, why: "NH3, a molecule."}
+  ammonium-bicarbonate: {group: a, kind: "anion", why: "NH4+ and hydrogen carbonate; drawn as the ions."}
+  ammonium-carbonate: {group: a, kind: "anion", why: "NH4+ and carbonate; drawn as the ions."}
+  ammonium-chloride: {group: a, kind: "ions", why: "Ionic lattice of NH4+ and Cl-; drawn as the two ions."}
+  bicarbonate: {group: c, why: "The HCO3- ion itself, as it is in blood: a discrete ion, rightly drawn."}
+  bismuth-subsalicylate: {group: d, why: "A coordination polymer in the solid (layers of bismuth oxide and salicylate); drawn as one Bi salicylate ring."}
+  borax: {group: a, kind: "anion", why: "Na+ and the tetraborate ion, a discrete B4O5(OH)4 cage; drawn as the ions (it has a part layer)."}
+  boric-acid: {group: c, why: "B(OH)3, a molecule (its crystal is layers of molecules held by hydrogen bonds)."}
+  brilliant-blue-fcf: {group: b, why: "A sulfonated triarylmethane dye anion and Na+."}
+  calcium-acetate: {group: b, why: "Acetate anions and Ca2+."}
+  calcium-beta-hydroxy-beta-methylbutyrate: {group: b, why: "HMB anions and Ca2+."}
+  calcium-carbonate: {group: a, kind: "anion", why: "Calcite or aragonite: Ca2+ and carbonate ions; drawn as Ca2+ and CO3 2-."}
+  calcium-chloride: {group: a, kind: "ions", why: "Ionic lattice of Ca2+ and Cl-; drawn as one Ca2+ and two Cl-."}
+  calcium-citrate: {group: b, why: "Citrate anions and Ca2+."}
+  calcium-gluconate: {group: b, why: "Gluconate anions and Ca2+."}
+  calcium-hydroxide: {group: a, kind: "ions", why: "Portlandite, a layered lattice; drawn as Ca2+ and two OH-."}
+  calcium-oxalate: {group: b, why: "Oxalate, a discrete organic anion, and Ca2+ (also the mineral of kidney stones; the anion carries the structure)."}
+  calcium-oxide: {group: a, kind: "false", why: "Quicklime: a rock-salt lattice of Ca2+ and O2- ions, each among six of the other. Drawn as a Ca=O molecule (O=[Ca])."}
+  carbon-dioxide: {group: c, why: "CO2, a molecule (dry ice is a crystal of whole molecules)."}
+  carbon-monoxide: {group: c, why: "CO, a molecule."}
+  chlorophyll-a: {group: d, why: "A discrete molecule, Mg bonded inside the ring; drawn with the Mg2+ apart."}
+  choline-chloride: {group: b, why: "The choline cation and Cl-."}
+  chromium-iii-picolinate: {group: d, why: "A discrete complex, Cr bonded to three picolinates; drawn as Cr3+ and three loose picolinate ions."}
+  cisplatin: {group: d, why: "A discrete square-planar complex, Pt bonded to two Cl and two NH3; PubChem's SMILES leaves the two NH3 unbonded, so the drawing shows them floating."}
+  copper-ii-sulfate: {group: a, kind: "anion", why: "Cu2+ and sulfate (the blue crystal is the pentahydrate); drawn as the ions."}
+  cyanocobalamin: {group: d, why: "A discrete molecule, Co bonded in the corrin ring; drawn with Co3+ and the cyanide apart."}
+  cyclamate: {group: b, why: "The cyclamate anion and Na+."}
+  dicalcium-phosphate: {group: a, kind: "anion", why: "Ca2+ and hydrogen phosphate; drawn as the ions."}
+  dimenhydrinate: {group: b, why: "A salt of two organic ions, diphenhydramine and 8-chlorotheophylline (PubChem draws both neutral)."}
+  dipotassium-phosphate: {group: a, kind: "anion", why: "K+ and hydrogen phosphate; drawn as the ions."}
+  disodium-inosinate: {group: b, why: "The inosinate anion and Na+."}
+  disodium-phosphate: {group: a, kind: "anion", why: "Na+ and hydrogen phosphate; drawn as the ions."}
+  docusate: {group: b, why: "The docusate anion and Na+."}
+  hydrogen-peroxide: {group: c, why: "H2O2, a molecule."}
+  hydrogen-sulfide: {group: c, why: "H2S, a molecule."}
+  hydroxocobalamin: {group: d, why: "A discrete molecule, Co bonded in the corrin ring; drawn with the Co3+ apart."}
+  hyoscine-butylbromide: {group: b, why: "A quaternary ammonium drug cation and Br-."}
+  hypochlorous-acid: {group: c, why: "HOCl, a molecule."}
+  indigo-carmine: {group: b, why: "The disulfonated indigo anion and Na+."}
+  iodine: {group: c, why: "I2, a molecule (solid iodine is a crystal of I2 molecules)."}
+  ipratropium-bromide: {group: b, why: "A quaternary ammonium drug cation and Br-."}
+  iron-ii-sulfate: {group: a, kind: "anion", why: "Fe2+ and sulfate; drawn as the ions."}
+  lithium-orotate: {group: b, why: "The orotate anion and Li+."}
+  magnesium-carbonate: {group: a, kind: "anion", why: "Magnesite: Mg2+ and carbonate; drawn as the ions."}
+  magnesium-chloride: {group: a, kind: "ions", why: "Layered ionic lattice of Mg2+ and Cl-; drawn as the three ions."}
+  magnesium-citrate: {group: b, why: "Citrate anion and Mg2+."}
+  magnesium-glycinate: {group: b, why: "Glycinate anions and Mg2+ (a chelate, drawn as ions)."}
+  magnesium-hydroxide: {group: a, kind: "ions", why: "Brucite, a layered lattice; drawn as Mg2+ and two OH-."}
+  magnesium-l-threonate: {group: b, why: "Threonate anions and Mg2+."}
+  magnesium-oxide: {group: a, kind: "false", why: "Periclase: a rock-salt lattice of Mg2+ and O2-, each among six of the other. Drawn as a Mg=O molecule (O=[Mg])."}
+  magnesium-stearate: {group: b, why: "Stearate anions and Mg2+."}
+  magnesium-sulfate: {group: a, kind: "anion", why: "Mg2+ and sulfate (Epsom salt is the heptahydrate); drawn as the ions."}
+  metamizole: {group: b, why: "The metamizole anion and Na+."}
+  methylcobalamin: {group: d, why: "A discrete molecule, Co bonded to a methyl in the corrin ring; drawn with Co3+ and CH3- apart."}
+  methylene-blue: {group: b, why: "The methylene blue cation and Cl-."}
+  monosodium-glutamate: {group: b, why: "The glutamate anion and Na+."}
+  monosodium-phosphate: {group: a, kind: "anion", why: "Na+ and dihydrogen phosphate; drawn as the ions."}
+  nitric-oxide: {group: c, why: "NO, a molecule (a radical)."}
+  nitrous-oxide: {group: c, why: "N2O, a molecule."}
+  ozone: {group: c, why: "O3, a molecule."}
+  phosphoric-acid: {group: c, why: "H3PO4, a molecule."}
+  ponceau-4r: {group: b, why: "A sulfonated azo dye anion and Na+."}
+  potassium-bicarbonate: {group: a, kind: "anion", why: "K+ and hydrogen carbonate; drawn as the ions."}
+  potassium-bitartrate: {group: b, why: "Hydrogen tartrate and K+."}
+  potassium-chloride: {group: a, kind: "ions", why: "Rock-salt lattice of K+ and Cl-; drawn as the two ions."}
+  potassium-citrate: {group: b, why: "Citrate and K+."}
+  potassium-hydroxide: {group: a, kind: "ions", why: "Ionic lattice of K+ and OH-; drawn as the two ions."}
+  potassium-iodide: {group: a, kind: "ions", why: "Rock-salt lattice of K+ and I-; drawn as the two ions."}
+  potassium-nitrate: {group: a, kind: "anion", why: "K+ and nitrate; drawn as the ions."}
+  potassium-permanganate: {group: a, kind: "anion", why: "K+ and the permanganate ion MnO4-; drawn as the ions."}
+  potassium-sodium-tartrate: {group: b, why: "Tartrate, K+ and Na+, with its four waters."}
+  potassium-sorbate: {group: b, why: "The sorbate anion and K+."}
+  povidone-iodine: {group: d, why: "Iodine held by a polymer (povidone); PubChem draws one vinylpyrrolidone unit and I2."}
+  silicon-carbide: {group: a, kind: "false", why: "A covalent network like diamond's, each silicon bonded to four carbons and each carbon to four silicons. Drawn as a charged Si triple-bond C molecule ([C-]#[Si+])."}
+  silicon-dioxide: {group: a, kind: "built", why: "A network of SiO4 tetrahedra sharing every corner (quartz, and the glassy and amorphous silicas). PubChem's O=[Si]=O drew a molecule with two Si=O double bonds and a 3D model of it."}
+  simeticone: {group: d, why: "A mixture, polydimethylsiloxane with 4 to 7% silica. PubChem draws a short siloxane plus the same O=[Si]=O molecule silicon dioxide had."}
+  sodium-acetate: {group: b, why: "Acetate and Na+."}
+  sodium-benzoate: {group: b, why: "The benzoate anion and Na+ (the brief's own example)."}
+  sodium-bicarbonate: {group: a, kind: "anion", why: "Na+ and hydrogen carbonate; drawn as the ions (it has a part layer)."}
+  sodium-bisulfite: {group: a, kind: "anion", why: "Na+ and hydrogen sulfite; drawn as the ions."}
+  sodium-carbonate: {group: a, kind: "anion", why: "Na+ and carbonate; drawn as the ions (it has a part layer)."}
+  sodium-chloride: {group: a, kind: "ions", why: "Rock-salt lattice of Na+ and Cl-; drawn as the two ions, no bond."}
+  sodium-ferrocyanide: {group: a, kind: "anion", why: "Na+ and the ferrocyanide ion [Fe(CN)6]4-, a discrete complex; but drawn as Fe2+ and six loose cyanide ions, as if the cyanides were free."}
+  sodium-fluoride: {group: a, kind: "ions", why: "Rock-salt lattice of Na+ and F-; drawn as the two ions."}
+  sodium-hydroxide: {group: a, kind: "ions", why: "Ionic lattice of Na+ and OH-; drawn as the two ions."}
+  sodium-hypochlorite: {group: a, kind: "anion", why: "Na+ and hypochlorite (sold as a solution, bleach); drawn as the ions."}
+  sodium-iodide: {group: a, kind: "ions", why: "Rock-salt lattice of Na+ and I-; drawn as the two ions."}
+  sodium-lauryl-sulfate: {group: b, why: "The dodecyl sulfate anion and Na+."}
+  sodium-metabisulfite: {group: a, kind: "anion", why: "Na+ and the disulfite ion S2O5 2-; drawn as the ions."}
+  sodium-monofluorophosphate: {group: a, kind: "anion", why: "Na+ and the monofluorophosphate ion PO3F 2-; drawn as the ions."}
+  sodium-nitrate: {group: a, kind: "anion", why: "Na+ and nitrate; drawn as the ions."}
+  sodium-nitrite: {group: a, kind: "anion", why: "Na+ and nitrite; drawn as the ions."}
+  sodium-sulfite: {group: a, kind: "anion", why: "Na+ and sulfite; drawn as the ions."}
+  sodium-thiopental: {group: b, why: "The thiopental anion and Na+."}
+  stannous-fluoride: {group: d, why: "SnF2 is a molecule in the gas; the solid is built of Sn4F8 rings; in toothpaste it is dissolved. F-Sn-F is the usual formula drawing."}
+  sucralfate: {group: d, why: "Sucrose octasulfate with basic aluminium hydroxide, an amorphous complex; drawn as the sucrose octasulfate with Al(OH) groups."}
+  sulfur-dioxide: {group: c, why: "SO2, a molecule."}
+  sulfuric-acid: {group: c, why: "H2SO4, a molecule."}
+  sunset-yellow-fcf: {group: b, why: "A sulfonated azo dye anion and Na+."}
+  tartrazine: {group: b, why: "A sulfonated pyrazolone azo dye anion and Na+."}
+  thiomersal: {group: d, why: "A discrete molecule with an Hg to S bond; drawn as ethylmercury, thiosalicylate and Na+ apart."}
+  titanium-dioxide: {group: a, kind: "done", why: "Rutile and anatase: a lattice of TiO6 octahedra. Drawn with nothing since 2026-11-15 (your ruling)."}
+  tricalcium-phosphate: {group: a, kind: "anion", why: "Ca2+ and phosphate; drawn as three Ca2+ and two PO4 3-."}
+  trisodium-citrate: {group: b, why: "Citrate and Na+."}
+  tungsten-carbide: {group: a, kind: "false", why: "A hexagonal lattice, each carbon among six tungstens and each tungsten among six carbons. Drawn as a charged W triple-bond C molecule ([C-]#[W+])."}
+  vitamin-b12: {group: d, why: "A discrete molecule (cyanocobalamin); drawn with Co3+ and the cyanide apart."}
+  water: {group: c, why: "H2O, a molecule (ice is a lattice of whole molecules)."}
+  zinc-oxide: {group: a, kind: "built", why: "Wurtzite: every zinc among four oxygens. PubChem's O=[Zn] drew a diatomic Zn=O molecule."}
+  zinc-sulfate: {group: a, kind: "anion", why: "Zn2+ and sulfate; drawn as the ions."}
