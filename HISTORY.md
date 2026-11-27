@@ -2,7 +2,7 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
-## The cobalamins, amended and merged for the deploy (2026-11-27, `main` `fa311be`, NOT pushed yet)
+## The cobalamins, amended and merged for the deploy (2026-11-27, `main` `fa311be`, DEPLOYED: ETL `main` pushed `175cce2..c5741ef`)
 Brief `../COBALAMINS-DEPLOY-PROMPT.md`; full record `../HISTORY.md`, 2026-11-27. `51228b2`: methylcobalamin's methyl labelled "H3C" by a `top_label` field on its metal-bonds entry (`structures.labelled_top`, a CXSMILES atom label `H<sub>3</sub>C`; engine and `RECIPE_VERSION` untouched; only its drawing and part layers moved); tests +3; DRAWING-RECIPES section 15. Suite 1,640 passed, 1 skipped, 3 failed in `tests/test_load_retry.py` (the same 3 fail on `main` in this Mac's lock-exact env, unrelated); ruff 130. Guard: the four redraws and four part sets; dry run complete.
 
 ## The cobalamins drawn with their cobalt bonded (2026-11-26, branch `cobalamins-2026-11`, NOT merged, NOT pushed)
