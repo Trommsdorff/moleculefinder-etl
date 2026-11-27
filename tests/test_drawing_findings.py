@@ -15,6 +15,7 @@ tests/fixtures/drawing-findings-before-2026-11-27.json.
 """
 from __future__ import annotations
 
+import itertools
 import json
 import math
 import re
@@ -171,7 +172,11 @@ def test_each_unit_replaces_pubchems_drawing_as_carboxymethyl_cellulose_does(slu
     assert r["macromolecule"] is True and r["has_3d"] is False and r.get("structure_parts") is None
     for k in ("molecular_formula", "molecular_weight", "isomeric_smiles", "canonical_smiles", "inchi", "inchikey"):
         assert r[k] is None, (slug, k)
-    assert r["edges"] == [] and not [c for c in r["categories"] if c["kind"] in ("functional_group", "element", "size")]
+    # Garrett's ruling 1 at the deploy (2026-11-27): the hubs come from the unit, marked so; no size hub (no weight)
+    assert r["edges"] == [] and not [c for c in r["categories"] if c["kind"] == "size"]
+    hubs = [c for c in r["categories"] if c["kind"] in ("functional_group", "element")]
+    assert hubs and all(c.get("from") == "repeat_unit" and c["source"] == "rdkit" and c["confidence"] == "computed"
+                        for c in hubs)
     spec = _seed(slug)
     assert u["smiles"] == spec["smiles"] and u["key"] == drawings.repeat_key(slug, spec)
     assert f"CID {before['cid']}" in u["replaces"] and u["line"] and u["units"] == spec["units"]
@@ -434,30 +439,130 @@ def test_a_note_needs_a_drawing_and_no_display_structure():
     assert assemble.structure_note_for("caffeine", True, None) is None
 
 
-def test_shellac_is_held_and_untouched():
+# ── The deploy's rulings (Garrett's word, 2026-11-27; brief ../TRUST-2C-DRAWING-FINDINGS-DEPLOY-PROMPT.md) ──────────
+# Ruling 1: each unit's functional groups and elements, matched on the unit. They are the hubs the stand-in record had
+# (the fixture), so no hub count moves for the seven; the weight goes, so inulin leaves the over-1000 g/mol hub.
+UNIT_HUBS = {
+    "chitin": {"alcohols", "amides", "ethers", "element-nitrogen"},
+    "hyaluronic-acid": {"alcohols", "carboxylic-acids", "amides", "ethers", "element-nitrogen"},
+    "glycogen": {"alcohols", "ethers"},
+    "maltodextrin": {"alcohols", "ethers"},
+    "inulin": {"alcohols", "ethers"},
+    "poly-methyl-methacrylate": {"esters"},
+    "acrylonitrile-butadiene-styrene": {"aromatics", "element-nitrogen"},
+}
+
+
+def _hub_slugs(slugs):
+    """The fixture's category slugs that are computed hubs: a functional group, an element or a size band."""
+    from moleculefinder_etl.transform import categories
+    return {s for s in slugs if s in categories.FUNCTIONAL_GROUPS or s.startswith("element-") and s != "element-material"
+            or s.endswith("-g-mol")}
+
+
+@pytest.mark.parametrize("slug", UNITS)
+def test_ruling_1_each_units_hubs_are_matched_on_the_unit(slug):
+    r, before = _rec(slug), BEFORE["records"][slug]
+    got = {c["slug"] for c in r["categories"] if c["kind"] in ("functional_group", "element")}
+    assert got == UNIT_HUBS[slug]
+    assert {c["slug"] for c in assemble.unit_hub_categories(slug)} == UNIT_HUBS[slug]
+    was = _hub_slugs(before["categories"])
+    assert was - got == ({"over-1000-g-mol"} if slug == "inulin" else set()), slug
+    assert got - was == set(), slug
+    assert _seed(slug)["hubs"] == assemble.UNIT_HUBS
+
+
+def test_ruling_1_the_older_units_and_a_bad_entry():
+    """Carboxymethyl cellulose and simeticone keep the hubs they shipped with (none from their unit); `hubs` takes one
+    value, on a unit that replaces its drawing; it is no input of the drawing's key."""
+    for slug in ("carboxymethyl-cellulose", "simeticone"):
+        assert "hubs" not in _seed(slug) and assemble.unit_hub_categories(slug) == []
+    spec = dict(_seed("chitin"))
+    assert drawings.repeat_key("chitin", spec) == drawings.repeat_key("chitin", {k: v for k, v in spec.items()
+                                                                                    if k != "hubs"})
+    from unittest import mock
+    for bad in ({**spec, "hubs": "pubchem"}, {k: v for k, v in {**spec, "hubs": "repeat-unit"}.items()
+                                              if k != "replaces"}):
+        with mock.patch.object(drawings, "load_repeat_seed", return_value={"chitin": bad}), \
+                pytest.raises(SystemExit):
+            assemble.unit_hub_categories("chitin")
+
+
+def test_ruling_4_shellac_gets_the_panel_and_drops_the_stand_ins_values():
     """The record's two pieces: shellolic acid's skeleton (C15H20O6) and 9,10,15-trihydroxypentadecanoic acid
-    (C15H30O5), which is not aleuritic acid (9,10,16-trihydroxyhexadecanoic acid, C16H32O5), shellac's main acid. The
-    ruling's line ("two of the acids shellac is built from") would not be true of the second, so shellac waits."""
+    (C15H30O5), which is not aleuritic acid (9,10,16-trihydroxyhexadecanoic acid, C16H32O5), shellac's main acid. So
+    no drawing: the no-structure panel with Cowork's line, and (`stand_in: true`, as for the polymers, not the oxides)
+    nothing PubChem computed from the pieces."""
     before = BEFORE["records"]["shellac"]
     f = sorted(CalcMolFormula(Chem.MolFromSmiles(s)) for s in before["isomeric_smiles"].split("."))
     assert f == ["C15H20O6", "C15H30O5"]
     r = _rec("shellac")
-    assert r["structure_svg_key"] == before["structure_svg_key"] and "structure_note" not in r
-    assert "shellac" not in assemble._notes_seed()
+    assert r["cid"] == before["cid"] == 6850749 and r["title"] == before["title"]
+    assert r["structure_none"]["line"] == ("a natural resin with no single molecule: a mixture of polyesters built "
+                                           "from hydroxy acids, among them aleuritic acid and shellolic acid.")
+    assert "formula" not in r["structure_none"] and "structure_note" not in r
+    assert r["structure_svg"] is None and r["structure_svg_key"] is None and r.get("structure_parts") is None
+    assert r["has_3d"] is False and r["macromolecule"] is True and r["edges"] == []
+    for k in ("molecular_formula", "molecular_weight", "isomeric_smiles", "canonical_smiles", "inchi", "inchikey"):
+        assert r[k] is None, k
+    assert all(v is None for k, v in r["descriptors"].items() if k != "confidence")
+    # the hubs computed from the pieces go (alcohols, carboxylic acids); the curated ones stay
+    assert _hub_slugs(before["categories"]) == {"alcohols", "carboxylic-acids"}
+    assert not [c for c in r["categories"] if c["kind"] in ("functional_group", "element", "size")]
+    assert {(c["kind"], c["slug"]) for c in r["categories"]} == {
+        ("bucket", "element-material"), ("family", "polymer"), ("product", "paint-and-solvent")}
+    assert r["description"] == before["description"]          # its frozen description names no formula or weight
+    assert assemble.structure_none_stand_in("shellac") is True
+    assert assemble.structure_none_stand_in("titanium-dioxide") is False
+
+
+def test_ruling_4_stand_in_takes_only_true():
+    from unittest import mock
+    with mock.patch.object(assemble, "_none_seed", return_value={"x": {"stand_in": "yes", "line": "l", "basis": "b"}}), \
+            pytest.raises(SystemExit):
+        assemble.structure_none_stand_in("x")
+
+
+def test_ruling_5_abs_units_sit_in_one_tighter_row():
+    """The same three units, label and line; one row, each chain on one baseline, the nitrile up and the ring down,
+    one bond length between units: 16.3 bond lengths wide (it was 18.8)."""
+    spec = _seed("acrylonitrile-butadiene-styrene")
+    assert _plain(spec["smiles"]) == "*CC(C#N)*.*CC=CC*.*CC(c1ccccc1)*"
+    assert spec["label"] == "The three units its chains are built from"
+    mol = Chem.MolFromSmiles(spec["smiles"])
+    xy = [(p.x, p.y) for p in (mol.GetConformer().GetAtomPosition(i) for i in range(mol.GetNumAtoms()))]
+    xs = [x for x, _ in xy]
+    assert max(xs) - min(xs) < 16.5
+    frags = Chem.GetMolFrags(mol)
+    spans = [(min(xy[i][0] for i in f), max(xy[i][0] for i in f)) for f in frags]
+    assert all(a[1] < b[0] for a, b in itertools.pairwise(spans))          # left to right, no overlap: a row
+    for f in frags:                                                    # the chain ends sit on the baseline
+        assert all(abs(xy[i][1]) < 0.8 for i in f if mol.GetAtomWithIdx(i).GetAtomicNum() == 0)
+    n = next(a.GetIdx() for a in mol.GetAtoms() if a.GetSymbol() == "N")
+    ring = [a.GetIdx() for a in mol.GetAtoms() if a.GetIsAromatic()]
+    assert xy[n][1] > 2 and all(xy[i][1] < -1 for i in ring)
+
+
+def test_ruling_6_magnesium_glycinates_truncated_name_is_off_its_line():
+    r = _rec("magnesium-glycinate")
+    assert r["display_synonyms"] == ["magnesium bisglycinate"]
+    assert "magnesium diglyci" in assemble.synonym_do_not_use()
+    assert "Magnesium diglyci" in r["synonyms"]                        # search keeps it
 
 
 # ── the drawing guard's list ─────────────────────────────────────────────────────────────────────────────────────
 def test_the_guard_lists_exactly_the_passs_changes(tmp_path):
     """Against a shipped snapshot shaped as main was before this pass (the fixture's keys and SMILES), the guard lists
     magnesium glycinate's redraw and its dropped part set, the seven drawings replaced by their units with their part
-    sets and seven new units, and the two pairs remade; it stops nothing."""
+    sets and seven new units, and the two pairs remade; and (the deploy) shellac's drawing and part set; it stops
+    nothing."""
     shipped = tmp_path / "snapshots"
     shutil.copytree(SNAP / "molecules", shipped / "molecules")
     cd = json.loads((SNAP / "compare_drawings.json").read_text())
     for k, v in BEFORE["pairs"].items():
         cd["pairs"][k] = {**cd["pairs"][k], **v}
     (shipped / "compare_drawings.json").write_text(json.dumps(cd))
-    for slug in (*UNITS, "magnesium-glycinate"):
+    for slug in (*UNITS, "magnesium-glycinate", "shellac"):
         p = shipped / "molecules" / f"{slug}.json"
         r, b = json.loads(p.read_text()), BEFORE["records"][slug]
         r["structure_svg"], r["structure_svg_key"] = "<svg/>", b["structure_svg_key"]
@@ -479,7 +584,10 @@ def test_the_guard_lists_exactly_the_passs_changes(tmp_path):
              f"magnesium-glycinate (structure parts): dropped, its display structure changed ({mg}), its drawing changed",
              "glucose-vs-glycogen (compare drawing): remade, glycogen's SMILES changed",
              "maltodextrin-vs-starch (compare drawing): remade, maltodextrin's SMILES changed, maltodextrin's drawing changed"}
-    assert set(v.made) == want and len(v.made) == len(want) == 25
+    # the deploy (Cowork's ruling 4): shellac's drawing and its part set leave for the no-structure panel
+    want |= {"shellac (structure drawing): removed, its SMILES is gone",
+             "shellac (structure parts): dropped, its SMILES changed, its drawing changed"}
+    assert set(v.made) == want and len(v.made) == len(want) == 27
 
 
 def test_the_pairs_the_pass_touches_and_nothing_booked():

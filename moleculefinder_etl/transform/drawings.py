@@ -887,8 +887,15 @@ def clear_replaced_drawings(records: list[dict], units: dict | None = None) -> l
     return done
 
 
+# Seed fields that feed no drawing and no word on it, so they are not part of the unit's key: `hubs` (the deploy of the
+# drawing findings, 2026-11-27) says where the record's hubs come from (assemble.unit_hub_categories). A unit without
+# them keeps the key it always had.
+NOT_DRAWN = ("hubs",)
+
+
 def repeat_key(slug: str, spec: dict) -> str:
-    return _sha(REPEAT_RECIPE, slug, json.dumps(spec, sort_keys=True, ensure_ascii=False))
+    drawn = {k: v for k, v in spec.items() if k not in NOT_DRAWN}
+    return _sha(REPEAT_RECIPE, slug, json.dumps(drawn, sort_keys=True, ensure_ascii=False))
 
 
 def attach_repeat_units(records: list[dict], prior: dict[int, dict] | None = None,

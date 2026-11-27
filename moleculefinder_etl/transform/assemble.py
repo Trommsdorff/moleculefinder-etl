@@ -1155,6 +1155,40 @@ def _replaced_by_unit(slug: str) -> bool:
     return slug in _replacing_units()
 
 
+UNIT_HUBS = "repeat-unit"
+
+
+def unit_hub_categories(slug: str) -> list[dict]:
+    """The functional-group and element memberships of a record whose repeat unit replaces its PubChem record and whose
+    seed entry says ``hubs: repeat-unit`` (the deploy of the drawing findings, Garrett's ruling 1, 2026-11-27): the
+    same SMARTS and the same element list as every other record, matched on the unit's own atoms (its ``*`` chain ends
+    are no element and match no group), so chitin is still among the amides and the alcohols and PMMA among the esters.
+    Each membership is marked ``from: repeat_unit``: computed by RDKit from the curated unit, not from PubChem's record,
+    which is a stand-in. The weight and the formula stay dropped, so no size hub and no weight board. A bad entry stops
+    the build; no entry gives []."""
+    from rdkit import Chem
+
+    from .drawings import load_repeat_seed
+    spec = load_repeat_seed().get(slug) or {}
+    hubs = spec.get("hubs")
+    if hubs is None:
+        return []
+    if hubs != UNIT_HUBS or not spec.get("replaces"):
+        raise SystemExit(f"repeat_units.yaml: {slug}: `hubs` takes only {UNIT_HUBS!r}, on a unit that `replaces` the "
+                         f"record's drawing")
+    smiles = spec["smiles"]
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        raise SystemExit(f"repeat_units.yaml: {slug}: the unit's SMILES does not parse")
+    mark = {"confidence": label_for("functional_group"), "source": _src("rdkit"), "from": "repeat_unit"}
+    out = [{"slug": fg, "name": _titleize(fg), "kind": "functional_group", **mark}
+           for fg in categories.functional_groups(smiles)]
+    present = {a.GetSymbol() for a in mol.GetAtoms() if a.GetAtomicNum() > 0}
+    out += [{"slug": "element-" + name.lower(), "name": name, "kind": "element", **mark}
+            for sym, name in ELEMENT_HUBS.items() if sym in present]
+    return out
+
+
 def _check_unit_monomers(slug: str, iso: str | None) -> None:
     """The drawing-findings pass (2026-11-27): a separate-units repeat unit (acrylonitrile butadiene styrene) names in
     `monomers` the record's own SMILES, its three monomers, and each of its drawn units must be one of them opened into
@@ -1249,6 +1283,20 @@ def structure_note_for(slug: str, has_drawing: bool, display: dict | None) -> di
     if problems:
         raise SystemExit(f"{STRUCTURE_NOTES.name}: {slug}: " + "; ".join(problems))
     return {"line": line, "confidence": "from_source", "source": _src("curated")}
+
+
+def structure_none_stand_in(slug: str) -> bool:
+    """True when the record's structure_none entry says ``stand_in: true`` (the deploy of the drawing findings,
+    2026-11-27; shellac): PubChem's record is a stand-in made of pieces that are not the substance, so assemble drops
+    every value computed from it, as for a polymer whose repeat unit replaces its record. Anything but true or absent
+    stops the build."""
+    e = _none_seed().get(slug) or {}
+    v = e.get("stand_in")
+    if v is None:
+        return False
+    if v is not True:
+        raise SystemExit(f"{STRUCTURE_NONE.name}: {slug}: `stand_in` takes only true")
+    return True
 
 
 def structure_none_dropped_names(slug: str) -> set:
@@ -1362,6 +1410,15 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
         _check_unit_monomers(slug, iso)
         iso = can = None
         props = {}
+    elif structure_none_stand_in(slug):
+        # Shellac (the deploy of the drawing findings, Cowork's ruling 4, 2026-11-27): a natural resin with no single
+        # molecule, whose PubChem record (CID 6850749) is two small acids standing in for it. It gets the "No single
+        # structure" panel (structure_none.yaml) and, as a polymer whose unit replaces its record does (not as an
+        # extended solid, which keeps the formula and weight of one formula unit), drops everything PubChem computed
+        # from those pieces: formula, weight, SMILES and identifiers, descriptors, 3D model, and so the functional
+        # groups computed from them. Its curated memberships stay.
+        iso = can = None
+        props = {}
     display = structure_display_for(slug, iso)
     no_drawing = structure_none_for(slug, props.get("MolecularFormula"))
 
@@ -1454,6 +1511,9 @@ def assemble_record(row: dict, fetched: dict, taken: set, prior: dict | None = N
     for fg in categories.functional_groups(iso or ""):
         rec["categories"].append({"slug": fg, "name": _titleize(fg), "kind": "functional_group",
                                   "confidence": label_for("functional_group"), "source": _src("rdkit")})
+    # The deploy of the drawing findings (Garrett's ruling 1, 2026-11-27): a polymer whose repeat unit replaces its
+    # PubChem record takes its functional-group and element hubs from that unit (repeat_units.yaml `hubs`).
+    rec["categories"].extend(unit_hub_categories(slug))
 
     # Primary family (Color System Brief §2b): first kind:type membership that maps
     # to a hued family. Consumed by the family pills/cards/neighbors/roam on the web.

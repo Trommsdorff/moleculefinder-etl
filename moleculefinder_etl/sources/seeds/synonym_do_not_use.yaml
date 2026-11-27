@@ -123,3 +123,7 @@
 # catalogue label.
 - name: Simethicon - USP CRS
   why: the USP's catalogue label for its simethicone reference standard (CRS, chemical reference substance), not a name
+# The deploy of the drawing findings (Cowork's ruling 6, 2026-11-27): magnesium glycinate's line ended with a name
+# PubChem lists cut off mid-word.
+- name: Magnesium diglyci
+  why: magnesium diglycinate cut off mid-word in PubChem's synonym list, not a readable name

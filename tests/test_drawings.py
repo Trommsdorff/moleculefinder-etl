@@ -97,7 +97,8 @@ def sweep(records):
 def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
     unproven = {s for s, row in sweep.items() if row["bonded"] and row["reading"] is None}
     assert unproven == UNPROVEN
-    assert len(sweep) == 889          # drawing findings (2026-11-27): -7 (six polymers and ABS, their repeat units);
+    assert len(sweep) == 888          # the drawing findings' deploy (2026-11-27): -1 (shellac, the no-structure panel);
+                                      # drawing findings (2026-11-27): -7 (six polymers and ABS, their repeat units);
                                       # phase 3B: +6 new drawings, -1 (carboxymethyl cellulose, now its repeat unit);
                                       # 2026-12-care: +2 (octinoxate, oxybenzone; titanium dioxide has none);
                                       # extended solids (2026-11-26): -2 (silicon dioxide, zinc oxide: lattices);

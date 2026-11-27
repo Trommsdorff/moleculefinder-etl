@@ -27,9 +27,13 @@ def _rec(slug):
 def test_structure_none_lists_exactly_the_ruled_lattices():
     # A new entry removes a live drawing: it comes only with Garrett's ruling and its own review page. The
     # wrong-drawings pass (2026-11-26, his word on decision 2) added four; tests/test_wrong_drawings.py holds them.
+    # The deploy of the drawing findings (2026-11-27, Cowork's ruling 4) added shellac, not a lattice but a resin whose
+    # PubChem record is a stand-in (`stand_in: true`); tests/test_drawing_findings.py holds it.
     seed = yaml.safe_load((SEEDS_DIR / "structure_none.yaml").read_text())["molecules"]
-    assert set(seed) == {"titanium-dioxide", "silicon-dioxide", "zinc-oxide",
-                         "calcium-oxide", "magnesium-oxide", "silicon-carbide", "tungsten-carbide"}
+    lattices = {s for s, e in seed.items() if not e.get("stand_in")}
+    assert lattices == {"titanium-dioxide", "silicon-dioxide", "zinc-oxide",
+                        "calcium-oxide", "magnesium-oxide", "silicon-carbide", "tungsten-carbide"}
+    assert set(seed) - lattices == {"shellac"}
 
 
 def test_each_is_drawn_with_nothing_and_keeps_its_formula_unit():
@@ -83,7 +87,8 @@ def test_the_guard_lists_exactly_the_two_drawings_that_leave(tmp_path):
                       "silicon-dioxide (structure drawing): removed, it no longer has a drawing"]
     # 896 and 33 since the wrong-drawings pass (2026-11-26), which test_wrong_drawings.py lists on its own
     # 889 and 40 since the drawing-findings pass (2026-11-27), which tests/test_drawing_findings.py lists on its own
-    assert v.lines[0] == "structure drawings: 889 carried, 0 repainted, 0 drawn, 40 with no drawing"
+    # 888 and 41 since the drawing findings' deploy (2026-11-27: shellac's panel), listed there too
+    assert v.lines[0] == "structure drawings: 888 carried, 0 repainted, 0 drawn, 41 with no drawing"
 
 
 def test_zinc_oxide_leaves_the_molecule_of_the_week_for_avobenzone():

@@ -70,8 +70,10 @@ MONDAY = [
     # to 40th with no drawing; 11 repeat units); each of the six had a part set, and magnesium glycinate's (the amine,
     # which no longer matches a nitrogen bonded to the magnesium) dropped with its redraw: 723 to 716 with parts;
     # inulin was one of the four drawings no reading could prove (now three).
-    "structure drawings: 889 carried, 0 repainted, 0 drawn, 40 with no drawing",
-    "structure parts: 716 carried, 0 made, 210 with no part, 3 drawings unreadable",
+    # The deploy of the drawing findings (2026-11-27, Cowork's ruling 4): shellac's drawing of PubChem's two pieces
+    # leaves for the no-structure panel, its part set with it (41st with no drawing; 715 with parts).
+    "structure drawings: 888 carried, 0 repainted, 0 drawn, 41 with no drawing",
+    "structure parts: 715 carried, 0 made, 211 with no part, 3 drawings unreadable",
     # Phase 3A (2026-11-14): erythritol vs allulose leaves "aligned+highlight" for "shipped" and sucrose vs
     # fructose leaves "shipped" for "aligned" (allulose and fructose drawn as their rings).
     ("compare drawings: 147 pairs (aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); "
