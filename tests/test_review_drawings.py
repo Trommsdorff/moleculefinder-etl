@@ -362,27 +362,49 @@ def test_parts_find_a_curated_part_whose_expect_fails():
     assert {f["shape"] for f in rv.findings} == {"a curated part no longer matches its expect"}
 
 
+# The survey's group b records with no metal to float (an organic cation beside a halide, or methylene blue): the
+# metal-floating check never finds them, so ruling A of 2026-11-27 did not name them.
+GROUP_B_NOT_FOUND = {"choline-chloride", "dimenhydrinate", "hyoscine-butylbromide", "ipratropium-bromide",
+                     "methylene-blue"}
+
+
 # ── the allowlists ───────────────────────────────────────────────────────────────────────────────
 def test_every_allowlist_entry_names_an_existing_record_and_carries_a_reason():
     recs = D.load_records(SNAP)
     allow = RULINGS["allow"]
     assert {k: len(v["records"]) for k, v in allow.items()} == \
-        {"salts-as-ions": 41, "kept-as-drawn": 4, "discrete-inorganic": 16}
+        {"salts-as-ions": 72, "kept-as-drawn": 6, "discrete-inorganic": 16}
     for name, rule in allow.items():
         assert isinstance(rule["date"], dt.date) and rule["by"].strip() and rule["what"].strip(), name
         assert set(rule["covers"]) <= {"metal-floating", "lattice", "fragments"}, name
+        later = {r["date"]: r for r in rule.get("later") or []}
+        for r in later.values():
+            assert isinstance(r["date"], dt.date) and r["by"].strip() and r["what"].strip(), name
         for slug, why in rule["records"].items():
             assert slug in recs, f"{name}: {slug} is not a record"
+            if isinstance(why, dict):            # a later ruling's entry: its reason and that ruling's date
+                assert why["date"] in later, f"{name}: {slug} names a date no ruling on the list has"
+                why = why["reason"]
             assert isinstance(why, str) and len(why.strip()) > 10, f"{name}: {slug} has no reason"
 
 
 def test_the_allowlists_hold_only_the_two_rulings():
     """Ruling 3 (the 41 salts drawn as ions), the four kept as drawn, and the survey's group c; nothing else."""
     s = RULINGS["survey"]
-    assert set(RULINGS["allow"]["salts-as-ions"]["records"]) == \
-        {k for k, v in s.items() if v["group"] == "a" and v.get("kind") in ("ions", "anion")}
-    assert set(RULINGS["allow"]["kept-as-drawn"]["records"]) == \
-        {"stannous-fluoride", "sucralfate", "bismuth-subsalicylate", "povidone-iodine"}
+    salts = RULINGS["allow"]["salts-as-ions"]["records"]
+    first = {k for k, v in salts.items() if isinstance(v, str)}
+    later = {k for k, v in salts.items() if isinstance(v, dict)}
+    assert first == {k for k, v in s.items() if v["group"] == "a" and v.get("kind") in ("ions", "anion")}
+    # Ruling A of 2026-11-27: the survey's group b found floating on the first run, all but the one chelate (magnesium
+    # glycinate, redrawn with its bonds) and the reason the brief gave, word for word.
+    assert later == {k for k, v in s.items() if v["group"] == "b"} - GROUP_B_NOT_FOUND - {"magnesium-glycinate"}
+    assert len(later) == 31
+    assert {v["reason"] for v in salts.values() if isinstance(v, dict)} == \
+        {"an ionic salt of a discrete organic ion, drawn as its ions"}
+    kept = RULINGS["allow"]["kept-as-drawn"]["records"]
+    assert set(kept) == {"stannous-fluoride", "sucralfate", "bismuth-subsalicylate", "povidone-iodine",
+                         "butylated-hydroxyanisole", "ivermectin"}
+    assert "shellac" not in kept          # held: its record's chain acid is not shellac's (see the yaml)
     assert set(RULINGS["allow"]["discrete-inorganic"]["records"]) == {k for k, v in s.items() if v["group"] == "c"}
 
 

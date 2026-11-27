@@ -74,3 +74,138 @@ units:
       on each silicon, mixed with a small share of finely divided silica.
     replaces: >-
       PubChem's record of it, CID 6433516, is a short siloxane and a lone O=Si=O molecule, not the polymer.
+
+  # ── The drawing-findings pass (2026-11-27; Cowork's rulings B and C4 on the drawing-truth review's first run, Garrett's
+  # word; brief ../TRUST-2B-DRAWING-FINDINGS-PROMPT.md). Six polymers whose PubChem record is one small molecule or one
+  # short piece, drawn as if it were the molecule, and acrylonitrile butadiene styrene, drawn as its three monomers. Each
+  # unit REPLACES the record's drawing as carboxymethyl cellulose's and simeticone's do (`replaces`): the guard lists the
+  # remake, and the record drops everything derived from PubChem's structure (assemble._replaced_by_unit). Each is
+  # derived and tested in tests/test_drawing_findings.py. Two seed fields are new here (drawings.repeat_unit_marks):
+  #   also:     a further kind of joint in the same unit ({linkage, linkage_smarts, linkages}), marked in the same amber
+  #             (glycogen's alpha-1,6 branch; hyaluronic acid's beta-1,4, half of it at each open end);
+  #   variant:  separate-units, several units side by side with no linkage between them and no amber (ABS), checked by
+  #             unit_monomers against `monomers`, the record's own SMILES, which assemble holds equal to PubChem's.
+  #   hubs:     repeat-unit (the deploy, Garrett's ruling 1, 2026-11-27): the record's functional-group and element hubs
+  #             are matched on this unit (assemble.unit_hub_categories), each membership marked `from: repeat_unit`,
+  #             since the record's own structure is dropped. Its weight, formula, identifiers, descriptors and 3D model
+  #             stay dropped (no weight board, no size hub). Carboxymethyl cellulose and simeticone have none: their
+  #             hubs shipped without it and no ruling moves them.
+  # Layouts: inulin, poly(methyl methacrylate) and ABS carry coordinates in the SMILES (CXSMILES, the metal-bonds
+  # precedent), each `*` given the atom label "*" so it stays a chain end and is not read as a query atom; RDKit's own
+  # layout drew inulin's ring oxygen over a bond and PMMA's quaternary carbons as crosses that hid the backbone. PMMA's
+  # two backbone CH2 carbons are labelled (CH2, the methylcobalamin label precedent) on a straight backbone, its
+  # substituents alternating up and down (no stereo: the commercial plastic is atactic).
+  #
+  # Chitin: cellulose's unit (above) with the hydroxyl on each unit's carbon 2 replaced by an acetamido group,
+  # NH-CO-CH3, the configuration at carbon 2 unchanged (N-acetyl-D-glucosamine is glucose's 2-acetamido-2-deoxy form).
+  chitin:
+    hubs: repeat-unit
+    smiles: "*O[C@@H]1O[C@H](CO)[C@@H](O[C@@H]2O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]2NC(C)=O)[C@H](O)[C@H]1NC(C)=O"
+    linkage: beta-1,4
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    units: 2
+    label: Two units of the chain
+    line: >-
+      Chitin is a chain of N-acetylglucosamine units joined beta-1,4: cellulose's chain with an acetamido group in
+      place of the hydroxyl on each unit's carbon 2. The drawing shows two units.
+    replaces: PubChem's record of it, CID 6857375, is a single N-acetylglucosamine sugar, not the polymer.
+  # Hyaluronic acid: one repeating disaccharide, beta-D-glucuronic acid joined 1->3 to beta-D-N-acetylglucosamine; the
+  # chain carries on beta-1,4 from the glucuronic acid's carbon 4 and from the N-acetylglucosamine's carbon 1. The
+  # glucuronic acid is cellulose's beta-glucose with its CH2OH oxidised to COOH; the N-acetylglucosamine is chitin's
+  # unit. Both kinds of joint are marked: the beta-1,3 in the middle, the beta-1,4 as the C-O at each open end.
+  hyaluronic-acid:
+    hubs: repeat-unit
+    smiles: "*O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O[C@@H]2O[C@H](C(=O)O)[C@@H](O*)[C@H](O)[C@H]2O)[C@H]1NC(C)=O"
+    linkage: beta-1,3
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    also:
+      - {linkage: "beta-1,4", linkage_smarts: "[#6;R]-[#8;!R;$([#8][#0])]", linkages: 2}
+    units: 2
+    label: The repeating pair, joints alternating
+    line: >-
+      Hyaluronic acid is a long unbranched chain of one repeating pair of sugars, glucuronic acid and
+      N-acetylglucosamine. The drawing shows one pair; its two kinds of joint alternate.
+    replaces: PubChem's record of it, CID 24759, is a piece of four sugars, not the polymer.
+  # Glycogen: starch's unit (two alpha-D-glucose joined 1->4) with a third alpha-D-glucose joined 1->6 to carbon 6 of
+  # the first, its own carbon 4 open, since a branch is a chain that carries on. No figure for how often it branches:
+  # no source the licence rule allows states one.
+  glycogen:
+    hubs: repeat-unit
+    smiles: "*O[C@H]1O[C@H](CO[C@H]3O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]3O)[C@@H](O[C@H]2O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O"
+    linkage: alpha-1,4
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    also:
+      - {linkage: "alpha-1,6", linkage_smarts: "[#6;R]-[#8;!R]-[CH2;!R;$([CH2][#6;R])]", linkages: 1}
+    units: 3
+    label: Three units of the chain, one a branch
+    line: >-
+      Glycogen is a chain of glucose joined alpha-1,4 with branches joined alpha-1,6, branched far more often than
+      starch's amylopectin. The drawing shows three units, one a branch.
+    replaces: PubChem's record of it, CID 439177, is a piece of four glucose units with one branch, not the polymer.
+  # Maltodextrin: starch's own unit, character for character (short chains of alpha-1,4 glucose), labelled as a short
+  # chain. Its drawing is starch's.
+  maltodextrin:
+    hubs: repeat-unit
+    smiles: "*O[C@H]1O[C@H](CO)[C@@H](O[C@H]2O[C@H](CO)[C@@H](O*)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O"
+    linkage: alpha-1,4
+    linkage_smarts: "[#6;R]-[#8;!R]-[#6;R]"
+    linkages: 1
+    units: 2
+    label: Two units of a short chain
+    line: >-
+      Maltodextrin is starch cut into short chains of glucose joined alpha-1,4. What sets it apart from starch is the
+      length of its chains, not the unit the drawing shows.
+    replaces: PubChem's record of it, CID 62698, is one chain of three glucose units, a single length of a material whose chains vary.
+  # Inulin: two beta-D-fructofuranose units joined 2->1 (the C2 of one through an oxygen to the CH2 of the next). The
+  # fructofuranose is the one cut from the catalog's sucrose (its fructose half), both units matching it, stereo
+  # included. The chain is fructose; one glucose ends it, which the line says and the unit does not draw.
+  inulin:
+    hubs: repeat-unit
+    smiles: "*O[C@]1(CO[C@]2(CO*)O[C@H](CO)[C@@H](O)[C@@H]2O)O[C@H](CO)[C@@H](O)[C@@H]1O |(-1.058,-3.190,;-2.298,-2.347,;-2.188,-0.851,;-0.712,-1.117,;0.256,0.029,;1.733,-0.237,;1.314,-1.678,;2.352,-2.760,;1.933,-4.201,;3.121,-0.804,;4.090,0.341,;5.586,0.231,;6.429,1.472,;3.300,1.616,;3.867,3.005,;1.843,1.259,;0.697,2.227,;-1.769,0.589,;-3.010,1.433,;-3.057,2.932,;-4.379,3.641,;-4.195,0.514,;-5.636,0.932,;-3.687,-0.898,;-4.531,-2.138,),$*;;;;;;;;*;;;;;;;;;;;;;;;;$|"
+    linkage: beta-2,1
+    linkage_smarts: "[#6;R]-[#8;!R]-[CH2;!R;$([CH2][#6;R])]"
+    linkages: 1
+    units: 2
+    label: Two units of the chain
+    line: >-
+      Inulin is a chain of fructose units joined beta-2,1, with one glucose at one end. The drawing shows two fructose
+      units of the chain.
+    replaces: PubChem's record of it, CID 24763, is one chain of 38 sugars drawn whole, a single length of a fiber whose chains vary.
+  # Poly(methyl methacrylate): two units of the chain, the brief's SMILES; the joint is the backbone C-C bond formed
+  # when the next monomer's double bond opens (the quaternary carbon of one unit to the CH2 of the next). No radical,
+  # no double bond, no stereo.
+  poly-methyl-methacrylate:
+    hubs: repeat-unit
+    smiles: "*CC(C)(C(=O)OC)CC(C)(C(=O)OC)* |(0.000,0.000,;1.600,0.000,;3.200,0.000,;3.200,1.000,;3.200,-1.000,;2.334,-1.500,;4.066,-1.500,;4.066,-2.500,;4.800,0.000,;6.400,0.000,;6.400,-1.000,;6.400,1.000,;7.266,1.500,;5.534,1.500,;5.534,2.500,;8.000,0.000,),$*;CH<sub>2</sub>;;;;;;;CH<sub>2</sub>;;;;;;;*$|"
+    linkage: carbon-carbon
+    linkage_smarts: "[CX4H0;$([CX4H0]([CH2])[CH2])]-[CH2;$([CH2]([CX4H0])[CX4H0])]"
+    linkages: 1
+    units: 2
+    label: Two units of the chain
+    line: >-
+      Poly(methyl methacrylate) is a carbon chain in which every second carbon carries a methyl group and a methyl
+      ester. The drawing shows two units of the chain.
+    replaces: PubChem's record of it, CID 3032549, is one methyl methacrylate unit drawn with an unpaired electron, not the polymer.
+  # Acrylonitrile butadiene styrene: no single repeat unit. The three units as they sit in the chains, side by side,
+  # no linkage marked and no order implied: acrylonitrile (*CC(C#N)*), butadiene joined 1,4 (*CC=CC*, no cis or trans
+  # given) and styrene (*CC(c1ccccc1)*). Each is its monomer with the double bond opened into two chain ends, which
+  # drawings.unit_monomers checks against `monomers`, PubChem's own record of it verbatim (read 2026-11-27).
+  # Layout (the deploy, Cowork's ruling 5, 2026-11-27: the units sat small in the panel): one tighter row, every chain
+  # a plain zigzag on one baseline, the nitrile standing up and the ring hanging down from the carbon that carries
+  # them, one bond length's gap between units (the row is 16.3 bond lengths wide, it was 18.8; the units draw about
+  # 15 percent larger and use about 60 percent of the panel's height, they used about 40). Coordinates only: the same
+  # three units, the same label and line.
+  acrylonitrile-butadiene-styrene:
+    hubs: repeat-unit
+    variant: separate-units
+    smiles: "*CC(C#N)*.*CC=CC*.*CC(c1ccccc1)* |(0.000,0.000,;1.299,0.750,;2.598,0.000,;2.598,1.500,;2.598,3.000,;3.897,0.750,;4.897,0.000,;6.196,0.750,;7.495,0.000,;8.794,0.750,;10.093,0.000,;11.392,0.750,;12.392,0.000,;13.691,0.750,;14.990,0.000,;14.990,-1.500,;16.289,-2.250,;16.289,-3.750,;14.990,-4.500,;13.691,-3.750,;13.691,-2.250,;16.289,0.750,),$*;;;;;*;*;;;;;*;*;;;;;;;;;*$|"
+    monomers: "C=CC=C.C=CC#N.C=CC1=CC=CC=C1"
+    units: 3
+    label: The three units its chains are built from
+    line: >-
+      ABS has no single repeat unit: chains of styrene and acrylonitrile units are grafted onto, and blended with, a
+      rubber made of butadiene units; the drawing shows the three units.
+    replaces: PubChem's record of it, CID 24756, is its three monomers, each with its double bond, what goes into the reactor and not what is in the plastic.

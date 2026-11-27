@@ -68,14 +68,15 @@ ruled, and where it is written down), `what` (the ruling in a line), `covers` (w
 
 | list | ruling | covers | records |
 |---|---|---|---|
-| `salts-as-ions` | Garrett, ruling 3 on the extended-solids review, 2026-11-26: keep the salts drawn as their ions | metal floating, lattice, fragments | 41 |
-| `kept-as-drawn` | Garrett, the same review: stannous fluoride, sucralfate, bismuth subsalicylate, povidone-iodine keep their drawing | metal floating, lattice, fragments | 4 |
+| `salts-as-ions` | Garrett, ruling 3 on the extended-solids review, 2026-11-26: keep the salts drawn as their ions; and (`later:`, 2026-11-27, Cowork's ruling A, Garrett's word) the 31 salts of a discrete organic ion | metal floating, lattice, fragments | 72 |
+| `kept-as-drawn` | Garrett, the same review: stannous fluoride, sucralfate, bismuth subsalicylate, povidone-iodine keep their drawing; and (`later:`, 2026-11-27, ruling C) BHA and ivermectin | metal floating, lattice, fragments | 6 |
 | `discrete-inorganic` | the survey's group c (discrete inorganic molecules, rightly drawn), named as check 3's allowlist by the trust-2 brief | lattice | 16 |
 
 **Rules.** An entry is added only on a ruling: **Garrett rules** (Cowork reviews the chemistry and brings him the
 question with a recommended answer). Never add an entry to make a finding go away. A new ruling is a new list with its
 own date; a record joins an existing list only when that ruling covers it. Every entry names a record that exists and
-carries a reason (a test holds both). Commit the change on a branch with the ruling's source in the message.
+carries a reason (a test holds both). A later ruling of the same kind joins a list under `later:` (date, by, what),
+and each record it adds is `{reason, date}` with that date (2026-11-27). Commit the change on a branch with the ruling's source in the message.
 
 The survey's classification (`survey:`) is the extended-solids survey's, copied verbatim (a test holds it equal to
 `scripts/extended_solids_review.py`). A record the scope rule catches that is not classified is a finding of check 5:

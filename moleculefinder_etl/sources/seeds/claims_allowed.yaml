@@ -303,7 +303,7 @@ comparison:
     why: "Gabapentin does not act on GABA receptors; it binds the alpha-2-delta subunit (standard pharmacology)."}
   "gelatin/pectin": {words: ["only"], basis: ordinary, line: "1ac011daff48",
     why: "\"The only option of the two\" compares two records; it ranks nothing beyond them."}
-  "glucose/glycogen": {words: ["only"], basis: science, line: "45e7fca6c598",
+  "glucose/glycogen": {words: ["only"], basis: science, line: "a5f109fabeaa",
     why: "Muscle lacks glucose-6-phosphatase, so its glycogen serves only the muscle (standard biochemistry)."}
   "hydrogen-peroxide/isopropyl-alcohol": {words: ["first"], basis: ordinary, line: "ac10cdd1052a",
     why: "\"First-aid cabinet\" ranks nothing."}

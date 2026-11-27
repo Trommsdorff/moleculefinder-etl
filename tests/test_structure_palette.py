@@ -368,4 +368,4 @@ def test_every_committed_drawing_is_in_its_table_colours_and_current():
         # Phase 3A: keyed by the SMILES the drawing is drawn from (a sugar's ring, structure_display.yaml).
         assert rec["structure_svg_key"] == structures.svg_key(structures.drawn_smiles(rec)), rec["slug"]
     assert drawn > 800
-    assert flagged == 14
+    assert flagged == 13          # inulin's (41 flags) left 2026-11-27: drawn as its repeat unit

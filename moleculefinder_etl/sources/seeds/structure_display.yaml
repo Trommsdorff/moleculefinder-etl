@@ -364,3 +364,31 @@ metal_bonds:
       the cobalt, so Co3+ is drawn Co+; the three neutral ring nitrogens and the benzimidazole nitrogen give dative
       arrows. Its record carries no stereocentre; every centre is drawn from hydroxocobalamin's record (stereo_from):
       the forms are made from one another by swapping the top group, which touches no carbon centre.
+  # Magnesium glycinate (the drawing-findings pass, 2026-11-27; Cowork's ruling A, Garrett's word, brief
+  # ../TRUST-2B-DRAWING-FINDINGS-PROMPT.md): the drawing-truth review's first run found it drawn as Mg2+ beside two
+  # glycinate ions. Magnesium bisglycinate is a chelate, not a salt drawn as ions: each glycinate holds the magnesium
+  # by its amine nitrogen AND one carboxylate oxygen, two five-membered rings. Chromium(III) picolinate is the precedent.
+  magnesium-glycinate:
+    smiles: "O=C1[O][Mg]2([O]C(=O)C[NH2]->2)<-[NH2]C1 |(-3.522,-1.632,;-2.308,-0.75,;-0.882,-1.214,;0,0,;0.882,1.214,;2.308,0.75,;3.522,1.632,;2.308,-0.75,;0.882,-1.214,;-0.882,1.214,;-2.308,0.75,)|"
+    metal: Mg
+    bonded:
+      - {smarts: "[#7;H2]", count: 2}
+      - {smarts: "[#8]-[#6]=[#8]", count: 2}
+    charges:
+      - {element: Mg, record: 2, drawn: 0}
+      - {element: O, record: -1, drawn: 0}
+      - {element: O, record: -1, drawn: 0}
+    line: >-
+      Drawn with the magnesium bonded to the amine nitrogen and one carboxylate oxygen of each of its two glycinates,
+      two five-membered rings; PubChem's one-line structure leaves the magnesium apart.
+    from: >-
+      Written by hand from the record's SMILES (CID 84645, C(C(=O)[O-])N.C(C(=O)[O-])N.[Mg+2]): a plain bond from one
+      oxygen of each carboxylate and a dative bond from each amine nitrogen to the magnesium. Coordinates by hand: each
+      ring a regular pentagon with the magnesium at one corner, the second ring the first turned half a turn about the
+      magnesium (the two nitrogens on opposite sides), every bond the same length.
+    basis: >-
+      Magnesium bisglycinate is Mg(gly)2: magnesium chelated by two glycinate anions, each through its amine nitrogen
+      and one carboxylate oxygen, four bonds in all and two five-membered chelate rings. The record's formula,
+      C4H8MgN2O4, and its curated line ("Magnesium bound to two glycine molecules") both give two glycinates per
+      magnesium. The bond rule as for the other entries: each carboxylate oxygen, charged negative in the record, shares
+      a plain bond with the magnesium, so Mg2+ is drawn Mg; each neutral nitrogen gives a dative arrow.

@@ -174,7 +174,9 @@ def test_the_display_lines_are_under_the_claim_rule():
     metal = {f"display.{s}.line" for s in ("cisplatin", "sodium-ferrocyanide", "chromium-iii-picolinate",
                                             "thiomersal", "chlorophyll-a",
                                             # and the cobalamins pass (2026-11-26, tests/test_cobalamins.py)
-                                            "cyanocobalamin", "vitamin-b12", "hydroxocobalamin", "methylcobalamin")}
+                                            "cyanocobalamin", "vitamin-b12", "hydroxocobalamin", "methylcobalamin",
+                                            # and the drawing-findings pass (2026-11-27, tests/test_drawing_findings.py)
+                                            "magnesium-glycinate")}
     assert set(lines) == {"display.fructose.line", "display.fructose.model_line",
                           "display.allulose.line", "display.allulose.model_line"} | metal
     assert all(claims.words_in(lines[k]) == [] for k in metal)

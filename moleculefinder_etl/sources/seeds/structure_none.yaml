@@ -18,6 +18,11 @@
 #              atoms as PubChem's formula (the build stops if not).
 #   drop_names (optional) names left out of "Also called": a systematic name of the one-formula-unit molecule
 #              that does not exist ("dioxosilane"). The record's `synonyms` (search) still hold them.
+#   stand_in   (optional, true; the deploy of the drawing findings, 2026-11-27) PubChem's record is a stand-in made of
+#              pieces that are not the substance (shellac): the record drops its formula, weight, SMILES and identifiers,
+#              descriptors and 3D model, as a polymer whose repeat unit replaces its record does, and with them every hub
+#              computed from that structure. Without it an entry is an extended solid, which keeps PubChem's formula
+#              and weight (those of one formula unit).
 # An entry for a record with a shipped drawing removes that drawing: the drawing guard lists it ("it no longer
 # has a drawing"), so it is a reviewed change, never a silent one (docs/DRAWING-RECIPES.md section 13).
 molecules:
@@ -101,3 +106,16 @@ molecules:
       PubChem's SMILES [C-]#[W+] (CID 2724274) showed a diatomic molecule with a triple bond, and PubChem's computed
       descriptors are of that molecule. Its two "methanidylidyne" synonyms name that false molecule; neither is on
       the page's "Also called" today (its line is empty), and drop_names keeps them off it.
+  # The deploy of the drawing findings (Cowork's ruling 4, Garrett's word, 2026-11-27): shellac had a live drawing of
+  # PubChem's two pieces. The drawing guard lists its removal and its three part layers'.
+  shellac:
+    stand_in: true
+    line: >-
+      a natural resin with no single molecule: a mixture of polyesters built from hydroxy acids, among them aleuritic
+      acid and shellolic acid.
+    basis: >-
+      Shellac, the resin the lac insect secretes, is a mixture of polyesters of hydroxy acids, the main ones aleuritic
+      acid (9,10,16-trihydroxyhexadecanoic acid) and the terpenic shellolic acid. PubChem's record of it (CID 6850749)
+      is two small acids side by side: a shellolic-type acid and 9,10,15-trihydroxypentadecanoic acid (C15), which is
+      not aleuritic acid (C16). The drawing showed a molecule that is neither shellac nor a building block worth
+      showing, and the formula, weight, descriptors and hubs were computed from those two pieces.

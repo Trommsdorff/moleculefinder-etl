@@ -321,6 +321,7 @@ def _seeds():
         "metal": assemble._metal_bonds_seed(),
         "units": drawings.load_repeat_seed(),
         "parts": drawings.load_parts_seed(),
+        "notes": assemble._notes_seed(),          # the drawing-findings pass (2026-11-27): a true drawing's note
     }
 
 
@@ -520,7 +521,8 @@ def check_classification(rv: Review, recs: dict) -> None:
 def check_seeds(rv: Review, recs: dict, seeds: dict) -> None:
     from ..transform import assemble, structures
 
-    n = sum(len(seeds[k]) for k in ("none", "display", "metal", "units")) + len(seeds["parts"].get("molecules") or {})
+    n = sum(len(seeds.get(k) or {}) for k in ("none", "display", "metal", "units", "notes")) \
+        + len(seeds["parts"].get("molecules") or {})
     rv.denom("seed", "seed entry", n, "seed entries")
 
     def build_check(fn, *a):
@@ -569,6 +571,17 @@ def check_seeds(rv: Review, recs: dict, seeds: dict) -> None:
         problems = repeat_unit_problems(slug, spec, r)
         for p in problems:
             rv.find("seed", "repeat_units.yaml", p, slug)
+    for slug in (seeds.get("notes") or {}):
+        r = recs.get(slug)
+        if not r:
+            rv.find("seed", "structure_notes.yaml", "names a record that does not exist", slug)
+            continue
+        got, err = build_check(assemble.structure_note_for, slug, bool(r.get("structure_svg")),
+                               r.get("structure_display"))
+        if err:
+            rv.find("seed", "structure_notes.yaml", "fails its build-time check", slug, err[:200])
+        elif norm((r.get("structure_note") or {}).get("line")) != norm(got["line"]):
+            rv.find("seed", "structure_notes.yaml", "the snapshot does not carry what the seed makes", slug)
     for slug in (seeds["parts"].get("molecules") or {}):
         if slug not in recs:
             rv.find("seed", "structure_parts.yaml", "names a record that does not exist", slug)
@@ -581,25 +594,27 @@ def check_seeds(rv: Review, recs: dict, seeds: dict) -> None:
                     "names", slug)
         if r.get("structure_repeat_unit") and slug not in units:
             rv.find("seed", "repeat_units.yaml", "the record carries a repeat unit the seed no longer names", slug)
+        if r.get("structure_note") and slug not in (seeds.get("notes") or {}):
+            rv.find("seed", "structure_notes.yaml", "the record carries a note the seed no longer names", slug)
 
 
 def repeat_unit_problems(slug: str, spec: dict, r: dict) -> list[str]:
-    """repeat_units.yaml's build-time checks (drawings.attach_repeat_units / draw_repeat_unit) without drawing."""
+    """repeat_units.yaml's build-time checks (drawings.attach_repeat_units / repeat_unit_marks) without drawing: the
+    linkage pattern and each further joint (`also`) match their counts, a group its count, a separate-units unit is
+    its record's monomers opened into chains; and the snapshot carries exactly what the seed makes."""
     from ..transform import drawings
 
     mol = mol_of(spec.get("smiles"))
     if mol is None:
         return ["the unit's SMILES does not parse"]
     out = []
-    atoms, _, n = drawings._match(mol, {"id": "linkage", "smarts": spec["linkage_smarts"]})
-    if n != int(spec.get("linkages", 1)):
-        out.append(f"fails its build-time check: the linkage pattern matches {n} times, expected "
-                   f"{spec.get('linkages', 1)}")
-    if spec.get("group_smarts"):
-        _, _, g = drawings._match(mol, {"id": "group", "smarts": spec["group_smarts"], "light": spec.get("group_light")})
-        if g != int(spec.get("groups", 1)):
-            out.append(f"fails its build-time check: the group pattern matches {g} times, expected "
-                       f"{spec.get('groups', 1)}")
+    try:
+        _, _, marks = drawings.repeat_unit_marks(spec, mol)
+    except drawings.DrawingSeedError as e:
+        marks = None
+        msg = str(e).replace("repeat unit linkage SMARTS matches", "the linkage pattern matches") \
+            .replace("repeat unit group SMARTS matches", "the group pattern matches")
+        out.append(f"fails its build-time check: {msg}")
     if r.get("structure_svg") and not spec.get("replaces"):
         out.append("fails its build-time check: the record has a structure and the unit does not `replace` it")
     if spec.get("replaces") and r.get("structure_svg"):
@@ -609,7 +624,8 @@ def repeat_unit_problems(slug: str, spec: dict, r: dict) -> list[str]:
         out.append("the snapshot carries no repeat unit for it")
     elif u.get("key") != drawings.repeat_key(slug, spec) or u.get("smiles") != spec["smiles"]:
         out.append("the snapshot does not carry what the seed makes (its key or SMILES differs)")
-    elif sorted(u.get("linkage_atoms") or []) != sorted(atoms):
+    elif marks is not None and (sorted(u.get("linkage_atoms") or []) != sorted(marks["linkage_atoms"])
+                                or (u.get("also") or []) != (marks.get("also") or [])):
         out.append("the shipped linkage atoms are not the pattern's")
     return out
 
@@ -750,6 +766,8 @@ def pinned_pages(rv: Review, recs: dict, seeds: dict) -> dict[str, str]:
         out[slug] = "A metal drawn with its bonds (structure_display.yaml metal_bonds): the drawing, the line, no 3D."
     for slug in seeds["units"]:
         out[slug] = "A repeat unit (repeat_units.yaml): the unit's drawing and its words."
+    for slug in seeds.get("notes") or {}:
+        out[slug] = "A true drawing with its note (structure_notes.yaml): the drawing and the note's line."
     return {s: w for s, w in out.items() if s in recs}
 
 
@@ -779,7 +797,8 @@ def fetch_page(url: str) -> tuple[int, str]:
 def seed_line(slug: str, seeds: dict) -> tuple[str, str] | None:
     """(which seed, the line the page must print) for a record a seed gives a notes line."""
     for kind, table in (("structure_none.yaml", seeds["none"]), ("structure_display.yaml", seeds["display"]),
-                        ("structure_display.yaml metal_bonds", seeds["metal"]), ("repeat_units.yaml", seeds["units"])):
+                        ("structure_display.yaml metal_bonds", seeds["metal"]), ("repeat_units.yaml", seeds["units"]),
+                        ("structure_notes.yaml", seeds.get("notes") or {})):
         e = table.get(slug) or {}
         if e.get("line"):
             return kind, norm(e["line"])

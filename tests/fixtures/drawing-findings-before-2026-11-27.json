@@ -1,0 +1,272 @@
+{
+ "from": "data/snapshots on ETL main ebde934 (2026-11-27), before the drawing-findings pass",
+ "pairs": {
+  "glucose-vs-glycogen": {
+   "key": "4fb2a16b046b20e4",
+   "mode": "shipped",
+   "reason": "the common core, 12 of 45 atoms, is too small to align on"
+  },
+  "maltodextrin-vs-starch": {
+   "key": "908087f91f4bb4a8",
+   "mode": "shipped",
+   "reason": "one of the two has no drawing"
+  }
+ },
+ "records": {
+  "acrylonitrile-butadiene-styrene": {
+   "categories": [
+    "aromatics",
+    "element-material",
+    "element-nitrogen",
+    "polymer"
+   ],
+   "cid": 24756,
+   "description": "ABS: the tough, glossy plastic of LEGO bricks, keyboard keys and a common 3D printer filament. Three monomers give it hardness, toughness and gloss.",
+   "edges": 0,
+   "has_3d": false,
+   "isomeric_smiles": "C=CC=C.C=CC#N.C=CC1=CC=CC=C1",
+   "molecular_formula": "C15H17N",
+   "molecular_weight": 211.3,
+   "parts": [
+    "benzene-ring"
+   ],
+   "parts_key": "c0378a57ec374ffb",
+   "structure_svg_key": "141eefcc20af04d8c38438b5622a32baedaf554d",
+   "title": "Acrylonitrile butadiene styrene"
+  },
+  "butylated-hydroxyanisole": {
+   "categories": [
+    "aromatics",
+    "ethers",
+    "food-flavor",
+    "phenolic",
+    "phenols"
+   ],
+   "cid": 24667,
+   "description": "BHA, the antioxidant added to fats, cereals, and chewing gum to stop them going rancid. Butylated hydroxyanisole (C22H32O4, 360 g/mol) is a phenolic compound found in everyday food and flavor.",
+   "edges": 1,
+   "has_3d": false,
+   "isomeric_smiles": "CC(C)(C)C1=C(C=CC(=C1)O)OC.CC(C)(C)C1=C(C=CC(=C1)OC)O",
+   "molecular_formula": "C22H32O4",
+   "molecular_weight": 360.5,
+   "parts": [
+    "phenol",
+    "ether",
+    "benzene-ring"
+   ],
+   "parts_key": "9ca905b7b44e297a",
+   "structure_svg_key": "c2c254416c5fa5fe73faaff9f45484537af177c3",
+   "title": "Butylated hydroxyanisole"
+  },
+  "chitin": {
+   "categories": [
+    "alcohols",
+    "amides",
+    "element-nitrogen",
+    "ethers",
+    "mushrooms",
+    "nutrient-vitamin",
+    "sugar"
+   ],
+   "cid": 6857375,
+   "description": "The tough polymer that makes up insect shells, crab shells, and fungal cell walls. After cellulose it is the second most abundant biopolymer on earth.",
+   "edges": 10,
+   "has_3d": true,
+   "isomeric_smiles": "CC(=O)NC1[C@@H](OC(C(C1O)O)CO)O",
+   "molecular_formula": "C8H15NO6",
+   "molecular_weight": 221.21,
+   "parts": [
+    "amide",
+    "alcohol",
+    "hemiacetal"
+   ],
+   "parts_key": "b4dec5434d0b23fd",
+   "structure_svg_key": "47f8c06a39dd974c2f676518068f46250e196727",
+   "title": "Chitin"
+  },
+  "glycogen": {
+   "categories": [
+    "alcohols",
+    "body-endogenous",
+    "ethers",
+    "sugar"
+   ],
+   "cid": 439177,
+   "description": "The branched chain of glucose your liver and muscles store sugar as. Running it down is what carb-loading before a race is meant to prevent.",
+   "edges": 17,
+   "has_3d": true,
+   "isomeric_smiles": "C([C@@H]1[C@H]([C@@H]([C@H]([C@H](O1)OC[C@@H]2[C@H]([C@@H]([C@H]([C@H](O2)O[C@@H]3[C@H](O[C@@H]([C@@H]([C@H]3O)O)O)CO)O)O)O[C@@H]4[C@@H]([C@H]([C@@H]([C@H](O4)CO)O)O)O)O)O)O)O",
+   "molecular_formula": "C24H42O21",
+   "molecular_weight": 666.6,
+   "parts": [
+    "alcohol",
+    "acetal",
+    "hemiacetal"
+   ],
+   "parts_key": "9165569bd2eb6ffb",
+   "structure_svg_key": "4f99f355b06bc7ebf2a4b4019087d806743f1fb0",
+   "title": "Glycogen"
+  },
+  "hyaluronic-acid": {
+   "categories": [
+    "alcohols",
+    "amides",
+    "body-endogenous",
+    "carboxylic-acids",
+    "element-nitrogen",
+    "ethers",
+    "skincare"
+   ],
+   "cid": 24759,
+   "description": "A water-holding molecule the body makes to keep skin and joints plump and cushioned. Hyaluronic acid (C28H44N2O23, 777 g/mol) is a compound that occurs naturally in the human body.",
+   "edges": 11,
+   "has_3d": false,
+   "isomeric_smiles": "CC(=O)N[C@H]1[C@@H](O[C@@H]([C@H](C1O[C@H]2[C@@H]([C@H]([C@@H]([C@H](O2)C(=O)O)O[C@H]3[C@@H](C([C@@H]([C@H](O3)CO)O)O[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)C(=O)O)O)O)O)NC(=O)C)O)O)O)CO)O",
+   "molecular_formula": "C28H44N2O23",
+   "molecular_weight": 776.6,
+   "parts": [
+    "carboxylic-acid",
+    "amide",
+    "alcohol"
+   ],
+   "parts_key": "893bee6d01584f4a",
+   "structure_svg_key": "e9f9402f8f9a3e5da83dbdb3a5983e1a0923bef3",
+   "title": "Hyaluronic acid"
+  },
+  "inulin": {
+   "categories": [
+    "alcohols",
+    "ethers",
+    "nutrient-vitamin",
+    "over-1000-g-mol",
+    "sugar"
+   ],
+   "cid": 24763,
+   "description": "The soluble fiber in chicory root, onions, and Jerusalem artichokes. Human enzymes cannot digest it, so gut bacteria ferment it instead.",
+   "edges": 8,
+   "has_3d": false,
+   "isomeric_smiles": "C([C@@H]1[C@H]([C@@H]([C@H]([C@H](O1)O[C@]2([C@H]([C@@H]([C@H](O2)CO)O)O)CO[C@]3([C@H]([C@@H]([C@H](O3)CO)O)O)CO[C@]4([C@H]([C@@H]([C@H](O4)CO)O)O)CO[C@]5([C@H]([C@@H]([C@H](O5)CO)O)O)CO[C@]6([C@H]([C@@H]([C@H](O6)CO)O)O)CO[C@]7([C@H]([C@@H]([C@H](O7)CO)O)O)CO[C@]8([C@H]([C@@H]([C@H](O8)CO)O)O)CO[C@]9([C@H]([C@@H]([C@H](O9)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO[C@]1([C@H]([C@@H]([C@H](O1)CO)O)O)CO)O)O)O)O",
+   "molecular_formula": "C228H382O191",
+   "molecular_weight": 6179.0,
+   "parts": [],
+   "parts_key": "0cb79d739743ebe7",
+   "structure_svg_key": "5358adcf1c19540b11ac2cb757392fb788906f46",
+   "title": "Inulin"
+  },
+  "ivermectin": {
+   "categories": [
+    "alcohols",
+    "antiparasitic",
+    "esters",
+    "ethers",
+    "over-1000-g-mol",
+    "prescription-medicine"
+   ],
+   "cid": 9812710,
+   "description": "An antiparasitic that treats river blindness and scabies in people and worms in animals. Its discovery from a soil bacterium won a Nobel Prize in 2015.",
+   "edges": 0,
+   "has_3d": false,
+   "isomeric_smiles": "CC[C@H](C)[C@@H]1[C@H](CC[C@@]2(O1)C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\\CO[C@H]5[C@@]4([C@@H](C=C([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\\C)C.C[C@H]1CC[C@]2(C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\\CO[C@H]5[C@@]4([C@@H](C=C([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\\C)O[C@@H]1C(C)C",
+   "molecular_formula": "C95H146O28",
+   "molecular_weight": 1736.2,
+   "parts": [
+    "lactone",
+    "alcohol",
+    "acetal"
+   ],
+   "parts_key": "73e20aee2e7e1d84",
+   "structure_svg_key": "5b4c17d5ab5226ab86afbb306776166a931854d9",
+   "title": "Ivermectin"
+  },
+  "magnesium-glycinate": {
+   "categories": [
+    "amines",
+    "element-magnesium",
+    "element-nitrogen",
+    "nutrient-vitamin"
+   ],
+   "cid": 84645,
+   "description": "Magnesium bound to two glycine molecules, a form sold as a supplement because the amino acid carrier makes it gentler on the stomach than magnesium oxide.",
+   "edges": 9,
+   "has_3d": false,
+   "isomeric_smiles": "C(C(=O)[O-])N.C(C(=O)[O-])N.[Mg+2]",
+   "molecular_formula": "C4H8MgN2O4",
+   "molecular_weight": 172.42,
+   "parts": [
+    "amine"
+   ],
+   "parts_key": "840645a5487a9157",
+   "structure_svg_key": "3f33ab419d1f419827174be59b4e532c2f8f1cfc",
+   "title": "Magnesium glycinate"
+  },
+  "maltodextrin": {
+   "categories": [
+    "alcohols",
+    "ethers",
+    "food-flavor",
+    "polysaccharide",
+    "processed-snacks"
+   ],
+   "cid": 62698,
+   "description": "A short chain of glucose units cut from starch by acid or enzymes. It bulks up powders and thickens sauces, and it tastes barely sweet.",
+   "edges": 19,
+   "has_3d": true,
+   "isomeric_smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O[C@@H]2[C@H](OC([C@@H]([C@H]2O)O)O[C@@H]3[C@H](O[C@@H]([C@@H]([C@H]3O)O)O)CO)CO)O)O)O)O",
+   "molecular_formula": "C18H32O16",
+   "molecular_weight": 504.4,
+   "parts": [
+    "alcohol",
+    "acetal",
+    "hemiacetal"
+   ],
+   "parts_key": "e6571388ef717958",
+   "structure_svg_key": "eddb50aa265338076728d7ca226fc0cdd4158a40",
+   "title": "Maltodextrin"
+  },
+  "poly-methyl-methacrylate": {
+   "categories": [
+    "element-material",
+    "esters",
+    "paint-and-solvent",
+    "polymer"
+   ],
+   "cid": 3032549,
+   "description": "Acrylic glass: Plexiglas and Perspex. It is clearer than window glass, half the weight, and the material of aquarium walls and bone cement.",
+   "edges": 1,
+   "has_3d": false,
+   "isomeric_smiles": "C[C](C)C(=O)OC",
+   "molecular_formula": "C5H9O2",
+   "molecular_weight": 101.12,
+   "parts": [
+    "ester"
+   ],
+   "parts_key": "8fbbb1e01a4698a7",
+   "structure_svg_key": "076df4f2b0e7639cf9a18b718136290363a853d7",
+   "title": "Poly(methyl methacrylate)"
+  },
+  "shellac": {
+   "categories": [
+    "alcohols",
+    "carboxylic-acids",
+    "element-material",
+    "paint-and-solvent",
+    "polymer"
+   ],
+   "cid": 6850749,
+   "description": "The resin a lac insect secretes on trees in India and Thailand, dissolved in alcohol to make wood varnish, and the glaze on shiny sweets and pills.",
+   "edges": 0,
+   "has_3d": false,
+   "isomeric_smiles": "C[C@]1([C@H]2CC3(C1CC[C@H]3C(=O)O)[C@H](C=C2C(=O)O)O)CO.C(CCCC(C(CCCCCO)O)O)CCCC(=O)O",
+   "molecular_formula": "C30H50O11",
+   "molecular_weight": 586.7,
+   "parts": [
+    "carboxylic-acid",
+    "alcohol",
+    "ring-system"
+   ],
+   "parts_key": "5e37d8152995b98a",
+   "structure_svg_key": "285f62c11a66a9e4aa82bf8ed14e71af50ed061c",
+   "title": "Shellac"
+  }
+ }
+}

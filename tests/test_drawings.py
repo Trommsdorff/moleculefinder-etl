@@ -42,7 +42,7 @@ MANIFEST = Path(__file__).parent / "fixtures" / "shipped-drawings-2026-11-12.jso
 # Bonded drawings with no proven positions on this machine: not reproduced by this RDKit, and the
 # reading's own proof does not close (anchors off by 7.5 to 9 px, or a glyph count that differs).
 # They keep their shipped drawing and carry no highlight. A new one here fails this test on purpose.
-UNPROVEN = {"aldosterone", "chitosan", "insulin", "inulin"}
+UNPROVEN = {"aldosterone", "chitosan", "insulin"}          # inulin left 2026-11-27: drawn as its repeat unit
 
 
 def _records() -> list[dict]:
@@ -97,7 +97,9 @@ def sweep(records):
 def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
     unproven = {s for s, row in sweep.items() if row["bonded"] and row["reading"] is None}
     assert unproven == UNPROVEN
-    assert len(sweep) == 896          # phase 3B: +6 new drawings, -1 (carboxymethyl cellulose, now its repeat unit);
+    assert len(sweep) == 888          # the drawing findings' deploy (2026-11-27): -1 (shellac, the no-structure panel);
+                                      # drawing findings (2026-11-27): -7 (six polymers and ABS, their repeat units);
+                                      # phase 3B: +6 new drawings, -1 (carboxymethyl cellulose, now its repeat unit);
                                       # 2026-12-care: +2 (octinoxate, oxybenzone; titanium dioxide has none);
                                       # extended solids (2026-11-26): -2 (silicon dioxide, zinc oxide: lattices);
                                       # wrong drawings (2026-11-26): -5 (four lattices; simeticone, its repeat unit)
@@ -121,7 +123,8 @@ def test_every_bonded_drawing_has_proven_positions_but_four(sweep):
 # The deploy's amendment (2026-11-26): sodium ferrocyanide joined, its layout now stored in the SMILES (six straight
 # cyanides 60 degrees apart).
 READ_ALONE_FAILS = {"chlorophyll-a", "chromium-iii-picolinate", "cisplatin", "liraglutide", "potassium-permanganate",
-                    "sodium-ferrocyanide", "sucralfate"}
+                    "sodium-ferrocyanide", "sucralfate",
+                    "magnesium-glycinate"}     # 2026-11-27: drawn with its metal's bonds, as chromium picolinate
 
 
 def test_the_reading_alone_agrees_with_rdkit_wherever_the_truth_is_known(sweep):
@@ -387,8 +390,8 @@ def test_no_black_and_only_band_colours_plus_the_amber(records, pairs):
     for r in records:
         outputs += [p["layer"] for p in (r.get("structure_parts") or {}).get("parts") or []]
         u = r.get("structure_repeat_unit")
-        if u:
-            outputs += [u["svg"], u["layer"]]
+        if u:                    # a separate-units unit (ABS, 2026-11-27) has no amber layer
+            outputs += [u["svg"]] + ([u["layer"]] if u.get("layer") else [])
     for p in pairs["pairs"].values():
         outputs += [x for x in (p.get("b_svg"), p.get("a_layer"), p.get("b_layer")) if x]
     assert len(outputs) > 1500

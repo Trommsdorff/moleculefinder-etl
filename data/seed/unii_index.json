@@ -1126,7 +1126,7 @@
   "YO7261ME24": {"slug": "cetirizine", "how": "cid", "name": "CETIRIZINE"},
   "YQE403BP4D": {"slug": "phenobarbital", "how": "cid", "name": "PHENOBARBITAL"},
   "YS08XHA860": {"slug": "menthol", "how": "pubchem", "name": "RACEMENTHOL"},
-  "YSE9PPT4TH": {"slug": "hyaluronic-acid", "how": "skeleton", "name": "SODIUM HYALURONATE"},
+  "YSE9PPT4TH": {"slug": "hyaluronic-acid", "how": "alias", "name": "SODIUM HYALURONATE"},
   "YU55MQ3IZY": {"slug": "alprazolam", "how": "cid", "name": "ALPRAZOLAM"},
   "YUJ4U1EW7R": {"slug": "scandium", "how": "cid", "name": "SCANDIUM"},
   "YY9FVM7NSN": {"slug": "hydrogen-sulfide", "how": "cid", "name": "HYDROGEN SULFIDE"},
