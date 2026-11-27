@@ -58,3 +58,46 @@ molecules:
       and every oxygen among four zincs. The recipe's drawing of PubChem's SMILES O=[Zn] (CID 14806) showed a
       diatomic molecule with a Zn=O double bond, which exists only in the gas phase, and PubChem's computed
       descriptors are of that molecule.
+  # The wrong-drawings pass (2026-11-26; Garrett's word on decision 2 of the extended-solids review): four more
+  # extended solids PubChem draws as a false molecule. Each had a live drawing; the drawing guard lists each removal.
+  # None is in a /vs pair, a pair drawing, a part layer, a door's requires: or a booked molecule of the week.
+  # `formula` only where PubChem's Hill order reads differently (CSi, CW); CaO and MgO are already written so.
+  calcium-oxide:
+    line: >-
+      a crystal lattice of calcium and oxygen ions with no single molecule, each calcium among six oxygens; its
+      formula, CaO, gives the ratio, one calcium to each oxygen.
+    basis: >-
+      Quicklime is a rock-salt (halite) lattice of Ca2+ and O2- ions, each ion among six of the other. The recipe's
+      drawing of PubChem's SMILES O=[Ca] (CID 14778) showed a diatomic molecule with a Ca=O double bond, a gas-phase
+      species, and PubChem's computed descriptors are of that molecule. Its "Also called" names (caustic lime,
+      quicklime, calx, calcium monoxide) are everyday or compositional names; none names the false molecule.
+  magnesium-oxide:
+    line: >-
+      a crystal lattice of magnesium and oxygen ions with no single molecule, each magnesium among six oxygens; its
+      formula, MgO, gives the ratio, one magnesium to each oxygen.
+    basis: >-
+      Magnesia (the mineral periclase) is a rock-salt lattice of Mg2+ and O2- ions, each ion among six of the other.
+      The recipe's drawing of PubChem's SMILES O=[Mg] (CID 14792) showed a diatomic molecule with a Mg=O double bond,
+      a gas-phase species, and PubChem's computed descriptors are of that molecule.
+  silicon-carbide:
+    formula: SiC
+    line: >-
+      a network of silicon and carbon with no single molecule, each silicon bonded to four carbons and each carbon
+      to four silicons; its formula, SiC, gives the ratio, one silicon to each carbon.
+    basis: >-
+      Carborundum, in all its polytypes (the cubic beta form and the hexagonal alpha forms), is a covalent network
+      like diamond's: every silicon bonded to four carbons at the corners of a tetrahedron and every carbon to four
+      silicons. The recipe's drawing of PubChem's SMILES [C-]#[Si+] (CID 9863) showed a diatomic molecule with a
+      triple bond, and PubChem's 3D model and computed descriptors are of that molecule.
+  tungsten-carbide:
+    formula: WC
+    drop_names: [methanidylidynetungsten(1+), methanidylidynetungstenylium]
+    line: >-
+      a crystal lattice of tungsten and carbon with no single molecule, each carbon among six tungstens; its
+      formula, WC, gives the ratio, one tungsten to each carbon.
+    basis: >-
+      Tungsten carbide (WC, the hard metal of drill bits and cutting tools) is a hexagonal lattice in which each
+      carbon sits in a trigonal prism of six tungstens and each tungsten among six carbons. The recipe's drawing of
+      PubChem's SMILES [C-]#[W+] (CID 2724274) showed a diatomic molecule with a triple bond, and PubChem's computed
+      descriptors are of that molecule. Its two "methanidylidyne" synonyms name that false molecule; neither is on
+      the page's "Also called" today (its line is empty), and drop_names keeps them off it.

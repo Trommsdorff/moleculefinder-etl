@@ -85,3 +85,134 @@ molecules:
       unspecified, as for fructose. The line (2026-11-14) says only that nearly all of it is a ring,
       that this is the five-membered one and that in water it is a mix of five- and six-membered
       rings; it gives no share, and carries no claim word.
+
+# ── Metal bonds (the wrong-drawings pass, 2026-11-26; Garrett's word on decision 5 of the extended-solids review) ──
+# PubChem's one-line structure keeps a metal apart from the atoms it is bonded to (cisplatin N.N.Cl[Pt]Cl), so the
+# recipe drew the metal floating beside its partners. These are real, discrete molecules or complex ions. An entry
+# here gives the SMILES the DRAWING is drawn from, with the metal's bonds; nothing else on the record moves (SMILES,
+# InChI, formula, weight, CID and every computed property stay PubChem's). A second kind of entry, not a sugar: its
+# check is assemble.metal_bonds_for -> structures.metal_bonds_problems, at every build, and stops the build if it fails:
+#   - the display structure has the record's formula and overall charge;
+#   - the metal is bonded to exactly the atoms `bonded` names ({smarts, count}: the pattern's first atom is the one
+#     bonded to the metal), so a cyanide bonded by its nitrogen, or a missing bond, fails;
+#   - every bond the record itself gives the metal is kept;
+#   - deleting the bonds to the metal gives back the record's own pieces: same atoms, bonds and hydrogens, every
+#     stereocentre and double-bond geometry included; formal charges move only on the metal and the atoms bonded to
+#     it, and only as `charges` lists them ({element, record, drawn}).
+# The bonds, one rule for all five: a partner that carries a negative charge in PubChem's record shares a plain bond
+# with the metal (the two charges pair off: thiomersal's S- and Hg+ become the neutral C-Hg-S PubChem's own
+# thimerosal record draws); a neutral partner gives a dative bond, which RDKit draws as an arrow to the metal
+# (cisplatin's two ammonia, chlorophyll's two imine nitrogens).
+# The drawings are laid out in the SMILES (CXSMILES coordinates, `|(x,y,;...)|`) where RDKit's own layout fails:
+# it does not treat a bond to a metal as a ring bond, so it drew cisplatin trans and crushed the chelate rings and
+# the chlorin. The recipe draws from a SMILES's own coordinates when it has them (structures.draw), and the key
+# covers the whole string, so a layout is as fixed as the SMILES. No 3D model: PubChem's conformer of the record
+# shows the metal apart, which must not sit beside a drawing that bonds it (has_3d is false on all five already).
+# Each entry: smiles, metal, bonded, charges, line (the page's notes; claim rule, kind `part`, display.<slug>.line),
+# from (where the SMILES came from), basis (why; not shown), and cid + form when the SMILES is a PubChem record's own.
+# NOT here, stopped and reported (the wrong-drawings pass): cyanocobalamin, vitamin-b12, hydroxocobalamin and
+# methylcobalamin. A flat drawing of a cobalamin must cross the corrin once (the nucleotide loop runs from the corrin's
+# side chain back to the cobalt); no layout tried was clean, and the records' stereo differs (see the HISTORY record).
+metal_bonds:
+  cisplatin:
+    smiles: "[NH3]->[Pt](<-[NH3])([Cl])[Cl] |(-1.061,-1.061,;0,0,;-1.061,1.061,;1.061,1.061,;1.061,-1.061,)|"
+    metal: Pt
+    bonded:
+      - {smarts: "[#7;H3]", count: 2}
+      - {smarts: "[Cl]", count: 2}
+    charges: []
+    line: >-
+      Drawn with the platinum bonded to its two ammonia nitrogens as well as its two chlorides, the two chlorides on
+      neighboring corners; PubChem's one-line structure leaves the ammonia apart.
+    from: >-
+      Written by hand from the record's SMILES (CID 5460033, N.N.Cl[Pt]Cl): its two Pt-Cl bonds kept, a dative bond
+      from each ammonia nitrogen to the platinum added. PubChem has no record of cisplatin with those bonds drawn
+      (CID 5702198 and 84691, the same InChIKey, keep the ammonia apart too). Coordinates by hand: a square, the
+      ammonia on the left corners and the chlorides on the right.
+    basis: >-
+      Cisplatin is cis-diamminedichloroplatinum(II), a square-planar complex: platinum bonded to two chloride ions
+      and two ammonia nitrogens, like groups on adjacent corners. Opposite corners would be transplatin, a different
+      compound (PubChem CID 441203), so the layout is fixed in the SMILES and a test reads the drawn corners.
+  sodium-ferrocyanide:
+    smiles: "N#C[Fe-4](C#N)(C#N)(C#N)(C#N)C#N.[Na+].[Na+].[Na+].[Na+]"
+    metal: Fe
+    bonded:
+      - {smarts: "[#6]#[#7]", count: 6}
+    charges:
+      - {element: Fe, record: 2, drawn: -4}
+      - {element: C, record: -1, drawn: 0}
+      - {element: C, record: -1, drawn: 0}
+      - {element: C, record: -1, drawn: 0}
+      - {element: C, record: -1, drawn: 0}
+      - {element: C, record: -1, drawn: 0}
+      - {element: C, record: -1, drawn: 0}
+    line: >-
+      Drawn with the iron bonded to the carbon of each of its six cyanides, the complex ion they form; PubChem's
+      one-line structure leaves the iron and the cyanides apart.
+    from: >-
+      Written by hand from the record's SMILES (CID 26129): each cyanide's carbon bonded to the iron, the four sodium
+      ions left as ions. The same form as ChEBI's hexacyanoferrate(4-). RDKit's own layout (no coordinates needed).
+    basis: >-
+      Sodium ferrocyanide is Na4[Fe(CN)6]: the hexacyanoferrate(II) ion, iron octahedrally bonded to the carbon end
+      of six cyanide ligands, with four sodium ions. With the six bonds drawn, the formal charges put the ion's 4-
+      on the iron.
+  chromium-iii-picolinate:
+    smiles: "O=C1[O][Cr]23([O]C(=O)C4=CC=CC=[N]->24)([O]C(=O)C2=CC=CC=[N]->32)<-[N]2=CC=CC=C12 |(-1.742,4.237,;-0.75,3.112,;-0.937,1.624,;0,0,;-0.938,-1.624,;-2.32,-2.206,;-2.798,-3.627,;-3.07,-0.906,;-4.453,-0.325,;-4.64,1.163,;-3.445,2.07,;-2.063,1.488,;-1.875,0,;1.875,0,;3.07,-0.906,;4.54,-0.61,;2.32,-2.206,;2.508,-3.694,;1.312,-4.6,;-0.07,-4.019,;-0.258,-2.53,;0.937,-1.624,;0.938,1.624,;2.32,1.042,;3.515,1.949,;3.328,3.437,;1.945,4.019,;0.75,3.112,)|"
+    metal: Cr
+    bonded:
+      - {smarts: "[#7;r6]", count: 3}
+      - {smarts: "[#8]-[#6]=[#8]", count: 3}
+    charges:
+      - {element: Cr, record: 3, drawn: 0}
+      - {element: O, record: -1, drawn: 0}
+      - {element: O, record: -1, drawn: 0}
+      - {element: O, record: -1, drawn: 0}
+    line: >-
+      Drawn with the chromium bonded to the ring nitrogen and one carboxylate oxygen of each of its three
+      picolinates, three five-membered rings; PubChem's one-line structure leaves the chromium apart.
+    from: >-
+      Written by hand from the record's SMILES (CID 151932): a plain bond from each carboxylate oxygen and a dative
+      bond from each ring nitrogen to the chromium. Coordinates by hand: the three chelate rings at 120 degrees.
+    basis: >-
+      Chromium(III) picolinate is Cr(pic)3: chromium(III) chelated by three picolinate anions, each through its
+      pyridine nitrogen and one carboxylate oxygen, six bonds in all and three five-membered chelate rings.
+  thiomersal:
+    smiles: "CC[Hg]SC1=CC=CC=C1C(=O)[O-].[Na+]"
+    metal: Hg
+    cid: 16684434
+    form: thimerosal
+    bonded:
+      - {smarts: "[#16]-c", count: 1}
+      - {smarts: "[CH2]-[CH3]", count: 1}
+    charges:
+      - {element: Hg, record: 1, drawn: 0}
+      - {element: S, record: -1, drawn: 0}
+    line: >-
+      Drawn from PubChem's thimerosal record, which bonds the mercury to the sulfur that this record's one-line
+      structure leaves apart.
+    from: >-
+      PubChem CID 16684434 (Thimerosal), its SMILES verbatim, read 2026-11-26: CC[Hg]SC1=CC=CC=C1C(=O)[O-].[Na+].
+      It has the record's InChIKey (RTKIYNMVFMVABJ-UHFFFAOYSA-L); this record (CID 5908) writes CC[Hg+] and the
+      [S-] apart.
+    basis: >-
+      Thiomersal is sodium ethylmercurithiosalicylate: an ethyl group, mercury and sulfur in a line (C-Hg-S), the
+      sulfur on the benzene ring next to the carboxylate, which is a sodium salt.
+  chlorophyll-a:
+    smiles: "C=CC1=C(C)C2=CC3=[N]4->[Mg]56<-[N]7=C(C=C1[N]25)C(C)=C(CC)C7=CC1=C(C)C2=C(C(=C4[C@@H](CCC(=O)OC/C=C(\\C)CCC[C@H](C)CCC[C@H](C)CCCC(C)C)[C@@H]3C)[C@@H](C(=O)OC)C2=O)[N]16 |(24.263,-5.211,;22.785,-5.461,;22.262,-6.868,;20.816,-7.267,;19.643,-6.337,;20.753,-8.768,;19.776,-9.909,;19.307,-11.332,;19.423,-12.827,;22.823,-11.81,;25.624,-10.828,;26.146,-9.424,;25.013,-8.447,;23.583,-7.978,;22.09,-8.093,;27.647,-9.487,;28.577,-8.307,;28.046,-10.925,;29.453,-11.449,;29.703,-12.926,;26.803,-11.754,;26.467,-13.677,;25.498,-14.818,;25.107,-16.264,;26.045,-17.429,;22.66,-17.108,;22.66,-15.607,;21.238,-15.138,;20.096,-14.161,;18.603,-14.099,;17.672,-15.279,;16.188,-15.052,;15.258,-16.233,;15.634,-17.683,;13.774,-16.014,;12.843,-17.186,;11.357,-16.967,;10.427,-18.14,;10.982,-19.539,;8.942,-17.921,;8.395,-16.53,;6.91,-16.311,;6.355,-14.919,;4.874,-14.697,;7.285,-13.739,;6.738,-12.348,;7.668,-11.175,;7.113,-9.776,;8.047,-8.604,;5.636,-9.557,;5.081,-8.166,;3.596,-7.947,;3.048,-6.556,;1.563,-6.337,;3.979,-5.375,;18.197,-12.653,;16.794,-12.137,;20.354,-16.35,;18.856,-16.348,;18.302,-15.773,;18.1,-17.644,;16.61,-17.819,;21.23,-17.561,;20.764,-18.992,;24.156,-15.494,)|"
+    metal: Mg
+    bonded:
+      - {smarts: "[#7]", count: 4}
+    charges:
+      - {element: Mg, record: 2, drawn: 0}
+      - {element: N, record: -1, drawn: 0}
+      - {element: N, record: -1, drawn: 0}
+    line: >-
+      Drawn with the magnesium bonded to the four ring nitrogens in the middle of the ring; PubChem's one-line
+      structure leaves the magnesium apart.
+    from: >-
+      Written by hand from the record's SMILES (CID 12085802): a plain bond from each of the two N- and a dative bond
+      from each of the two imine nitrogens to the magnesium. Coordinates: the live drawing's own layout, read from its
+      SVG (svg_geometry.read_positions, proven), with the magnesium at the centre of its four nitrogens.
+    basis: >-
+      Chlorophyll a is a magnesium chlorin: magnesium at the centre, bonded to the four ring nitrogens, the phytyl
+      tail an ester. Every stereocentre is PubChem's (the check holds them).

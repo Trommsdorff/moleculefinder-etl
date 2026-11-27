@@ -1049,15 +1049,61 @@ STRUCTURE_DISPLAY = SEEDS_DIR / "structure_display.yaml"
 
 
 @functools.lru_cache(maxsize=1)
-def _display_seed() -> dict:
+def _display_file() -> dict:
     if not STRUCTURE_DISPLAY.exists():
         return {}
-    return (yaml.safe_load(STRUCTURE_DISPLAY.read_text()) or {}).get("molecules") or {}
+    return yaml.safe_load(STRUCTURE_DISPLAY.read_text()) or {}
+
+
+def _display_seed() -> dict:
+    """The sugars (phase 3A): a ring form in place of PubChem's open chain."""
+    return _display_file().get("molecules") or {}
+
+
+def _metal_bonds_seed() -> dict:
+    """The metal bonds (the wrong-drawings pass, 2026-11-26): PubChem's one-line structure with its metal's bonds."""
+    return _display_file().get("metal_bonds") or {}
+
+
+def metal_bonds_for(slug: str, iso: str | None) -> dict | None:
+    """The record's ``structure_display`` of kind ``metal_bonds`` ({kind, smiles, metal, has_3d: false, line, and
+    ``form`` and ``cid`` when the display structure is a PubChem record's own, confidence, source}) or None. The
+    display structure is checked at every build by ``structures.metal_bonds_problems`` (the record's formula and
+    charge; the metal bonded to exactly the atoms the entry names; deleting those bonds gives back the record's own
+    pieces, stereo included, charges moved only as listed); a failure stops the build. There is no 3D model: PubChem's
+    conformer of the record shows the metal apart, which must not sit beside a drawing that bonds it."""
+    e = _metal_bonds_seed().get(slug)
+    if not e:
+        return None
+    smiles, metal, line = (str(e.get(k) or "").strip() for k in ("smiles", "metal", "line"))
+    problems = []
+    if not (smiles and metal and line and str(e.get("basis") or "").strip() and str(e.get("from") or "").strip()
+            and isinstance(e.get("bonded"), list) and e["bonded"] and isinstance(e.get("charges", []), list)):
+        problems.append("needs smiles, metal, bonded, line, from and basis (and charges, a list, when any move)")
+    elif ("cid" in e) != ("form" in e):
+        problems.append("cid and form go together (a display structure that is a PubChem record's own)")
+    elif not iso:
+        problems.append("the record has no SMILES of its own")
+    elif any(d in line for d in ("\u2014", "\u2013")):
+        problems.append("a dash in the line")
+    else:
+        problems += structures.metal_bonds_problems(smiles, iso, metal, e["bonded"], e.get("charges") or [])
+    if problems:
+        raise SystemExit(f"{STRUCTURE_DISPLAY.name}: metal_bonds: {slug}: " + "; ".join(problems))
+    out = {"kind": "metal_bonds", "smiles": smiles, "metal": metal, "has_3d": False, "line": " ".join(line.split())}
+    if "cid" in e:
+        out.update({"cid": int(e["cid"]), "form": str(e["form"]).strip()})
+    return {**out, "confidence": "from_source", "source": _src("curated")}
 
 
 def structure_display_for(slug: str, iso: str | None) -> dict | None:
     """The record's ``structure_display`` ({smiles, form, cid, has_3d, line, confidence, source}) or
-    None. An entry whose ring does not open to the record's own SMILES stops the build."""
+    None. An entry whose ring does not open to the record's own SMILES stops the build. A metal-bonds entry
+    (``metal_bonds_for``) is the second kind."""
+    if slug in _display_seed() and slug in _metal_bonds_seed():
+        raise SystemExit(f"{STRUCTURE_DISPLAY.name}: {slug} is under both molecules and metal_bonds")
+    if slug in _metal_bonds_seed():
+        return metal_bonds_for(slug, iso)
     e = _display_seed().get(slug)
     if not e:
         return None

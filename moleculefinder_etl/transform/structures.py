@@ -314,6 +314,125 @@ def ring_opens_to(ring_smiles: str, chain_smiles: str) -> bool:
     return ring_opened(ring_smiles) == Chem.MolToSmiles(chain)
 
 
+def _frozen_without_metal_bonds(mol, metal_idx: int):
+    """A copy of ``mol`` with every atom's hydrogen count frozen and every bond to the atom ``metal_idx``
+    deleted (the wrong-drawings pass, 2026-11-26). Returns (copy, the metal's former neighbours)."""
+    from rdkit import Chem
+
+    rw = Chem.RWMol(mol)
+    for a in rw.GetAtoms():
+        a.SetNumExplicitHs(a.GetTotalNumHs())
+        a.SetNoImplicit(True)
+    nbrs = sorted(n.GetIdx() for n in rw.GetAtomWithIdx(metal_idx).GetNeighbors())
+    for n in nbrs:
+        rw.RemoveBond(metal_idx, n)
+    return rw, nbrs
+
+
+def metal_bonds_problems(display: str, record: str, metal: str, bonded: list[dict],
+                         charges: list[dict]) -> list[str]:
+    """Why ``display`` is not ``record`` with its metal's bonds drawn in, or [] when it is (the wrong-drawings pass,
+    2026-11-26; seeds/structure_display.yaml ``metal_bonds``). PubChem's one-line structure keeps a metal apart from
+    the atoms it bonds (cisplatin ``N.N.Cl[Pt]Cl``); the display structure bonds them. Proven here, at every build:
+
+    1. the display structure has the record's formula and overall charge (``CalcMolFormula`` carries the charge);
+    2. there is exactly one ``metal`` atom in each, and the atoms bonded to it in the display are exactly the atoms
+       ``bonded`` names: each entry {smarts, count}, the pattern's FIRST atom being the one bonded to the metal (so a
+       cyanide bonded by its nitrogen, or an ammine missing, fails);
+    3. every bond the record itself gives the metal (cisplatin's two Pt-Cl) is in the display too;
+    4. deleting the bonds to the metal from both gives the same pieces: same atoms, same bonds, same hydrogens,
+       every stereocentre and double-bond geometry as the record has it. Formal charges may differ only on the
+       metal and the atoms bonded to it, and only as ``charges`` lists them, each {element, record, drawn}: the
+       charges are set back to the record's and the two must then be identical (every way of choosing which
+       bonded atom of that element carries a listed change is tried; one must give the record).
+    """
+    from rdkit import Chem
+    from rdkit.Chem.rdMolDescriptors import CalcMolFormula
+
+    d, r = Chem.MolFromSmiles(display or ""), Chem.MolFromSmiles(record or "")
+    if d is None or r is None:
+        return ["the display structure or the record's SMILES does not parse"]
+    out = []
+    if CalcMolFormula(d) != CalcMolFormula(r):
+        out.append(f"formula {CalcMolFormula(d)} is not the record's {CalcMolFormula(r)}")
+    if Chem.GetFormalCharge(d) != Chem.GetFormalCharge(r):
+        out.append(f"overall charge {Chem.GetFormalCharge(d)} is not the record's {Chem.GetFormalCharge(r)}")
+    dm = [a.GetIdx() for a in d.GetAtoms() if a.GetSymbol() == metal]
+    rm = [a.GetIdx() for a in r.GetAtoms() if a.GetSymbol() == metal]
+    if len(dm) != 1 or len(rm) != 1:
+        return out + [f"needs exactly one {metal} in each (display {len(dm)}, record {len(rm)})"]
+    dm, rm = dm[0], rm[0]
+    # 2. the metal's partners are exactly the named atoms
+    named: list[int] = []
+    for b in bonded:
+        patt = Chem.MolFromSmarts(b["smarts"])
+        hits = sorted({h[0] for h in d.GetSubstructMatches(patt)}
+                      & {n.GetIdx() for n in d.GetAtomWithIdx(dm).GetNeighbors()})
+        if len(hits) != int(b["count"]):
+            out.append(f"{b['smarts']} bonded to {metal}: {len(hits)}, expected {b['count']}")
+        named += hits
+    partners = sorted(n.GetIdx() for n in d.GetAtomWithIdx(dm).GetNeighbors())
+    if sorted(named) != partners:
+        out.append(f"{metal} is bonded to {len(partners)} atoms, the entry names {len(named)}")
+    if out:
+        return out
+    dfree, dn = _frozen_without_metal_bonds(d, dm)
+    rfree, rn = _frozen_without_metal_bonds(r, rm)
+
+    def settled(m):
+        m = Chem.Mol(m)
+        m.UpdatePropertyCache(False)
+        Chem.SanitizeMol(m)
+        Chem.AssignStereochemistry(m, cleanIt=True, force=True)
+        return m
+
+    # 4. charges back to the record's, every way the listed changes can fall on the bonded atoms
+    changes = [c for c in charges if c["element"] != metal]
+    metal_change = [c for c in charges if c["element"] == metal]
+    if len(metal_change) > 1:
+        return [f"{metal}'s charge is listed twice"]
+    m_atom = dfree.GetAtomWithIdx(dm)
+    if metal_change:
+        if m_atom.GetFormalCharge() != int(metal_change[0]["drawn"]):
+            return [f"{metal} is drawn with charge {m_atom.GetFormalCharge()}, the entry says {metal_change[0]['drawn']}"]
+        m_atom.SetFormalCharge(int(metal_change[0]["record"]))
+    rset = settled(rfree)
+    want = Chem.MolToSmiles(rset)
+    choices = []
+    for c in changes:
+        cands = [i for i in dn if dfree.GetAtomWithIdx(i).GetSymbol() == c["element"]
+                 and dfree.GetAtomWithIdx(i).GetFormalCharge() == int(c["drawn"])]
+        choices.append(cands)
+    match = None
+    from rdkit.rdBase import BlockLogs
+    quiet = BlockLogs()                                    # a wrong pick's valence complaint is not news
+    for pick in itertools.product(*choices) if choices else [()]:
+        if len(set(pick)) != len(pick):
+            continue
+        trial = Chem.RWMol(dfree)
+        for i, c in zip(pick, changes):
+            trial.GetAtomWithIdx(i).SetFormalCharge(int(c["record"]))
+        try:
+            got = settled(trial)
+        except Chem.rdchem.MolSanitizeException:          # a wrong pick leaves an impossible valence
+            got = None
+        if got is not None and Chem.MolToSmiles(got) == want:
+            match = got
+            break
+    del quiet
+    if match is None:
+        return [(f"with the bonds to {metal} deleted and the listed charges set back, it is not the record's own "
+                 f"pieces {want}")]
+    # 3. the record's own bonds to the metal are kept
+    amap = match.GetSubstructMatch(rset, useChirality=True)
+    if len(amap) != r.GetNumAtoms():
+        return ["the pieces match as SMILES but not atom for atom"]
+    for n in rn:
+        if d.GetBondBetweenAtoms(amap[rm], amap[n]) is None:
+            out.append(f"the record's own bond from {metal} to {r.GetAtomWithIdx(n).GetSymbol()} is missing")
+    return out
+
+
 def svg_key(smiles: str, width: int = 400, height: int = 300,
             recipe: str = RECIPE_VERSION) -> str:
     """Fingerprint of everything that decides what ``svg_for`` draws.

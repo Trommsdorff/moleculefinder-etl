@@ -160,7 +160,8 @@ def test_the_record_stays_the_same_substance():
         assert d["cid"] != cid and d["has_3d"] is True and m["has_3d"] is True
         assert d["model_cid"] not in (cid, d["cid"])
         assert structures.drawn_smiles(m) == d["smiles"]
-    assert sum("structure_display" in m for m in _all()) == 2
+    # the sugars only; the wrong-drawings pass's metal-bond entries are kind "metal_bonds" (test_wrong_drawings.py)
+    assert sum("structure_display" in m and not m["structure_display"].get("kind") for m in _all()) == 2
 
 
 def test_the_display_lines_are_under_the_claim_rule():
@@ -169,8 +170,12 @@ def test_the_display_lines_are_under_the_claim_rule():
     the claim corpus (kind part, display.<slug>.line), so an edit to either is checked."""
     from moleculefinder_etl.transform import claims
     lines = {key: text for kind, key, text in claims.corpus() if kind == "part" and key.startswith("display.")}
+    # plus, since the wrong-drawings pass (2026-11-26), one line per metal-bonds entry (test_wrong_drawings.py)
+    metal = {f"display.{s}.line" for s in ("cisplatin", "sodium-ferrocyanide", "chromium-iii-picolinate",
+                                            "thiomersal", "chlorophyll-a")}
     assert set(lines) == {"display.fructose.line", "display.fructose.model_line",
-                          "display.allulose.line", "display.allulose.model_line"}
+                          "display.allulose.line", "display.allulose.model_line"} | metal
+    assert all(claims.words_in(lines[k]) == [] for k in metal)
     assert lines["display.fructose.line"].startswith("Drawn as a ring, as nearly all fructose in water is.")
     assert "most free fructose in water is the six-membered ring" in lines["display.fructose.line"]
     assert claims.words_in(lines["display.fructose.line"]) == ["most"]

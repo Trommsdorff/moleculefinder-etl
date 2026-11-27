@@ -24,10 +24,12 @@ def _rec(slug):
     return json.loads((SNAP / "molecules" / f"{slug}.json").read_text())
 
 
-def test_structure_none_lists_exactly_the_three_ruled_lattices():
-    # A new entry removes a live drawing: it comes only with Garrett's ruling and its own review page.
+def test_structure_none_lists_exactly_the_ruled_lattices():
+    # A new entry removes a live drawing: it comes only with Garrett's ruling and its own review page. The
+    # wrong-drawings pass (2026-11-26, his word on decision 2) added four; tests/test_wrong_drawings.py holds them.
     seed = yaml.safe_load((SEEDS_DIR / "structure_none.yaml").read_text())["molecules"]
-    assert set(seed) == {"titanium-dioxide", "silicon-dioxide", "zinc-oxide"}
+    assert set(seed) == {"titanium-dioxide", "silicon-dioxide", "zinc-oxide",
+                         "calcium-oxide", "magnesium-oxide", "silicon-carbide", "tungsten-carbide"}
 
 
 def test_each_is_drawn_with_nothing_and_keeps_its_formula_unit():
@@ -79,7 +81,8 @@ def test_the_guard_lists_exactly_the_two_drawings_that_leave(tmp_path):
     # listed in CID order (the guard walks the catalog by CID: zinc oxide 14806, silicon dioxide 24261)
     assert v.made == ["zinc-oxide (structure drawing): removed, it no longer has a drawing",
                       "silicon-dioxide (structure drawing): removed, it no longer has a drawing"]
-    assert v.lines[0] == "structure drawings: 901 carried, 0 repainted, 0 drawn, 28 with no drawing"
+    # 896 and 33 since the wrong-drawings pass (2026-11-26), which test_wrong_drawings.py lists on its own
+    assert v.lines[0] == "structure drawings: 896 carried, 0 repainted, 0 drawn, 33 with no drawing"
 
 
 def test_zinc_oxide_leaves_the_molecule_of_the_week_for_avobenzone():
@@ -131,4 +134,5 @@ def test_also_called_drops_the_name_of_the_molecule_that_does_not_exist():
     assert _rec("zinc-oxide")["display_synonyms"] == ["ZnO", "calamine", "philosopher's wool", "Chinese white"]
     assert _rec("titanium-dioxide")["display_synonyms"] == ["titania", "Hombitan", "Tiofine", "Tioxide"]
     seed = yaml.safe_load((SEEDS_DIR / "structure_none.yaml").read_text())["molecules"]
-    assert {s for s, e in seed.items() if e.get("drop_names")} == {"silicon-dioxide"}
+    # tungsten carbide's two "methanidylidyne" names joined in the wrong-drawings pass (tests/test_wrong_drawings.py)
+    assert {s for s, e in seed.items() if e.get("drop_names")} == {"silicon-dioxide", "tungsten-carbide"}

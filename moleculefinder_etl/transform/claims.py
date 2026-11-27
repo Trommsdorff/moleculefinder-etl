@@ -109,10 +109,15 @@ def corpus(seeds: Path = SEEDS_DIR, curated: Path = CURATED_DIR) -> list[tuple[s
     # keyed display.<slug>.line and display.<slug>.model_line.
     disp = seeds / "structure_display.yaml"
     if disp.exists():
-        for slug, d in ((yaml.safe_load(disp.read_text()) or {}).get("molecules") or {}).items():
+        seed = yaml.safe_load(disp.read_text()) or {}
+        for slug, d in (seed.get("molecules") or {}).items():
             for f in ("line", "model_line"):
                 if isinstance((d or {}).get(f), str) and d[f].strip():
                     out.append(("part", f"display.{slug}.{f}", normalise(d[f])))
+        # The wrong-drawings pass (2026-11-26): a metal compound drawn with its metal's bonds, one line each.
+        for slug, d in (seed.get("metal_bonds") or {}).items():
+            if isinstance((d or {}).get("line"), str) and d["line"].strip():
+                out.append(("part", f"display.{slug}.line", normalise(d["line"])))
     # The 2026-12-care tranche: the no-structure line of a lattice drawn with nothing.
     none = seeds / "structure_none.yaml"
     if none.exists():
