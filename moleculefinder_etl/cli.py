@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 from .config import Settings, weekly_run
@@ -30,7 +31,10 @@ STAGES = {
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mfetl", description="MoleculeFinder ETL")
-    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset", "zenodo", "mirrors"], help="pipeline stage to run")
+    p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset", "zenodo", "mirrors", "review"],
+                   help="pipeline stage to run")
+    p.add_argument("review_what", nargs="?", choices=["drawings"], default=None,
+                   help="review: which trust review (drawings: moleculefinder_etl/review/drawings.py)")
     p.add_argument("--target", type=int, default=None, help="canon size (default from env)")
     p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
     p.add_argument("--version", dest="dataset_version", default=None,
@@ -58,7 +62,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--env-file", dest="zenodo_env_file", type=Path, default=None,
                    help="zenodo, mirrors: the file holding the logins (default: this repo's .env)")
     p.add_argument("-v", "--verbose", action="store_true")
+    if argv is None:
+        argv = sys.argv[1:]
+    if argv[:2] == ["review", "drawings"]:
+        # A trust review (read-only; its own options: `mfetl review drawings --help`). It loads no database key.
+        from .review import drawings as review_drawings
+        return review_drawings.main(argv[2:])
     args = p.parse_args(argv)
+    if args.stage == "review":
+        p.error("review: name the review (`mfetl review drawings`)")
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")

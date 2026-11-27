@@ -192,6 +192,29 @@ def _warn_retry(state) -> None:
                 state.attempt_number, LOAD_ATTEMPTS, state.outcome.exception(), state.next_action.sleep)
 
 
+def _response_hooks(query) -> list | None:
+    """The httpx client's list of response hooks behind a postgrest query (``query.request.session``), or None."""
+    session = getattr(getattr(query, "request", None), "session", None)
+    hooks = getattr(session, "event_hooks", None)
+    return hooks.get("response") if isinstance(hooks, dict) else None
+
+
+def _with_gateway_status(err: APIError, response: httpx.Response | None) -> APIError:
+    """The gateway's own error, when postgrest's parse lost it (found 2026-11-27).
+
+    postgrest 2.34.1 (the version uv.lock pins, which the Mac's weekly job runs) reads any JSON error body into
+    an error whose every field is optional, so the gateway's 504 ``{"message":"Gateway Timeout"}`` became an
+    APIError with ``code`` None and no trace of the HTTP status, and ``_is_transient`` stopped seeing it: the
+    retry built for the 2026-09-14 failure no longer fired. PostgREST's own errors always carry a code (a
+    SQLSTATE or PGRSTnnn); an error without one is the proxy's answer, so it is reported as the proxy's status,
+    in the shape postgrest gives a non-JSON error page (``generate_default_error_message``): code the status,
+    details the body."""
+    if err.code is not None or response is None or response.is_success:
+        return err
+    return APIError({"message": err.message or response.reason_phrase, "code": str(response.status_code),
+                     "hint": err.hint, "details": response.text or err.details})
+
+
 @retry(wait=wait_exponential(multiplier=5, max=60), stop=stop_after_attempt(LOAD_ATTEMPTS),
        retry=retry_if_exception(_is_transient), before_sleep=_warn_retry, reraise=True)
 def _execute_idempotent(query):
@@ -199,8 +222,23 @@ def _execute_idempotent(query):
     with 5 s and 10 s between; the last error is raised as it came, so the run still fails.
 
     Only the child-row DELETE goes through here. The INSERT after it does not: a gateway timeout
-    does not say whether the rows landed, and sending them again could store every row twice."""
-    return query.execute()
+    does not say whether the rows landed, and sending them again could store every row twice.
+
+    The HTTP status of the answer is watched for the length of the call (an httpx response hook on the
+    query's own client, removed after), so a gateway error keeps its status whatever postgrest makes of
+    its body (``_with_gateway_status``)."""
+    seen: list[httpx.Response] = []
+    hooks = _response_hooks(query)
+    hook = seen.append
+    if hooks is not None:
+        hooks.append(hook)
+    try:
+        return query.execute()
+    except APIError as err:
+        raise _with_gateway_status(err, seen[-1] if seen else None) from err
+    finally:
+        if hooks is not None and hook in hooks:
+            hooks.remove(hook)
 
 
 # ── Orchestrated load (idempotent) ───────────────────────────────────────────
