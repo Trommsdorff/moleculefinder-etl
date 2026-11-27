@@ -601,3 +601,19 @@ def test_the_pairs_the_pass_touches_and_nothing_booked():
         assert cd[k]["mode"] == "shipped" and cd[k]["reason"] == "one of the two has no drawing"
     featured = json.loads((SNAP / "featured.json").read_text())
     assert not eight & set(re.findall(r'"slug": "([a-z0-9-]+)"', json.dumps(featured)))
+
+
+def test_ruling_3_glucose_vs_glycogen_says_what_glycogen_is():
+    """The pair's text no longer leans on glycogen's listed formula and weight (the record has none now): glycogen is a
+    branched chain of many thousands of glucose units with no single formula or weight. Its answer line, the /vs
+    page's frozen description, does not move."""
+    import yaml
+    pair = yaml.safe_load((ROOT / "moleculefinder_etl" / "sources" / "seeds" / "comparisons.yaml").read_text())[
+        "glucose/glycogen"]
+    text = " ".join(pair["text"].split())
+    assert text.startswith("Glycogen is a branched chain of many thousands of glucose units, so it has no single "
+                           "formula or weight.")
+    assert "listed formula" not in text and "fragment" not in text and "—" not in text and "–" not in text
+    assert pair["answer"] == ("Glycogen is thousands of glucose units branched together, the form in which the liver "
+                              "and muscles store glucose until the body needs it.")
+    assert claims.line_id(pair["text"]) == "a5f109fabeaa"
