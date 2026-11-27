@@ -662,6 +662,38 @@ at the molecule page's desktop size (464 x 348) and at its phone size (272 x 204
 **After the pass, the weekly run's lines** are those of section 14 (896 / 723 / 147 / 4 carried, 33 with no drawing);
 made or remade: none.
 
+## 16. The drawing-truth review's findings (the drawing-findings pass, 2026-11-27)
+
+Brief `../TRUST-2B-DRAWING-FINDINGS-PROMPT.md` (Cowork's rulings, Garrett's word). Built on branch
+`drawing-findings-2026-11`, NOT merged: frozen text moves and waits for a ruling (HISTORY, 2026-11-27). Every change is
+one the guard LISTS (25 entries, pinned in `tests/test_drawing_findings.py`).
+
+- **Magnesium glycinate** (`structure_display.yaml` `metal_bonds`): the chelate, Mg bonded to the NH2 nitrogen (dative)
+  and one carboxylate oxygen (plain) of each glycinate, a stored point-symmetric layout. Its amine part layer drops:
+  `[NX3;H2,H1]` does not match a nitrogen that also bonds the metal. RDKit draws two dots on the Mg (it counts the
+  dative bonds in Mg's valence and gives it two radical electrons), as on chlorophyll a's live drawing.
+- **Six repeat units in place of PubChem's drawing** (`replaces`, the section 13/14 precedent): chitin, hyaluronic acid,
+  glycogen, maltodextrin, inulin, poly(methyl methacrylate); and ABS. Two seed fields are new
+  (`drawings.repeat_unit_marks`, shared by the build and the review):
+  - `also:` a further kind of joint ({linkage, linkage_smarts, linkages}) marked in the same amber; the record gets
+    `also: [{linkage, linkage_atoms}]` (glycogen's alpha-1,6; hyaluronic acid's beta-1,4, half of it at each open end);
+  - `variant: separate-units`: several units side by side, no linkage, no amber layer (`layer: null`,
+    `linkage: null`); each fragment must be its monomer with the double bond opened into two ends
+    (`drawings.unit_monomers`), equal to `monomers`, the record's own SMILES, which `assemble._check_unit_monomers`
+    holds equal to PubChem's at every build (ABS).
+  Inulin, PMMA and ABS carry their layout as CXSMILES coordinates; each `*` then needs the atom label `*` (`$*;...$`),
+  or RDKit reads it as a query atom and draws "A". PMMA's backbone CH2 carbons are labelled (`CH<sub>2</sub>`).
+- **A true drawing's note** (`seeds/structure_notes.yaml` -> `structure_note` {line, confidence, source}): BHA and
+  ivermectin, each a defined mixture of the two compounds drawn. Claim rule kind `part`, key `note.<slug>.line`; house
+  rules kind `note` (30 to 280 characters). The web prints it as the 2D drawing's note.
+- **Sodium hyaluronate** (UNII YSE9PPT4TH) is ruled a form in `unii_aliases.yaml`: it matched by the InChIKey skeleton the
+  record dropped.
+
+**After the pass, the weekly run's lines:** `structure drawings: 889 carried, 0 repainted, 0 drawn, 40 with no
+drawing`; `structure parts: 716 carried, 0 made, 210 with no part, 3 drawings unreadable`; `compare drawings: 147 pairs
+(aligned 45, aligned+highlight 29, shipped 72, shipped+highlight 1); 147 carried, 0 repainted, 0 made`; `repeat units:
+11 (11 carried, 0 repainted, 0 drawn this run)`; made or remade: none.
+
 ## Seeing a layer
 
 `drawings.compose(record["structure_svg"], part["layer"])` returns the drawing with the part under
