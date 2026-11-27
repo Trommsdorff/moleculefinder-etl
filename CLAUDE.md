@@ -12,7 +12,7 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 929 molecules; 430 product pages; 6 doors.
-- **Next weekly run's Drawings:** 901 / 723 / 147 / 3, 28 with no drawing, made: none (`main`; branch `wrong-drawings-2026-11`, NOT merged: 896 / 723 / 147 / 4, 33). Lines: `docs/DRAWING-RECIPES.md` 13, 14. On a stop: 10, 11.
+- **Next weekly run's Drawings:** 896 / 723 / 147 / 4 carried, 33 with no drawing, made: none (wrong drawings, merged 2026-11-26). Lines: `docs/DRAWING-RECIPES.md` 14. On a stop: 10, 11.
 - **Both scheduled jobs run on the Mac mini:** the weekly refresh (`scripts/mac/weekly-refresh.sh`, Mon 03:10 ET, from
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
