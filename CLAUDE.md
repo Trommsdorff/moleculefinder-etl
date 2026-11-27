@@ -22,7 +22,7 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 - **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
 - **Trust reviews** (read-only; `scripts/mac/trust-review.sh <review>`; runbook `docs/MAC-TRUST-REVIEWS.md`): 3, drawing
   truth (`mfetl review drawings`, 06:30 ET; pushed) and 2, one fact every surface (`mfetl review facts`, 06:45 ET, all
-  pages Tue; `facts_differences.yaml`; merged 11-27, NOT pushed). Allowlists, differences: a ruling only.
+  pages Tue; `facts_differences.yaml`; pushed 11-27). Allowlists, differences: a ruling only.
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 
 ## Golden rules (do not break these)
