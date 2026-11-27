@@ -172,7 +172,9 @@ def test_the_display_lines_are_under_the_claim_rule():
     lines = {key: text for kind, key, text in claims.corpus() if kind == "part" and key.startswith("display.")}
     # plus, since the wrong-drawings pass (2026-11-26), one line per metal-bonds entry (test_wrong_drawings.py)
     metal = {f"display.{s}.line" for s in ("cisplatin", "sodium-ferrocyanide", "chromium-iii-picolinate",
-                                            "thiomersal", "chlorophyll-a")}
+                                            "thiomersal", "chlorophyll-a",
+                                            # and the cobalamins pass (2026-11-26, tests/test_cobalamins.py)
+                                            "cyanocobalamin", "vitamin-b12", "hydroxocobalamin", "methylcobalamin")}
     assert set(lines) == {"display.fructose.line", "display.fructose.model_line",
                           "display.allulose.line", "display.allulose.model_line"} | metal
     assert all(claims.words_in(lines[k]) == [] for k in metal)

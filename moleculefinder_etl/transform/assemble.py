@@ -1071,7 +1071,10 @@ def metal_bonds_for(slug: str, iso: str | None) -> dict | None:
     display structure is checked at every build by ``structures.metal_bonds_problems`` (the record's formula and
     charge; the metal bonded to exactly the atoms the entry names; deleting those bonds gives back the record's own
     pieces, stereo included, charges moved only as listed); a failure stops the build. There is no 3D model: PubChem's
-    conformer of the record shows the metal apart, which must not sit beside a drawing that bonds it."""
+    conformer of the record shows the metal apart, which must not sit beside a drawing that bonds it.
+    The cobalamins (2026-11-26) add two optional fields: ``top`` (the pattern of the group on top of the metal) and
+    ``stereo_from`` (the entry whose stereo a record that leaves centres unspecified is drawn with; checked by
+    ``structures.metal_bonds_problems``, ruling 4(d)). Neither reaches the record."""
     e = _metal_bonds_seed().get(slug)
     if not e:
         return None
@@ -1086,8 +1089,16 @@ def metal_bonds_for(slug: str, iso: str | None) -> dict | None:
         problems.append("the record has no SMILES of its own")
     elif any(d in line for d in ("\u2014", "\u2013")):
         problems.append("a dash in the line")
+    elif "stereo_from" in e and not (e.get("top") and isinstance(_metal_bonds_seed().get(e["stereo_from"]), dict)
+                                     and _metal_bonds_seed()[e["stereo_from"]].get("top")
+                                     and "stereo_from" not in _metal_bonds_seed()[e["stereo_from"]]):
+        problems.append("stereo_from names an entry with its own smiles and top (and no stereo_from of its own), and "
+                        "needs this entry's top")
     else:
-        problems += structures.metal_bonds_problems(smiles, iso, metal, e["bonded"], e.get("charges") or [])
+        ref = _metal_bonds_seed()[e["stereo_from"]] if "stereo_from" in e else None
+        problems += structures.metal_bonds_problems(
+            smiles, iso, metal, e["bonded"], e.get("charges") or [], top=e.get("top"),
+            reference=(str(ref["smiles"]).strip(), ref["top"]) if ref else None)
     if problems:
         raise SystemExit(f"{STRUCTURE_DISPLAY.name}: metal_bonds: {slug}: " + "; ".join(problems))
     out = {"kind": "metal_bonds", "smiles": smiles, "metal": metal, "has_3d": False, "line": " ".join(line.split())}
