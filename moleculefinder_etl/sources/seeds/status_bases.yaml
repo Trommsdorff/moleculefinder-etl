@@ -59,4 +59,5 @@ levomethamphetamine:
 unsettled:
   cyclizine: "Its licence record is the MHRA's (Valoid), which states no over-the-counter or prescription status; Drugs@FDA lists no cyclizine product marketed today."
   hyoscine-butylbromide: "Its licence record is the MHRA's (Buscopan), which states no over-the-counter or prescription status; Drugs@FDA lists no hyoscine butylbromide product marketed today."
-  phenazopyridine: "No licence record (Drugs@FDA, the EMA and the MHRA list none), and its one label, Pyridium, is marketed as an unapproved drug."
+# phenazopyridine left this list on 2026-11-28: Garrett ruled it an exception (approvals.yaml, `exception:`, marketed
+# unapproved), and its line is the fourth outcome, from its label (transform/medicine_status.py).

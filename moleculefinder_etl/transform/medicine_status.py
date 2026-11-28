@@ -28,6 +28,17 @@ THE RULE
   ``unsettled:`` key names a molecule whose two sides could not be settled from primary sources: its page is left as
   it is and every run reports it.
 
+* **The fourth outcome, "unapproved"** (2026-11-28, Garrett's ruling, brief ../TRUST-5-SOURCE-CHECK-PROMPT.md section
+  D): ONLY for a ruled exception recorded as marketed unapproved (approvals.yaml ``exception:``, read through
+  ``relationships.ruled_exceptions``; today phenazopyridine). Its page says "Sold in the United States without FDA
+  approval." and its evidence is the DailyMed label the exception names (at the edition the build holds), with the
+  marketing category quoted as the label states it. If that label is not an active ingredient label of the record, its
+  marketing is not read, a product on it is marketed today under anything but the recorded unapproved category, or the
+  record has gained an over-the-counter or prescription basis, the line is NOT the fourth one: the molecule falls back
+  to unsettled (its group's line), the reason is logged and written in the run's report, and the source review's check
+  3 reports it the next morning. The weekly run never stops for it. A molecule with no basis and no recorded exception
+  is unsettled, as before. Its ``is_otc`` is left as it is.
+
 ``is_otc`` follows the rule: for every medicine and every molecule on the OTC list it is True exactly when the
 over-the-counter side holds.
 """
@@ -40,6 +51,7 @@ from collections.abc import Callable
 import yaml
 
 from ..config import SEEDS_DIR
+from . import relationships
 
 log = logging.getLogger("mfetl")
 
@@ -61,6 +73,34 @@ _STATUS_WORDS = {"otc": "Over-the-counter", "prescription": "Prescription"}
 
 class StatusError(SystemExit):
     """The status rule refused the build: an OTC-list entry with no basis, or a bad status_bases.yaml entry."""
+
+
+UNAPPROVED = "unapproved"          # the fourth outcome: a ruled exception marketed with no authorisation
+
+
+def exception_evidence(slug: str, ex: dict, rec: dict, labels: dict[str, dict],
+                       marketing: Callable[[str, int | None], list[dict] | None]) -> tuple[dict | None, str | None]:
+    """(the evidence the page shows, the reason it cannot be used) for a ruled exception marketed unapproved."""
+    lab = ex.get("label") or {}
+    setid = lab.get("setid")
+    mine = [p for p in rec.get("products") or [] if p.get("role") == "active"
+            and ((labels.get(p.get("slug")) or {}).get("source") or {}).get("setid") == setid]
+    if not mine:
+        return None, f"the label {setid} it names is not one of the record's active ingredient labels"
+    prod = labels[mine[0]["slug"]]
+    src = prod.get("source") or {}
+    read = marketing(setid, src.get("version"))
+    if read is None:
+        return None, f"the label {setid}'s marketing category is not read"
+    current = [p for p in read if p.get("status") == "active"]
+    cats = sorted({(p.get("category") or "").upper() for p in current})
+    if not current or any(not c.startswith("UNAPPROVED") for c in cats) or str(lab.get("category")).upper() not in cats:
+        return None, (f"the label {setid} is marketed today as {', '.join(c.lower() for c in cats) or 'nothing'}, "
+                      f"not as {lab.get('category')!r}: read the exception again")
+    ev = {"kind": "label", "register": "DailyMed", "product": prod.get("name"), "slug": prod.get("slug"),
+          "setid": setid, "version": src.get("version"), "category": str(lab["category"]),
+          "source": src.get("url") or DAILYMED_LABEL.format(setid=setid)}
+    return {"ruled": ex.get("ruled"), "by": ex.get("by"), "label": ev}, None
 
 
 def decide(otc: list, prescription: list) -> str | None:
@@ -217,12 +257,16 @@ def attach(molecules: list[dict], products: list[dict], marketing: Callable[[str
     (StatusError) on an OTC-list entry with no over-the-counter basis, or a status_bases.yaml entry for an unknown slug.
     Returns the run's report: each medicine's status, the unsettled, and the labels that did not count."""
     recorded, unsettled = load_recorded(path)
+    unapproved = {s: e for s, e in relationships.ruled_exceptions().items() if e.get("marketed") == UNAPPROVED}
     labels = {p["slug"]: p for p in products}
     by_slug = {m["slug"]: m for m in molecules}
     unknown = sorted(s for s in [*recorded, *unsettled] if s not in by_slug)
     if unknown:
         raise StatusError("status_bases.yaml names molecule(s) the catalog does not hold: " + ", ".join(unknown))
-    report: dict = {"status": {}, "unsettled": {}, "not_counted": {}}
+    both_ways = sorted(set(unapproved) & (set(unsettled) | set(recorded)))
+    if both_ways:
+        raise StatusError("a ruled exception marketed unapproved is also in status_bases.yaml: " + ", ".join(both_ways))
+    report: dict = {"status": {}, "unsettled": {}, "not_counted": {}, "exceptions": {}}
     no_basis: list[str] = []
     for m in molecules:
         slug = m["slug"]
@@ -235,6 +279,17 @@ def attach(molecules: list[dict], products: list[dict], marketing: Callable[[str
         if skipped:
             report["not_counted"][slug] = skipped
         status = decide(sides["otc"], sides["prescription"])
+        if slug in unapproved and medicine:
+            ev, why = (None, f"it now has a basis ({status}): read the exception again") if status is not None else \
+                exception_evidence(slug, unapproved[slug], m, labels, marketing)
+            if ev:
+                m["medicine_status"] = {"status": UNAPPROVED, "otc": [], "prescription": [], "exception": ev}
+                report["status"][slug] = UNAPPROVED
+                report["exceptions"][slug] = f"ruled {ev['ruled']}: the {ev['label']['product']} label, {ev['label']['category']}"
+                continue                               # is_otc left as it is
+            log.warning("  status: the ruled exception %s is NOT given the fourth line: %s", slug, why)
+            report["exceptions"][slug] = f"NOT APPLIED: {why}"
+            unsettled = {**unsettled, slug: f"A ruled exception (approvals.yaml) whose label no longer supports its line: {why}"}
         if on_list and not sides["otc"] and slug not in unsettled:
             no_basis.append(slug)
         if medicine:
@@ -258,9 +313,10 @@ def attach(molecules: list[dict], products: list[dict], marketing: Callable[[str
             "monograph, a current OTC label under an NDA, ANDA or monograph, or one recorded in status_bases.yaml): "
             + ", ".join(sorted(no_basis)) + ". Record the basis, move the entry under uses_only:, or name it under "
             "unsettled: in status_bases.yaml.")
-    counts = {k: sum(1 for v in report["status"].values() if v == k) for k in ("otc", "prescription", "both")}
-    log.info("  status: %d medicine(s): %d over the counter, %d prescription, %d both; %d unsettled (%s); "
-             "%d label(s) not counted", len(report["status"]), counts["otc"], counts["prescription"], counts["both"],
+    counts = {k: sum(1 for v in report["status"].values() if v == k) for k in ("otc", "prescription", "both", UNAPPROVED)}
+    log.info("  status: %d medicine(s): %d over the counter, %d prescription, %d both, %d sold without approval "
+             "(ruled exceptions: %s); %d unsettled (%s); %d label(s) not counted", len(report["status"]), counts["otc"],
+             counts["prescription"], counts["both"], counts[UNAPPROVED], ", ".join(sorted(report["exceptions"])) or "none",
              len(report["unsettled"]), ", ".join(sorted(report["unsettled"])) or "none",
              sum(len(v) for v in report["not_counted"].values()))
     return report

@@ -2,10 +2,11 @@
 
 The plan: `../TRUST-REVIEWS-PLAN.md` (eight reviews, agreed with Garrett 2026-11-27). Review 1, the deploy smoke, lives
 in the web repo (`scripts/deploy-smoke.mjs`, run by `smoke.yml` after every production deploy). This runbook covers
-the reviews that run on the Mac mini. Today that is three: **review 3, drawing truth** (built 2026-11-27, brief
+the reviews that run on the Mac mini. Today that is four: **review 3, drawing truth** (built 2026-11-27, brief
 `../TRUST-2-DRAWING-TRUTH-PROMPT.md`; sections 1 to 3), **review 2, one fact on every surface** (built 2026-11-27,
-brief `../TRUST-3-ONE-FACT-PROMPT.md`; section 5) and **review 5, findings arithmetic** (built 2026-11-28, brief
-`../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md`; section 6). All run from one script (section 4).
+brief `../TRUST-3-ONE-FACT-PROMPT.md`; section 5), **review 5, findings arithmetic** (built 2026-11-28, brief
+`../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md`; section 6) and **review 4, the source check** (built 2026-11-28, brief
+`../TRUST-5-SOURCE-CHECK-PROMPT.md`; section 7). All run from one script (section 4).
 
 ## 1. What the drawing-truth review is
 
@@ -94,6 +95,7 @@ classify it there (group a, b, c or d, with the survey's `why`), with Cowork rea
 | `drawings` | `com.137finder.moleculefinder.trust-drawings` | daily 06:30 Eastern | `trust-drawings.lock` | `drawings-last-run.json` | 30 min (it takes about one) |
 | `facts` | `com.137finder.moleculefinder.trust-facts` | daily 06:45 Eastern | `trust-facts.lock` | `facts-last-run.json` | 60 min (sample about 1; Tuesday's full read: section 5) |
 | `findings` | `com.137finder.moleculefinder.trust-findings` | daily 06:55 Eastern | `trust-findings.lock` | `findings-last-run.json` | 30 min (it takes about half a minute) |
+| `sources` | `com.137finder.moleculefinder.trust-sources` | daily 08:15 Eastern | `trust-sources.lock` | `sources-last-run.json` | 60 min (sample about 2; Tuesday's full read: section 7) |
 
 - **When:** after Monday's 03:10 refresh, clear of the 07:50 news slot, on no other job's minute (the LaunchAgents
   were read 2026-11-27 and again 2026-11-28: nothing else at 06:30, 06:45 or 06:55). The findings review at 06:55
@@ -119,7 +121,7 @@ classify it there (group a, b, c or d, with the survey's `why`), with Cowork rea
 ### Install, reload, check, run now
 
 ```bash
-for r in drawings facts findings; do
+for r in drawings facts findings sources; do
   cp ~/137/moleculefinder/moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.trust-$r.plist ~/Library/LaunchAgents/
   launchctl bootout gui/$(id -u)/com.137finder.moleculefinder.trust-$r 2>/dev/null
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.137finder.moleculefinder.trust-$r.plist
@@ -129,7 +131,7 @@ launchctl kickstart gui/$(id -u)/com.137finder.moleculefinder.trust-facts       
 ```
 
 By hand: `scripts/mac/trust-review.sh facts --full` (the Tuesday read, any day), `--sample` (the day's sample, even on
-a Tuesday); `scripts/mac/trust-review.sh drawings --no-live`; `scripts/mac/trust-review.sh findings` (it takes no option). To stop one for good: `launchctl bootout
+a Tuesday); `scripts/mac/trust-review.sh drawings --no-live`; `scripts/mac/trust-review.sh findings` (it takes no option); `scripts/mac/trust-review.sh sources --full` or `--sample`. To stop one for good: `launchctl bootout
 gui/$(id -u)/com.137finder.moleculefinder.trust-<review>` and remove the installed plist.
 
 ## 5. One fact, every surface (review 2)
@@ -267,4 +269,68 @@ it, against the labels themselves and against what was pitched. No sampling: eve
   cases, the change since the last run and the fix; the recomputation (counts compared, which source each label's
   ingredients came from); numbers checked by check; the denominators; every address read. The heartbeat is
   `trust-reports/findings-last-run.json`.
+
+## 7. The source check (review 4)
+
+Every value on the site says where it came from; the reader's trust rests on that source still saying it. The weekly
+guards hold a page on Mondays (the product hold, the LD50 hold, the Wikidata age rule); this review looks every day,
+and says plainly when a live page rests on a source that has gone (Softsoap's label, held a week on 2026-11-17 before
+anyone knew why; levonorgestrel's LD50, detached by PubChem on 2026-11-21).
+
+- **Code:** `moleculefinder_etl/review/sources.py` (its docstring is the method). Tests: `tests/test_review_sources.py`
+  (each check found and not found on a fake network; the budget, one request per address, the date seed, the Tuesday
+  rule), `tests/test_ruled_exceptions.py`, `tests/test_mac_trust.py`.
+- **By hand:** `./.venv/bin/python3 -m moleculefinder_etl.review.sources` (= `mfetl review sources`; `--full` reads
+  everything any day, `--sample` the day's read even on a Tuesday; `--date`, `--out`, `--snapshot`, `--site`, `--cache`,
+  `--web`). Run it as the module, not through `mfetl`, clear of Monday's refresh (section 5's caution).
+- **It only reads, and its requests are its own.** The snapshot `main` holds; the live site; and the sources: DailyMed
+  (each label's SPL by set id, and a HEAD of the label page), PubChem (formula, weight and title, 100 CIDs a request;
+  the hazard label and the LD50 by PUG-View, the ETL's own parsers), Wikidata (50 items a request), the Drugs@FDA data
+  file and the EMA's medicines file (conditional requests: If-None-Match / If-Modified-Since, kept in the review's own
+  cache `~/Library/Application Support/MoleculeFinder/trust-sources-cache`, never the build's), Zenodo, Hugging Face and
+  Kaggle (the `zenodo` and `mirrors` modules' READ functions, anonymous), doi.org, the method pages' citations (eCFR and
+  the Federal Register through their APIs, review 5's code) and the door photographs' source pages (from the web
+  repository's local `main`, `lib/door-photos.ts`, read with `git show`). User-Agent `MoleculeFinder-trust-review/1
+  (source check; +https://moleculefinder.com/about)`. **Each host has its own pace** (PubChem 4 a second, under its
+  published 5 a second and 400 a minute; DailyMed 2 a second; Wikidata one at a time with `maxlag=5`; the site 4 readers,
+  at most 10 pages a second; everyone else one a second), **one request per address per run**, and **a per-run budget
+  per host** (`BUDGET`: PubChem 1,500, DailyMed 1,000, Wikidata 60, the site 1,600, others 60): a request past it is not
+  made and its address is "not read". The report's table gives requests, 304s and seconds per host.
+- **What it reads.** Daily: the pinned set (`PINNED_MOLECULES`, `PINNED_LABELS`, each with its reason, in every
+  report) plus 20 medicines, 20 other molecules and 30 DailyMed labels drawn by a seed made from the date. **On
+  Tuesdays, everything**: all 929 molecules, all 377 DailyMed labels behind the 430 label pages (the other 53 pages are
+  curated or Wikidata lists, with no label to check), every page they make. The labels a chosen medicine's status rests
+  on and each ruled exception's label are read too.
+- **The checks** (the brief's numbering): 1 the source links answer (where the host's page answers 200 for anything,
+  PubChem's compound page, the FDA's application overview, the host's own data is asked; MHRA's pages are built in the
+  browser, any address the same bytes, so an MHRA address is "not read"; a page answering scripts with a "Request
+  Access" page or a browser check is "not read", never "answers"); the pages read live give no source address the
+  review does not know of; 2 the labels are still marketed (the set id answers; the version on the page is the current
+  one; some package is still marketed: no marketing end date in the past on every package, so a date still to come is
+  marketed today, and a label whose every package has an end date to come is listed); 3 the approvals are current (the
+  licence or recorded application in the Drugs@FDA data file with a product not discontinued, the EMA's file for a
+  central authorisation, the label for a label, the monograph order answering); 4 the values still match (PubChem's
+  formula, weight and title; the hazard label's signal word, pictograms and codes; the LD50 the page shows; the
+  Wikidata description), each difference said to be held or not by the weekly run (the LD50 hold, the Wikidata age
+  rule's ledger or an item edited under 7 days ago, the snapshot guard's "chemical compound" rule); 5 every displayed
+  value has its kind and a registered, displayable source, none BLOCKED (licence_gate's own walk over every record and
+  product), and on the pages read live every Sources and notes line has its chip and a named source; 6 the dataset (the
+  concept DOI resolves to Zenodo, whose latest version is the repository's, and both mirrors hold it; /about/methodology
+  and /classroom name the concept DOI and no version DOI); 7 the door photographs (the source page answers, the licence
+  check is on file in `lib/door-photos.ts` and `assets/doors/SOURCES.md`).
+- **Ruled exceptions** (approvals.yaml `exception:`, the ONE place; read through `relationships.ruled_exceptions()`):
+  phenibut and flunitrazepam (2026-10-18) and phenazopyridine (2026-11-28, marketed unapproved). They are listed in
+  every report with their ruling and are never the class "no current authorisation anywhere"; phenazopyridine's label
+  is read every day for what its line says ("unapproved drug other"). Add one only on Garrett's ruling.
+- **The queue.** Every class on two consecutive runs, except **"a live page rests on a label that has ended or gone"**
+  and **"no current authorisation anywhere"** (a medicine every recorded basis of which is gone), which are reported
+  and queued the first run they are seen, at the top of the verdict. A medicine whose record names no basis at all is
+  its own ordinary class ("the record names no basis to check"): nothing was looked up, so it is not that alarm.
+- **The report:** `trust-reports/sources-<date>.md` and `.json`: the verdict line (classes, findings, things checked,
+  sources read, not read, requests), each class with its count over its denominator, up to ten cases, the change since
+  the last run and the fix; everything not read, grouped by reason; the ruled exceptions; what was read and what was not
+  covered; requests per host; the pinned set and the day's sample. The heartbeat is `trust-reports/sources-last-run.json`.
+- **When:** 08:15 Eastern: after the 07:50 news job (the script waits for it while it runs), after the other three
+  reviews, after Monday's 03:10 refresh (and its retries at :10 past the even hours, which it waits for). See HISTORY.md
+  (2026-11-28) for the measured Tuesday full read: how long it takes and how many requests it makes per host.
 

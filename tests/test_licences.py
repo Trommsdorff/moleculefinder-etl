@@ -83,7 +83,9 @@ def test_the_hand_rulings_are_untouched():
     relationships.attach_licences(recs)
     by = {r["slug"]: r for r in recs}
     for s, e in hand.items():
-        assert by[s]["approval"] == {k: str(v) for k, v in e.items()}, s
+        # a ruled exception (approvals.yaml `exception:`, 2026-11-28) is read by relationships.ruled_exceptions, never
+        # copied onto the approval record: phenibut's and flunitrazepam's records are exactly what they were
+        assert by[s]["approval"] == {k: str(v) for k, v in e.items() if k != "exception"}, s
     assert by["sertraline"]["approval"]["register"] == "Drugs@FDA"
 
 

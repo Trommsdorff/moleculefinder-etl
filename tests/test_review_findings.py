@@ -653,9 +653,18 @@ def test_the_pitched_numbers_on_file():
     p = rf.load_pitched()
     dyes = next(x for x in p["pitches"] if x["finding"] == "dyes-in-medicines")
     got = {f["id"]: (f["value"], f.get("of"), f["confirmed"]) for f in dyes["figures"]}
-    assert got == {"headline": (112, 300, True), "over the counter": (47, 116, False), "prescription": (65, 184, False),
-                   "red 3": (4, None, True)}
+    # 2026-11-28 (brief TRUST-5 section B): Cowork read the five emails; every figure is confirmed, three per-dye counts
+    # and the four Red No. 3 labels by name are watched too, and AP's email bounced (four recipients)
+    got["red 3 labels"] = (tuple(got["red 3 labels"][0]), None, True)
+    assert got == {"headline": (112, 300, True), "over the counter": (47, 116, True), "prescription": (65, 184, True),
+                   "red 3": (4, None, True), "blue 1": (53, None, True), "red 40": (45, None, True),
+                   "yellow 6": (45, None, True),
+                   "red 3 labels": (("inderal-la", "restoril", "vraylar", "vyvanse"), None, True)}
     assert dyes["sent"] == "2026-11-23" and "STAT" in dyes["to"] and "@" not in json.dumps(p)    # outlets only, public repo
+    assert "four delivered" in dyes["to"] and "AP's mail server" in dyes["to"]
+    D = json.loads((rf.SNAP / "findings" / "dyes-in-medicines.json").read_text())
+    for f in dyes["figures"]:                                         # every pitched figure holds in today's data
+        assert rf.dig(D["totals"], f["data"]) == f["value"], f["id"]
     base = json.loads((rf.PITCHED.parent / dyes["baseline"]).read_text())
     assert base["totals"]["any_of_six"] == {"labels": 112, "otc": 47, "prescription": 65} and len(base["labels"]) == 300
     assert sum(1 for x in base["labels"].values() if x["six"]) == 112
