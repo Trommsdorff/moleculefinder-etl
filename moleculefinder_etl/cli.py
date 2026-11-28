@@ -1,13 +1,16 @@
 """`mfetl` command-line entry point."""
 from __future__ import annotations
+
 import argparse
 import logging
 import os
 import sys
 from pathlib import Path
+
 from dotenv import load_dotenv
-from .config import Settings, weekly_run
+
 from . import pipeline
+from .config import Settings, weekly_run
 
 load_dotenv()  # pick up SUPABASE_URL / SUPABASE_SERVICE_KEY from a local .env
 # The Zenodo token is read only by `mfetl zenodo` (zenodo.token(), straight from the file), so no other stage, and
@@ -33,9 +36,9 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mfetl", description="MoleculeFinder ETL")
     p.add_argument("stage", choices=[*STAGES, "migrate", "sync-inputs", "licences", "dataset", "zenodo", "mirrors", "review"],
                    help="pipeline stage to run")
-    p.add_argument("review_what", nargs="?", choices=["drawings", "facts"], default=None,
+    p.add_argument("review_what", nargs="?", choices=["drawings", "facts", "findings"], default=None,
                    help="review: which trust review (drawings: moleculefinder_etl/review/drawings.py; facts: "
-                        "moleculefinder_etl/review/facts.py)")
+                        "moleculefinder_etl/review/facts.py; findings: moleculefinder_etl/review/findings.py)")
     p.add_argument("--target", type=int, default=None, help="canon size (default from env)")
     p.add_argument("--apply", action="store_true", help="migrate: apply pending migrations (default: list them)")
     p.add_argument("--version", dest="dataset_version", default=None,
@@ -69,13 +72,17 @@ def main(argv: list[str] | None = None) -> int:
         # A trust review (read-only; its own options: `mfetl review drawings --help`). It loads no database key.
         from .review import drawings as review_drawings
         return review_drawings.main(argv[2:])
+    if argv[:2] == ["review", "findings"]:
+        # Trust review 5, findings arithmetic (read-only; `mfetl review findings --help`). No database key.
+        from .review import findings as review_findings
+        return review_findings.main(argv[2:])
     if argv[:2] == ["review", "facts"]:
         # Trust review 2, one fact on every surface (read-only; `mfetl review facts --help`). No database key.
         from .review import facts as review_facts
         return review_facts.main(argv[2:])
     args = p.parse_args(argv)
     if args.stage == "review":
-        p.error("review: name the review (`mfetl review drawings` or `mfetl review facts`)")
+        p.error("review: name the review (`mfetl review drawings`, `mfetl review facts` or `mfetl review findings`)")
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")

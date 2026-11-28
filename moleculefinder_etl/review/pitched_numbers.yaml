@@ -1,0 +1,54 @@
+# What MoleculeFinder told people outside, figure by figure (trust review 5, findings arithmetic; brief
+# ../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md, 2026-11-28). `mfetl review findings` checks every figure here against the
+# live data.json and the live page every day; a figure that no longer holds is the class "a pitched number moved",
+# reported the first day it is seen, at the top of the report and in QUEUE.md.
+#
+# Each figure: `value` (and `of`, its denominator) as it was told; `data`/`of_data`, where it lives in the finding's
+# totals; `confirmed`, whether a FILE holds the figure as sent (never guessed), with the `evidence`. The emails' own text
+# is not in any file in the folder (they were written in Gmail): a figure the tracker does not name is recorded as the
+# number the linked page printed that morning, and marked unconfirmed. `baseline` is the labels as they stood when the
+# emails went out, so a moved number can be explained label by label.
+#
+# The contacts themselves (names, addresses) stay in the private tracker, ../outreach/moleculefinder-backlink-outreach.xlsx
+# (sheet Tracker, rows 37 to 41, items #36 to #40). This repository is public: outlets only here.
+# Add a pitch when one is sent; never edit a sent figure.
+read: "2026-11-28"
+pitches:
+  - id: dyes-2026-11-23
+    finding: dyes-in-medicines
+    page: /findings/dyes-in-medicines
+    sent: "2026-11-23"
+    to: "STAT, AP, TechTarget Pharma Life Sciences, Consumer Reports, The People's Pharmacy (five emails)"
+    how: "Sent by Garrett, scheduled send Monday morning 2026-11-23, each linking https://moleculefinder.com/findings/dyes-in-medicines (tracker, confirmed in Sent); one follow-up due 2026-12-02"
+    baseline: pitched/dyes-in-medicines-2026-11-23.json
+    figures:
+      - id: headline
+        words: "112 of the 300 medicine labels list at least one of the six"
+        value: 112
+        of: 300
+        data: any_of_six.labels
+        of_data: labels.labels
+        confirmed: true
+        evidence: "tracker row 37 (#36, STAT): 'Dyes finding: 112 of 300 labels'; the other four rows say 'Dyes finding' and link the page"
+      - id: over the counter
+        words: "47 of the 116 over-the-counter labels"
+        value: 47
+        of: 116
+        data: any_of_six.otc
+        of_data: labels.otc
+        confirmed: false
+        evidence: "not in the tracker or any file as sent; the linked page printed it on 2026-11-23 (ETL ad2d868) and TRAFFIC-BOARD.md records it as the finding's number"
+      - id: prescription
+        words: "65 of the 184 prescription labels"
+        value: 65
+        of: 184
+        data: any_of_six.prescription
+        of_data: labels.prescription
+        confirmed: false
+        evidence: "not in the tracker or any file as sent; the linked page printed it on 2026-11-23 (ETL ad2d868) and TRAFFIC-BOARD.md records it as the finding's number"
+      - id: red 3
+        words: "four labels list FD&C Red No. 3"
+        value: 4
+        data: red_3.labels
+        confirmed: true
+        evidence: "tracker row 37 (#36, STAT): 'four Red No. 3 labels'"

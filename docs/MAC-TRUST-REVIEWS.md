@@ -2,9 +2,10 @@
 
 The plan: `../TRUST-REVIEWS-PLAN.md` (eight reviews, agreed with Garrett 2026-11-27). Review 1, the deploy smoke, lives
 in the web repo (`scripts/deploy-smoke.mjs`, run by `smoke.yml` after every production deploy). This runbook covers
-the reviews that run on the Mac mini. Today that is two: **review 3, drawing truth** (built 2026-11-27, brief
-`../TRUST-2-DRAWING-TRUTH-PROMPT.md`; sections 1 to 3) and **review 2, one fact on every surface** (built 2026-11-27,
-brief `../TRUST-3-ONE-FACT-PROMPT.md`; section 5). Both run from one script (section 4).
+the reviews that run on the Mac mini. Today that is three: **review 3, drawing truth** (built 2026-11-27, brief
+`../TRUST-2-DRAWING-TRUTH-PROMPT.md`; sections 1 to 3), **review 2, one fact on every surface** (built 2026-11-27,
+brief `../TRUST-3-ONE-FACT-PROMPT.md`; section 5) and **review 5, findings arithmetic** (built 2026-11-28, brief
+`../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md`; section 6). All run from one script (section 4).
 
 ## 1. What the drawing-truth review is
 
@@ -83,7 +84,7 @@ The survey's classification (`survey:`) is the extended-solids survey's, copied 
 `scripts/extended_solids_review.py`). A record the scope rule catches that is not classified is a finding of check 5:
 classify it there (group a, b, c or d, with the survey's `why`), with Cowork reading the chemistry.
 
-## 4. The Mac jobs (both reviews, one script)
+## 4. The Mac jobs (every review, one script)
 
 `scripts/mac/trust-review.sh <review>` runs either review (it was `trust-drawings.sh` until the facts review joined it,
 2026-11-27); each review has its own launchd file, lock, log, heartbeat and report:
@@ -92,9 +93,13 @@ classify it there (group a, b, c or d, with the survey's `why`), with Cowork rea
 |---|---|---|---|---|---|
 | `drawings` | `com.137finder.moleculefinder.trust-drawings` | daily 06:30 Eastern | `trust-drawings.lock` | `drawings-last-run.json` | 30 min (it takes about one) |
 | `facts` | `com.137finder.moleculefinder.trust-facts` | daily 06:45 Eastern | `trust-facts.lock` | `facts-last-run.json` | 60 min (sample about 1; Tuesday's full read: section 5) |
+| `findings` | `com.137finder.moleculefinder.trust-findings` | daily 06:55 Eastern | `trust-findings.lock` | `findings-last-run.json` | 30 min (it takes about half a minute) |
 
 - **When:** after Monday's 03:10 refresh, clear of the 07:50 news slot, on no other job's minute (the LaunchAgents
-  were read 2026-11-27: nothing else at 06:30 or 06:45). A start missed while the Mac slept fires once at the next wake.
+  were read 2026-11-27 and again 2026-11-28: nothing else at 06:30, 06:45 or 06:55). The findings review at 06:55
+  follows the facts review: its daily sample ends about 06:46, and Tuesday's full read (317 s measured 2026-11-27) about
+  06:50. A cold full read just after a deploy took 794 s once; on such a morning the two would overlap for a few
+  minutes, which is harmless (each only reads, with its own lock). A start missed while the Mac slept fires once at the next wake.
 - **Never in the way.** Its own lock (`~/Library/Application Support/MoleculeFinder/trust-<review>.lock`), which no
   other job reads. It runs the review as `python -m moleculefinder_etl.review.<review>`, never through `mfetl`, so the
   weekly refresh's "another build is running" check (`pgrep 'moleculefinder_etl\.cli|bin/mfetl '`) never sees it.
@@ -114,7 +119,7 @@ classify it there (group a, b, c or d, with the survey's `why`), with Cowork rea
 ### Install, reload, check, run now
 
 ```bash
-for r in drawings facts; do
+for r in drawings facts findings; do
   cp ~/137/moleculefinder/moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.trust-$r.plist ~/Library/LaunchAgents/
   launchctl bootout gui/$(id -u)/com.137finder.moleculefinder.trust-$r 2>/dev/null
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.137finder.moleculefinder.trust-$r.plist
@@ -124,7 +129,7 @@ launchctl kickstart gui/$(id -u)/com.137finder.moleculefinder.trust-facts       
 ```
 
 By hand: `scripts/mac/trust-review.sh facts --full` (the Tuesday read, any day), `--sample` (the day's sample, even on
-a Tuesday); `scripts/mac/trust-review.sh drawings --no-live`. To stop one for good: `launchctl bootout
+a Tuesday); `scripts/mac/trust-review.sh drawings --no-live`; `scripts/mac/trust-review.sh findings` (it takes no option). To stop one for good: `launchctl bootout
 gui/$(id -u)/com.137finder.moleculefinder.trust-<review>` and remove the installed plist.
 
 ## 5. One fact, every surface (review 2)
@@ -209,3 +214,57 @@ each, and the ten pages with the least text of their own.
 **Timing.** The daily sample (about 200 pages and their embed cards) takes about a minute. **The full read**
 (every sitemap address and every molecule's embed card, about 2,700 reads) was measured on 2026-11-27: see HISTORY.md
 for the figure; 06:45 leaves it well clear of the 07:50 news slot.
+
+## 6. Findings arithmetic (review 5)
+
+The findings pages are the pages sent to reporters (five emails on 2026-11-23: "112 of the 300 medicine labels list
+one of the six dyes"). A reporter adds the columns up. This review reads every findings address from the **live site**
+every day and checks that every number on them adds up, against the page's own data, against the other two forms of
+it, against the labels themselves and against what was pitched. No sampling: every address, every row, every label.
+
+- **Code:** `moleculefinder_etl/review/findings.py` (its docstring is the method), `moleculefinder_etl/review/pitched_numbers.yaml`
+  (what was told to people outside) and `review/pitched/` (the labels as they stood when it was sent). Tests:
+  `tests/test_review_findings.py` (a world of eight labels rendered with the web's markup; each check found and not
+  found; the recomputation against the transform on the real snapshot), `tests/test_mac_trust.py`.
+- **By hand:** `./.venv/bin/python3 -m moleculefinder_etl.cli review findings` (= `mfetl review findings`; `--out`,
+  `--snapshot`, `--date`, `--site`). The same caution as section 5: a hand run through `mfetl` is "another build" to the
+  weekly refresh; run it clear of Monday's refresh, or as `python -m moleculefinder_etl.review.findings`.
+- **What it reads.** The 14 findings addresses (`/findings`, `/findings/dyes-in-medicines`, its seven dye pages and
+  `none-listed`, `/findings/inactive-ingredients` and its three ingredient pages; the sitemap is checked to list exactly
+  these), the two `data.csv` and two `data.json`, a HEAD of every `/whats-in` page the tables link (300), each page's
+  share image and feed, and every rule or guidance the pages link (eCFR, fda.gov, the Federal Register). From the
+  snapshot ETL `main` holds: `products.json` (the declared label set), `meta.json` and the two findings files; the two
+  code tables that define the findings (`colour_additives.yaml`, `inactive_groups.yaml`); and each label's own
+  ingredient list from the **weekly job's DailyMed cache** (`~/Library/Application Support/MoleculeFinder/raw_cache`,
+  read only; the products file keeps one row per molecule, so a label naming two forms of lactose shows one there).
+  About 340 addresses, about 30 seconds. No PubChem request, no database key; it writes only into `trust-reports/`.
+- **The checks** (the brief's numbering, each finding in a named class): 1 every number a page prints equals the count
+  made from its data's rows, with the data's denominators; 2 the table, the CSV and the JSON hold the same labels with the
+  same values (a multi-valued cell compared as a set), the documented CSV header, the CC0 licence on the page, in the
+  JSON and in the Dataset; 3 the parts add up (over the counter plus prescription; a sub-page's two lists disjoint and
+  whole and equal to the main table's filter; the none page exactly the labels with no FD&C or D&C colour, by the page's
+  own rule; a label under two dyes once in the headline; the forms cover an ingredient's count; the JSON's totals equal
+  its rows); 4 **recomputed** from the labels' own codes, written in the review and never importing
+  `transform/findings.py` (the routes are in neither source, so the by-mouth counts are held by 1 and 3); 5 the label set
+  (the declared 300, none twice, each `/whats-in` page answers, each DailyMed link carries the label's own set id and
+  version, a route reading "Not read" listed); 6 the familiar labels the text names have that status; 7 the dates; 8
+  **pitched numbers**; 9 citations (linked, the text names the section its link points at, the link answers); 10 share
+  images and feeds.
+- **eCFR and the Federal Register** answer an automated reader with a "Request Access" page. For those two the review
+  asks the publisher's own API instead (eCFR's versioner: the section exists and is not removed; the Federal Register's
+  documents API: the document exists) and says so in the report; a link that answers neither way is "not read".
+- **Pitched numbers.** `pitched_numbers.yaml`: each figure as it was told, where it lives in the finding, and whether a
+  FILE confirms it was sent (the tracker in `../outreach/` names "112 of 300" and "four Red No. 3 labels"; 47 of 116 and
+  65 of 184 were on the page the emails linked but no file holds the emails' text, so they are marked unconfirmed). A
+  live number no longer equal to a pitched one is the class **"a pitched number moved"**: the verdict line starts with
+  it, it heads the report, it goes to `QUEUE.md` the same day, and the report says which labels moved and why against
+  `pitched/`. Add a pitch when one is sent; never edit a sent figure. The repository is public: outlets only, contacts
+  stay in the tracker.
+- **The queue.** Every class on two consecutive runs (the plan's rule), except "a pitched number moved" and the
+  recomputation class, which are queued the first day they are seen. Lines are prefixed `findings:`.
+- **The report:** `trust-reports/findings-<date>.md` and `.json`: the verdict line (classes, findings, numbers checked,
+  addresses read and not read), the pitched figures table, each class with its count over its denominator, up to ten
+  cases, the change since the last run and the fix; the recomputation (counts compared, which source each label's
+  ingredients came from); numbers checked by check; the denominators; every address read. The heartbeat is
+  `trust-reports/findings-last-run.json`.
+
