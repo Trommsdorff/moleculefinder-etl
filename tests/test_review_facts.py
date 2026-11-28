@@ -472,3 +472,21 @@ def test_the_report_and_heartbeat(snap, tmp_path, monkeypatch):
     assert facts.main(["--out", str(out)]) == 2
     hb = json.loads((out / "facts-last-run.json").read_text())
     assert hb["state"] == "could not run" and "no snapshot" in hb["reason"]
+
+
+def test_a_local_builds_sitemap_names_the_production_host():
+    xml = ('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://moleculefinder.com/</loc></url>'
+           '<url><loc>https://moleculefinder.com/m/caffeine</loc></url></urlset>')
+    assert facts.sitemap_paths(xml, "http://localhost:3137") == ["/", "/m/caffeine"]
+    assert facts.sitemap_paths(xml) == ["/", "/m/caffeine"]
+
+
+def test_the_one_ld50_phrase_names_its_own_molecule(snap):
+    # "192 mg/kg (pure caffeine, rat, oral) against 2,000 mg/kg (pure candesartan, ...)": each figure belongs to the
+    # molecule its phrase names, not the one named before it; a name with its own parentheses is read whole.
+    rv = review(snap)
+    ok = run_page(rv, "/classroom", "<main><p>The reported LD50 of Caffeine is 192 mg/kg (pure caffeine, rat, oral) "
+                                    "against more than 2,000 mg/kg (pure candesartan, rat, oral).</p>")
+    assert not [f for f in ok if f["fact"] == "LD50"]
+    ctx = facts.ld50_context(" (pure copper(II) sulfate, rat, oral).")
+    assert ctx["form"] == "pure copper(II) sulfate" and ctx["species"] == "rat" and ctx["route"] == "oral"

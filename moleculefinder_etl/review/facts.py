@@ -274,7 +274,9 @@ def read_all(paths: list[str], fetch, site: str, workers: int = WORKERS, pause: 
 def sitemap_paths(xml_text: str, site: str = SITE) -> list[str]:
     root = ET.fromstring(xml_text)
     locs = [e.text.strip() for e in root.iter() if e.tag.endswith("loc") and e.text]
-    return sorted({(u.removeprefix(site)) or "/" for u in locs})
+    # A local build's sitemap names the production host (its canonical addresses), so --site http://localhost:<port>
+    # strips that too; without it every address read as "http://localhost:<port>https://moleculefinder.com/..."
+    return sorted({(u.removeprefix(site).removeprefix(SITE)) or "/" for u in locs})
 
 
 # ── a small HTML tree (the standard library's parser; the pages are Next's well-formed output) ──
@@ -807,8 +809,14 @@ def sentences(text: str) -> list[str]:
 
 
 def owner(named: list[tuple[int, int, str]], pos: int, end: int, text: str, subject: str | None) -> str | None:
-    """Who a value at ``pos`` belongs to: the molecule after "for" ("151.16 g/mol for Acetaminophen"), else the
-    nearest molecule named before it in the sentence, else the page's own molecule."""
+    """Who a value at ``pos`` belongs to: the molecule the site's LD50 phrase names right after it ("192 mg/kg (pure
+    caffeine, rat, oral)"), else the molecule after "for" ("151.16 g/mol for Acetaminophen"), else the nearest molecule
+    named before it in the sentence, else the page's own molecule."""
+    own = re.match(r"\s*\(pure ", text[end:])
+    if own:
+        for s, _e, slug in named:
+            if s == end + own.end():
+                return slug
     after = re.match(r"(?:\s*\([^)]*\))?(?:,?\s+in\s+[a-z ]+?)?\s+for\s+", text[end:])
     if after:
         for s, _e, slug in named:
@@ -876,7 +884,7 @@ def check_prose(rv: Review, surface: str, path: str, text: str, subject: str | N
 # ── fact 2: LD50 ────────────────────────────────────────────────────────────────────────────────
 def ld50_context(after: str) -> dict:
     """Species, route and chemical form from the words after the figure: "(rat, oral)" or "pure caffeine, rat, oral"."""
-    m = re.match(r"\s*\(([^)]*)\)", after) or re.match(r"\s*(pure [^,]+, [a-z ]+, (?:oral|intravenous|on the skin|"
+    m = re.match(r"\s*\(((?:[^()]|\([^()]*\))*)\)", after) or re.match(r"\s*(pure [^,]+, [a-z ]+, (?:oral|intravenous|on the skin|"
                                                        r"another route|iv|other|dermal))\b", after)
     parts = [p.strip() for p in (m.group(1).split(",") if m else [])]
     out = {"species": None, "route": None, "form": None, "route_code": None}
