@@ -167,10 +167,16 @@ linking to another molecule's page.
 
 **How values are compared (the rounding rules, stated once; the same words are in the code's docstring).**
 Formula: equal when the element counts and the charge are equal, any order; written differently from the record is its
-own shape, "one value, written two ways". Weight: the printed figure, commas dropped; equal to the record exactly is
-agreement; equal to the record rounded to the printed decimals (within half a unit in the last place) is "one value,
-two roundings"; anything else is "two different values". **No rounding difference is ruled, so every one is reported.**
-LD50: the number exact, the qualifier words, the species and route words the site uses, the form "pure <name>".
+own shape, "one value, written two ways" (in a page's running text that shape is ruled, below: the same atoms in the
+way a reader knows them). **Weight (ruled 2026-11-27, Garrett's word on Cowork's ruling 1): a shown weight agrees when
+it equals the record's value rounded half-up to the precision shown, down to whole grams** (253.81 and 254 for
+253.8089). Anything else is a finding: "shown to more precision than the record" (more decimals than the record has),
+"rounded the wrong way" (within half a unit of the last printed place, but not the half-up rounding: 440 for 440.5),
+"two different values" (everything else). LD50: the number exact, the qualifier words, the species and route words the
+site uses, the form "pure <name>"; the site prints every part through one phrase (web `scripts/ld50-words.mjs`), and a
+/vs text writes its figures as `{ld50:<slug>}` (the ETL compile refuses a figure typed by hand). Status: a molecule
+page says over the counter, prescription, or (ruled 2026-11-27, ruling 4) "Sold over the counter in some products and
+on prescription in others", which agrees only where the record's `is_otc` is true.
 Counts are integers; a week range must contain the snapshot's refreshed date. In running text a value belongs to the
 molecule named nearest before it in the sentence (or the one after "for"); a value that matches any molecule the
 sentence or page names is never a finding, and a group (CH3), a vitamin's letter (B12) or a value nobody can own is
@@ -178,7 +184,7 @@ counted as "not attributed" and listed, not compared.
 
 **Reading the report** (`trust-reports/facts-<date>.md` and `.json`): the first line is the verdict (classes found,
 findings, facts compared, pages read, pages not read). Findings are grouped by CLASS: the fact, the surface it was read
-on, what it was compared with, and the shape ("two different values", "one value, two roundings", "one value, written
+on, what it was compared with, and the shape ("two different values", "rounded the wrong way", "one value, written
 two ways", "stated here, absent there", ...), each with its count over its denominator (the facts of that kind compared
 on that surface), the pages, up to ten addresses, the change since the last run, and the recommended fix. A class on two
 consecutive runs goes to `trust-reports/QUEUE.md` once, prefixed `facts:` (the drawing review's queue, shared). The
@@ -186,7 +192,9 @@ heartbeat is `trust-reports/facts-last-run.json`.
 
 **Deliberate differences** (`facts_differences.yaml`) are the only excuse, each one ruling with its date, who ruled and
 where it is written: the conventional formula on panel pages (Garrett, 2026-11-26, extended to the wrong-drawings
-panels) and the repeat-unit hub memberships (Garrett, 2026-11-27, ruling 1 at the drawing findings' deploy). Each
+panels), the repeat-unit hub memberships (Garrett, 2026-11-27, ruling 1 at the drawing findings' deploy) and a
+conventional formula in a page's running text whose atoms are exactly the record's (NaHCO3 for CHNaO3; Garrett's word
+on Cowork's ruling 2, 2026-11-27). Each
 excused case is counted and listed in the report, never hidden. **Add an entry only on a ruling; never to make a finding
 go away** (section 3's rule; a test holds that exactly these entries exist and that nothing else is excused).
 

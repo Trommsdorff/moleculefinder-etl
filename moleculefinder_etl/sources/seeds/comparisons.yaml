@@ -46,8 +46,7 @@ caffeine/theobromine:
     arrives as a jolt and chocolate does not. Theobromine lingers longer instead, with a
     half-life around 7.2 hours against caffeine's 5, so cocoa's lift is slower and flatter.
     Both come from the same plants in different proportions: coffee and tea lead with
-    caffeine, cocoa leads with theobromine. The reported oral LD50 also splits them, 192 mg/kg
-    in rats for caffeine against 300 mg/kg in dogs for theobromine, and it is theobromine that
+    caffeine, cocoa leads with theobromine. The reported oral LD50 also splits them, {ld50:caffeine} against {ld50:theobromine}, and it is theobromine that
     dogs clear too slowly to tolerate.
 
 caffeine/theophylline:
@@ -57,7 +56,7 @@ caffeine/theophylline:
     alkaloid family for that reason. Both block adenosine, but theophylline also relaxes airway muscle strongly enough that it was a standard asthma medicine for much of the twentieth century; caffeine's effect on the airways is weaker. It stays in the body longer, a half-life near
     8 hours against caffeine's 5. Tea carries both, with caffeine dominant and theophylline in
     traces, so a cup does not deliver a medicinal amount of either. Their reported oral LD50
-    values are close, 192 mg/kg in rats for caffeine and 332 mg/kg in mice for theophylline,
+    values are close, {ld50:caffeine} and {ld50:theophylline},
     which is a reminder that the gap between the two is about what they do rather than about
     how toxic they are.
 
@@ -69,8 +68,7 @@ nicotine/caffeine:
     receptors directly; caffeine works by blocking adenosine, the molecule that builds up
     while you are awake and makes you feel sleepy. The habit-forming pull is not comparable: nicotine reaches the brain within seconds of a puff and is strongly reinforcing, and caffeine produces a mild dependence that shows up mostly as a headache when it stops. Nicotine also clears far
     faster, a half-life near 2 hours against caffeine's 5, which is part of why smoking is
-    paced in minutes and coffee in hours. Their oral LD50 values in rats are almost identical
-    at 188 and 192 mg/kg, which says nothing useful about how each is actually encountered.
+    paced in minutes and coffee in hours. Their oral LD50 values in rats are almost identical, {ld50:nicotine} and {ld50:caffeine}, which says nothing useful about how each is actually encountered.
 
 adenosine/caffeine:
   answer: "Adenosine is the body's own sleepiness signal and caffeine blocks its receptors without switching them on, so the two are opponents rather than alternatives."
@@ -107,7 +105,7 @@ acetaminophen/ibuprofen:
     inflammation, which is why a sprain and a headache are not the same problem for it. The
     functional groups in the table show the split, ibuprofen carrying a carboxylic acid and
     acetaminophen an amide and a phenol. Their reported oral LD50 values differ by a factor of
-    nearly four, 2400 mg/kg in rats for acetaminophen against 636 mg/kg for ibuprofen, though
+    nearly four, {ld50:acetaminophen} against {ld50:ibuprofen}, though
     the risks that actually matter for each are organ specific rather than a matter of the
     headline number.
 
@@ -120,8 +118,7 @@ acetaminophen/aspirin:
     days. Acetaminophen does not do that at all: it works centrally, has little
     anti-inflammatory effect, and leaves clotting alone. The table shows aspirin's carboxylic
     acid and ester against acetaminophen's amide and phenol, which is the structural reason
-    aspirin irritates a stomach lining and acetaminophen does not. Reported oral LD50 in rats
-    is 200 mg/kg for aspirin against 2400 mg/kg for acetaminophen, an unusually wide gap for
+    aspirin irritates a stomach lining and acetaminophen does not. The reported oral LD50 is {ld50:aspirin} against {ld50:acetaminophen}, an unusually wide gap for
     two drugs sold on the same shelf.
 
 aspirin/ibuprofen:
@@ -132,8 +129,7 @@ aspirin/ibuprofen:
     permanently, so its effect on platelets outlives the molecule in the blood, which is the
     basis of its use in cardiology. Ibuprofen binds and lets go, so its effect fades as it
     clears, with a half-life near 2 hours. Ibuprofen is also the more potent anti-inflammatory
-    at the doses people actually use, and it is the newer molecule by seventy years. Reported
-    oral LD50 in rats is 200 mg/kg for aspirin and 636 mg/kg for ibuprofen.
+    at the doses people actually use, and it is the newer molecule by seventy years. Their reported oral LD50 values are {ld50:aspirin} and {ld50:ibuprofen}.
 
 ibuprofen/naproxen:
   answer: "Ibuprofen and naproxen are both NSAIDs, but naproxen lasts far longer, with a half-life near 14 hours against about 2 for ibuprofen."
@@ -143,8 +139,7 @@ ibuprofen/naproxen:
     naproxen near 14, which is why one is taken through the day and the other is sold as a
     twice-daily tablet under the name Aleve. Naproxen is the heavier molecule at 230.26
     against 206.28 and carries an extra ether group on a naphthalene ring rather than
-    ibuprofen's simple benzene. Reported oral LD50 sits at 636 mg/kg in rats for ibuprofen and
-    1234 mg/kg in mice for naproxen, measured in different species, so the two numbers are not
+    ibuprofen's simple benzene. Reported oral LD50 sits at {ld50:ibuprofen} and {ld50:naproxen}, measured in different species, so the two numbers are not
     directly comparable.
 
 celecoxib/ibuprofen:
@@ -176,8 +171,7 @@ morphine/fentanyl:
     opium poppy in 1804, a rigid five-ring structure with two hydroxyl groups that make it
     relatively water-loving and slow to cross into the brain. Fentanyl is fully synthetic,
     much smaller in ring count, and far more fat-soluble, so it reaches the brain in minutes
-    and acts at a small fraction of the amount. The reported oral LD50 values sit at 335 mg/kg
-    in rats for morphine and 18 mg/kg in rats for fentanyl, a ratio that understates the
+    and acts at a small fraction of the amount. The reported oral LD50 values sit at {ld50:morphine} and {ld50:fentanyl}, a ratio that understates the
     difference in potency at ordinary exposures. That potency gap is the reason fentanyl
     dominates overdose statistics: the margin between a working amount and a fatal one is
     measured in units a kitchen scale cannot see.
@@ -250,8 +244,7 @@ aspartame/saccharin:
     sulfur-containing ring at 183.19 against aspartame's 294.3. Saccharin is also the sweeter
     of the two, roughly 400 times sugar against 200, and it is the one with the metallic
     aftertaste that shows up at higher concentrations. Aspartame breaks down with heat and
-    cannot be baked with; saccharin is stable and can. The reported oral LD50 for saccharin is
-    14200 mg/kg in rats, which is very high, and much of saccharin's reputation traces to a
+    cannot be baked with; saccharin is stable and can. The reported oral LD50 for saccharin is {ld50:saccharin}, which is very high, and much of saccharin's reputation traces to a
     1970s rat bladder study whose mechanism turned out not to apply to people. Aspartame's
     constraint is different and specific: it delivers phenylalanine.
 
@@ -354,7 +347,7 @@ monosodium-glutamate/sodium-chloride:
     same weight, since most of its mass is the glutamate. Glutamate is one of the twenty
     standard amino acids and is present naturally in tomatoes, parmesan, soy sauce and
     mushrooms, so the taste is not novel even where the ingredient is. The reported oral LD50
-    for table salt is 3000 mg/kg in rats, higher than several substances people treat with
+    for table salt is {ld50:sodium-chloride}, higher than several substances people treat with
     more caution.
 
 # ── Alcohols and solvents ──────────────────────────────────────────────────────
@@ -365,8 +358,7 @@ ethanol/methanol:
     intoxicant and a poison. The body oxidises both with the same enzymes. Ethanol becomes
     acetaldehyde and then acetic acid, which the body handles routinely. Methanol becomes
     formaldehyde and then formic acid, which attacks the optic nerve and drives the acidosis
-    that makes methanol poisoning dangerous. Methanol's listed oral LD50 is 5628 mg/kg in
-    rats, not a figure that marks it as a poison, which is exactly why the LD50 is a poor
+    that makes methanol poisoning dangerous. Methanol's listed oral LD50 is {ld50:methanol}, not a figure that marks it as a poison, which is exactly why the LD50 is a poor
     guide here: the danger is what the metabolites do, not the parent molecule. Methanol is
     present in tiny amounts in fermented drinks and is the reason improperly distilled spirits
     are hazardous.
@@ -380,7 +372,7 @@ ethanol/isopropyl-alcohol:
     percent solutions of either outperform higher concentrations, because some water is needed
     for the alcohol to get through a cell wall before it denatures the proteins inside.
     Isopropyl alcohol evaporates leaving less residue, which is why it is the one used on
-    electronics. The reported oral LD50 for isopropyl alcohol is 4797 mg/kg in dogs.
+    electronics. The reported oral LD50 for isopropyl alcohol is {ld50:isopropyl-alcohol}.
 
 acetone/isopropyl-alcohol:
   answer: "Acetone is rubbing alcohol, isopropyl alcohol, with two hydrogens removed, one oxidation step apart, and acetone is by far the harsher solvent of the two."
@@ -490,7 +482,7 @@ calcium-carbonate/sodium-bicarbonate:
     and releases carbon dioxide as it does, the fizz of an effervescent tablet and the lift in a
     cake. That reaction also means baking soda carries sodium, which calcium carbonate does not.
     Neither carries a GHS hazard label, and their reported oral LD50 values in rats are close,
-    6450 mg/kg for calcium carbonate and 4220 mg/kg for sodium bicarbonate.
+    {ld50:calcium-carbonate} and {ld50:sodium-bicarbonate}.
 
 sodium-hydroxide/sodium-bicarbonate:
   answer: "Sodium bicarbonate is a weak alkali mild enough to eat, while sodium hydroxide is caustic soda, strong enough to dissolve fat and hair and corrosive to skin."
@@ -645,7 +637,7 @@ dopamine/norepinephrine:
     norepinephrine drives arousal, attention and the fight-or-flight response, and acts as a
     hormone as well as a neurotransmitter. Several medicines act on both at once, which is why
     stimulant drug descriptions usually name the pair together. The reported oral LD50 for
-    norepinephrine is 20 mg/kg in mice, which makes it one of the more acutely toxic entries
+    norepinephrine is {ld50:norepinephrine}, which makes it one of the more acutely toxic entries
     in this catalog.
 
 melatonin/serotonin:
@@ -1017,8 +1009,7 @@ sodium-chloride/potassium-chloride:
     gets stronger with concentration, which is why substitutes are usually blends rather than
     straight potassium chloride. The saltiness is read by different mechanisms: the sodium ion
     passes through an ion channel on the taste cell directly, and the potassium ion is a
-    poorer fit for it. The reported oral LD50 values differ sharply, 3000 mg/kg in rats for
-    table salt against 383 mg/kg in mice for potassium chloride, measured in different species
+    poorer fit for it. The reported oral LD50 values differ sharply, {ld50:sodium-chloride} against {ld50:potassium-chloride}, measured in different species
     but pointing at a real difference: potassium load matters to the heart in a way sodium
     load does not.
 
@@ -1496,7 +1487,7 @@ benzene/toluene:
     is not classified as a carcinogen, because the body can oxidise that methyl group and
     excrete the result, a route benzene has no equivalent of. Toluene is still a neurotoxin on
     repeated inhalation, which is what makes solvent abuse dangerous, and it is the smell of
-    paint thinner and permanent marker. Benzene's reported oral LD50 is 3306 mg/kg in rats, a
+    paint thinner and permanent marker. Benzene's reported oral LD50 is {ld50:benzene}, a
     figure that understates how differently the two behave over long exposure.
 
 formaldehyde/acetaldehyde:
@@ -1509,7 +1500,7 @@ formaldehyde/acetaldehyde:
     Acetaldehyde at 44.05 is what ethanol becomes as the body breaks it down; it is long
     blamed for part of a hangover, and it causes the flushing reaction in people whose version
     of the clearing enzyme works slowly. Their reported oral LD50 values differ by more than
-    sixfold, 100 mg/kg in rats for formaldehyde against 661 mg/kg for acetaldehyde. The body
+    sixfold, {ld50:formaldehyde} against {ld50:acetaldehyde}. The body
     produces both in small amounts as a normal part of metabolism.
 
 caffeine/theanine:
