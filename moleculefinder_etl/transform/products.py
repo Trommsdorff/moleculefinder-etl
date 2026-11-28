@@ -323,6 +323,45 @@ def _routes_read(setid: str, version: int | None) -> bool:
     return isinstance(seen, int) and isinstance(version, int) and seen >= version
 
 
+MARKETING_PREFIX = "mkt1"             # dailymed/mkt1-<setid>.json: each product's marketing category and status
+
+
+def _marketing_path(setid: str) -> Path:
+    return DAILYMED_DIR / f"{MARKETING_PREFIX}-{setid}.json"
+
+
+def marketing_for(setid: str, version: int | None) -> list[dict] | None:
+    """The status rule's reading: the marketing read at this edition of the label or a newer one (a pinned build can
+    hold a label one edition behind DailyMed, and the newer edition is the one marketed today). None when unread."""
+    hit = cache.read_json(_marketing_path(setid), PRODUCTS_CACHE_TTL_DAYS)
+    value = hit.value if hit is not None else None
+    if not isinstance(value, dict) or value.get("missing"):
+        return None
+    seen = value.get("version")
+    if not (isinstance(seen, int) and isinstance(version, int) and seen >= version):
+        return None
+    products = value.get("products")
+    return products if isinstance(products, list) else None
+
+
+def _marketing_read(setid: str, version: int | None) -> bool:
+    """Read at this edition or a newer one (the same reading as ``_routes_read``)."""
+    hit = cache.read_json(_marketing_path(setid), PRODUCTS_CACHE_TTL_DAYS)
+    value = hit.value if hit is not None else None
+    if not isinstance(value, dict):
+        return False
+    if value.get("missing"):
+        return True
+    seen = value.get("version")
+    return isinstance(seen, int) and isinstance(version, int) and seen >= version
+
+
+def is_drug_label(doc_type: str | None) -> bool:
+    """A HUMAN OTC DRUG LABEL or a HUMAN PRESCRIPTION DRUG LABEL (any case)."""
+    t = (doc_type or "").upper()
+    return "DRUG" in t and ("OTC" in t or "PRESCRIPTION" in t)
+
+
 def _read_parts() -> dict[str, dict]:
     if not PARTS_CACHE.exists():
         return {}
@@ -390,7 +429,8 @@ def read_props(cids) -> dict[int, dict]:
 
 
 def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
-         fetch_parents=None, fetch_table=None, fetch_cid_parents=None, fetch_routes=None) -> dict[str, int]:
+         fetch_parents=None, fetch_table=None, fetch_cid_parents=None, fetch_routes=None,
+         fetch_marketing=None) -> dict[str, int]:
     """Fetch whatever the product pages need that the cache does not hold fresh: each seeded
     DailyMed label, the seeded Wikidata items' parts, the FDA's UNII table (``fetch_table``,
     default ``fda_unii.warm``; a test passes ``lambda: None`` for no table), every molecule's UNII
@@ -425,6 +465,24 @@ def warm(seed: list[dict], cids: list[int], fetch_uniis, fetch_props=None,
             fetched_routes += 1
     if fetched_routes:
         log.info("  products: %d medicine label(s) read again for their routes of administration", fetched_routes)
+
+    # The marketing category and status of every drug label (the status rule, 2026-11-27): a label is
+    # evidence for a side of a molecule's status only under an NDA, ANDA, BLA or OTC monograph with its
+    # marketing active (transform/medicine_status.py). Read once per edition, like the routes.
+    fetch_marketing = fetch_marketing or dailymed.fetch_marketing
+    fetched_marketing = 0
+    for p in seed:
+        if p["source"] != "dailymed":
+            continue
+        label = spl_cached(p["item"])
+        if not label or label.get("missing") or not is_drug_label(label.get("doc_type")):
+            continue
+        if not _marketing_read(p["item"], label.get("version")):
+            got = fetch_marketing(p["item"])
+            cache.write_json(_marketing_path(p["item"]), got if got is not None else {"missing": True})
+            fetched_marketing += 1
+    if fetched_marketing:
+        log.info("  products: %d drug label(s) read again for their marketing category and status", fetched_marketing)
 
     qids = sorted({s["item"] for p in seed for s in [p, *p.get("also", [])] if s["source"] == "wikidata"})
     stored = _read_parts()

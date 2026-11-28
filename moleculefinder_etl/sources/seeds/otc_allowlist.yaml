@@ -27,7 +27,6 @@ analgesics_nsaids:      # pain / fever, OTC strengths
   - Acetaminophen           # alias of paracetamol; kept so either title matches
 
 sleep_and_neuro:
-  - Melatonin               # (also body-endogenous; belongs in core either way)
   - Doxylamine              # OTC sleep aid / antihistamine
   - Diphenhydramine         # Benadryl / nighttime sleep aid
 
@@ -60,10 +59,8 @@ antacids_and_gi:          # heartburn / stomach, OTC
   - Docusate                # stool softener
   - Bisacodyl               # laxative
   - Hyoscine butylbromide   # tranche 2026-10-A
-  - Lactulose               # tranche 2026-10-A
 
 cough_cold_decongestant:  # OTC
-  - Acetylcysteine          # OTC mucolytic across much of the EU (tranche 2026-09-A)
   - Dextromethorphan
   - Guaifenesin
   - Pseudoephedrine
@@ -109,7 +106,6 @@ sunscreen_filters:        # phase 3B, batch 2026-11-care
   - Octinoxate              # batch 2026-12-care
   - Oxybenzone              # batch 2026-12-care
 vitamins_supplements_otc: # sold as supplements; many also nutrients
-  - Glucosamine
   - Dimenhydrinate          # Dramamine (note: technically a salt/mixture)
 
 antiseptics:              # wound / surface disinfectants, OTC (also everyday-chemistry)
@@ -121,3 +117,19 @@ antiseptics:              # wound / surface disinfectants, OTC (also everyday-ch
 
 urinary_otc:               # urinary pain relief, OTC (tranche 2026-10-A); one member, so no hub
   - Phenazopyridine         # tranche 2026-10-A
+
+# ── uses_only (the status rule, 2026-11-27; transform/medicine_status.py) ─────────────────────────────────────────
+# THIS LIST IS NOT EVIDENCE BY ITSELF. Every molecule named above must have an over-the-counter basis in its record (an
+# FDA OTC licence, an OTC monograph, a current OTC label under an NDA, ANDA or monograph, or a basis recorded in
+# status_bases.yaml), or the build stops and names it. The molecules below have none, so they are NOT on the OTC list:
+# they are named here only for what they are taken for, which keeps them in their use hub (relationships.USE_GROUPS),
+# and their records say is_otc false. Each was looked for on 2026-11-27 in the Drugs@FDA data files and on DailyMed.
+uses_only:
+  sleep_and_neuro:
+    - Melatonin             # sold in the US as a dietary supplement; Drugs@FDA lists no melatonin product
+  antacids_and_gi:
+    - Lactulose             # every Drugs@FDA lactulose product is prescription (14 ANDAs); no OTC licence in the record
+  cough_cold_decongestant:
+    - Acetylcysteine        # every Drugs@FDA acetylcysteine product is prescription; its EU OTC licences are not in the record
+  vitamins_supplements_otc:
+    - Glucosamine           # sold in the US as a dietary supplement; Drugs@FDA lists no glucosamine product

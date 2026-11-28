@@ -720,13 +720,39 @@ def load_otc_uses() -> dict[str, list[tuple[str, str]]]:
         return {}
     data = yaml.safe_load(OTC_ALLOWLIST_YAML.read_text()) or {}
     out: dict[str, list[tuple[str, str]]] = {}
-    for group, names in data.items():
+    # uses_only: (the status rule, 2026-11-27): a molecule listed for what it is taken for, with no over-the-counter
+    # basis in the record; it keeps its use hub and makes no over-the-counter claim.
+    groups = [(g, n) for g, n in data.items() if g != USES_ONLY_KEY] + list((data.get(USES_ONLY_KEY) or {}).items())
+    for group, names in groups:
         hub = USE_GROUPS.get(group)
         if not hub:
             continue
         for name in names or []:
             out.setdefault(_name_key(str(name)), []).append(hub)
     return out
+
+
+USES_ONLY_KEY = "uses_only"
+
+
+def _molecule_keys(m: dict) -> set[str]:
+    keys = {_name_key(m["slug"]), _name_key(m.get("title") or "")}
+    return keys | {_name_key(s) for s in (m.get("synonyms") or [])}
+
+
+def otc_listed(molecules: list[dict]) -> tuple[set[str], set[str]]:
+    """(the slugs the OTC list names as sold over the counter, the slugs it names under ``uses_only:`` for their use
+    hub alone). Matched the way ``attach_otc_uses`` matches. The status rule (transform/medicine_status.py) requires an
+    over-the-counter basis in the record for every molecule in the first set."""
+    if not OTC_ALLOWLIST_YAML.exists():
+        return set(), set()
+    data = yaml.safe_load(OTC_ALLOWLIST_YAML.read_text()) or {}
+    uses_only = data.get(USES_ONLY_KEY) or {}
+    listed_keys = {_name_key(str(n)) for g, names in data.items() if g != USES_ONLY_KEY for n in (names or [])}
+    only_keys = {_name_key(str(n)) for names in uses_only.values() for n in (names or [])}
+    listed = {m["slug"] for m in molecules if _molecule_keys(m) & listed_keys}
+    only = {m["slug"] for m in molecules if _molecule_keys(m) & only_keys}
+    return listed, only
 
 
 def attach_otc_uses(molecules: list[dict]) -> None:

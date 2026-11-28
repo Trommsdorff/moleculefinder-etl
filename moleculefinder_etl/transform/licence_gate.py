@@ -49,6 +49,8 @@ IMPLIED: tuple[tuple[str, str], ...] = (
 # A licence record's register (lib/registers.ts on the web) -> registry key. A record with no
 # register is one of Garrett's hand rulings: MoleculeFinder's own statement of a licence.
 REGISTERS = {"Drugs@FDA": "drugs_at_fda", "European Medicines Agency": "ema", "MHRA Products": "mhra"}
+# The status rule's evidence (medicine_status, 2026-11-27) cites one of these registers -> registry key.
+STATUS_REGISTERS = {"Drugs@FDA": "drugs_at_fda", "DailyMed": "dailymed", "OTC Monographs@FDA": "fda"}
 
 # How a product's ingredient list is sourced (products.json `source.type`) -> registry key.
 PRODUCT_SOURCES = {"dailymed": "dailymed", "wikidata": "wikidata", "curated": "curated",
@@ -120,6 +122,11 @@ def molecule_citations(m: dict) -> Iterator[tuple[str, str | None]]:
     a = m.get("approval")
     if isinstance(a, dict):
         yield f"{slug}.approval", REGISTERS.get(a.get("register") or "", "curated" if not a.get("register") else None)
+    st = m.get("medicine_status")
+    if isinstance(st, dict):
+        for side in ("otc", "prescription"):
+            for i, e in enumerate(st.get(side) or []):
+                yield f"{slug}.medicine_status.{side}[{i}]", STATUS_REGISTERS.get(e.get("register") or "")
 
 
 def product_citations(p: dict) -> Iterator[tuple[str, str | None]]:
