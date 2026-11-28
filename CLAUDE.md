@@ -17,12 +17,13 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
 - **Both scheduled jobs run on the Mac mini:** the weekly refresh (`scripts/mac/weekly-refresh.sh`, Mon 03:10 ET, from
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
-- **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9; a
-  hand `mfetl zenodo` runs it). The weekly job's release and mirrors steps are merged (11-23).
+- **Dataset 2026.11 on Zenodo** (`10.5281/zenodo.24407566`) and both mirrors (`mfetl mirrors`, runbook section 9);
+  the weekly job's release and mirrors steps are merged (11-23).
 - **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
-- **Trust reviews** (read-only; `scripts/mac/trust-review.sh <review>`; runbook `docs/MAC-TRUST-REVIEWS.md`): 3, drawing
-  truth (`mfetl review drawings`, 06:30 ET; pushed) and 2, one fact every surface (`mfetl review facts`, 06:45 ET, all
-  pages Tue; `facts_differences.yaml`; pushed 11-27). Allowlists, differences: a ruling only.
+- **Trust reviews** (read-only, `mfetl review <name>`; Mac `scripts/mac/trust-review.sh <name>`; runbook
+  `docs/MAC-TRUST-REVIEWS.md`): 3 `drawings` 06:30 ET; 2 `facts` 06:45, all pages Tue (`facts_differences.yaml`); 5
+  `findings` 06:55, merged 11-28 (`review/pitched_numbers.yaml`: a moved pitched number is queued at once).
+  Allowlists, differences: a ruling only.
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 
 ## Golden rules (do not break these)
@@ -68,8 +69,8 @@ binaries directly:
 ./.venv/bin/ruff check .
 ./.venv/bin/python3 -m moleculefinder_etl.cli migrate [--apply]
 ```
-Fresh setup elsewhere: `uv sync --frozen --extra dev`; `mfetl seed --target 200` for a smoke canon. The env has no
-pip: `uv pip install --python .venv/bin/python3 ...`. After a run, refresh the web's copy with `npm run sync-data` there.
+Fresh setup elsewhere: `uv sync --frozen --extra dev`; `mfetl seed --target 200` for a smoke canon. No pip:
+`uv pip install --python .venv/bin/python3 ...`. After a run, refresh the web's copy with `npm run sync-data` there.
 
 ## How it flows (disk-to-disk, resumable)
 - `stage_seed` → `data/seed/canon.parquet` (marquee names→CID + curated CIDs + Wikidata notability, ranked by pageviews).
