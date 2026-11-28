@@ -6,8 +6,10 @@
      copy is ~/Library/LaunchAgents/com.137finder.moleculefinder.trust-findings.plist.
      It runs ORIGIN/MAIN's scripts/mac/trust-review.sh (shared by the trust reviews) with the argument `findings`, from
      the job's own clone of the public repository (fetched here, then copied beside the state files as
-     trust-review-findings.sh), as the other two reviews do; until origin/main carries the script's `findings` case (before
-     Garrett's push of the branch that added it) it takes the interactive repository's local main's copy, read only.
+     trust-review-findings.sh), as the other two reviews do. Until origin/main's copy of the script names `findings` (before
+     Garrett's push of the branch that added it; origin/main HAS the script, for the other two reviews, so its mere
+     presence is not enough: seen 2026-11-28, the first kickstart ran it and got "usage", exit 2) it takes the
+     interactive repository's local main's copy, read only.
      Fires every day at 06:55 Eastern: after the drawing review (06:30, about a minute) and the facts review (06:45; its
      daily sample takes about a minute; Tuesday's full read was measured at 317 s on 2026-11-27, so it ends about 06:50),
      55 minutes clear of the 07:50 news slot, after Monday's 03:10 weekly refresh, and on no other job's minute
@@ -26,7 +28,7 @@
   <array>
     <string>/bin/bash</string>
     <string>-c</string>
-    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/trust-checkout"; S=scripts/mac/trust-review.sh; F="$D/trust-review-findings.sh"; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; fi; { /opt/homebrew/bin/git -C "$C" show origin/main:$S 2&gt;/dev/null || /opt/homebrew/bin/git -C "$R" show main:$S; } &gt; "$F.tmp" &amp;&amp; [ -s "$F.tmp" ] &amp;&amp; mv "$F.tmp" "$F"; rm -f "$F.tmp"; exec /bin/bash "$F" findings</string>
+    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/trust-checkout"; S=scripts/mac/trust-review.sh; F="$D/trust-review-findings.sh"; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; fi; { /opt/homebrew/bin/git -C "$C" show origin/main:$S 2&gt;/dev/null | /usr/bin/grep -q "^ *findings)" &amp;&amp; /opt/homebrew/bin/git -C "$C" show origin/main:$S || /opt/homebrew/bin/git -C "$R" show main:$S; } &gt; "$F.tmp" &amp;&amp; [ -s "$F.tmp" ] &amp;&amp; mv "$F.tmp" "$F"; rm -f "$F.tmp"; exec /bin/bash "$F" findings</string>
   </array>
   <key>StartCalendarInterval</key>
   <dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>55</integer></dict>
