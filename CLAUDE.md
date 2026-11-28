@@ -5,15 +5,14 @@
 add them at the top of `HISTORY.md` (this repo), and keep this file under 20,000 characters. This file before
 2026-11-14 is in `HISTORY.md` verbatim.
 
-Public ETL for MoleculeFinder. Pulls PubChem, Wikidata (+ Wikipedia pageviews), DailyMed and hand seeds, transforms,
-and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds from, plus Supabase. Design:
-`../MoleculeFinder_Technical_Build_Plan.md` (4–7). The web repo is `../moleculefinder-web/` (its own CLAUDE.md).
+Public ETL for MoleculeFinder: PubChem, Wikidata, DailyMed and hand seeds to **a static JSON snapshot**
+(`data/snapshots/`) the web builds from, plus Supabase. The web repo is `../moleculefinder-web/` (its own CLAUDE.md).
 
 ## Current state (update these lines; the record goes in HISTORY.md)
 - **The plan in force:** `../BUILD-PLAN-everyday-chemistry-2026-11.md`. **All ten phases are live** (1, 2, 3A, 3B and 4
   to 10, with 5A, 5B, the gate hold and the drawing guard). Catalog 929 molecules; 430 product pages; 6 doors.
-- **Next weekly run's Drawings:** 888 / 715 / 147 / 11 carried, 41 with no drawing, made: none (the drawing findings, deployed
-  2026-11-27). Lines: `docs/DRAWING-RECIPES.md` 16. On a stop: 10, 11.
+- **Next weekly run's Drawings:** 888 / 715 / 147 / 11 carried, 41 with no drawing, made: none. Lines:
+  `docs/DRAWING-RECIPES.md` 16. On a stop: 10, 11.
 - **Both scheduled jobs run on the Mac mini:** the weekly refresh (`scripts/mac/weekly-refresh.sh`, Mon 03:10 ET, from
   2026-11-23; `docs/MAC-WEEKLY-REFRESH.md`) and the news job (`scripts/mac/news.sh`, 01:50, 07:50, 13:50, 19:50 ET;
   `docs/MAC-NEWS.md`). `etl.yml`/`news.yml` are manual backups; the watchdog stays on GitHub (news age, 24 h).
@@ -21,9 +20,9 @@ and writes **a static JSON snapshot** (`data/snapshots/`) the web app builds fro
   the weekly job's release and mirrors steps are merged (11-23).
 - **Findings** (`transform/findings.py`): `findings/` rebuilt each run, summary "Findings".
 - **Trust reviews** (read-only, `mfetl review <name>`; Mac `scripts/mac/trust-review.sh <name>`; runbook
-  `docs/MAC-TRUST-REVIEWS.md`): 3 `drawings` 06:30 ET; 2 `facts` 06:45, all pages Tue (`facts_differences.yaml`); 5
-  `findings` 06:55, merged 11-28 (`review/pitched_numbers.yaml`: a moved pitched number is queued at once).
-  Allowlists, differences: a ruling only.
+  `docs/MAC-TRUST-REVIEWS.md`): 3 `drawings` 06:30 ET; 2 `facts` 06:45, all Tue; 5 `findings` 06:55
+  (`review/pitched_numbers.yaml`); 4 `sources` 08:15, all Tue (its own paced requests; merged 11-28). Ruled exceptions
+  to the approved-medicine rule: approvals.yaml `exception:` only. Allowlists, differences: a ruling only.
 - **Deferred:** monthly tranches (`../drugs-wing-deferred.csv`); the ~10k bulk canon stays gated on `/dashboard`.
 
 ## Golden rules (do not break these)
@@ -141,7 +140,8 @@ Fresh setup elsewhere: `uv sync --frozen --extra dev`; `mfetl seed --target 200`
   single EU member state. One national licence is enough** (an FDA OTC monograph counts). It applies the same way to new
   rows and to pages already live. Rows that fail go to `sources/seeds/deferred_rows.csv` (held for good,
   `tests/test_deferred_rows.py`); rows let in under a ruling carry their basis in `sources/seeds/approvals.yaml`.
-  **Phenibut and flunitrazepam stay. Do not raise them again.** No recreational-drug row, ever (Garrett, 2026-10-18).
+  **Phenibut and flunitrazepam stay** (and phenazopyridine, 2026-11-28, sold unapproved): ruled exceptions, approvals.yaml
+  `exception:`. Do not raise them again. No recreational-drug row, ever (Garrett, 2026-10-18).
   A live page removed under the rule answers 410 (web `lib/gone.ts`).
 - **A label ingredient is matched to a molecule by CODE only (UNII), never by name** (Garrett's ruling, trust run 3: fix
   the matching, never soften the line). A molecule shown as "not yet" that is one: add the code to

@@ -2,6 +2,41 @@
 
 Every run record that used to live in CLAUDE.md, moved here verbatim on 2026-11-14 because CLAUDE.md had grown past the size Claude Code loads (150,000 characters in total across instruction files). Below the line is the whole of CLAUDE.md as it stood on branch `molecule-page-2026-11` at `0f5b158`, unchanged. New records are added at the top of this file (above the line), newest first, never to CLAUDE.md.
 
+## Trust review 4, the source check (2026-11-28, `main` `9a5bb83`, merged, NOT pushed)
+Brief `../TRUST-5-SOURCE-CHECK-PROMPT.md`. Branch `trust-sources-2026-11` (`e8a4102`) merged `--no-ff`. Runbook `docs/MAC-TRUST-REVIEWS.md` section 7.
+- **`mfetl review sources`** (`review/sources.py`, read-only): seven checks (links answer; DailyMed labels still marketed;
+  approvals current in the Drugs@FDA and EMA data files; PubChem formula, weight, title, hazard label and LD50 and the
+  Wikidata description still match, each difference said to be held or not by the weekly guards; every value's kind and
+  source; the dataset and both mirrors; the door photographs). Every request its own: a pace per host (PubChem 4 a
+  second, DailyMed 2, Wikidata serial), one per address per run, a budget per host, conditional requests for the two
+  regulators' files in its own cache (`trust-sources-cache`). Daily: 15 pinned molecules and 5 pinned labels (each with
+  its reason) plus 20 medicines, 20 other molecules and 30 labels by a date seed; Tuesdays everything. Alarm classes
+  (queued at once): "a live page rests on a label that has ended or gone", "no current authorisation anywhere".
+  Mac job `com.137finder.moleculefinder.trust-sources`, daily 08:15 Eastern, loaded.
+- **Phenazopyridine, a ruled exception (Garrett, 2026-11-28, section D).** The exceptions live in ONE place, approvals.yaml
+  `exception:` (phenibut and flunitrazepam recorded there too, 2026-10-18), read by `relationships.ruled_exceptions()`
+  (the status rule, `review/facts.py`, `review/sources.py`). The status rule's fourth outcome `unapproved`, only for an
+  exception recorded `marketed: unapproved`, with the label's own category: the Pyridium label, set id
+  165d01d4-a9f7-2293-e054-00144ff8d46c, version 15 (effective 2023-12-16, "Rx Only"), marketing category **"unapproved drug
+  other"** (read from the SPL on 2026-11-28). Off `status_bases.yaml unsettled:`. If the label ever stops saying it, the
+  line falls back to the group's and the run logs it (never a Monday stop); the source review reads the label daily.
+  Snapshot change: phenazopyridine's `medicine_status` only. Status: 40 over the counter, 280 prescription, 21 both,
+  1 sold without approval, 33 unsettled.
+- **Pitched numbers (section B):** all confirmed from the emails (read in Gmail by Cowork); added Blue 1 53, Red 40 45,
+  Yellow 6 45 and the four Red No. 3 labels by name (Inderal LA, Restoril, Vraylar, Vyvanse); AP's email bounced at 16:47
+  UTC, four recipients. All hold. "224 by mouth": only two web comments carried it, now 225.
+- **The first full read** (by hand, 09:29 to 09:39 Eastern, `trust-reports/sources-2026-11-28-full.md`): "9 finding classes
+  found (117 findings); 68,297 things checked; 3,066 sources read; 77 not read; 3,066 requests"; 588 s. Requests:
+  the site 1,308, PubChem 950, DailyMed 760, Wikidata 19, others 29. No alarm class.
+- **Checks:** ETL 1,905 passed, 1 skipped; ruff 132 (= main). Pinned build twice byte-identical, 0 PubChem POSTs, snapshot
+  differs from main only in phenazopyridine's `medicine_status` (and `data/seed/medicine_status.json`); drawings 888 carried,
+  0 drawn. Drawing review (no live) 0 classes; findings and facts reviews against a local build of the web tip: nothing new.
+  `weekly-refresh.sh --dry-run --ref trust-sources-2026-11` (log `weekly-20261128-093732-dry-run.log`): DRY RUN complete;
+  drawings carried, 0 drawn; Wikidata held 34, products held 0, LD50 held 1; phenazopyridine's fourth line from the live
+  label; both mirrors hold 2026.11. **The job proven:** `launchctl print` (08:15, loaded); `launchctl kickstart` 09:40
+  Eastern waited 5 min for the dry run's weekly lock (by design), ran local `main` `9a5bb83`, 117 s, 336 requests,
+  "6 finding classes found (12 findings)", exit 0. Disk 463 GiB free before, 475 after.
+
 ## Trust review 5, findings arithmetic (2026-11-28, `main` `20c29c7`, merged, NOT pushed)
 Brief `../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md`. Branch `trust-findings-2026-11` (`7a109bd`, `58476d6`), merged `--no-ff` (`409fec9`, `20c29c7`). Full record `../HISTORY.md`, 2026-11-28. Read-only: no page and no data changed.
 - **`mfetl review findings`** (`moleculefinder_etl/review/findings.py`, its docstring the method): reads the 14 findings addresses, both `data.csv` and `data.json`, a HEAD of the 300 `/whats-in` pages, each page's share image and feed, and the 11 cited links, from the live site, every day, no sampling (about 340 addresses, about 30 s). Ten checks, each finding in a named class: 1 every printed count against the count made from the page's data ROWS; 2 table, CSV and JSON (rows, every value, the documented header, CC0 on the page, in the JSON and the Dataset, the download types); 3 the parts (splits, a sub-page's two lists disjoint, whole and equal to the main table's filter, the none page by its own rule, the headline once per label, the forms, the JSON's totals against its rows); 4 **recomputed** by UNII from each label's own ingredient list (the weekly job's DailyMed cache, read only; products.json only where a label is not cached, since it keeps one row per molecule) against `colour_additives.yaml` and `inactive_groups.yaml`, never importing `transform/findings.py`; 5 the label set; 6 the named labels; 7 dates; 8 **pitched numbers** (`review/pitched_numbers.yaml`, baseline `review/pitched/dyes-in-medicines-2026-11-23.json` from `ad2d868`); 9 citations (eCFR and the Federal Register answer automated readers with "Request Access", so their own APIs are asked and the report says so); 10 share images and feeds. "A pitched number moved" and the recomputation class queue at once; the rest on two runs.
