@@ -11,8 +11,8 @@
 # with a recommended answer). Never add an entry to make a finding go away. A test holds that every entry is honoured
 # and that nothing outside an entry is excused.
 #
-# Not here, on purpose: a rounding of the molecular weight that differs between a board and a page. No record rules
-# one, so any found is reported.
+# Not here, on purpose: the weight rule. A weight shown rounded half-up from the record, down to whole grams, is the
+# same fact (ruled 2026-11-27); that is a value rule, stated in facts.py's docstring and weight_shape, not a difference.
 differences:
   conventional-formula-on-panel-pages:
     date: 2026-11-26
@@ -37,3 +37,17 @@ differences:
     shape: listed in a structure hub, no formula on its page
     surfaces: [hub page row]
     subjects: repeat-unit-membership
+  conventional-formula-in-editorial-text:
+    date: 2026-11-27
+    by: "Garrett's word on Cowork's rulings, 2026-11-27, ruling 2 (brief ../TRUST-3B-FACT-FINDINGS-PROMPT.md; folder HISTORY.md, 2026-11-27)"
+    what: >-
+      A formula written in a page's running text (a molecule page's or a /vs page's prose, or any other page's) agrees
+      with the record when it holds exactly the record's atoms and charge: NaHCO3, Na2CO3 and CaCO3 are how a reader
+      knows these, and PubChem's CHNaO3, CNa2O3 and CCaO3 are the same atoms in another order. The record, the
+      Properties row, the JSON-LD, the search index and the dataset keep PubChem's writing.
+    reason: "The same atoms written the way a reader knows them, in a sentence; a different atom count is still a finding."
+    fact: formula
+    shape: one value, written two ways
+    surfaces: [molecule page text, /vs text, /whats-in text, home text, board text, hub page text, world text,
+               classroom text, molecule of the week text, /explore text, embed docs text, findings text]
+    subjects: same-atoms

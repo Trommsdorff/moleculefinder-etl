@@ -269,7 +269,7 @@ comparison:
     why: "RECOVERY trial, June 2020: the first treatment shown to reduce deaths from severe COVID-19."}
   "bupropion/sertraline": {words: ["most"], basis: ordinary, line: "b77486b44fa3",
     why: "\"Most of what separates them\" ranks nothing beyond the two records."}
-  "calcium-carbonate/sodium-bicarbonate": {words: ["only"], basis: ordinary, line: "a76a6be63074",
+  "calcium-carbonate/sodium-bicarbonate": {words: ["only"], basis: ordinary, line: "f3771098185f",
     why: "\"Reacts only as acid reaches it\" ranks nothing."}
   "cannabidiol/cannabigerol": {words: ["most"], basis: science, line: "0179a726feec",
     why: "CBGA is the precursor converted to THCA and CBDA, so little CBG remains in mature plants (standard plant biochemistry)."}
@@ -331,7 +331,7 @@ comparison:
     why: "NICE NG28 names metformin first-line; \"only slightly\" ranks nothing."}
   "methylphenidate/amphetamine": {words: ["only"], basis: ordinary, line: "e1b05cf871cf",
     why: "\"Rather than only preserving it\" ranks nothing."}
-  "monosodium-glutamate/sodium-chloride": {words: ["most"], basis: science, line: "099816d17f67",
+  "monosodium-glutamate/sodium-chloride": {words: ["most"], basis: science, line: "f466974b57ac",
     why: "Computed from the formulas: sodium is about 12 percent of MSG monohydrate's mass against 39 percent of salt's."}
   "nifedipine/amlodipine": {words: ["first"], basis: history, line: "c036f2c88e58",
     why: "Nifedipine (1975) preceded amlodipine (1989). Datable history."}

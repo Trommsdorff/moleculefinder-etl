@@ -188,3 +188,39 @@ def test_the_shipped_file_compiles_and_every_pair_is_real():
     molecules = [json.loads(f.read_text()) for f in files]
     out = rel.build_comparisons(molecules)
     assert len(out) >= 100, f"only {len(out)} comparisons compiled"
+
+
+# An LD50 in a comparison's text is written {ld50:<slug>} (trust review 2's findings, 2026-11-27): the web prints the
+# record's one LD50 through its one phrase (value, qualifier, species, route in words, chemical form).
+_CAF = {"slug": "caffeine", "ld50_mg_per_kg": 192, "ld50_species": "rat", "ld50_route": "oral"}
+_THB = {"slug": "theobromine", "ld50_mg_per_kg": 300, "ld50_species": "dog", "ld50_route": "oral"}
+_NONE = {"slug": "glucose"}
+
+
+def test_an_ld50_token_names_a_molecule_of_the_pair_with_an_ld50():
+    assert rel._ld50_token_errors("The LD50 is {ld50:caffeine} against {ld50:theobromine}.", _CAF, _THB) == []
+    assert rel._ld50_token_errors("It is {ld50:aspirin}.", _CAF, _THB) == [
+        "{ld50:aspirin} names a molecule that is not one of the pair"]
+    assert rel._ld50_token_errors("It is {ld50:glucose}.", _CAF, _NONE) == ["{ld50:glucose}: the record has no LD50"]
+    assert rel._ld50_token_errors("It is {ld50:Caffeine}.", _CAF, _THB) == ["a malformed {ld50:...} token"]
+
+
+def test_an_ld50_figure_written_by_hand_fails_the_build(monkeypatch):
+    errs = rel._ld50_token_errors("Its oral LD50 is 192 mg/kg in rats.", _CAF, _THB)
+    assert errs and errs[0].startswith("an LD50 figure written by hand")
+    monkeypatch.setattr(rel, "load_comparisons", lambda: {"caffeine/theobromine": _pair(
+        _OK + " Its oral LD50 is 192 mg/kg in rats.")})
+    with pytest.raises(SystemExit, match="written by hand"):
+        rel.build_comparisons([_CAF, _THB])
+    monkeypatch.setattr(rel, "load_comparisons", lambda: {"caffeine/theobromine": _pair(
+        _OK + " The LD50 is {ld50:caffeine} against {ld50:theobromine}.")})
+    assert "{ld50:caffeine}" in rel.build_comparisons([_CAF, _THB])["caffeine-vs-theobromine"]["text"]
+
+
+def test_the_shipped_comparisons_write_every_ld50_as_a_token():
+    import yaml
+    seed = yaml.safe_load(rel.COMPARISONS_YAML.read_text())
+    for pair, v in seed.items():
+        text = " ".join(str((v if isinstance(v, dict) else {"text": v}).get("text") or "").split())
+        assert not rel._LD50_BY_HAND.search(rel.LD50_TOKEN.sub("", text)), pair
+    assert sum(len(rel.LD50_TOKEN.findall(str(v))) for v in seed.values()) == 28

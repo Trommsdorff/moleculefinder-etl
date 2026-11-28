@@ -114,11 +114,25 @@ def test_formula_and_weight_that_agree_are_not_found(snap):
     assert rv.compared[("weight", "board row", "the record")] == 2
 
 
-def test_one_value_two_roundings_and_written_two_ways(snap):
+def test_the_weight_rule_rounded_half_up_to_the_precision_shown(snap):
+    # Ruled 2026-11-27 (brief ../TRUST-3B-FACT-FINDINGS-PROMPT.md, ruling 1): a shown weight agrees when it is the
+    # record's rounded half-up to the precision shown, down to whole grams; anything else is a finding.
+    assert facts.weight_shape("60.08", 60.084) is None
+    assert facts.weight_shape("60", 60.084) is None
+    assert facts.weight_shape("253.81", 253.8089) is None
+    assert facts.weight_shape("136", 136.11) is None
+    assert facts.weight_shape("441", 440.5) is None                                   # half-up, not half-even
+    assert facts.weight_shape("440", 440.5) == "rounded the wrong way"
+    assert facts.weight_shape("253.80", 253.8089) == "two different values"
+    assert facts.weight_shape("60.0840", 60.084) == "shown to more precision than the record"
+    assert facts.weight_shape("427.20", 427.2) == "shown to more precision than the record"
+    assert facts.weight_shape("6,179", 6179.0) is None
     rv = review(snap)
     found = run_page(rv, "/best/lightest", "<main>" + board_row("silicon-dioxide", "Silicon dioxide", "SiO2", "60.08"))
-    assert ("weight", "one value, two roundings") in shapes(found)
+    assert not [f for f in found if f["fact"] == "weight"]
     assert ("formula", "one value, written two ways") in shapes(found)   # not ruled on a board row
+    bad = run_page(rv, "/m/candesartan", "<main><p>Candesartan (C24H20N6O3, 440 g/mol) is a medicine.</p>")
+    assert ("weight", "rounded the wrong way") in shapes(bad)
 
 
 def test_a_weight_on_a_molecule_with_none_is_stated_here_absent_there(snap):
@@ -214,6 +228,15 @@ def test_molecule_status_line_against_is_otc(snap):
     assert ("status", "two different values") in shapes(run_page(rv, "/m/caffeine", page))
     page = mol_page("Caffeine", "C8H10N4O2", "194.19", "<p>Dispensed on prescription, not sold on a shelf.</p>")
     assert not [f for f in run_page(rv, "/m/caffeine", page) if f["fact"] == "status"]
+    # The third status (2026-11-27, ruling 4): sold both ways holds only where is_otc is true.
+    both = "<p>Sold over the counter in some products and on prescription in others.</p>"
+    assert ("status", "two different values") in shapes(run_page(rv, "/m/caffeine", mol_page(
+        "Caffeine", "C8H10N4O2", "194.19", both)))
+    MOLS_OTC = facts.Truth(snap)
+    MOLS_OTC.recs["caffeine"]["is_otc"] = True
+    rv2 = facts.Review(MOLS_OTC, facts.load_differences())
+    assert not [f for f in run_page(rv2, "/m/caffeine", mol_page("Caffeine", "C8H10N4O2", "194.19", both))
+                if f["fact"] == "status"]
 
 
 # ── 5. counts ───────────────────────────────────────────────────────────────────────────────────
@@ -283,7 +306,8 @@ def test_links_found_and_not(snap):
 # ── the deliberate differences ──────────────────────────────────────────────────────────────────
 def test_the_differences_file_holds_only_ruled_entries():
     raw = yaml.safe_load(facts.DIFFERENCES.read_text())["differences"]
-    assert set(raw) == {"conventional-formula-on-panel-pages", "repeat-unit-hubs"}
+    assert set(raw) == {"conventional-formula-on-panel-pages", "repeat-unit-hubs",
+                        "conventional-formula-in-editorial-text"}
     assert {str(e["date"]) for e in raw.values()} == {"2026-11-26", "2026-11-27"}
     for e in raw.values():
         assert e["by"].startswith("Garrett") and e["subjects"] in facts.SUBJECT_RULES and e["fact"] in facts.FACTS
@@ -300,6 +324,20 @@ def test_the_panel_formula_is_excused_on_its_page_and_nowhere_else(snap):
     assert ("formula", "one value, written two ways") in shapes(row)
     caffeine = run_page(rv, "/m/caffeine", mol_page("Caffeine", "N4O2C8H10", "194.19"))
     assert ("formula", "one value, written two ways") in shapes(caffeine)    # the ruling names panel pages only
+
+
+def test_a_conventional_formula_in_editorial_text_is_excused_when_the_atoms_match(snap):
+    # Ruled 2026-11-27 (ruling 2): NaHCO3 in a sentence for PubChem's CHNaO3; the atoms must be exactly the record's.
+    rv = review(snap)
+    ok = run_page(rv, "/m/caffeine", mol_page("Caffeine", "C8H10N4O2", "194.19",
+                                              "<p>Caffeine, written N4O2C8H10 here, is a purine.</p>"))
+    assert not [f for f in ok if f["fact"] == "formula"]
+    assert any(c["surface"] == "molecule page text" for c in rv.excused["conventional-formula-in-editorial-text"])
+    bad = run_page(rv, "/m/caffeine", mol_page("Caffeine", "C8H10N4O2", "194.19",
+                                               "<p>Caffeine, written C8H10N4O3 here, is a purine.</p>"))
+    assert ("formula", "two different values") in shapes(bad)
+    top = run_page(rv, "/m/caffeine", mol_page("Caffeine", "N4O2C8H10", "194.19"))
+    assert ("formula", "one value, written two ways") in shapes(top)     # the top line is not editorial text
 
 
 def test_with_no_differences_nothing_is_excused(snap):

@@ -41,10 +41,14 @@ THE FACTS (the brief's numbering; compared by VALUE, never by wording):
 
 VALUE RULES (stated once, here and in docs/MAC-TRUST-REVIEWS.md):
  - Formula: equal when the element counts and the charge are equal (any order, "C8H10N4O2" = "O2N4C8H10"). Written
-   differently from the record's molecular_formula is its own shape, "one value, written two ways".
- - Weight: the figure as printed, commas dropped. Equal to the record's molecular_weight exactly: agreement. Equal to
-   it rounded to the printed number of decimals (half a unit in the last printed place): "one value, two roundings".
-   Anything else: "two different values". No rounding difference is ruled, so any found is reported.
+   differently from the record's molecular_formula is its own shape, "one value, written two ways"; in editorial text
+   that shape is ruled (facts_differences.yaml, conventional-formula-in-editorial-text: NaHCO3 holds exactly the
+   atoms of PubChem's CHNaO3).
+ - Weight (ruled 2026-11-27, Garrett's word on Cowork's ruling 1, brief ../TRUST-3B-FACT-FINDINGS-PROMPT.md): a shown
+   weight AGREES when it equals the record's molecular_weight rounded half-up to the precision shown, down to whole
+   grams ("253.81" and "254" for 253.8089 are the same fact, correctly rounded). Anything else is a finding: more
+   decimals than the record has, "shown to more precision than the record"; within half a unit of the last printed
+   place but not the half-up rounding, "rounded the wrong way"; otherwise "two different values".
  - LD50: the number exact, the unit mg/kg, the qualifier words ("more than" for ">"), the species and route words as the
    site writes them (oral; intravenous; on the skin; another route), the chemical form "pure <name>".
  - Counts: integers, commas dropped. Dates: ISO dates; a week range must contain the snapshot's refreshed date.
@@ -55,6 +59,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures as cf
 import datetime as dt
+import decimal
 import hashlib
 import html as htmllib
 import json
@@ -424,14 +429,19 @@ def decimals(s: str) -> int:
 
 
 def weight_shape(printed: str, record: float | None) -> str | None:
-    """None when the printed weight is the record's; else the shape of the difference."""
+    """None when the printed weight is the record's, or the record's rounded half-up to the precision shown (down to
+    whole grams); else the shape of the difference (the rule in the module docstring, ruled 2026-11-27)."""
     if record is None:
         return "stated here, absent there"
-    w = number(printed)
-    if abs(w - record) < 1e-9:
+    w = decimal.Decimal(printed.replace(",", ""))
+    r = decimal.Decimal(str(record))
+    shown, held = decimals(printed), max(0, -int(r.as_tuple().exponent))
+    if shown > held:
+        return "shown to more precision than the record"
+    if w == r.quantize(decimal.Decimal(1).scaleb(-shown), rounding=decimal.ROUND_HALF_UP):
         return None
-    if abs(w - record) <= 0.5 * 10 ** -decimals(printed) + 1e-9:
-        return "one value, two roundings"
+    if abs(w - r) <= decimal.Decimal(5).scaleb(-shown - 1):
+        return "rounded the wrong way"
     return "two different values"
 
 
@@ -517,7 +527,14 @@ def _repeat_unit_membership(truth: Truth, subject: str, ctx: dict) -> bool:
     return subject in (truth.hubs.get(ctx.get("hub") or "") or {}).get("from_unit", set())
 
 
-SUBJECT_RULES = {"panel-formula": _panel_formula, "repeat-unit-membership": _repeat_unit_membership}
+def _same_atoms(truth: Truth, subject: str, ctx: dict) -> bool:
+    """The printed formula holds exactly the record's atoms (and charge): NaHCO3 for PubChem's CHNaO3."""
+    got = formula_value(ctx.get("printed"))
+    return got is not None and got == formula_value(truth.formula(subject))
+
+
+SUBJECT_RULES = {"panel-formula": _panel_formula, "repeat-unit-membership": _repeat_unit_membership,
+                 "same-atoms": _same_atoms}
 
 
 def load_differences(path: Path = DIFFERENCES) -> dict:
@@ -584,7 +601,7 @@ def check_formula(rv: Review, surface: str, slug: str, path: str, printed: str, 
         rv.check("formula", surface, against, slug, path, "two different values", f"printed {printed}, record {rec}")
     elif printed.replace(" ", "") != rec:
         rv.check("formula", surface, against, slug, path, "one value, written two ways",
-                 f"printed {printed}, record {rec}")
+                 f"printed {printed}, record {rec}", printed=printed)
     else:
         rv.check("formula", surface, against, slug, path, None)
 
@@ -837,8 +854,8 @@ def check_prose(rv: Review, surface: str, path: str, text: str, subject: str | N
                 rv.unattributed["weight"] += 1
                 continue
             others = [s for s in cands if s != who and t.weight(s) is not None
-                      and weight_shape(m.group(1), t.weight(s)) in (None, "one value, two roundings")]
-            if others and weight_shape(m.group(1), t.weight(who)) not in (None, "one value, two roundings"):
+                      and weight_shape(m.group(1), t.weight(s)) in (None, "rounded the wrong way")]
+            if others and weight_shape(m.group(1), t.weight(who)) not in (None, "rounded the wrong way"):
                 rv.compared[("weight", surface, "the record")] += 1
                 continue
             check_weight(rv, surface, who, path, m.group(1))
@@ -1013,10 +1030,13 @@ def check_licence(rv: Review, slug: str, page: Page) -> None:
                  f"the page: {m.group(0) if m else 'no licence line'}; the record: {appr.get('regulator') or 'none'}")
     otc = bool(re.search(r"Sold over the counter, without a prescription", text))
     rx = bool(re.search(r"Dispensed on prescription, not sold on a shelf", text))
-    if otc or rx:
+    # The third status (2026-11-27, ruling 4): sold both ways, which holds only where is_otc is true.
+    both = bool(re.search(r"Sold over the counter in some products and on prescription in others", text))
+    if otc or rx or both:
+        said = "both ways" if both else "over the counter" if otc else "prescription"
         rv.check("status", "molecule page status line", "the record's is_otc", slug, page.path,
-                 None if otc == bool(r.get("is_otc")) else "two different values",
-                 f"the page says {'over the counter' if otc else 'prescription'}, is_otc {r.get('is_otc')}")
+                 None if (otc or both) == bool(r.get("is_otc")) else "two different values",
+                 f"the page says {said}, is_otc {r.get('is_otc')}")
 
 
 # ── fact 5: counts ──────────────────────────────────────────────────────────────────────────────

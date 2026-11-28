@@ -469,7 +469,12 @@ products:
   - {slug: degree, name: "Degree", kind: cosmetic, dailymed: 5dd012bf-9655-5450-e063-6294a90a2775}
   - {slug: desitin-multi-purpose-healing-ointment, name: "Desitin Multi-Purpose Healing Ointment", kind: cosmetic, dailymed: 30f06dbb-de8c-43ee-b1ed-99ffd59dd3ab}
   - {slug: dickinsons-witch-hazel-exfoliating-toner, name: "Dickinson's Witch Hazel Exfoliating Toner", kind: cosmetic, dailymed: 5a5119a2-d6ca-4932-9df6-faed97e1d2a1}
-  - {slug: differin, name: "Differin", kind: cosmetic, dailymed: a0031324-92a6-4c11-90e2-c2818f7278ec}
+  # Repointed 2026-11-27 (trust review 2's findings, ruling 5): the row read a0031324-92a6-4c11-90e2-c2818f7278ec,
+  # Galderma's PRESCRIPTION label (Differin Gel 0.3%, NDA 021753, every package's marketing ended). This is the gel
+  # sold over the counter in the US, Galderma's HUMAN OTC DRUG LABEL (Differin Gel 0.1%, NDA 020380, NDC 0299-4910,
+  # version 10, effective 2022-12-07, marketing active). Its class should be medicine, not cosmetic (ruling 5), but
+  # that moves both findings' "300 labels" to 301 in their frozen titles: HELD for Garrett / the 2026-12-08 freeze.
+  - {slug: differin, name: "Differin", kind: cosmetic, dailymed: 0739d631-171b-42a8-bd55-0022b8df2d8a}
   - {slug: dove-advanced-care, name: "Dove Advanced Care", kind: cosmetic, dailymed: 5b38c67e-6140-7ce4-e063-6394a90a5a59}
   - {slug: dove-dermacare-scalp-anti-dandruff, name: "Dove DermaCare Scalp Anti-Dandruff", kind: cosmetic, dailymed: 7808cda5-a635-16ba-e053-2a91aa0ab539}
   - {slug: eltamd-uv-clear, name: "EltaMD UV Clear", kind: cosmetic, dailymed: 6337b9e3-2524-4292-8fc8-1f6aad6cfe05}

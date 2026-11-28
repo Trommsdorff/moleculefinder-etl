@@ -150,6 +150,7 @@ def build_comparisons(molecules: list[dict]) -> dict[str, dict]:
             continue
         seen[unordered] = key
         errors.extend(f"{key}: {e}" for e in _comparison_prose_errors(text))
+        errors.extend(f"{key}: {e}" for e in _ld50_token_errors(text, by_slug[a], by_slug[b]))
         errors.extend(f"{key}: {e}" for e in _answer_errors(answer, by_slug[a], by_slug[b]))
         names = entry.get("names") or {}
         errors.extend(f"{key}: {e}" for e in _names_errors(names, answer, by_slug[a], by_slug[b]))
@@ -180,6 +181,29 @@ _ADVICE_PATTERNS = (
     r"\btwice a day\b",
     r"\bbetter (?:choice|option) (?:for|if)\b", r"\bsafer to take\b",
 )
+
+
+# An LD50 in a comparison's text is written {ld50:<slug>} (trust review 2's findings, 2026-11-27): the web prints it
+# through its one LD50 phrase (web scripts/ld50-words.mjs: value, the "more than" qualifier, species, route in words and
+# the chemical form), so the text can never state the figure without a part, or a figure the record no longer holds.
+LD50_TOKEN = re.compile(r"\{ld50:([a-z0-9-]+)\}")
+_LD50_BY_HAND = re.compile(r"\d\s*mg/kg", re.IGNORECASE)
+
+
+def _ld50_token_errors(text: str, a: dict, b: dict) -> list[str]:
+    errors = []
+    if _LD50_BY_HAND.search(LD50_TOKEN.sub("", text)):
+        errors.append("an LD50 figure written by hand: write {ld50:<slug>}, which prints the record's one LD50 with "
+                      "its species, route and chemical form")
+    for slug in LD50_TOKEN.findall(text):
+        m = {a["slug"]: a, b["slug"]: b}.get(slug)
+        if m is None:
+            errors.append(f"{{ld50:{slug}}} names a molecule that is not one of the pair")
+        elif m.get("ld50_mg_per_kg") is None:
+            errors.append(f"{{ld50:{slug}}}: the record has no LD50")
+    if re.search(r"\{ld50(?![:][a-z0-9-]+\})", text):
+        errors.append("a malformed {ld50:...} token")
+    return errors
 
 
 def _comparison_prose_errors(text: str) -> list[str]:
