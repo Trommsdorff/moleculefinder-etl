@@ -15,6 +15,7 @@ import re
 
 import yaml
 
+from .weights import description_places, format_weight
 from .confidence import label_for
 from . import names, slugs, categories, hooks, structures, similarity, families, buckets, toxicity
 from . import ghs as ghs_wording
@@ -704,7 +705,7 @@ def _identity_clause(rec: dict) -> str:
     ident = rec["title"]
     formula, mw = rec.get("molecular_formula"), rec.get("molecular_weight")
     if formula and mw:
-        ident = f"{ident} ({formula}, {_fmt_num(mw)} g/mol)"
+        ident = f"{ident} ({formula}, {format_weight(mw, description_places(mw))} g/mol)"   # the one weight formatter
     elif formula:
         ident = f"{ident} ({formula})"
     return f"{ident} is {article} {phrase}" + (f" {bucket}." if bucket else ".")

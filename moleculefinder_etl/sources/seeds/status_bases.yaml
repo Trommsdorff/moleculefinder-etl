@@ -1,0 +1,62 @@
+# The status rule's recorded bases (transform/medicine_status.py; brief ../../../TRUST-3C-STATUS-AND-ROUNDING-PROMPT.md,
+# 2026-11-27). A medicine's page says "over the counter", "prescription" or both from the evidence in its record: its
+# licence record, the DailyMed labels MoleculeFinder carries, and the entries here. An entry is a side of the status
+# the record did not already hold, read from the PRIMARY source, never from memory or a secondary site:
+#
+#   kind: application   a Drugs@FDA product, read from the FDA's Drugs@FDA data files (www.fda.gov/media/89850,
+#                       US government work, public domain): the application as "NDA 012345", the product's name, its
+#                       holder and form, and its marketing status in the files ("Over-the-counter" or "Prescription";
+#                       "Discontinued" never counts). The source line links the application's Drugs@FDA overview page.
+#   kind: label         a DailyMed label (US National Library of Medicine, public domain) by set id and version, its
+#                       marketing category as the SPL states it (an NDA, ANDA or BLA; for the over-the-counter side
+#                       also an OTC monograph) and its marketing status (active). Each was matched to the molecule BY
+#                       CODE: the label's active ingredient's UNII resolves, in the FDA's UNII table, to the
+#                       molecule's own PubChem CID.
+#
+# `unsettled:` names a molecule whose two sides could not be settled from primary sources: its page is left as it is
+# (its group's line) and every run reports it. The build refuses an unknown field, a missing one, or a status that is
+# not the side's.
+
+budesonide:
+  otc:
+    - {kind: application, application: NDA 020746, product: Rhinocort Allergy, holder: Kenvue Brands, form: "SPRAY, METERED;NASAL", status: Over-the-counter, read: "2026-11-27"}
+mometasone:
+  otc:
+    - {kind: application, application: NDA 215712, product: Nasonex 24HR Allergy, holder: Perrigo Pharma Intl, form: "SPRAY, METERED;NASAL", status: Over-the-counter, read: "2026-11-27"}
+azelastine:
+  prescription:
+    - {kind: application, application: ANDA 077954, product: Azelastine Hydrochloride, holder: Apotex Inc, form: "SPRAY, METERED;NASAL", status: Prescription, read: "2026-11-27"}
+
+# OTC-list entries whose over-the-counter side the record did not hold (the list is not evidence by itself).
+chlorhexidine:
+  otc:
+    - {kind: application, application: NDA 017768, product: Hibiclens, holder: Molnlycke Hlth, form: "SOLUTION;TOPICAL", status: Over-the-counter, read: "2026-11-27"}
+esomeprazole:
+  otc:
+    - {kind: application, application: NDA 204655, product: Nexium 24HR, holder: AstraZeneca LP, form: "CAPSULE, DELAYED RELEASE;ORAL", status: Over-the-counter, read: "2026-11-27"}
+isopropyl-alcohol:
+  otc:
+    - {kind: application, application: NDA 210872, product: Zuragard, holder: Zurex Pharma, form: "SOLUTION;TOPICAL", status: Over-the-counter, read: "2026-11-27"}
+povidone-iodine:
+  otc:
+    - {kind: application, application: NDA 019522, product: Povidone Iodine, holder: Allegiance Hlthcare, form: "SOLUTION;TOPICAL", status: Over-the-counter, read: "2026-11-27"}
+bisacodyl:
+  otc:
+    - {kind: label, setid: f1e4b28a-ed74-4eff-bd10-b2bfaf7483b0, version: 8, product: Dulcolax Stimulant Laxative, labeler: "Chattem, Inc.", category: OTC MONOGRAPH DRUG, status: active, read: "2026-11-27"}
+brompheniramine:
+  otc:
+    - {kind: label, setid: 15c3570c-bd00-8e43-e063-6294a90a8683, version: 1, product: Dimetapp Cold and Allergy, labeler: Foundation Consumer Healthcare, category: OTC MONOGRAPH DRUG, status: active, read: "2026-11-27"}
+dimenhydrinate:
+  otc:
+    - {kind: label, setid: f9302a5a-295a-4501-9332-e3f5eb387362, version: 8, product: Dramamine Original Formula, labeler: Medtech Products Inc., category: OTC MONOGRAPH DRUG, status: active, read: "2026-11-27"}
+ephedrine:
+  otc:
+    - {kind: label, setid: 9a0b792a-caee-41f6-9400-922a5ebd592f, version: 2, product: Bronkaid Max, labeler: Foundation Consumer Healthcare LLC, category: OTC MONOGRAPH DRUG, status: active, read: "2026-11-27"}
+levomethamphetamine:
+  otc:
+    - {kind: label, setid: 3ec7309d-96e9-44f3-bb98-dbfba0c29c0a, version: 3, product: Sinu Inhaler, labeler: "NeilMed Pharmaceuticals, Inc.", category: OTC MONOGRAPH FINAL, status: active, read: "2026-11-27"}
+
+unsettled:
+  cyclizine: "Its licence record is the MHRA's (Valoid), which states no over-the-counter or prescription status; Drugs@FDA lists no cyclizine product marketed today."
+  hyoscine-butylbromide: "Its licence record is the MHRA's (Buscopan), which states no over-the-counter or prescription status; Drugs@FDA lists no hyoscine butylbromide product marketed today."
+  phenazopyridine: "No licence record (Drugs@FDA, the EMA and the MHRA list none), and its one label, Pyridium, is marketed as an unapproved drug."

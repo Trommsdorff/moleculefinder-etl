@@ -1,0 +1,160 @@
+{
+ "about": "The one weight formatter's cases (trust 3C, 2026-11-27): ETL transform/weights.py format_weight and web scripts/weight-words.mjs formatWeight must both give `shown`. decimals null = the record's own precision. Half up on the decimal value, never more precision than the record, trailing zeros dropped, thousands grouped. The web keeps a byte-identical copy (lib/weight-cases.json).",
+ "cases": [
+  {
+   "value": 286.5,
+   "decimals": 0,
+   "shown": "287"
+  },
+  {
+   "value": 360.5,
+   "decimals": 0,
+   "shown": "361"
+  },
+  {
+   "value": 406.5,
+   "decimals": 0,
+   "shown": "407"
+  },
+  {
+   "value": 434.5,
+   "decimals": 0,
+   "shown": "435"
+  },
+  {
+   "value": 1234.5,
+   "decimals": 0,
+   "shown": "1,235"
+  },
+  {
+   "value": 152.15,
+   "decimals": 0,
+   "shown": "152"
+  },
+  {
+   "value": 152.15,
+   "decimals": 2,
+   "shown": "152.15"
+  },
+  {
+   "value": 271.4,
+   "decimals": 2,
+   "shown": "271.4"
+  },
+  {
+   "value": 271.4,
+   "decimals": null,
+   "shown": "271.4"
+  },
+  {
+   "value": 342.3,
+   "decimals": 2,
+   "shown": "342.3"
+  },
+  {
+   "value": 804.9,
+   "decimals": 2,
+   "shown": "804.9"
+  },
+  {
+   "value": 194.19,
+   "decimals": 2,
+   "shown": "194.19"
+  },
+  {
+   "value": 194.19,
+   "decimals": null,
+   "shown": "194.19"
+  },
+  {
+   "value": 194.19,
+   "decimals": 0,
+   "shown": "194"
+  },
+  {
+   "value": 5808.0,
+   "decimals": null,
+   "shown": "5,808"
+  },
+  {
+   "value": 5808.0,
+   "decimals": 2,
+   "shown": "5,808"
+  },
+  {
+   "value": 1580.0,
+   "decimals": 0,
+   "shown": "1,580"
+  },
+  {
+   "value": 4.0026,
+   "decimals": 1,
+   "shown": "4"
+  },
+  {
+   "value": 4.0026,
+   "decimals": 2,
+   "shown": "4"
+  },
+  {
+   "value": 4.0026,
+   "decimals": null,
+   "shown": "4.0026"
+  },
+  {
+   "value": 7.0,
+   "decimals": 1,
+   "shown": "7"
+  },
+  {
+   "value": 6.94,
+   "decimals": 1,
+   "shown": "6.9"
+  },
+  {
+   "value": 9.012183,
+   "decimals": 1,
+   "shown": "9"
+  },
+  {
+   "value": 41.9881724,
+   "decimals": 2,
+   "shown": "41.99"
+  },
+  {
+   "value": 18.99840316,
+   "decimals": null,
+   "shown": "18.99840316"
+  },
+  {
+   "value": 2.675,
+   "decimals": 2,
+   "shown": "2.68"
+  },
+  {
+   "value": 1.005,
+   "decimals": 2,
+   "shown": "1.01"
+  },
+  {
+   "value": 180.16,
+   "decimals": 2,
+   "shown": "180.16"
+  },
+  {
+   "value": 46.07,
+   "decimals": 2,
+   "shown": "46.07"
+  },
+  {
+   "value": 100.0,
+   "decimals": 2,
+   "shown": "100"
+  },
+  {
+   "value": 0.5,
+   "decimals": 0,
+   "shown": "1"
+  }
+ ]
+}

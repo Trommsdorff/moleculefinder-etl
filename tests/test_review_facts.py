@@ -222,21 +222,31 @@ def test_label_status_found_and_not(snap):
     assert ("status", "two different values") in shapes(bad)
 
 
-def test_molecule_status_line_against_is_otc(snap):
-    rv = review(snap)
-    page = mol_page("Caffeine", "C8H10N4O2", "194.19", "<p>Sold over the counter, without a prescription.</p>")
-    assert ("status", "two different values") in shapes(run_page(rv, "/m/caffeine", page))
-    page = mol_page("Caffeine", "C8H10N4O2", "194.19", "<p>Dispensed on prescription, not sold on a shelf.</p>")
-    assert not [f for f in run_page(rv, "/m/caffeine", page) if f["fact"] == "status"]
-    # The third status (2026-11-27, ruling 4): sold both ways holds only where is_otc is true.
+def test_molecule_status_line_against_the_status_rule(snap):
+    """The line agrees only with the status the record's own evidence supports (trust 3C, 2026-11-27: the site and the
+    review read one rule, transform/medicine_status.py); a record with no status states none."""
+    rx = "<p>Dispensed on prescription, not sold on a shelf.</p>"
+    otc = "<p>Sold over the counter, without a prescription.</p>"
     both = "<p>Sold over the counter in some products and on prescription in others.</p>"
-    assert ("status", "two different values") in shapes(run_page(rv, "/m/caffeine", mol_page(
-        "Caffeine", "C8H10N4O2", "194.19", both)))
-    MOLS_OTC = facts.Truth(snap)
-    MOLS_OTC.recs["caffeine"]["is_otc"] = True
-    rv2 = facts.Review(MOLS_OTC, facts.load_differences())
-    assert not [f for f in run_page(rv2, "/m/caffeine", mol_page("Caffeine", "C8H10N4O2", "194.19", both))
-                if f["fact"] == "status"]
+    rv = review(snap)
+    assert ("status", "two different values") in shapes(run_page(rv, "/m/caffeine", mol_page("Caffeine", "C8H10N4O2", "194.19", rx)))
+    lic = {"kind": "licence", "register": "Drugs@FDA", "application": "NDA 000001"}
+    lab = {"kind": "label", "register": "DailyMed", "product": "Brand", "category": "OTC MONOGRAPH DRUG"}
+    t = facts.Truth(snap)
+    t.recs["caffeine"]["medicine_status"] = {"status": "prescription", "otc": [], "prescription": [lic]}
+    rv2 = facts.Review(t, facts.load_differences())
+    status = lambda html: [f for f in run_page(rv2, "/m/caffeine", mol_page("Caffeine", "C8H10N4O2", "194.19", html))
+                           if f["fact"] == "status"]
+    assert not status(rx) and status(otc) and status(both)
+    t.recs["caffeine"]["medicine_status"] = {"status": "both", "otc": [lab], "prescription": [lic]}
+    assert not status(both) and status(rx)
+    # a status field its own evidence does not support is found too
+    t.recs["caffeine"]["medicine_status"] = {"status": "both", "otc": [], "prescription": [lic]}
+    assert status(both)
+    # an unsettled medicine keeps its group's line
+    t.recs["caffeine"].update(scope_bucket="otc-medicine",
+                              medicine_status={"status": "otc", "otc": [], "prescription": [], "unsettled": "no basis"})
+    assert not status(otc) and status(rx)
 
 
 # ── 5. counts ───────────────────────────────────────────────────────────────────────────────────

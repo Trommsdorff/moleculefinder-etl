@@ -355,6 +355,44 @@ def parse_routes(xml: bytes) -> list[dict]:
     return [{"code": c, "name": n} for c, n in sorted(found.items(), key=lambda x: (x[1], x[0]))]
 
 
+# ── marketing category and status (the status rule, 2026-11-27) ─────────────────
+# What makes a label count as evidence that a molecule is sold over the counter or on prescription
+# (transform/medicine_status.py): the category each product on it is marketed under (NDA, ANDA, BLA,
+# an OTC monograph; or an unapproved drug, which is no marketing authorisation) and whether that
+# product's marketing is active today. Read from the same SPL document, cached beside the label under
+# the version it was read at, like the routes.
+def parse_marketing(xml: bytes) -> list[dict]:
+    """Each product the SPL describes, with its marketing category and status, in document order:
+    ``[{"product": "Percocet", "category": "ANDA", "code": "C73584", "application": "ANDA040330",
+    "status": "active"}]``. A part of a kit is not a product of its own here. A product with no
+    approval element has category ``""``; one with no marketing act has status ``""``."""
+    root = ET.fromstring(xml)
+    out: list[dict] = []
+    for subj in root.iter(f"{_NS}subject"):
+        mp = subj.find(f"{_NS}manufacturedProduct")
+        if mp is None:
+            continue
+        inner = mp.find(f"{_NS}manufacturedProduct")
+        name = _text(inner.find(f"{_NS}name")) if inner is not None else ""
+        category = code = application = status = ""
+        for so in mp.findall(f"{_NS}subjectOf"):
+            ap = so.find(f"{_NS}approval")
+            if ap is not None and not category:
+                c = ap.find(f"{_NS}code")
+                i = ap.find(f"{_NS}id")
+                category = _clean((c.get("displayName") or "") if c is not None else "").upper()
+                code = (c.get("code") or "") if c is not None else ""
+                application = _clean((i.get("extension") or "") if i is not None else "")
+            ma = so.find(f"{_NS}marketingAct")
+            if ma is not None and not status:
+                st = ma.find(f"{_NS}statusCode")
+                status = ((st.get("code") or "") if st is not None else "").lower()
+        if not (name or category or status):
+            continue
+        out.append({"product": name, "category": category, "code": code, "application": application, "status": status})
+    return out
+
+
 # ── network ───────────────────────────────────────────────────────────────────
 def _get_xml(setid: str) -> bytes | None:
     """One label's SPL bytes. None when DailyMed has no such set id (404: the label was withdrawn
@@ -404,3 +442,14 @@ def fetch_routes(setid: str) -> dict | None:
     version = ET.fromstring(xml).find(f"{_NS}versionNumber")
     v = version.get("value") if version is not None else None
     return {"version": int(v) if v and v.isdigit() else None, "routes": parse_routes(xml)}
+
+
+def fetch_marketing(setid: str) -> dict | None:
+    """One label's products with their marketing category and status, with the version they were read
+    at: ``{"version": 66, "products": [...]}``. None for a 404."""
+    xml = _get_xml(setid)
+    if xml is None:
+        return None
+    version = ET.fromstring(xml).find(f"{_NS}versionNumber")
+    v = version.get("value") if version is not None else None
+    return {"version": int(v) if v and v.isdigit() else None, "products": parse_marketing(xml)}

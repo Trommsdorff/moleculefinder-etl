@@ -27,7 +27,7 @@ from .config import (Settings, SEED_DIR, RAW_CACHE, CURATED_DIR, PUBCHEM_BATCH, 
 from .transform import canon as canon_stage
 from .transform import toxicity, ghs, assemble, leaderboards, relationships, featured, products, products_hold, findings
 from .transform import presence, claims, doors, drawings, drawing_guard
-from .transform import wikidata_age, ld50_hold
+from .transform import wikidata_age, ld50_hold, medicine_status
 from .sources import cache, fda_unii, pubchem
 from .load import supabase_loader, snapshot_export, snapshot_guard
 from . import freshness, inputs
@@ -44,6 +44,8 @@ DEFERRED = SEED_DIR / "deferred.json"
 # that failed, and why).
 PRODUCTS_STAGED = SEED_DIR / "products.json"
 PRODUCTS_GATE = SEED_DIR / "products_gate.json"
+# The status rule's run record (2026-11-27): every medicine's line, the unsettled, the labels that did not count.
+MEDICINE_STATUS_REPORT = SEED_DIR / "medicine_status.json"
 # Product comparisons (SEO run 2): the pairs whose two products both passed the gate, staged by
 # transform for export the same way, so the two files always come from one run.
 PRODUCT_PAIRS_STAGED = SEED_DIR / "product_pairs.json"
@@ -578,8 +580,16 @@ def stage_transform(settings: Settings) -> list[dict]:
                  report["passed"], report["seeded"], products.MIN_MOLECULES,
                  report["by_kind"], report["failed"], PRODUCTS_GATE.name, report["held"], len(pairs), len(pairs_seed))
     else:
+        passed = []
         PRODUCTS_STAGED.unlink(missing_ok=True)
         PRODUCT_PAIRS_STAGED.unlink(missing_ok=True)
+
+    # One rule for "over the counter", "prescription" or both (2026-11-27): every medicine's line and the evidence for
+    # each side, from its licence record, the labels above (each label's marketing category read from DailyMed) and
+    # status_bases.yaml. After the products, which it reads; refuses the build on an OTC-list entry with no basis.
+    listed, uses_only = relationships.otc_listed(kept)
+    status_report = medicine_status.attach(kept, passed, products.marketing_for, listed, uses_only)
+    MEDICINE_STATUS_REPORT.write_text(json.dumps(status_report, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
 
     MOLECULES.write_text(json.dumps(kept, ensure_ascii=False))
     DEFERRED.write_text(json.dumps([{"cid": r["cid"], "slug": r["slug"], "title": r["title"]} for r in deferred],

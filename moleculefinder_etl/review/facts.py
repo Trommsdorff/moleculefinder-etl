@@ -77,6 +77,7 @@ from pathlib import Path
 
 import yaml
 
+from ..transform import medicine_status
 from . import drawings as shared
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -1041,10 +1042,26 @@ def check_licence(rv: Review, slug: str, page: Page) -> None:
     # The third status (2026-11-27, ruling 4): sold both ways, which holds only where is_otc is true.
     both = bool(re.search(r"Sold over the counter in some products and on prescription in others", text))
     if otc or rx or both:
-        said = "both ways" if both else "over the counter" if otc else "prescription"
-        rv.check("status", "molecule page status line", "the record's is_otc", slug, page.path,
-                 None if (otc or both) == bool(r.get("is_otc")) else "two different values",
-                 f"the page says {said}, is_otc {r.get('is_otc')}")
+        said = "both" if both else "otc" if otc else "prescription"
+        want = record_status(r)
+        words = {"both": "both ways", "otc": "over the counter", "prescription": "prescription", None: "nothing"}
+        rv.check("status", "molecule page status line", "the status rule on the record", slug, page.path,
+                 None if said == want else "two different values",
+                 f"the page says {words[said]}, the record's evidence says {words.get(want, want)}")
+
+
+def record_status(r: dict) -> str | None:
+    """The line the record supports, by the site's own rule (transform/medicine_status.py, 2026-11-27): decided again
+    here from the evidence the record carries for each side, so a record whose status field disagrees with its own
+    evidence is found too. An unsettled medicine keeps its group's line. An unapproved drug's label is never evidence
+    (the rule leaves it off the record), so it cannot make the review report a line the rule chose."""
+    st = r.get("medicine_status")
+    if not isinstance(st, dict):
+        return None
+    if st.get("unsettled"):
+        return medicine_status.GROUP_STATUS.get(r.get("scope_bucket") or "")
+    decided = medicine_status.decide(st.get("otc") or [], st.get("prescription") or [])
+    return decided if decided == st.get("status") else f"{st.get('status')} (but its evidence says {decided})"
 
 
 # ── fact 5: counts ──────────────────────────────────────────────────────────────────────────────
