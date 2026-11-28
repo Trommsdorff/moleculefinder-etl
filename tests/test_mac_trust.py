@@ -46,6 +46,11 @@ def test_the_facts_job_is_clear_of_the_news_slot_and_after_the_drawing_job():
     assert JOBS["facts"]["Hour"] * 60 + JOBS["facts"]["Minute"] <= 7 * 60 + 50 - 60   # an hour before 07:50
 
 
+def test_the_findings_job_takes_origin_mains_script_only_once_it_names_the_review():
+    cmd = plistlib.loads((ROOT / "scripts" / "mac" / "com.137finder.moleculefinder.trust-findings.plist").read_bytes())["ProgramArguments"][-1]
+    assert 'grep -q "^ *findings)"' in cmd                         # origin/main's copy predates the review until the push
+
+
 def test_the_findings_job_follows_the_facts_job_and_is_clear_of_the_news_slot():
     at = lambda r: JOBS[r]["Hour"] * 60 + JOBS[r]["Minute"]
     assert at("findings") > at("facts") + 5                       # the facts review's Tuesday full read: about 5.3 min
