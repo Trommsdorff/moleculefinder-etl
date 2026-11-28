@@ -6,11 +6,17 @@
 #             Eastern; on Tuesdays it reads every sitemap address
 #   findings  review 5, findings arithmetic (2026-11-28; brief ../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md), daily 06:55
 #             Eastern: every findings address, its CSV and JSON, every label page it links, recomputed from the labels
+#   sources   review 4, the source check (2026-11-28; brief ../TRUST-5-SOURCE-CHECK-PROMPT.md), daily 08:15 Eastern, after
+#             the 07:50 news job: every source a page cites still says it (DailyMed, Drugs@FDA, the EMA, PubChem,
+#             Wikidata, the dataset's mirrors, the door photographs); on Tuesdays everything. Its requests to those
+#             sources are its own, paced per host, one per address, within a per-run budget per host
 #
 # WHAT IT DOES: runs `python -m moleculefinder_etl.review.<review>`, which reads the snapshot main holds, the seeds and
 # pages of the live site, and writes its report to ~/137/moleculefinder/trust-reports/ (<review>-<date>.md and .json,
 # the heartbeat <review>-last-run.json, and QUEUE.md for a finding class seen on two consecutive runs). That is ALL it
-# writes. It commits nothing, pushes nothing, deploys nothing, loads no database key and asks PubChem nothing.
+# writes (the source check also keeps its own cache of the two regulators' data files, trust-sources-cache in the
+# state folder, never the build's). It commits nothing, pushes nothing, deploys nothing and loads no database key; only
+# the source check asks PubChem anything (read-only, paced under PubChem's published limit, counted in its report).
 #
 # IT NEVER GETS IN ANYONE'S WAY. It takes only its own lock (trust-<review>.lock); no other job reads it. It runs the
 # review as a module, never through `mfetl`, so the weekly refresh's check for another build
@@ -35,6 +41,7 @@
 #          scripts/mac/trust-review.sh drawings --no-live  skip the live site (check 9)
 #          scripts/mac/trust-review.sh facts --full        read every sitemap address (the Tuesday read), any day
 #          scripts/mac/trust-review.sh facts --sample      the pinned set and the day's sample, even on a Tuesday
+#          scripts/mac/trust-review.sh sources --full      the source check's Tuesday read, any day (--sample likewise)
 #          scripts/mac/trust-review.sh <review> --out DIR  write the report elsewhere (a test)
 set -uo pipefail
 
@@ -51,7 +58,8 @@ case "$REVIEW" in
   drawings) NEXT_START="06:30 tomorrow"; LIMIT_SECONDS=1800 ;;   # about a minute; stopped at 30
   facts)    NEXT_START="06:45 tomorrow"; LIMIT_SECONDS=3600 ;;   # a few minutes; the Tuesday full read about 10
   findings) NEXT_START="06:55 tomorrow"; LIMIT_SECONDS=1800 ;;   # about half a minute; stopped at 30
-  *) echo "usage: trust-review.sh drawings|facts|findings [options]" >&2; exit 2 ;;
+  sources)  NEXT_START="08:15 tomorrow"; LIMIT_SECONDS=3600 ;;   # about two minutes; the Tuesday full read about 10
+  *) echo "usage: trust-review.sh drawings|facts|findings|sources [options]" >&2; exit 2 ;;
 esac
 LOCK="$STATE_DIR/trust-$REVIEW.lock"                       # this job's alone
 WEEKLY_LOCK="$STATE_DIR/running.lock"                      # weekly-refresh.sh
@@ -69,7 +77,7 @@ export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="credential.helper" GIT_CONFIG_VALUE_
 LIVE=(); while [ $# -gt 0 ]; do
   case "$1" in
     --no-live) [ "$REVIEW" = drawings ] || { echo "--no-live is the drawing review's" >&2; exit 2; }; LIVE=(--no-live) ;;
-    --full|--sample) [ "$REVIEW" = facts ] || { echo "$1 is the facts review's" >&2; exit 2; }; LIVE=("$1") ;;
+    --full|--sample) case "$REVIEW" in facts|sources) ;; *) echo "$1 is the facts and sources reviews'" >&2; exit 2 ;; esac; LIVE=("$1") ;;
     --out) OUT="${2:?--out needs a folder}"; shift ;;
     *) echo "unknown option $1" >&2; exit 2 ;;
   esac
@@ -163,12 +171,13 @@ git -C "$CHECKOUT" clean -fdxq
 say "code and snapshot: $REF $(git -C "$CHECKOUT" log -1 --format='%h %cd %s' --date=format:'%F %H:%M' | cut -c1-110)"
 
 # ── the review (read only; no database key; not through mfetl) ──
+CACHE_ARG=(); [ "$REVIEW" = sources ] && CACHE_ARG=(--cache "$STATE_DIR/trust-sources-cache")   # its own cache, never the build's
 [ -x "$VENV/bin/python" ] || fail "no Python environment at $(echo "$VENV" | tilde) (the weekly job builds it from uv.lock)"
 cd "$CHECKOUT" || fail "cannot enter the checkout"
 say "── the review: python -m moleculefinder_etl.review.$REVIEW ${LIVE[*]:-} --out $(echo "$OUT" | tilde)"
 env SUPABASE_URL= SUPABASE_SERVICE_KEY= SUPABASE_DB_URL= PYTHONDONTWRITEBYTECODE=1 \
   /usr/bin/perl -e 'alarm shift; exec @ARGV' "$LIMIT_SECONDS" \
-  "$VENV/bin/python" -m "moleculefinder_etl.review.$REVIEW" ${LIVE[@]+"${LIVE[@]}"} --out "$OUT" &
+  "$VENV/bin/python" -m "moleculefinder_etl.review.$REVIEW" ${LIVE[@]+"${LIVE[@]}"} ${CACHE_ARG[@]+"${CACHE_ARG[@]}"} --out "$OUT" &
 pid=$!; wait "$pid"; rc=$?
 git -C "$CHECKOUT" clean -fdxq
 case "$rc" in

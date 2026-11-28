@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- MoleculeFinder's source check on the Mac mini (trust review 4, 2026-11-28; docs/MAC-TRUST-REVIEWS.md section 7;
+     brief ../TRUST-5-SOURCE-CHECK-PROMPT.md).
+     Source of truth: moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.trust-sources.plist; the installed
+     copy is ~/Library/LaunchAgents/com.137finder.moleculefinder.trust-sources.plist.
+     It runs ORIGIN/MAIN's scripts/mac/trust-review.sh (shared by the trust reviews) with the argument `sources`, from
+     the job's own clone of the public repository (fetched here, then copied beside the state files as
+     trust-review-sources.sh), as the other reviews do. Until origin/main's copy of the script names `sources` (before
+     Garrett's push of the branch that added it) it takes the interactive repository's local main's copy, read only.
+     Fires every day at 08:15 Eastern: 25 minutes after the 07:50 news job starts (the script waits for it if it is still
+     running), after the other three reviews (06:30, 06:45, 06:55), after Monday's 03:10 weekly refresh (its Monday
+     retries are at :10 past the even hours; the script waits for one that is running), and on no other job's minute
+     (~/Library/LaunchAgents read 2026-11-28: MoleculeFinder weekly Monday 03:10 and retries 06:10 to 18:10, news :50,
+     trust 06:30, 06:45, 06:55; PolitiFinder 05:10 and 08:30; ThePatentFinder 00:30, 12:15, 15:15 and others; nothing
+     at 08:15). Its requests to the sources are paced per host and budgeted per run (review/sources.py HOSTS, BUDGET).
+     launchd, not cron: a start missed while the Mac slept fires once at the next wake. It only reads, so a late or a
+     manual run (launchctl kickstart) is harmless. The fetch uses no credential helper and gives up after 60 s.
+     A change here takes effect only when the installed copy is replaced and the agent reloaded (the runbook says how). -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.137finder.moleculefinder.trust-sources</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-c</string>
+    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/trust-checkout"; S=scripts/mac/trust-review.sh; F="$D/trust-review-sources.sh"; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; fi; { /opt/homebrew/bin/git -C "$C" show origin/main:$S 2&gt;/dev/null | /usr/bin/grep -q "^ *sources)" &amp;&amp; /opt/homebrew/bin/git -C "$C" show origin/main:$S || /opt/homebrew/bin/git -C "$R" show main:$S; } &gt; "$F.tmp" &amp;&amp; [ -s "$F.tmp" ] &amp;&amp; mv "$F.tmp" "$F"; rm -f "$F.tmp"; exec /bin/bash "$F" sources</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>15</integer></dict>
+  <key>ExitTimeOut</key><integer>30</integer>
+  <key>StandardOutPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd-trust-sources.log</string>
+  <key>StandardErrorPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd-trust-sources.log</string>
+</dict>
+</plist>

@@ -19,7 +19,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "mac" / "trust-review.sh"
 WEEKLY = ROOT / "scripts" / "mac" / "weekly-refresh.sh"
-JOBS = {"drawings": {"Hour": 6, "Minute": 30}, "facts": {"Hour": 6, "Minute": 45}, "findings": {"Hour": 6, "Minute": 55}}
+JOBS = {"drawings": {"Hour": 6, "Minute": 30}, "facts": {"Hour": 6, "Minute": 45}, "findings": {"Hour": 6, "Minute": 55},
+        "sources": {"Hour": 8, "Minute": 15}}
 
 
 def _code(text: str) -> str:
@@ -57,6 +58,14 @@ def test_the_findings_job_follows_the_facts_job_and_is_clear_of_the_news_slot():
     assert at("findings") <= 7 * 60 + 50 - 30                     # half an hour before 07:50 (it takes about half a minute)
 
 
+def test_the_source_job_runs_after_the_news_job_and_takes_origin_mains_script_only_once_it_names_it():
+    at = JOBS["sources"]["Hour"] * 60 + JOBS["sources"]["Minute"]
+    assert 7 * 60 + 50 + 15 <= at < 9 * 60                        # clear of the 07:50 news slot by 15 minutes or more
+    cmd = plistlib.loads((ROOT / "scripts" / "mac" / "com.137finder.moleculefinder.trust-sources.plist").read_bytes())["ProgramArguments"][-1]
+    assert 'grep -q "^ *sources)"' in cmd
+    assert 'CACHE_ARG=(--cache "$STATE_DIR/trust-sources-cache")' in CODE and "raw_cache" not in CODE
+
+
 def test_the_review_runs_as_a_module_the_weekly_build_check_never_matches():
     m = re.search(r"pgrep -f '([^']+)'", WEEKLY.read_text())
     assert m, "the weekly refresh's check for another build moved"
@@ -85,7 +94,7 @@ def test_it_takes_only_its_own_lock_and_waits_for_the_others():
 
 
 def test_it_reads_only():
-    for word in ("git push", "git commit", "gh ", "with_keys.py", "osascript", "curl "):
+    for word in ("git push", "git commit", "gh ", "with_keys.py", "osascript", "curl ", "raw_cache"):
         assert word not in CODE, word
     assert "SUPABASE_URL= SUPABASE_SERVICE_KEY= SUPABASE_DB_URL=" in CODE
 

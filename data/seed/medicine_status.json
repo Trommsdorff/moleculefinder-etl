@@ -1,4 +1,7 @@
 {
+ "exceptions": {
+  "phenazopyridine": "ruled 2026-11-28: the Pyridium label, unapproved drug other"
+ },
  "not_counted": {
   "alprazolam": [
    "the Xanax label (no product on it is marketed today)"
@@ -304,7 +307,7 @@
   "pembrolizumab": "prescription",
   "pentobarbital": "prescription",
   "pethidine": "prescription",
-  "phenazopyridine": "otc",
+  "phenazopyridine": "unapproved",
   "phenibut": "prescription",
   "phenobarbital": "prescription",
   "phentermine": "prescription",
@@ -418,7 +421,6 @@
   "nefopam": "no over-the-counter or prescription basis in the record",
   "nitrazepam": "no over-the-counter or prescription basis in the record",
   "oxymetholone": "no over-the-counter or prescription basis in the record",
-  "phenazopyridine": "No licence record (Drugs@FDA, the EMA and the MHRA list none), and its one label, Pyridium, is marketed as an unapproved drug.",
   "phenibut": "no over-the-counter or prescription basis in the record",
   "piracetam": "no over-the-counter or prescription basis in the record",
   "rilmenidine": "no over-the-counter or prescription basis in the record",

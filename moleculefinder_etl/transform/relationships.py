@@ -444,11 +444,67 @@ def is_regulator_url(url: str) -> bool:
     return u.scheme == "https" and any(host == h or host.endswith("." + h) for h in REGULATOR_HOSTS)
 
 
-def load_approvals() -> dict:
-    """approvals.yaml as written: {slug: entry}."""
+def _approvals_raw() -> dict:
     if not APPROVALS_YAML.exists():
         return {}
     return yaml.safe_load(APPROVALS_YAML.read_text()) or {}
+
+
+def load_approvals() -> dict:
+    """approvals.yaml's licence entries: {slug: entry}. An entry that is only a ruled exception (no regulator: the
+    molecule holds no licence, phenazopyridine 2026-11-28) is not a licence and is left out; ``ruled_exceptions``
+    reads it."""
+    return {s: e for s, e in _approvals_raw().items() if (e or {}).get("regulator") or not (e or {}).get("exception")}
+
+
+# ── Ruled exceptions to the approved-medicine rule (the ONE place they are recorded) ───────────────────────────────
+# A molecule Garrett ruled stays live although the approved-medicine rule's check cannot confirm a current marketing
+# authorisation for it from a regulator's data file. Each is an `exception:` mapping on its approvals.yaml entry:
+#   ruled: YYYY-MM-DD   by: who ruled   why: the ruling in a line
+#   marketed: unapproved   (only for a molecule sold with no marketing authorisation at all; its page's status line
+#                           then says so, from the label below: transform/medicine_status.py, the fourth outcome)
+#   label: {product, setid, version, category, read}   (with `marketed: unapproved`: the DailyMed label it is sold under,
+#                           and its marketing category quoted exactly as the label states it)
+# The approved-medicine rule, the status rule and the source review's check 3 (review/sources.py) all read this.
+_EXCEPTION_FIELDS = {"ruled", "by", "why", "marketed", "label"}
+_EXCEPTION_LABEL_FIELDS = {"product", "setid", "version", "category", "read"}
+
+
+def ruled_exceptions() -> dict[str, dict]:
+    """{slug: exception} from approvals.yaml. A malformed exception stops the build (SystemExit), naming every problem."""
+    out: dict[str, dict] = {}
+    problems: list[str] = []
+    for slug, entry in _approvals_raw().items():
+        ex = (entry or {}).get("exception")
+        if ex is None:
+            continue
+        if not isinstance(ex, dict):
+            problems.append(f"{slug}: exception must be a mapping")
+            continue
+        extra = sorted(set(ex) - _EXCEPTION_FIELDS)
+        missing = sorted(k for k in ("ruled", "by", "why") if not ex.get(k))
+        if extra:
+            problems.append(f"{slug}: exception has unknown field(s) {extra}")
+        if missing:
+            problems.append(f"{slug}: exception needs {missing}")
+        if not re.fullmatch(r"\d{4}-\d\d-\d\d", str(ex.get("ruled") or "")):
+            problems.append(f"{slug}: exception's ruled must be YYYY-MM-DD")
+        if ex.get("marketed") not in (None, "unapproved"):
+            problems.append(f"{slug}: exception's marketed may only be 'unapproved'")
+        lab = ex.get("label")
+        if ex.get("marketed") == "unapproved":
+            if not isinstance(lab, dict) or set(lab) != _EXCEPTION_LABEL_FIELDS or not all(lab.get(k) for k in _EXCEPTION_LABEL_FIELDS):
+                problems.append(f"{slug}: an exception marketed unapproved names its label: {sorted(_EXCEPTION_LABEL_FIELDS)}")
+            elif not isinstance(lab.get("version"), int) or not str(lab.get("category")).lower().startswith("unapproved"):
+                problems.append(f"{slug}: the label's version is its number and its category says unapproved")
+        elif lab is not None:
+            problems.append(f"{slug}: only an exception marketed unapproved names a label")
+        if not (entry or {}).get("regulator") and ex.get("marketed") != "unapproved":
+            problems.append(f"{slug}: an exception with no licence (no regulator) must be marketed: unapproved")
+        out[str(slug)] = {k: (dict(v) if isinstance(v, dict) else str(v)) for k, v in ex.items()}
+    if problems:
+        raise SystemExit("approvals.yaml exceptions refused:\n  " + "\n  ".join(problems))
+    return out
 
 
 def attach_approvals(molecules: list[dict]) -> None:
@@ -463,10 +519,12 @@ def attach_approvals(molecules: list[dict]) -> None:
     errors = []
     for slug, entry in data.items():
         entry = entry or {}
+        if set(entry) == {"exception"}:
+            continue                    # a ruled exception with no licence: no approval record (the status rule checks it)
         if slug not in by_slug:
             errors.append(f"{slug}: unknown slug")
             continue
-        extra = sorted(set(entry) - set(_APPROVAL_FIELDS))
+        extra = sorted(set(entry) - set(_APPROVAL_FIELDS) - {"exception"})
         if extra:
             errors.append(f"{slug}: unknown field(s) {extra}")
         if not entry.get("regulator") or not entry.get("basis"):

@@ -4,22 +4,22 @@
 # reported the first day it is seen, at the top of the report and in QUEUE.md.
 #
 # Each figure: `value` (and `of`, its denominator) as it was told; `data`/`of_data`, where it lives in the finding's
-# totals; `confirmed`, whether a FILE holds the figure as sent (never guessed), with the `evidence`. The emails' own text
-# is not in any file in the folder (they were written in Gmail): a figure the tracker does not name is recorded as the
-# number the linked page printed that morning, and marked unconfirmed. `baseline` is the labels as they stood when the
-# emails went out, so a moved number can be explained label by label.
+# totals; `confirmed`, whether the figure as sent is confirmed (never guessed), with the `evidence`. On 2026-11-28 Cowork
+# read the emails themselves in Gmail (brief ../TRUST-5-SOURCE-CHECK-PROMPT.md, section B): every one states the same
+# figures, so all of them are confirmed. A figure may also name labels (`value` a sorted list of slugs, `names` as told).
+# `baseline` is the labels as they stood when the emails went out, so a moved number can be explained label by label.
 #
 # The contacts themselves (names, addresses) stay in the private tracker, ../outreach/moleculefinder-backlink-outreach.xlsx
 # (sheet Tracker, rows 37 to 41, items #36 to #40). This repository is public: outlets only here.
 # Add a pitch when one is sent; never edit a sent figure.
-read: "2026-11-28"
+read: "2026-11-28"          # the emails read in Gmail by Cowork, 2026-11-28
 pitches:
   - id: dyes-2026-11-23
     finding: dyes-in-medicines
     page: /findings/dyes-in-medicines
     sent: "2026-11-23"
-    to: "STAT, AP, TechTarget Pharma Life Sciences, Consumer Reports, The People's Pharmacy (five emails)"
-    how: "Sent by Garrett, scheduled send Monday morning 2026-11-23, each linking https://moleculefinder.com/findings/dyes-in-medicines (tracker, confirmed in Sent); one follow-up due 2026-12-02"
+    to: "STAT, TechTarget Pharma Life Sciences, Consumer Reports, The People's Pharmacy (four delivered; the fifth, to AP, was rejected by AP's mail server at 16:47 UTC and never delivered)"
+    how: "Sent by Garrett 2026-11-23 16:46 UTC from MoleculeFinder's own address, five emails, each linking https://moleculefinder.com/findings/dyes-in-medicines (read in Sent by Cowork 2026-11-28); AP's bounced at 16:47 UTC, so four recipients; one follow-up due 2026-12-02"
     baseline: pitched/dyes-in-medicines-2026-11-23.json
     figures:
       - id: headline
@@ -36,19 +36,44 @@ pitches:
         of: 116
         data: any_of_six.otc
         of_data: labels.otc
-        confirmed: false
-        evidence: "not in the tracker or any file as sent; the linked page printed it on 2026-11-23 (ETL ad2d868) and TRAFFIC-BOARD.md records it as the finding's number"
+        confirmed: true
+        evidence: "the emails' own text (all five state it), read in Gmail by Cowork 2026-11-28; it was unconfirmed until then (the page printed it on 2026-11-23, ETL ad2d868)"
       - id: prescription
         words: "65 of the 184 prescription labels"
         value: 65
         of: 184
         data: any_of_six.prescription
         of_data: labels.prescription
-        confirmed: false
-        evidence: "not in the tracker or any file as sent; the linked page printed it on 2026-11-23 (ETL ad2d868) and TRAFFIC-BOARD.md records it as the finding's number"
+        confirmed: true
+        evidence: "the emails' own text (all five state it), read in Gmail by Cowork 2026-11-28; it was unconfirmed until then (the page printed it on 2026-11-23, ETL ad2d868)"
       - id: red 3
         words: "four labels list FD&C Red No. 3"
         value: 4
         data: red_3.labels
         confirmed: true
-        evidence: "tracker row 37 (#36, STAT): 'four Red No. 3 labels'"
+        evidence: "tracker row 37 (#36, STAT): 'four Red No. 3 labels'; the emails' own text, read 2026-11-28"
+      - id: blue 1
+        words: "Blue 1 on 53 labels"
+        value: 53
+        data: by_dye.blue-1.labels
+        confirmed: true
+        evidence: "the emails' own text (all five state it), read in Gmail by Cowork 2026-11-28"
+      - id: red 40
+        words: "Red 40 on 45 labels"
+        value: 45
+        data: by_dye.red-40.labels
+        confirmed: true
+        evidence: "the emails' own text (all five state it), read in Gmail by Cowork 2026-11-28"
+      - id: yellow 6
+        words: "Yellow 6 on 45 labels"
+        value: 45
+        data: by_dye.yellow-6.labels
+        confirmed: true
+        evidence: "the emails' own text (all five state it), read in Gmail by Cowork 2026-11-28"
+      - id: red 3 labels
+        words: "four prescription labels list Red No. 3: Inderal LA, Restoril, Vraylar, Vyvanse"
+        value: [inderal-la, restoril, vraylar, vyvanse]
+        names: [Inderal LA, Restoril, Vraylar, Vyvanse]
+        data: red_3.slugs
+        confirmed: true
+        evidence: "the emails' own text (all five name the four), read in Gmail by Cowork 2026-11-28"

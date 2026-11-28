@@ -26,6 +26,10 @@ meldonium:
 phenibut:
   regulator: State Agency of Medicines of Latvia
   basis: Latvian national licence; stays live exactly as meldonium qualifies (Garrett ruling, 2026-10-18). Not to be raised again.
+  exception:   # a ruled exception (see the note above phenazopyridine below): the source review's check 3 does not report it
+    ruled: "2026-10-18"
+    by: Garrett (the approved-medicine rule's ruling; CLAUDE.md "Phenibut and flunitrazepam stay")
+    why: Stays live on its Latvian national licence, which no regulator's data file the review reads can confirm. Not to be raised again.
 
 clenbuterol:
   regulator: National regulators of EU member states
@@ -45,6 +49,25 @@ flunitrazepam:
   basis: Italian national licence, administrative status A (authorised), marketed, not revoked or suspended, special prescription (RMR); confirmed 2026-10-18 from AIFA's medicines database. Spain's AEMPS register (CIMA) lists no flunitrazepam product.
   source: https://api.aifa.gov.it/aifa-bdf-eif-be/1.0.0/formadosaggio/ricerca?query=flunitrazepam
   label: https://medicinali.aifa.gov.it/
+  exception:
+    ruled: "2026-10-18"
+    by: Garrett (the approved-medicine rule's ruling; CLAUDE.md "Phenibut and flunitrazepam stay")
+    why: Stays live on its Italian national licence (AIFA), read by hand on 2026-10-18; not to be raised again.
+
+# ── RULED EXCEPTIONS (one place). An `exception:` on an entry records a molecule Garrett ruled stays live although
+# the approved-medicine rule's check cannot confirm a current authorisation from a regulator's data file: phenibut and
+# flunitrazepam (2026-10-18) above, phenazopyridine (2026-11-28) below. The approved-medicine rule, the status rule
+# (transform/medicine_status.py) and the source review's check 3 (review/sources.py) read them through
+# relationships.ruled_exceptions(); none reports one as a finding. `marketed: unapproved` (with the label it is sold
+# under, its marketing category quoted as the label states it) gives the page the fourth status line, "Sold in the
+# United States without FDA approval.", and is allowed only on an entry that holds no licence.
+phenazopyridine:
+  exception:
+    ruled: "2026-11-28"
+    by: Garrett (brief TRUST-5-SOURCE-CHECK-PROMPT.md, section D)
+    why: No marketing authorisation from any regulator the approved-medicine rule names (Drugs@FDA, the EMA and the MHRA list none); its one DailyMed label, Pyridium, is an unapproved drug's. The page stays, as a ruled exception, and says so truthfully.
+    marketed: unapproved
+    label: {product: Pyridium, setid: 165d01d4-a9f7-2293-e054-00144ff8d46c, version: 15, category: unapproved drug other, read: "2026-11-28"}
 
 # ── Phase 3B, the personal-care tranche (batch 2026-11-care; Garrett's ruling, 2026-11-09, question 6 of the
 # everyday chemistry plan: an FDA OTC monograph counts as a current authorisation). Products with these actives are

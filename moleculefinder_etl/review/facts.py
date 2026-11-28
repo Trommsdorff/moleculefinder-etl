@@ -77,7 +77,7 @@ from pathlib import Path
 
 import yaml
 
-from ..transform import medicine_status
+from ..transform import medicine_status, relationships
 from . import drawings as shared
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -1041,10 +1041,13 @@ def check_licence(rv: Review, slug: str, page: Page) -> None:
     rx = bool(re.search(r"Dispensed on prescription, not sold on a shelf", text))
     # The third status (2026-11-27, ruling 4): sold both ways, which holds only where is_otc is true.
     both = bool(re.search(r"Sold over the counter in some products and on prescription in others", text))
-    if otc or rx or both:
-        said = "both" if both else "otc" if otc else "prescription"
+    # The fourth (2026-11-28, Garrett's ruling D): a ruled exception marketed unapproved (approvals.yaml exception:).
+    unapproved = bool(re.search(r"Sold in the United States without FDA approval", text))
+    if otc or rx or both or unapproved:
+        said = "unapproved" if unapproved else "both" if both else "otc" if otc else "prescription"
         want = record_status(r)
-        words = {"both": "both ways", "otc": "over the counter", "prescription": "prescription", None: "nothing"}
+        words = {"both": "both ways", "otc": "over the counter", "prescription": "prescription",
+                 "unapproved": "sold without FDA approval", None: "nothing"}
         rv.check("status", "molecule page status line", "the status rule on the record", slug, page.path,
                  None if said == want else "two different values",
                  f"the page says {words[said]}, the record's evidence says {words.get(want, want)}")
@@ -1060,6 +1063,12 @@ def record_status(r: dict) -> str | None:
         return None
     if st.get("unsettled"):
         return medicine_status.GROUP_STATUS.get(r.get("scope_bucket") or "")
+    if st.get("status") == medicine_status.UNAPPROVED:
+        # only a ruled exception recorded as marketed unapproved, with its label's own category, may say it
+        ex = relationships.ruled_exceptions().get(r.get("slug") or "") or {}
+        ok = ex.get("marketed") == medicine_status.UNAPPROVED and (st.get("exception") or {}).get("label") \
+            and not (st.get("otc") or st.get("prescription"))
+        return medicine_status.UNAPPROVED if ok else "unapproved (but no ruled exception records it)"
     decided = medicine_status.decide(st.get("otc") or [], st.get("prescription") or [])
     return decided if decided == st.get("status") else f"{st.get('status')} (but its evidence says {decided})"
 
