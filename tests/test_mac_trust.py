@@ -19,7 +19,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "mac" / "trust-review.sh"
 WEEKLY = ROOT / "scripts" / "mac" / "weekly-refresh.sh"
-JOBS = {"drawings": {"Hour": 6, "Minute": 30}, "facts": {"Hour": 6, "Minute": 45}}
+JOBS = {"drawings": {"Hour": 6, "Minute": 30}, "facts": {"Hour": 6, "Minute": 45}, "findings": {"Hour": 6, "Minute": 55}}
 
 
 def _code(text: str) -> str:
@@ -46,6 +46,12 @@ def test_the_facts_job_is_clear_of_the_news_slot_and_after_the_drawing_job():
     assert JOBS["facts"]["Hour"] * 60 + JOBS["facts"]["Minute"] <= 7 * 60 + 50 - 60   # an hour before 07:50
 
 
+def test_the_findings_job_follows_the_facts_job_and_is_clear_of_the_news_slot():
+    at = lambda r: JOBS[r]["Hour"] * 60 + JOBS[r]["Minute"]
+    assert at("findings") > at("facts") + 5                       # the facts review's Tuesday full read: about 5.3 min
+    assert at("findings") <= 7 * 60 + 50 - 30                     # half an hour before 07:50 (it takes about half a minute)
+
+
 def test_the_review_runs_as_a_module_the_weekly_build_check_never_matches():
     m = re.search(r"pgrep -f '([^']+)'", WEEKLY.read_text())
     assert m, "the weekly refresh's check for another build moved"
@@ -57,7 +63,8 @@ def test_the_review_runs_as_a_module_the_weekly_build_check_never_matches():
 
 
 def test_it_names_only_the_known_reviews():
-    assert re.search(r"^\s*drawings\)", CODE, re.MULTILINE) and re.search(r"^\s*facts\)", CODE, re.MULTILINE)
+    for review in JOBS:
+        assert re.search(rf"^\s*{review}\)", CODE, re.MULTILINE), review
     r = subprocess.run(["/bin/bash", str(SCRIPT), "everything"], capture_output=True, text=True, timeout=30,
                        check=False)
     assert r.returncode == 2 and "usage" in r.stderr

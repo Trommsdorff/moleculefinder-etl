@@ -1,0 +1,2438 @@
+{
+ "what": "The dyes finding labels as they stood when the pitch emails were sent (Monday 2026-11-23): data/snapshots/findings/dyes-in-medicines.json at ETL ad2d868 (etl: refresh 2026-11-23, 03:26 Eastern), the snapshot the site served that morning. Written 2026-11-28 by the findings review brief (TRUST-4); never edited.",
+ "etl_commit": "ad2d868",
+ "snapshot_refreshed": "2026-11-23",
+ "totals": {
+  "labels": {
+   "labels": 300,
+   "otc": 116,
+   "prescription": 184
+  },
+  "any_of_six": {
+   "labels": 112,
+   "otc": 47,
+   "prescription": 65
+  },
+  "red_3": {
+   "labels": 4,
+   "otc": 0,
+   "prescription": 4,
+   "slugs": [
+    "inderal-la",
+    "restoril",
+    "vraylar",
+    "vyvanse"
+   ]
+  }
+ },
+ "labels": {
+  "abilify": {
+   "setid": "c040bd1d-45b7-49f2-93ea-aed7220b30ac",
+   "version": 73,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "abreva": {
+   "setid": "c39b38a7-dcdd-4c32-8f35-b565c4d3cec6",
+   "version": 16,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "absorica": {
+   "setid": "3ef0cff8-19c1-4441-b780-fca6c7ee1615",
+   "version": 21,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "acetadote": {
+   "setid": "472f158a-5ab9-4308-8e49-1116e6ea3d39",
+   "version": 17,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "aciphex": {
+   "setid": "1eb38279-0237-4967-be7a-c53a826c1138",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "actos": {
+   "setid": "d2ddc491-88a9-4063-9150-443b4fa4330c",
+   "version": 20,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "adderall": {
+   "setid": "f22635fe-821d-4cde-aa12-419f8b53db81",
+   "version": 21,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "addyi": {
+   "setid": "3819daf3-e935-2c53-c527-e1d57922f394",
+   "version": 15,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "advil": {
+   "setid": "1a665e64-9f30-be37-4a83-38789f1f1e89",
+   "version": 39,
+   "class": "otc",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "advil-cold-and-sinus": {
+   "setid": "0da9ed22-bfb4-d61b-110b-0c7760332a98",
+   "version": 14,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "advil-dual-action": {
+   "setid": "f5ea858e-76d9-4777-b3dc-5d614f66d485",
+   "version": 11,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "advil-liqui-gels": {
+   "setid": "9fce41c2-e059-4180-9e7b-47ac506baf44",
+   "version": 2,
+   "class": "otc",
+   "six": [
+    "green-3"
+   ],
+   "red_3": false
+  },
+  "advil-pm": {
+   "setid": "405afdb4-c157-1d88-f232-848063ba4714",
+   "version": 22,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "adzenys-xr-odt": {
+   "setid": "c1179269-00b5-48ea-972d-31e614e99b7e",
+   "version": 16,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "akovaz": {
+   "setid": "e92f3eda-33eb-4b34-9e8b-db8d32a5dbd9",
+   "version": 4,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "alaway": {
+   "setid": "e4c310b5-1dba-4ddc-bc90-b27ebc765871",
+   "version": 15,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "albenza": {
+   "setid": "1977a867-0ee1-44c0-8da3-fe59c48699f5",
+   "version": 14,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "aleve": {
+   "setid": "00ef5b30-71d0-4cb4-84a3-48c67d1cea2a",
+   "version": 19,
+   "class": "otc",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "aleve-pm": {
+   "setid": "82891458-ab0d-459a-8602-dcebd22c3010",
+   "version": 16,
+   "class": "otc",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "alka-seltzer-original": {
+   "setid": "5be36a7f-7d1f-468d-9c29-92c8cd3ef1bc",
+   "version": 11,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "alka-seltzer-plus-cold-day-and-night": {
+   "setid": "75894849-a0ba-57be-e053-2a91aa0a049a",
+   "version": 6,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "allegra-allergy": {
+   "setid": "81c1dcbb-28b3-4ad5-9f3d-9ccc16ddd173",
+   "version": 64,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "allegra-hives-24hr": {
+   "setid": "490b4c5f-448b-4563-928b-837117b59b9f",
+   "version": 10,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "ambien": {
+   "setid": "747949c5-2c91-4909-8a07-71b6826f8e97",
+   "version": 1,
+   "class": "prescription",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "amidate": {
+   "setid": "b7ed5bf8-ba75-44dc-8f81-96b4ad5766be",
+   "version": 27,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "amrix": {
+   "setid": "3902123b-1365-ac3c-0934-afff9eeeb1bd",
+   "version": 32,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "green-3",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "anafranil": {
+   "setid": "4074b555-7635-41a9-809d-fae3b3610059",
+   "version": 22,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "anbesol-maximum-strength": {
+   "setid": "8c6ac499-9bd2-4ea5-9f26-df7947bff4a6",
+   "version": 5,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "apokyn": {
+   "setid": "3235535d-9ef9-4657-8b2a-176a807d091c",
+   "version": 21,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "aricept": {
+   "setid": "98e451e1-e4d7-4439-a675-c5457ba20975",
+   "version": 33,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "aspercreme": {
+   "setid": "275e1343-deef-424a-a883-5e780083af91",
+   "version": 8,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "astepro-allergy": {
+   "setid": "e0640846-19a6-7f79-e053-2995a90a8176",
+   "version": 9,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "atacand": {
+   "setid": "94a59260-d2b6-464a-b5b9-bbc599e57e10",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "ativan": {
+   "setid": "5fc0e987-61c9-40c4-b0d5-fcea07c8733e",
+   "version": 15,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "atoncy": {
+   "setid": "72d3d8cf-7f3b-479e-bd9f-e204d4118517",
+   "version": 1,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "augmentin": {
+   "setid": "174cc098-fe49-4f1a-87e2-601c7573f0db",
+   "version": 6,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "avodart": {
+   "setid": "960797b3-09b1-4d6a-8ece-8b5d918e93e4",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "bactrim-ds": {
+   "setid": "f59d0c04-9c66-4d53-a0e1-cb55570deb62",
+   "version": 18,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "bayer-low-dose-aspirin": {
+   "setid": "075b103e-0bb4-4b7a-ac0e-5645bcbd0a07",
+   "version": 8,
+   "class": "otc",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "belsomra": {
+   "setid": "e5b72731-1acb-45b7-9c13-290ad12d3951",
+   "version": 22,
+   "class": "prescription",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "benadryl-allergy": {
+   "setid": "224ba2a3-1a93-29c8-e063-6394a90a9bef",
+   "version": 3,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "benadryl-itch-stopping-cream": {
+   "setid": "66a2fd60-1757-45cc-a195-ecb9241dca2a",
+   "version": 9,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "bengay-vanishing-scent": {
+   "setid": "6cc3294b-3b0f-44d0-af71-61db1022d269",
+   "version": 8,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "benicar": {
+   "setid": "dc3f1fd4-5578-4c5d-be7b-12e3f8f3e7df",
+   "version": 1,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "biofreeze": {
+   "setid": "00bb462a-27d0-6f74-e063-6394a90a90ec",
+   "version": 12,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "bonine": {
+   "setid": "0b2ea6b8-b342-4940-8922-898758fbeb31",
+   "version": 2,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "brilinta": {
+   "setid": "f7b3f443-e83d-4bf2-0e96-023448fed9a8",
+   "version": 56,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "bufferin-regular-strength": {
+   "setid": "3543b2bf-1062-468a-a5dc-eabb2408af8c",
+   "version": 2,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "bystolic": {
+   "setid": "8b8ad213-1dc8-454e-a524-075685c0e1a8",
+   "version": 31,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "caladryl": {
+   "setid": "67d4fd42-9fed-4238-9f5a-c9403abbcf20",
+   "version": 6,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "carafate": {
+   "setid": "c87c6b50-6977-4fa7-ae98-40c0753f7aee",
+   "version": 18,
+   "class": "prescription",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "cardizem": {
+   "setid": "f3e7ecef-f360-4987-a4f5-933214130ab2",
+   "version": 20,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "celebrex": {
+   "setid": "2d6675e4-5859-4be2-8037-a20ce9f707aa",
+   "version": 13,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "celexa": {
+   "setid": "4259d9b1-de34-43a4-85a8-41dd214e9177",
+   "version": 40,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "cepacol-sore-throat-and-cough": {
+   "setid": "c0cc32db-90f0-4106-8538-89821083ece1",
+   "version": 14,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "childrens-advil": {
+   "setid": "3079d932-afb2-94fe-f4ba-a3d8b5198fce",
+   "version": 20,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "childrens-benadryl": {
+   "setid": "fc9181b9-c92d-493e-8d7c-4a4239c6c092",
+   "version": 15,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "childrens-motrin": {
+   "setid": "15b0b56d-6188-4937-b541-902022e35b24",
+   "version": 8,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "childrens-mucinex-multi-symptom-cold": {
+   "setid": "60daf6e2-ded8-44e6-bd8d-9d221384adde",
+   "version": 10,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "childrens-tylenol": {
+   "setid": "3162733b-9382-39f1-e063-6294a90ac420",
+   "version": 3,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "childrens-zyrtec": {
+   "setid": "0fe77356-d945-46a0-882e-b3bbab784556",
+   "version": 14,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "chloraseptic": {
+   "setid": "d500f423-b9f2-4d98-8f2a-8bab7c05737c",
+   "version": 4,
+   "class": "otc",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "cialis": {
+   "setid": "bcd8f8ab-81a2-4891-83db-24a0b0e25895",
+   "version": 52,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "cipro": {
+   "setid": "888dc7f9-ad9c-4c00-8d50-8ddfd9bd27c0",
+   "version": 32,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "claritin": {
+   "setid": "660ac9df-f1b1-4c89-94dd-9fae0a013f3c",
+   "version": 12,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "claritin-d-24-hour": {
+   "setid": "f046a807-ab8c-0620-e053-2a95a90a9d3c",
+   "version": 11,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "clear-eyes-cooling-redness-relief": {
+   "setid": "38d14e99-e4c8-431b-b106-578eeb38bf3c",
+   "version": 7,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "cleocin-hydrochloride": {
+   "setid": "df9a2a41-b132-4f43-8940-b2d773b1369a",
+   "version": 41,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-5"
+   ],
+   "red_3": false
+  },
+  "clomid": {
+   "setid": "2ca373c1-4dba-4126-8616-5c533d606fe5",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "clozaril": {
+   "setid": "90876802-0e3a-44c9-9ff7-1754dfbe736a",
+   "version": 21,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "colace": {
+   "setid": "9fce5c4b-1e2e-47ef-13e5-c3bd5320d41b",
+   "version": 9,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "concerta": {
+   "setid": "1a88218c-5b18-4220-8f56-526de1a276cd",
+   "version": 30,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "conzip": {
+   "setid": "a65b4d05-3a1c-4aa1-848a-d20ac9aaf62f",
+   "version": 14,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "coreg": {
+   "setid": "07c619c6-4a0c-445e-94fa-664a54f68a39",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "coricidin-hbp-chest-congestion-and-cough": {
+   "setid": "40ad8261-d01d-436b-83b4-1b7c987573db",
+   "version": 10,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "cortizone-10-soothing-aloe": {
+   "setid": "1a841bf0-9d7b-4566-b442-aa9bcc827846",
+   "version": 3,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "cozaar": {
+   "setid": "9949448f-c3b9-44ee-94ed-c1aca8c90f39",
+   "version": 9,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "crestor": {
+   "setid": "325a5d0e-9a72-4015-9fcd-1655fb504cee",
+   "version": 19,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "dayvigo": {
+   "setid": "7074cb65-77b3-45d2-8e8d-da8dc0f70bfd",
+   "version": 39,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "debrox": {
+   "setid": "43649ba3-75e0-4dcf-9172-23767dbaeda6",
+   "version": 3,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "delsym": {
+   "setid": "e3e1d126-76c2-4776-8ce0-449625b7e6ba",
+   "version": 15,
+   "class": "otc",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "demerol": {
+   "setid": "b31d1308-28c3-43f4-e0a6-2f3ed76b8975",
+   "version": 38,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "depakote": {
+   "setid": "08a65cf4-7749-4ceb-6895-8f4805e2b01f",
+   "version": 1621,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "depo-provera": {
+   "setid": "199cf13e-0859-4a73-9b45-e700d0cd1049",
+   "version": 29,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "depo-testosterone": {
+   "setid": "cfbb53d4-b868-4a28-8436-f9112eb01c39",
+   "version": 27,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "dexedrine-spansule": {
+   "setid": "cc717b9b-22ea-4c60-a1d4-ee38a40bce78",
+   "version": 15,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "dexilant": {
+   "setid": "9819f033-3bbe-442e-8e92-45fec77b237d",
+   "version": 40,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "diflucan": {
+   "setid": "f694c617-3383-416c-91b6-b94fda371204",
+   "version": 57,
+   "class": "prescription",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "dilantin-125": {
+   "setid": "f339f9e4-b289-4efe-82b9-46c57d1dc277",
+   "version": 1,
+   "class": "prescription",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "diovan": {
+   "setid": "5ddba454-f3e6-43c2-a7a6-58365d297213",
+   "version": 32,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "diprivan": {
+   "setid": "e3105799-a4b6-f3f4-e6e2-b2b29bbdb538",
+   "version": 10,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "dramamine": {
+   "setid": "3a960d43-62aa-464e-92b9-d83042ba02bf",
+   "version": 1,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "ecotrin": {
+   "setid": "222d187b-aae6-410b-baeb-b2bd42f5c676",
+   "version": 5,
+   "class": "otc",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "effexor-xr": {
+   "setid": "c848a5d8-ba94-4c84-80e3-0bf35fb8e32e",
+   "version": 7,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "egrifta-wr": {
+   "setid": "839334d3-8c1d-4c26-9036-2ab524a6ea75",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "eliquis": {
+   "setid": "e9481622-7cc6-418a-acb6-c5450daae9b0",
+   "version": 39,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "emetrol-chewables": {
+   "setid": "9880a18a-cf84-47cd-99b5-d692065a25bf",
+   "version": 8,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "entresto": {
+   "setid": "000dc81d-ab91-450c-8eae-8eb74e72296f",
+   "version": 25,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "epsolay": {
+   "setid": "641981e6-460b-44dd-8146-306c47e5367c",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "ex-lax-chocolated": {
+   "setid": "59a26a7f-516f-4507-8dec-f40cf6cfaffc",
+   "version": 6,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "excedrin-extra-strength": {
+   "setid": "60af6b21-9dc2-461e-a9bd-28d8e75cecb5",
+   "version": 1,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "excedrin-migraine": {
+   "setid": "7ed841fb-a61c-4868-b4e5-4f2311a5e79c",
+   "version": 14,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "farxiga": {
+   "setid": "72ad22ae-efe6-4cd6-a302-98aaee423d69",
+   "version": 49,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "femara": {
+   "setid": "82b77d74-085f-45ac-a7dd-1f5c038bf406",
+   "version": 32,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "finacea": {
+   "setid": "63773349-0295-4d56-a72e-0d7cade88ddb",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "flagyl": {
+   "setid": "a2883ca1-5a9a-4259-9d80-46ab67274384",
+   "version": 25,
+   "class": "prescription",
+   "six": [
+    "green-3"
+   ],
+   "red_3": false
+  },
+  "flonase-allergy-relief": {
+   "setid": "b6134ba0-b70a-4eac-9a82-cef64b242c1d",
+   "version": 21,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "focalin": {
+   "setid": "2016f5c2-95d2-4655-af65-c588c2bf5e6d",
+   "version": 2,
+   "class": "prescription",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "foundayo": {
+   "setid": "8ac446c5-feba-474f-a103-23facb9b5c62",
+   "version": 10,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "gas-x-total-relief": {
+   "setid": "edb0f11a-bdb7-484d-9257-09ff47b0fca4",
+   "version": 6,
+   "class": "otc",
+   "six": [
+    "blue-2",
+    "red-40",
+    "yellow-5"
+   ],
+   "red_3": false
+  },
+  "gaviscon": {
+   "setid": "2d74e5bc-1f10-4fb6-9258-cd906e360013",
+   "version": 23,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "gleevec": {
+   "setid": "211ef2da-2868-4a77-8055-1cb2cd78e24b",
+   "version": 41,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "gocovri": {
+   "setid": "2bee0631-0028-1314-e063-6394a90aaaed",
+   "version": 8,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "goodys-extra-strength": {
+   "setid": "d4325b17-23bc-44ac-868d-bb0886853a73",
+   "version": 4,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "halls-cough-drops-variety-pack": {
+   "setid": "512a9a2e-6160-80d1-e063-6394a90aeff0",
+   "version": 1,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "hysingla-er": {
+   "setid": "b7d23ac2-e776-9f62-3290-c64c2d6eb353",
+   "version": 17,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "icy-hot": {
+   "setid": "1830c5ce-60e2-40e7-96cb-c5f7b9357ae5",
+   "version": 6,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "imitrex": {
+   "setid": "584abe73-8290-4484-ff8e-5890831c095e",
+   "version": 24,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "imodium-a-d": {
+   "setid": "76a976d5-8bee-4158-a94d-7fbfc5544fd4",
+   "version": 10,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "imodium-multi-symptom-relief": {
+   "setid": "ecb91e47-2b0c-47c8-9256-4623d8bc825e",
+   "version": 25,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "inderal-la": {
+   "setid": "35d28979-36b1-4630-b85e-a44e0a443734",
+   "version": 11,
+   "class": "prescription",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": true
+  },
+  "indocin": {
+   "setid": "3b36645c-de5e-4263-ae06-2f6ff6a9add2",
+   "version": 6,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "infumorph": {
+   "setid": "db9ac9e3-d761-4a99-9f34-4946ebe8f255",
+   "version": 12,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "intuniv": {
+   "setid": "b972af81-3a37-40be-9fe1-3ddf59852528",
+   "version": 44,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "jantoven": {
+   "setid": "19a69a72-ac5d-45d5-a94d-a5aaecbe4730",
+   "version": 14,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "januvia": {
+   "setid": "f85a48d0-0407-4c50-b0fa-7673a160bf01",
+   "version": 71,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "journavx": {
+   "setid": "f0976da4-1d20-4517-945c-b60ed2f41c12",
+   "version": 10,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "kaopectate": {
+   "setid": "3877a88d-9546-48ce-ad6b-3c2a115e3eaf",
+   "version": 9,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "kenalog-10": {
+   "setid": "ec04ecbb-2896-3feb-85fd-a64aba93b289",
+   "version": 24,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "keppra": {
+   "setid": "3ca9df05-a506-4ec8-a4fe-320f1219ab21",
+   "version": 36,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "keytruda": {
+   "setid": "9333c79b-d487-4538-a9f0-71b91a02b287",
+   "version": 229,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "klonopin": {
+   "setid": "cfa0d79a-843c-4b88-95a1-e9511d649ca1",
+   "version": 6,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "lamictal": {
+   "setid": "d7e3572d-56fe-4727-2bb4-013ccca22678",
+   "version": 45,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "lamisil-at": {
+   "setid": "21f1bf77-4338-4b75-b513-80a0d98a722a",
+   "version": 1,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "lanoxin": {
+   "setid": "9ec84cac-6ecc-43dc-8006-6ccc029e2707",
+   "version": 10,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "lasix": {
+   "setid": "2c9b4d8f-0770-482d-a9e6-9c616a440b1a",
+   "version": 7,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "latuda": {
+   "setid": "afad3051-9df2-4c54-9684-e8262a133af8",
+   "version": 37,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "lexapro": {
+   "setid": "13bb8267-1cab-43e5-acae-55a4d957630a",
+   "version": 45,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "lioresal": {
+   "setid": "6f3bdcc0-ffc8-4911-8c35-958c8103a2c5",
+   "version": 29,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "lipitor": {
+   "setid": "a60cc18b-0631-4cf0-b021-9f52224ece65",
+   "version": 8,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "lithobid": {
+   "setid": "f7f5b69a-c2a1-4586-a189-1475d41387c0",
+   "version": 13,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "little-remedies-infant-fever-and-pain-reliever": {
+   "setid": "af5c3b3b-079f-4ee6-a9a4-a13ee8cd99a5",
+   "version": 5,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "lopressor": {
+   "setid": "b5f4fed2-369c-4808-a682-8a5b8cfdbb4f",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "lotrimin-af": {
+   "setid": "163996c6-af54-21ac-e063-6394a90ac05c",
+   "version": 2,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "ludens-throat-drops": {
+   "setid": "adfb248a-96bb-4742-9df6-c47edccdd671",
+   "version": 16,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "lumigan": {
+   "setid": "a5e67c75-db88-4372-bb07-c8dd15c97631",
+   "version": 19,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "lunesta": {
+   "setid": "3821f4b7-a3c8-4920-ba80-18aa96532c09",
+   "version": 2,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "lyrica": {
+   "setid": "60185c88-ecfd-46f9-adb9-b97c6b00a553",
+   "version": 59,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "maxalt": {
+   "setid": "007b4644-e0e7-4863-9ae3-fe09676b3f5f",
+   "version": 4,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "maxidex": {
+   "setid": "35e47fcd-e020-43e5-8322-41f8060d220d",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "medrol": {
+   "setid": "39d5270b-d957-4821-93d6-501b7b9f02d4",
+   "version": 25,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "midol-complete": {
+   "setid": "ce9e6acb-a38b-4c9b-a7e8-3e1c2a49a324",
+   "version": 7,
+   "class": "otc",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "mifeprex": {
+   "setid": "61626f72-7469-6f6e-4953-6d7572646572",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "monistat-1-combination-pack": {
+   "setid": "97ff1c90-c250-4921-81af-6a56cc9cc7d2",
+   "version": 7,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "monistat-7": {
+   "setid": "2aad40f2-4eea-441d-8b34-5613f1955405",
+   "version": 5,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "monodox": {
+   "setid": "a65325a7-ae0a-4704-99c4-a3a2e4e1dcf2",
+   "version": 18,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "motrin-ib": {
+   "setid": "d9fc716a-fba5-45f8-8024-52325799d1dd",
+   "version": 13,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "mounjaro": {
+   "setid": "d2d7da5d-ad07-4228-955f-cf7e355c8cc0",
+   "version": 40,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "mucinex": {
+   "setid": "dd379cdd-90ab-42e0-ad89-f50d3220f611",
+   "version": 20,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "mucinex-d": {
+   "setid": "d5f046c0-66b9-4cdc-9a1e-8e2cb5ece84f",
+   "version": 11,
+   "class": "otc",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "mucinex-dm": {
+   "setid": "70987d06-d206-445f-bd0d-5e1345b8465c",
+   "version": 19,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "mucinex-fast-max-cold-and-flu": {
+   "setid": "31ac6883-ffcd-39de-e063-6294a90a52dd",
+   "version": 3,
+   "class": "otc",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "mylanta-spiced-apple-cider": {
+   "setid": "5a6040ff-1779-3215-e063-6294a90aaab1",
+   "version": 1,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "myrbetriq": {
+   "setid": "ba9e9e15-e666-4c56-9271-2e24739cfa2d",
+   "version": 17,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "narcan": {
+   "setid": "a0ebc83d-2892-40de-bc0a-775ce90b30db",
+   "version": 4,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "nasacort-allergy-24hr": {
+   "setid": "4bff57a5-cce0-401c-a0fe-23c65c1b7ddc",
+   "version": 38,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "nayzilam": {
+   "setid": "2b29422e-54d5-4a49-8522-e9cf752368c3",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "neurontin": {
+   "setid": "97935fd9-1d4a-43b6-a5d9-de994591187b",
+   "version": 48,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "nexium": {
+   "setid": "f4853677-1622-4037-688b-fdf533a11d96",
+   "version": 74,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "nexium-24hr": {
+   "setid": "61f67858-ba2f-449b-8b30-c15cdaf49222",
+   "version": 12,
+   "class": "otc",
+   "six": [
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "nicorette": {
+   "setid": "f350e050-2173-43e0-8738-848382ce0700",
+   "version": 8,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "norvasc": {
+   "setid": "7367289c-b0b0-466a-83e2-558e2985c29f",
+   "version": 10,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "norvir": {
+   "setid": "2849298e-de6e-47bb-8194-56e075b33fc3",
+   "version": 1653,
+   "class": "prescription",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "nucynta": {
+   "setid": "80938c30-9fe3-4c7d-9d9c-5476638cfb2d",
+   "version": 7,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "nuvigil": {
+   "setid": "a69631d0-1263-769e-b232-4ab9160e0fa3",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "orajel-4x-toothache-and-gum": {
+   "setid": "5a1b4133-0eac-2f8f-e063-6394a90af8f6",
+   "version": 2,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "ozempic": {
+   "setid": "adec4fd2-6858-4c99-91d4-531f5f2a2d79",
+   "version": 20,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "pamelor": {
+   "setid": "e17dc299-f52d-414d-ab6e-e809bd6f8acb",
+   "version": 24,
+   "class": "prescription",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "paxil": {
+   "setid": "ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e",
+   "version": 13,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "paxlovid": {
+   "setid": "8a99d6d6-fd9e-45bb-b1bf-48c7f761232a",
+   "version": 12,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "pepcid-complete": {
+   "setid": "a2ef8424-7d80-42b0-a01e-f378f629b2b6",
+   "version": 20,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "pepto-bismol": {
+   "setid": "67006e82-870d-8d63-e053-2991aa0a02d1",
+   "version": 19,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "percocet": {
+   "setid": "4dd36cf5-8f73-404a-8b1d-3bd53bd90c25",
+   "version": 66,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "phenergan": {
+   "setid": "6f7e47cc-f823-4336-8107-f980e3049617",
+   "version": 8,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "phillips-milk-of-magnesia-wild-cherry": {
+   "setid": "0a6d824a-3d9a-07f9-e054-00144ff8d46c",
+   "version": 10,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "plan-b-one-step": {
+   "setid": "6ce6b40e-14ac-47bd-a648-ddf9e452e559",
+   "version": 5,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "plaquenil": {
+   "setid": "34496b43-05a2-45fb-a769-52b12e099341",
+   "version": 15,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "plavix": {
+   "setid": "de8b0b67-eb25-4684-83b5-7ad785314227",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "precedex": {
+   "setid": "92b7ddaa-e45a-4b64-a802-bb5df8771dd6",
+   "version": 6,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "pred-mild": {
+   "setid": "4fcce64a-94ea-4031-ad5a-c4eddc73a910",
+   "version": 16,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "prevacid": {
+   "setid": "71ba78cb-7e46-43eb-9425-fa130f537f84",
+   "version": 45,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "prilosec-otc": {
+   "setid": "35a79458-79f6-44d6-b74c-b4f4aaf0dde0",
+   "version": 18,
+   "class": "otc",
+   "six": [
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "pristiq": {
+   "setid": "0f43610c-f290-46ea-d186-4f998ed99fce",
+   "version": 67,
+   "class": "prescription",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "procardia-xl": {
+   "setid": "8ebcb33c-f43b-4b36-9f94-9774b2a59e06",
+   "version": 20,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "prograf": {
+   "setid": "7f667de1-9dfa-4bd6-8ba0-15ee2d78873b",
+   "version": 30,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "proscar": {
+   "setid": "6f988153-fc74-4ca4-b29a-111f750c4a4b",
+   "version": 9,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "provigil": {
+   "setid": "0391f182-1958-9fef-a944-53b229ce99e7",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "prozac": {
+   "setid": "c88f33ed-6dfb-4c5e-bc01-d8e36dd97299",
+   "version": 59,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "pyridium": {
+   "setid": "165d01d4-a9f7-2293-e054-00144ff8d46c",
+   "version": 15,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "qelbree": {
+   "setid": "aedf408d-0f84-418d-9416-7c39ddb0d29a",
+   "version": 16,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "quviviq": {
+   "setid": "3a2d1503-b816-40c9-9fac-7e03c5a3bcef",
+   "version": 13,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "raldesy": {
+   "setid": "34708cc1-b0b2-4fd0-b9f3-7f008b457fc9",
+   "version": 6,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "reglan": {
+   "setid": "de55c133-eb08-4a35-91a2-5dc093027397",
+   "version": 8,
+   "class": "prescription",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "remeron": {
+   "setid": "98ad1917-a094-44f5-a28f-a64a8cfcd887",
+   "version": 8,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "restasis": {
+   "setid": "8e24af2b-bc1c-4849-94f2-6df950cdca89",
+   "version": 19,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "restoril": {
+   "setid": "bc56f7fd-1aaf-48ff-8aa7-d467e59e1015",
+   "version": 25,
+   "class": "prescription",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": true
+  },
+  "retin-a": {
+   "setid": "9556d73d-c573-4e0a-9feb-764ce2d1107b",
+   "version": 15,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "retrovir": {
+   "setid": "6df09f15-b102-431c-adde-d7aeef6f5d84",
+   "version": 33,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "rexulti": {
+   "setid": "2d301358-6291-4ec1-bd87-37b4ad9bd850",
+   "version": 26,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "ricola-max-honey-lemon": {
+   "setid": "27c0d805-ae15-46c7-965f-e6b3eeb3e013",
+   "version": 4,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "risperdal": {
+   "setid": "7e117c7e-02fc-4343-92a1-230061dfc5e0",
+   "version": 46,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "ritalin": {
+   "setid": "d6fb2750-cdab-4749-ba0d-7534840a5892",
+   "version": 3,
+   "class": "prescription",
+   "six": [
+    "green-3"
+   ],
+   "red_3": false
+  },
+  "robaxin": {
+   "setid": "090a3d3d-92c3-4c30-a648-436461f81702",
+   "version": 8,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "robitussin-long-acting-coughgels": {
+   "setid": "472c5c1f-eb5a-444b-a17e-f0d71007fb15",
+   "version": 5,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "rolaids-advanced-soft-chews": {
+   "setid": "9789c3f7-bdb5-453e-812f-951682a2f5c2",
+   "version": 8,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "roxicodone": {
+   "setid": "5a8157d3-ba20-4abf-b0d4-6ad141b31d63",
+   "version": 30,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "salonpas": {
+   "setid": "f439445d-046e-4220-a4a7-13d750ee0949",
+   "version": 5,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "sandimmune": {
+   "setid": "5e5926a7-1de0-4b54-a5c0-286b6200ff82",
+   "version": 37,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "seroquel": {
+   "setid": "8ae62aaf-f8c5-417f-baac-0098369ca322",
+   "version": 53,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "singulair": {
+   "setid": "482dcc92-b47f-4ea6-854a-f5ac2aea7842",
+   "version": 5,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "solarcaine-burn-relief": {
+   "setid": "14f23c28-c713-4868-9f46-66363bf94b2c",
+   "version": 4,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "soltamox": {
+   "setid": "1e6ff055-590c-41e6-9530-1fdf04cdbd02",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "sominex": {
+   "setid": "f7858ecf-8498-4465-85d8-3e7814737573",
+   "version": 3,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "spravato": {
+   "setid": "d81a6a79-a74a-44b7-822c-0dfa3036eaed",
+   "version": 21,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "strattera": {
+   "setid": "309de576-c318-404a-bc15-660c2b1876fb",
+   "version": 69,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "stromectol": {
+   "setid": "681888c9-af79-4b7d-ae80-c3f4f6f1effd",
+   "version": 21,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "suboxone": {
+   "setid": "8a5edcf9-828c-4f97-b671-268ab13a8ecd",
+   "version": 37,
+   "class": "prescription",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "sudafed-pe-head-congestion-plus-pain": {
+   "setid": "76513fb2-7323-4f1f-8a10-92f8f603cf97",
+   "version": 5,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "sudafed-sinus-congestion": {
+   "setid": "c05d7e27-6821-468f-b27d-9c0b02a07b0f",
+   "version": 7,
+   "class": "otc",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "sudafed-sinus-congestion-plus-cold-severe": {
+   "setid": "537e1a0d-820d-c3f7-e063-6294a90a56ea",
+   "version": 1,
+   "class": "otc",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "sunlenca": {
+   "setid": "e5652804-29c4-40d7-aeb2-0142ed2a7b5b",
+   "version": 14,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "synthroid": {
+   "setid": "1e11ad30-1041-4520-10b0-8f9d30d30fcc",
+   "version": 1537,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "systane": {
+   "setid": "1d679d0f-cec2-a644-79cd-079607254bb9",
+   "version": 11,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "tamiflu": {
+   "setid": "ee3c9555-60f2-4f82-a760-11983c86e97b",
+   "version": 45,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "tegretol": {
+   "setid": "8d409411-aa9f-4f3a-a52c-fbcb0c3ec053",
+   "version": 39,
+   "class": "prescription",
+   "six": [
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "tenormin": {
+   "setid": "6e850b1e-28a4-4ff8-8ed7-bb0b29faa28a",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "theraflu-nasal-mist": {
+   "setid": "4ec42064-7390-4137-a93e-57343c3c76a7",
+   "version": 3,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "tiger-balm": {
+   "setid": "5066dc10-e4d5-49e9-9a5f-0ac220cfbf28",
+   "version": 12,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "topamax": {
+   "setid": "21628112-0c47-11df-95b3-498d55d89593",
+   "version": 31,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "trexall": {
+   "setid": "e942f8db-510f-44d6-acb5-b822196f5e8c",
+   "version": 14,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "trileptal": {
+   "setid": "4c5c86c8-ab7f-4fcf-bc1b-5a0b1fd0691b",
+   "version": 40,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "trintellix": {
+   "setid": "1a5b68e2-14d0-419d-9ec6-1ca97145e838",
+   "version": 18,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "tucks-triple-relief": {
+   "setid": "bf892e90-2d9b-4fa0-8ee4-8a2736be6c30",
+   "version": 1,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "tums": {
+   "setid": "35f79dcf-1743-4d9f-aba5-5ead6b056309",
+   "version": 12,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-5",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "tylenol-8-hr-arthritis-pain": {
+   "setid": "3af22fc8-e4e0-4863-8696-6bc1257047cb",
+   "version": 16,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "tylenol-cold-plus-flu-severe": {
+   "setid": "efb3bfc5-72e9-4221-8d03-e48f3d8e3821",
+   "version": 21,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "tylenol-extra-strength": {
+   "setid": "103d109d-f520-409c-8da2-eb6b0fbec891",
+   "version": 16,
+   "class": "otc",
+   "six": [
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "tylenol-pm": {
+   "setid": "ce58105b-f010-47af-8f31-6dd4ce4e9cba",
+   "version": 15,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "tylenol-regular-strength": {
+   "setid": "1622f694-4d63-4c56-8737-fae31f0ecfb7",
+   "version": 13,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "unisom-sleepgels": {
+   "setid": "17383d22-91cc-4d9e-a0b8-3f7d9a18af83",
+   "version": 9,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "unisom-sleeptabs": {
+   "setid": "7ae32d74-76a0-47e2-9e5c-812426413c4e",
+   "version": 1,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "unithroid": {
+   "setid": "07562e72-7eaa-4ce6-94f0-e08814787e50",
+   "version": 13,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "valium": {
+   "setid": "260e2041-2bb3-482f-850e-b5d47a7bdbe6",
+   "version": 12,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "valtrex": {
+   "setid": "f8e0d8f8-cb73-4206-a484-88f5c4fbd719",
+   "version": 32,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "vancocin": {
+   "setid": "a078d9c2-f89c-4f9f-8ded-60ffb2983c3f",
+   "version": 12,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "vazalore": {
+   "setid": "c623d479-f7c9-da5d-e053-2a95a90a898a",
+   "version": 6,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "veklury": {
+   "setid": "c0978fa8-53ff-4ca2-82a7-567fd3e958ca",
+   "version": 24,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "viagra": {
+   "setid": "d905dc8d-917f-4ea3-a4ee-a1ecf6967d4e",
+   "version": 6,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "vicks-dayquil-and-nyquil-kids-honey-cold-and-cough": {
+   "setid": "efa53214-b2e0-cfd0-e053-2a95a90abbdf",
+   "version": 11,
+   "class": "otc",
+   "six": [
+    "green-3",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "vicks-dayquil-severe-cold-and-flu": {
+   "setid": "6f013cc1-7885-5025-e053-2a91aa0afe11",
+   "version": 19,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "vicks-nyquil-intense-flu-liquicaps": {
+   "setid": "354906d1-455b-460c-8283-984e73c09d7e",
+   "version": 7,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "vicks-sinex-severe-pain-mucus-and-chest": {
+   "setid": "5605aab6-6074-0a3b-e063-6294a90a49a2",
+   "version": 2,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "vicks-vapocool": {
+   "setid": "3de4268b-61a0-b92f-e063-6394a90a40b9",
+   "version": 2,
+   "class": "otc",
+   "six": [
+    "blue-1"
+   ],
+   "red_3": false
+  },
+  "vicks-vaporub": {
+   "setid": "699691ae-d2a1-a8bb-e053-2991aa0acfea",
+   "version": 13,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "victoza": {
+   "setid": "5a9ef4ea-c76a-4d34-a604-27c5b505f5a4",
+   "version": 31,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "viibryd": {
+   "setid": "4c55ccfb-c4cf-11df-851a-0800200c9a66",
+   "version": 34,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "red-40",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "visine-red-eye-total-comfort": {
+   "setid": "5747edef-7a87-41d7-9594-6c78508b9ba2",
+   "version": 7,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "vivitrol": {
+   "setid": "cd11c435-b0f0-4bb9-ae78-60f101f3703f",
+   "version": 39,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "voltaren-arthritis-pain": {
+   "setid": "30a94282-0892-442a-aa10-6525cbd4fe88",
+   "version": 13,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "vraylar": {
+   "setid": "4b5f7c65-aa2d-452a-b3db-bc85c06ff12f",
+   "version": 32,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "red-40"
+   ],
+   "red_3": true
+  },
+  "vusion": {
+   "setid": "b44b452d-3630-4cb5-8ed1-1f8edac4690c",
+   "version": 6,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "vyvanse": {
+   "setid": "704e4378-ca83-445c-8b45-3cfa51c1ecad",
+   "version": 81,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "yellow-6"
+   ],
+   "red_3": true
+  },
+  "wegovy": {
+   "setid": "ee06186f-2aa3-4990-a760-757579d8f77b",
+   "version": 19,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "wellbutrin-sr": {
+   "setid": "cbc8c074-f080-4489-a5ae-207b5fadeba3",
+   "version": 39,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "womens-rogaine-foam": {
+   "setid": "4d328537-b7f5-43cc-9837-c5a0c6c390f8",
+   "version": 6,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "xalatan": {
+   "setid": "a98595b3-9f47-48e0-b18d-550a2095f264",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "xanax": {
+   "setid": "388e249d-b9b6-44c3-9f8f-880eced0239f",
+   "version": 30,
+   "class": "prescription",
+   "six": [
+    "blue-2",
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "xarelto": {
+   "setid": "10db92f9-2300-4a80-836b-673e1ae91610",
+   "version": 65,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "xifaxan": {
+   "setid": "c5e8e2fd-7087-4b78-9181-cc259c0be2f1",
+   "version": 50,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "xylocaine": {
+   "setid": "14b55cf9-f7cd-4bb4-a7c5-aba61abadef1",
+   "version": 10,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "xyzal-allergy-24hr": {
+   "setid": "8be45c2a-1eca-4a00-81b9-f7babdbdcd41",
+   "version": 14,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "zaditor": {
+   "setid": "ac66b1e4-c2b0-a4c3-09e3-ebd44a2f7c9f",
+   "version": 13,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "zanaflex": {
+   "setid": "60c27d35-7349-4fc6-86ad-70fffdbe3e08",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zegerid-otc": {
+   "setid": "1d764fc5-8eae-4fc9-a2e9-3f1954a3ac05",
+   "version": 3,
+   "class": "otc",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "zepbound": {
+   "setid": "487cd7e7-434c-4925-99fa-aa80b1cc776b",
+   "version": 40,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zestril": {
+   "setid": "838c2d78-d2d8-4981-9ec9-e50ef9e1a5d8",
+   "version": 2,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zetia": {
+   "setid": "174e45e0-45bb-48b7-9e60-8f6cfc1d22bb",
+   "version": 9,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zicam": {
+   "setid": "54604317-7d74-007e-e063-6394a90a5b83",
+   "version": 1,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "zithromax": {
+   "setid": "8d24bacb-feff-4c6a-b8df-625e1435387a",
+   "version": 26,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zocor": {
+   "setid": "8f55d5de-5a4f-4a39-8c84-c53976dd6af9",
+   "version": 11,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zoloft": {
+   "setid": "fda754f6-d0f3-4dce-a17a-927d64f912f7",
+   "version": 7,
+   "class": "prescription",
+   "six": [
+    "blue-1",
+    "blue-2",
+    "red-40"
+   ],
+   "red_3": false
+  },
+  "zomig": {
+   "setid": "2438c223-605b-4885-afc3-a6794f190f89",
+   "version": 6,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zonalon": {
+   "setid": "5f302247-525e-4acc-852b-00eb1d79af4b",
+   "version": 3,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zovirax": {
+   "setid": "125dbe4e-94ba-45bd-a714-f9c4b8e8b5c2",
+   "version": 10,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  },
+  "zyloprim": {
+   "setid": "342832b5-1a32-4bea-bc49-ab0fd152154e",
+   "version": 2,
+   "class": "prescription",
+   "six": [
+    "yellow-6"
+   ],
+   "red_3": false
+  },
+  "zyprexa": {
+   "setid": "b418946a-1ab4-4d89-a012-d94fc361a3c4",
+   "version": 69,
+   "class": "prescription",
+   "six": [
+    "blue-2"
+   ],
+   "red_3": false
+  },
+  "zyrtec": {
+   "setid": "dc613bd5-70fd-1d9b-e053-2995a90a41cd",
+   "version": 9,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "zyrtec-allergy": {
+   "setid": "b165db38-b302-4220-8627-77cb07bb078c",
+   "version": 25,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "zyrtec-d": {
+   "setid": "f1ecf9ba-1c03-7fb7-e053-2a95a90a875a",
+   "version": 6,
+   "class": "otc",
+   "six": [],
+   "red_3": false
+  },
+  "zyvox": {
+   "setid": "3e5e9975-6f36-42e4-ab46-0e75dda83592",
+   "version": 24,
+   "class": "prescription",
+   "six": [],
+   "red_3": false
+  }
+ }
+}

@@ -4,6 +4,8 @@
 #   drawings  review 3, drawing truth (2026-11-27; brief ../TRUST-2-DRAWING-TRUTH-PROMPT.md), daily 06:30 Eastern
 #   facts     review 2, one fact on every surface (2026-11-27; brief ../TRUST-3-ONE-FACT-PROMPT.md), daily 06:45
 #             Eastern; on Tuesdays it reads every sitemap address
+#   findings  review 5, findings arithmetic (2026-11-28; brief ../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md), daily 06:55
+#             Eastern: every findings address, its CSV and JSON, every label page it links, recomputed from the labels
 #
 # WHAT IT DOES: runs `python -m moleculefinder_etl.review.<review>`, which reads the snapshot main holds, the seeds and
 # pages of the live site, and writes its report to ~/137/moleculefinder/trust-reports/ (<review>-<date>.md and .json,
@@ -48,7 +50,8 @@ REVIEW="${1:-}"; shift || true
 case "$REVIEW" in
   drawings) NEXT_START="06:30 tomorrow"; LIMIT_SECONDS=1800 ;;   # about a minute; stopped at 30
   facts)    NEXT_START="06:45 tomorrow"; LIMIT_SECONDS=3600 ;;   # a few minutes; the Tuesday full read about 10
-  *) echo "usage: trust-review.sh drawings|facts [options]" >&2; exit 2 ;;
+  findings) NEXT_START="06:55 tomorrow"; LIMIT_SECONDS=1800 ;;   # about half a minute; stopped at 30
+  *) echo "usage: trust-review.sh drawings|facts|findings [options]" >&2; exit 2 ;;
 esac
 LOCK="$STATE_DIR/trust-$REVIEW.lock"                       # this job's alone
 WEEKLY_LOCK="$STATE_DIR/running.lock"                      # weekly-refresh.sh

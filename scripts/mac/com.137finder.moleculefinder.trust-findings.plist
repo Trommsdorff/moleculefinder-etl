@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- MoleculeFinder's findings-arithmetic review on the Mac mini (trust review 5, 2026-11-28; docs/MAC-TRUST-REVIEWS.md
+     section 6; brief ../TRUST-4-FINDINGS-ARITHMETIC-PROMPT.md).
+     Source of truth: moleculefinder-etl/scripts/mac/com.137finder.moleculefinder.trust-findings.plist; the installed
+     copy is ~/Library/LaunchAgents/com.137finder.moleculefinder.trust-findings.plist.
+     It runs ORIGIN/MAIN's scripts/mac/trust-review.sh (shared by the trust reviews) with the argument `findings`, from
+     the job's own clone of the public repository (fetched here, then copied beside the state files as
+     trust-review-findings.sh), as the other two reviews do; until origin/main carries the script's `findings` case (before
+     Garrett's push of the branch that added it) it takes the interactive repository's local main's copy, read only.
+     Fires every day at 06:55 Eastern: after the drawing review (06:30, about a minute) and the facts review (06:45; its
+     daily sample takes about a minute; Tuesday's full read was measured at 317 s on 2026-11-27, so it ends about 06:50),
+     55 minutes clear of the 07:50 news slot, after Monday's 03:10 weekly refresh, and on no other job's minute
+     (~/Library/LaunchAgents read 2026-11-28: MoleculeFinder weekly Monday 03:10 and retries :10, news :50, trust 06:30
+     and 06:45; ThePatentFinder 00:30, 04:00, 05:00, 11:00, 12:15, 15:15, 19:00, 07:30 backups and two every-15-minute
+     jobs; TheFiscalFinder 04:20, Monday 09:30 on; PolitiFinder 05:10 and 08:30; GravityFinder every 30 minutes and
+     Wednesday 01:40 on; the snapshot thinning 03:50). If the weekly refresh or the news job is running, the script waits
+     for it, up to an hour; the trust reviews never wait for each other (each only reads).
+     launchd, not cron: a start missed while the Mac slept fires once at the next wake. It only reads, so a late or a
+     manual run (launchctl kickstart) is harmless. The fetch uses no credential helper and gives up after 60 s.
+     A change here takes effect only when the installed copy is replaced and the agent reloaded (the runbook says how). -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.137finder.moleculefinder.trust-findings</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-c</string>
+    <string>R=/Users/garrettpoe/137/moleculefinder/moleculefinder-etl; D="/Users/garrettpoe/Library/Application Support/MoleculeFinder"; C="$D/trust-checkout"; S=scripts/mac/trust-review.sh; F="$D/trust-review-findings.sh"; mkdir -p "$D"; export GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1; if [ -d "$C/.git" ]; then /usr/bin/perl -e 'alarm 60; exec @ARGV' /opt/homebrew/bin/git -c credential.helper= -C "$C" fetch --quiet --depth 1 --no-tags origin +refs/heads/main:refs/remotes/origin/main 2&gt;/dev/null; fi; { /opt/homebrew/bin/git -C "$C" show origin/main:$S 2&gt;/dev/null || /opt/homebrew/bin/git -C "$R" show main:$S; } &gt; "$F.tmp" &amp;&amp; [ -s "$F.tmp" ] &amp;&amp; mv "$F.tmp" "$F"; rm -f "$F.tmp"; exec /bin/bash "$F" findings</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>55</integer></dict>
+  <key>ExitTimeOut</key><integer>30</integer>
+  <key>StandardOutPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd-trust-findings.log</string>
+  <key>StandardErrorPath</key><string>/Users/garrettpoe/Library/Logs/MoleculeFinder/launchd-trust-findings.log</string>
+</dict>
+</plist>
